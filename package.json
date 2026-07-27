@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@platform/auth-sdk": "file:../packages/auth-sdk",
+    "@platform/auth-sdk": "file:../Auth-sdk",
     "@tanstack/react-query": "^5.101.2",
     "axios": "^1.18.1",
     "react": "^19.2.7",

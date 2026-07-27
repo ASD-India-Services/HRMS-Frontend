@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@platform/auth-sdk'
 
@@ -11,6 +11,7 @@ import { useAuth } from '@platform/auth-sdk'
 export function AuthCallback() {
   const { authState } = useAuth()
   const navigate = useNavigate()
+<<<<<<< HEAD
   const [waitingForAuth, setWaitingForAuth] = useState(true)
   const [callbackError, setCallbackError] = useState<string | null>(null)
 
@@ -27,15 +28,27 @@ export function AuthCallback() {
   useEffect(() => {
     // Don't navigate while still waiting or loading.
     if (waitingForAuth) return
+=======
+
+  useEffect(() => {
+    // Wait until AuthProvider finishes processing the callback
+>>>>>>> b5b6a8e0cc3f5c7ccaeb95e76d1f3ed213be73fe
     if (authState.isLoading) return
 
     if (authState.isAuthenticated) {
       navigate('/dashboard', { replace: true })
+<<<<<<< HEAD
       return
     }
 
     setCallbackError('Sign-in could not be completed. Please try again.')
   }, [waitingForAuth, authState.isLoading, authState.isAuthenticated, navigate])
+=======
+    }
+    // If not loading and not authenticated after callback, something failed
+    // Don't redirect to login here -- ProtectedRoute handles that
+  }, [authState.isLoading, authState.isAuthenticated, navigate])
+>>>>>>> b5b6a8e0cc3f5c7ccaeb95e76d1f3ed213be73fe
 
   return (
     <div className="flex min-h-screen items-center justify-center">

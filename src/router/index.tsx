@@ -20,9 +20,13 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { FeatureGatedRoute } from './FeatureGatedRoute';
 import { RoleGatedRoute } from './RoleGatedRoute';
 import { OnboardingGuard } from './OnboardingGuard';
+import { RouteErrorBoundary } from '@/components/ErrorBoundary';
 
 // Auth pages (not lazy — needed immediately)
 import { AuthCallback } from '@/pages/AuthCallback';
+
+// Login redirect page (not lazy — needed immediately for unauthenticated users)
+import Login from '@/pages/Login';
 
 // Auth pages (public, lazy-loaded)
 const SetupPassword = lazy(() => import('@/pages/auth/SetupPassword'));
@@ -197,6 +201,12 @@ export const router = createBrowserRouter([
     element: <AuthCallback />,
   },
 
+  // Login page — branded redirect to Identity Center
+  {
+    path: '/login',
+    element: <Login />,
+  },
+
   // Public auth pages (outside ProtectedRoute — user is not authenticated)
   {
     path: '/auth/setup-password',
@@ -219,6 +229,7 @@ export const router = createBrowserRouter([
         <AppShell />
       </ProtectedRoute>
     ),
+    errorElement: <RouteErrorBoundary />,
     children: [
       // Redirect root to dashboard
       { index: true, element: <Navigate to="/dashboard" replace /> },
