@@ -27,3 +27,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# AI/Agent tools (local only)
+.bolt/
+.kiro/
+.amazonq/
+.claude/
+CLAUDE.md
+AGENTS.md
