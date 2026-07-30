@@ -90,7 +90,7 @@ export function createCrudHooks<T>(options: UseCrudOptions): UseCrudReturn<T> {
         return response.data;
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [queryKey, 'list'] });
+        queryClient.invalidateQueries({ queryKey: [queryKey] });
       },
     });
   }
@@ -104,8 +104,7 @@ export function createCrudHooks<T>(options: UseCrudOptions): UseCrudReturn<T> {
         return response.data;
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [queryKey, 'list'] });
-        queryClient.invalidateQueries({ queryKey: [queryKey, 'detail', id] });
+        queryClient.invalidateQueries({ queryKey: [queryKey] });
       },
     });
   }
@@ -118,7 +117,7 @@ export function createCrudHooks<T>(options: UseCrudOptions): UseCrudReturn<T> {
         await api.delete(endpoints.delete(id));
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [queryKey, 'list'] });
+        queryClient.invalidateQueries({ queryKey: [queryKey] });
       },
     });
   }

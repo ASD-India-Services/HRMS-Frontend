@@ -3,6 +3,8 @@
  * to the onboarding wizard. Blocks access to all other routes.
  *
  * Admins and HR managers bypass this guard entirely.
+ * Shows children immediately while loading (optimistic) — only redirects
+ * once we know onboarding is required.
  */
 
 import { Navigate } from 'react-router-dom';
@@ -14,7 +16,7 @@ interface OnboardingGuardProps {
 }
 
 export function OnboardingGuard({ children }: OnboardingGuardProps) {
-  const { roleName } = useHrmsPermissionsContext();
+  const { roleName, isLoading: permissionsLoading } = useHrmsPermissionsContext();
   const { data: onboardingStatus, isLoading } = useOnboardingStatus();
 
   // Only apply to employees (not admins/HR)
@@ -22,12 +24,19 @@ export function OnboardingGuard({ children }: OnboardingGuardProps) {
     return <>{children}</>;
   }
 
-  if (isLoading) {
+  // Show children while loading (avoid blocking render with spinner)
+  // Only show spinner if permissions are still loading (no role info yet)
+  if (permissionsLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-500 border-t-transparent" />
       </div>
     );
+  }
+
+  // While onboarding status loads, render children optimistically
+  if (isLoading) {
+    return <>{children}</>;
   }
 
   // If onboarding not completed, redirect to wizard

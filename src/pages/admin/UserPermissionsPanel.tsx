@@ -43,11 +43,13 @@ type GroupedPermissions = Record<string, PermissionItem[]>;
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
+const EMPTY_OVERRIDES: string[] = [];
+
 export function UserPermissionsPanel({
   userId,
   currentRole,
   currentRoleId,
-  currentOverrides = [],
+  currentOverrides = EMPTY_OVERRIDES,
 }: UserPermissionsPanelProps) {
   const queryClient = useQueryClient();
   const { hasPermission } = useHrmsPermissionsContext();

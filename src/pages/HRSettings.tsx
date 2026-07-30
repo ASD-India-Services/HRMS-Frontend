@@ -1,19 +1,16 @@
 import { useEffect, useState } from 'react';
-import { createCrudHooks } from '@/hooks/useCrud';
 import api from '@/lib/api';
 import { EMAIL_CONFIG } from '@/lib/endpoints';
 
 const ENDPOINT = '/api/v1/hr-settings/';
-const crud = createCrudHooks<Record<string, unknown>>({
-  queryKey: 'hr-settings',
-  endpoints: { list: ENDPOINT, create: ENDPOINT, detail: () => ENDPOINT, update: () => ENDPOINT, delete: () => ENDPOINT },
-});
 
 interface HRSettingsData {
   company_name: string;
   fiscal_year_start: string;
-  probation_months: number;
+  probation_period_days: number;
   notice_period_days: number;
+  employee_naming_series?: string;
+  retirement_age?: number;
 }
 
 interface EmailConfigData {
@@ -37,8 +34,8 @@ export default function HRSettings() {
   const [form, setForm] = useState<HRSettingsData>({
     company_name: '',
     fiscal_year_start: '',
-    probation_months: 0,
-    notice_period_days: 0,
+    probation_period_days: 90,
+    notice_period_days: 30,
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -65,19 +62,24 @@ export default function HRSettings() {
   const [showTestModal, setShowTestModal] = useState(false);
   const [testResult, setTestResult] = useState<{ success?: boolean; message?: string; error?: string } | null>(null);
 
-  const queryResult = crud.useList({});
-
+  // Fetch HR settings on mount (singleton endpoint returns single object)
   useEffect(() => {
-    if (queryResult.data && queryResult.data.results && queryResult.data.results.length > 0) {
-      const data = queryResult.data.results[0] as unknown as HRSettingsData;
-      setForm({
-        company_name: data.company_name || '',
-        fiscal_year_start: data.fiscal_year_start || '',
-        probation_months: data.probation_months || 0,
-        notice_period_days: data.notice_period_days || 0,
-      });
-    }
-  }, [queryResult.data]);
+    const fetchSettings = async () => {
+      try {
+        const response = await api.get<HRSettingsData>(ENDPOINT);
+        const data = response.data;
+        setForm({
+          company_name: data.company_name || '',
+          fiscal_year_start: data.fiscal_year_start || '',
+          probation_period_days: data.probation_period_days || 90,
+          notice_period_days: data.notice_period_days || 30,
+        });
+      } catch {
+        // Settings not found yet — keep defaults
+      }
+    };
+    fetchSettings();
+  }, []);
 
   // Fetch email config on mount
   useEffect(() => {
@@ -116,14 +118,10 @@ export default function HRSettings() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch(ENDPOINT, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-      if (response.ok) {
-        setSaved(true);
-      }
+      await api.put(ENDPOINT, form);
+      setSaved(true);
+    } catch {
+      // Handle error silently or add error state if needed
     } finally {
       setSaving(false);
     }
@@ -219,13 +217,13 @@ export default function HRSettings() {
           </div>
 
           <div>
-            <label htmlFor="probation_months" className="mb-1 block text-sm font-medium text-gray-700">Probation Period (months)</label>
+            <label htmlFor="probation_period_days" className="mb-1 block text-sm font-medium text-gray-700">Probation Period (days)</label>
             <input
-              id="probation_months"
+              id="probation_period_days"
               type="number"
               min={0}
-              value={form.probation_months}
-              onChange={(e) => handleChange('probation_months', parseInt(e.target.value, 10) || 0)}
+              value={form.probation_period_days}
+              onChange={(e) => handleChange('probation_period_days', parseInt(e.target.value, 10) || 0)}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>

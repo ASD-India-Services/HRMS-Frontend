@@ -38,13 +38,10 @@ export function RoleGatedRoute({
   const { role } = useUser();
   const { hasPermission, isLoading, error, refetch } = useHrmsPermissionsContext();
 
-  // While permissions are loading, show a loading spinner
+  // While permissions are loading, render children optimistically
+  // (most users will have access — deny only after data confirms otherwise)
   if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
-      </div>
-    );
+    return <>{children}</>;
   }
 
   // If permission fetch failed, show retry instead of blocking forever

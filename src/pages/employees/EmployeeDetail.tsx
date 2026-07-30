@@ -54,23 +54,25 @@ export function EmployeeDetail() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showPromote, setShowPromote] = useState(false);
   const [showProvisionModal, setShowProvisionModal] = useState(false);
-  const [provisionPassword, setProvisionPassword] = useState('Welcome@123');
   const [provisionResult, setProvisionResult] = useState<{
     message: string;
     email: string;
-    default_password?: string;
     user_id: string;
     already_existed: boolean;
+    email_sent?: boolean;
   } | null>(null);
 
   const deleteMutation = useMutation({
     mutationFn: () => api.delete(`/api/v1/employees/${id}/`),
-    onSuccess: () => { navigate('/employees'); },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
+      navigate('/employees');
+    },
   });
 
   const provisionMutation = useMutation({
-    mutationFn: (password: string) =>
-      api.post(`/api/v1/employees/${id}/provision-account/`, { password }),
+    mutationFn: () =>
+      api.post(`/api/v1/employees/${id}/provision-account/`),
     onSuccess: (response) => {
       setProvisionResult(response.data);
       queryClient.invalidateQueries({ queryKey: ['employee', id] });
@@ -171,7 +173,7 @@ export function EmployeeDetail() {
             <Can permissions={['roles.manage']}>
               <ActionButton
                 label="Create Login"
-                variant="default"
+                variant="primary"
                 size="sm"
                 onClick={() => setShowProvisionModal(true)}
               />
@@ -347,7 +349,6 @@ export function EmployeeDetail() {
               if (!provisionMutation.isPending) {
                 setShowProvisionModal(false);
                 setProvisionResult(null);
-                setProvisionPassword('Welcome@123');
               }
             }}
             aria-hidden="true"
@@ -373,13 +374,10 @@ export function EmployeeDetail() {
                     <dt className="text-gray-500">Email</dt>
                     <dd className="font-medium text-gray-900">{provisionResult.email}</dd>
                   </div>
-                  {provisionResult.default_password && (
-                    <div className="flex justify-between">
-                      <dt className="text-gray-500">Password</dt>
-                      <dd className="font-mono font-medium text-gray-900">
-                        {provisionResult.default_password}
-                      </dd>
-                    </div>
+                  {provisionResult.email_sent && (
+                    <p className="mt-2 text-xs text-green-600">
+                      A password setup link has been sent to the employee&apos;s email.
+                    </p>
                   )}
                   {provisionResult.already_existed && (
                     <p className="mt-2 text-xs text-gray-500">
@@ -393,7 +391,6 @@ export function EmployeeDetail() {
                     onClick={() => {
                       setShowProvisionModal(false);
                       setProvisionResult(null);
-                      setProvisionPassword('Welcome@123');
                     }}
                     className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                   >
@@ -402,11 +399,16 @@ export function EmployeeDetail() {
                 </div>
               </div>
             ) : (
-              /* Form view */
+              /* Confirmation view */
               <div className="mt-4">
                 <p className="text-sm text-gray-600">
-                  Create a login account in the Identity Center for{' '}
-                  <span className="font-medium">{fullName}</span> ({employee.email}).
+                  This will create a login account for{' '}
+                  <span className="font-medium">{fullName}</span> and send a password
+                  setup link to <span className="font-medium">{employee.email}</span>.
+                </p>
+                <p className="mt-2 text-xs text-gray-500">
+                  The employee will receive an email with a link to set up their own password.
+                  The link expires in 72 hours.
                 </p>
 
                 {provisionMutation.isError && (
@@ -418,33 +420,10 @@ export function EmployeeDetail() {
                   </div>
                 )}
 
-                <div className="mt-4">
-                  <label
-                    htmlFor="provision-password"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Initial Password
-                  </label>
-                  <input
-                    id="provision-password"
-                    type="text"
-                    value={provisionPassword}
-                    onChange={(e) => setProvisionPassword(e.target.value)}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                    placeholder="Welcome@123"
-                  />
-                  <p className="mt-1 text-xs text-gray-500">
-                    The employee should change this on first login.
-                  </p>
-                </div>
-
                 <div className="mt-6 flex justify-end gap-3">
                   <button
                     type="button"
-                    onClick={() => {
-                      setShowProvisionModal(false);
-                      setProvisionPassword('Welcome@123');
-                    }}
+                    onClick={() => setShowProvisionModal(false)}
                     disabled={provisionMutation.isPending}
                     className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50"
                   >
@@ -452,8 +431,8 @@ export function EmployeeDetail() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => provisionMutation.mutate(provisionPassword)}
-                    disabled={provisionMutation.isPending || !provisionPassword}
+                    onClick={() => provisionMutation.mutate()}
+                    disabled={provisionMutation.isPending}
                     className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {provisionMutation.isPending && (
@@ -478,7 +457,7 @@ export function EmployeeDetail() {
                         />
                       </svg>
                     )}
-                    Create Account
+                    Send Setup Link
                   </button>
                 </div>
               </div>

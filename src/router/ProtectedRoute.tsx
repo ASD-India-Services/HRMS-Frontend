@@ -9,7 +9,6 @@ interface ProtectedRouteProps {
 /**
  * Route guard that requires authentication.
  * If the user is not authenticated and not loading, initiates login redirect.
- * Includes a debounce to avoid triggering login during token settlement.
  *
  * Once authenticated, wraps children with HrmsPermissionsProvider so that
  * the entire authenticated app tree has access to the user's HRMS permissions.
@@ -21,16 +20,10 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const loginTriggered = useRef(false);
 
   useEffect(() => {
-    // Only trigger login once, and only after a brief delay to allow
-    // AuthProvider to settle tokens from a callback redirect.
+    // Trigger login immediately when we know user is not authenticated
     if (!isLoading && !isAuthenticated && !loginTriggered.current) {
-      const timer = setTimeout(() => {
-        if (!loginTriggered.current) {
-          loginTriggered.current = true;
-          login();
-        }
-      }, 500); // 500ms grace period for token settlement
-      return () => clearTimeout(timer);
+      loginTriggered.current = true;
+      login();
     }
   }, [isLoading, isAuthenticated, login]);
 

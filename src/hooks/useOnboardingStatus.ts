@@ -23,7 +23,10 @@ export function useOnboardingStatus() {
   return useQuery<OnboardingStatusResponse>({
     queryKey: ['onboarding-status'],
     queryFn: () => api.get('/api/v1/onboarding/self/status/').then((r) => r.data),
-    staleTime: 30000,
+    staleTime: 10 * 60 * 1000, // 10 minutes — status doesn't change frequently
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
     retry: 1,
   });
 }

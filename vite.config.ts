@@ -43,8 +43,23 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Only precache the app shell — lazy chunks load on demand
+        globPatterns: ['**/*.html', '**/assets/react-*.js', '**/assets/react-*.css'],
+        // Skip precaching large chunks — let them cache at runtime
+        maximumFileSizeToCacheInBytes: 200 * 1024, // 200KB max per file
         runtimeCaching: [
+          {
+            // StaleWhileRevalidate for JS/CSS chunks — serve cached, update in background
+            urlPattern: /\/assets\/.*\.(?:js|css)$/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'hrms-chunks',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+              },
+            },
+          },
           {
             // NetworkFirst for API requests — always try network, fall back to cache
             urlPattern: /^https:\/\/api\.digihrms\.com\/api\/.*/i,
@@ -100,16 +115,31 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      // Force ALL react imports (including from @platform/auth-sdk) to use
+      // the single React instance from this project's node_modules.
+      // Without this, the linked auth-sdk resolves its own react@19.2.7,
+      // creating two React instances that break context propagation.
+      'react': path.resolve(__dirname, './node_modules/react'),
+      'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
+      'react/jsx-runtime': path.resolve(__dirname, './node_modules/react/jsx-runtime'),
+      'react/jsx-dev-runtime': path.resolve(__dirname, './node_modules/react/jsx-dev-runtime'),
     },
+    dedupe: ['react', 'react-dom', 'react-router', 'react-router-dom'],
   },
   server: {
     port: 3001,
     host: '0.0.0.0',
     open: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
@@ -118,6 +148,9 @@ export default defineConfig({
           }
           if (id.includes('@tanstack/react-query')) {
             return 'query'
+          }
+          if (id.includes('recharts') || id.includes('d3-')) {
+            return 'charts'
           }
           if (id.includes('axios')) {
             return 'vendor'

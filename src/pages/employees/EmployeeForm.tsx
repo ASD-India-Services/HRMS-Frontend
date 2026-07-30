@@ -47,13 +47,19 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
 
   const handleSubmit = useCallback(
     async (data: Record<string, unknown>) => {
+      // Convert empty date fields to null so the backend doesn't try to parse ""
+      const cleanedData = { ...data };
+      if (cleanedData.date_of_birth === '') {
+        cleanedData.date_of_birth = null;
+      }
+
       if (isEditMode && employeeId) {
-        await updateMutation.mutateAsync(data);
+        await updateMutation.mutateAsync(cleanedData);
         setSuccessMessage('Employee updated successfully');
         // Navigate back to the employee detail after a short delay for toast visibility
         setTimeout(() => navigate(`/employees/${employeeId}`), 800);
       } else {
-        await createMutation.mutateAsync(data);
+        await createMutation.mutateAsync(cleanedData);
         setSuccessMessage('Employee created successfully');
         // Navigate back to the employee list
         setTimeout(() => navigate('/employees'), 800);

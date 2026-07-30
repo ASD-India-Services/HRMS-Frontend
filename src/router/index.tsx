@@ -159,7 +159,7 @@ function PageLoader() {
   );
 }
 
-/** Helper to wrap a page in Suspense + FeatureGatedRoute + RoleGatedRoute + OnboardingGuard */
+/** Helper to wrap a page in FeatureGatedRoute + RoleGatedRoute + OnboardingGuard */
 function gated(
   featureFlag: string,
   moduleName: string,
@@ -167,28 +167,24 @@ function gated(
   element: React.ReactNode,
 ) {
   return (
-    <Suspense fallback={<PageLoader />}>
-      <OnboardingGuard>
-        <FeatureGatedRoute featureFlag={featureFlag} moduleName={moduleName}>
-          <RoleGatedRoute requiredPermission={requiredPermission}>
-            {element}
-          </RoleGatedRoute>
-        </FeatureGatedRoute>
-      </OnboardingGuard>
-    </Suspense>
+    <OnboardingGuard>
+      <FeatureGatedRoute featureFlag={featureFlag} moduleName={moduleName}>
+        <RoleGatedRoute requiredPermission={requiredPermission}>
+          {element}
+        </RoleGatedRoute>
+      </FeatureGatedRoute>
+    </OnboardingGuard>
   );
 }
 
 /** Helper for routes without a feature gate but with permission gating + OnboardingGuard */
 function permGated(requiredPermission: string, element: React.ReactNode) {
   return (
-    <Suspense fallback={<PageLoader />}>
-      <OnboardingGuard>
-        <RoleGatedRoute requiredPermission={requiredPermission}>
-          {element}
-        </RoleGatedRoute>
-      </OnboardingGuard>
-    </Suspense>
+    <OnboardingGuard>
+      <RoleGatedRoute requiredPermission={requiredPermission}>
+        {element}
+      </RoleGatedRoute>
+    </OnboardingGuard>
   );
 }
 
@@ -237,7 +233,7 @@ export const router = createBrowserRouter([
       // ─── Self-Onboarding (inside ProtectedRoute, outside OnboardingGuard) ─
       {
         path: 'onboarding/self',
-        element: <Suspense fallback={<PageLoader />}><SelfOnboarding /></Suspense>,
+        element: <SelfOnboarding />,
       },
 
       // ─── Dashboard ───────────────────────────────────────────────
@@ -249,7 +245,7 @@ export const router = createBrowserRouter([
       // ─── Profile ─────────────────────────────────────────────────
       {
         path: 'profile',
-        element: <Suspense fallback={<PageLoader />}><Profile /></Suspense>,
+        element: <Profile />,
       },
 
       // ─── Employees ───────────────────────────────────────────────
