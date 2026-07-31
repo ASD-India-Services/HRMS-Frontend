@@ -27,8 +27,8 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'employee', label: 'Employee', type: 'text', required: true, placeholder: 'Employee name or ID' },
-  { key: 'document_type', label: 'Document Type', type: 'text', required: true, placeholder: 'Document type' },
+  { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
+  { key: 'document_type', label: 'Document Type', type: 'select', required: true, optionsEndpoint: '/api/v1/document-types/' },
   { key: 'document_number', label: 'Document Number', type: 'text', required: true, placeholder: 'Document number' },
   { key: 'issue_date', label: 'Issue Date', type: 'date' },
   { key: 'expiry_date', label: 'Expiry Date', type: 'date' },
@@ -97,6 +97,35 @@ export default function EmployeeDocuments() {
         fields={createFields}
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
+      />
+
+      {/* Edit Modal */}
+      <CrudModal
+        isOpen={!!editRecord}
+        onClose={() => setEditRecord(null)}
+        title="Edit"
+        fields={createFields}
+        initialValues={editRecord ?? undefined}
+        onSubmit={handleEdit}
+        isLoading={editLoading}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) {
+            deleteMutation.mutate(deleteId, {
+              onSuccess: () => setDeleteId(null),
+            });
+          }
+        }}
+        title="Delete Record"
+        message="Are you sure you want to delete this record? This action cannot be undone."
+        confirmLabel="Delete"
+        variant="destructive"
+        isLoading={deleteMutation.isPending}
       />
     </div>
   );

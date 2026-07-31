@@ -26,7 +26,7 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'employee', label: 'Employee', type: 'text', required: true, placeholder: 'Employee ID or name' },
+  { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
   { key: 'incentive_date', label: 'Incentive Date', type: 'date', required: true },
   { key: 'incentive_amount', label: 'Amount', type: 'number', required: true, placeholder: '0.00' },
   { key: 'reason', label: 'Reason', type: 'textarea', placeholder: 'Reason for incentive' },
@@ -95,6 +95,35 @@ export default function EmployeeIncentives() {
         fields={createFields}
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
+      />
+
+      {/* Edit Modal */}
+      <CrudModal
+        isOpen={!!editRecord}
+        onClose={() => setEditRecord(null)}
+        title="Edit"
+        fields={createFields}
+        initialValues={editRecord ?? undefined}
+        onSubmit={handleEdit}
+        isLoading={editLoading}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) {
+            deleteMutation.mutate(deleteId, {
+              onSuccess: () => setDeleteId(null),
+            });
+          }
+        }}
+        title="Delete Record"
+        message="Are you sure you want to delete this record? This action cannot be undone."
+        confirmLabel="Delete"
+        variant="destructive"
+        isLoading={deleteMutation.isPending}
       />
     </div>
   );

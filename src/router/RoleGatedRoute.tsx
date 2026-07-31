@@ -36,10 +36,9 @@ export function RoleGatedRoute({
   children,
 }: RoleGatedRouteProps) {
   const { role } = useUser();
-  const { hasPermission, isLoading, error, refetch } = useHrmsPermissionsContext();
+  const { hasPermission, roleName, isLoading, error, refetch } = useHrmsPermissionsContext();
 
   // While permissions are loading, render children optimistically
-  // (most users will have access — deny only after data confirms otherwise)
   if (isLoading) {
     return <>{children}</>;
   }
@@ -59,12 +58,17 @@ export function RoleGatedRoute({
     );
   }
 
+  // org_admin and hr_manager roles bypass permission checks (full access)
+  if (roleName === 'org_admin' || roleName === 'hr_manager') {
+    return <>{children}</>;
+  }
+
   // Primary check: HRMS permission-based
   if (requiredPermission) {
-    if (!hasPermission(requiredPermission)) {
-      return <AccessDenied />;
+    if (hasPermission(requiredPermission)) {
+      return <>{children}</>;
     }
-    return <>{children}</>;
+    return <AccessDenied />;
   }
 
   // Legacy check: role-based (backward compatibility)

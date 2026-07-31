@@ -13,6 +13,7 @@
 
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { FormBuilder } from '@/components/FormBuilder';
 import { createCrudHooks } from '@/hooks/useCrud';
 import { employeeCrudConfig } from '@/config/crud/employees';
@@ -30,6 +31,7 @@ const employeeCrud = createCrudHooks<Employee>({
 
 export function EmployeeForm({ employeeId }: EmployeeFormProps) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const isEditMode = Boolean(employeeId);
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -55,6 +57,8 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
 
       if (isEditMode && employeeId) {
         await updateMutation.mutateAsync(cleanedData);
+        // Invalidate the singular employee detail query used by EmployeeDetail page
+        queryClient.invalidateQueries({ queryKey: ['employee', employeeId] });
         setSuccessMessage('Employee updated successfully');
         // Navigate back to the employee detail after a short delay for toast visibility
         setTimeout(() => navigate(`/employees/${employeeId}`), 800);
@@ -65,7 +69,7 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
         setTimeout(() => navigate('/employees'), 800);
       }
     },
-    [isEditMode, employeeId, createMutation, updateMutation, navigate]
+    [isEditMode, employeeId, createMutation, updateMutation, navigate, queryClient]
   );
 
   const handleCancel = useCallback(() => {

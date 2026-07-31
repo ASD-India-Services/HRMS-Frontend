@@ -27,10 +27,10 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'referrer', label: 'Referrer', type: 'text', required: true, placeholder: 'Referring employee' },
+  { key: 'referrer', label: 'Referrer', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
   { key: 'candidate_name', label: 'Candidate Name', type: 'text', required: true, placeholder: 'Candidate full name' },
   { key: 'candidate_email', label: 'Candidate Email', type: 'text', required: true, placeholder: 'Candidate email address' },
-  { key: 'job_opening', label: 'Job Opening', type: 'text', required: true, placeholder: 'Job opening reference' },
+  { key: 'job_opening', label: 'Job Opening', type: 'select', required: true, optionsEndpoint: '/api/v1/recruitment/job-openings/', optionsLabelKey: 'title' },
   { key: 'notes', label: 'Notes', type: 'textarea', placeholder: 'Additional notes' },
 ];
 
@@ -97,6 +97,35 @@ export default function EmployeeReferrals() {
         fields={createFields}
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
+      />
+
+      {/* Edit Modal */}
+      <CrudModal
+        isOpen={!!editRecord}
+        onClose={() => setEditRecord(null)}
+        title="Edit"
+        fields={createFields}
+        initialValues={editRecord ?? undefined}
+        onSubmit={handleEdit}
+        isLoading={editLoading}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) {
+            deleteMutation.mutate(deleteId, {
+              onSuccess: () => setDeleteId(null),
+            });
+          }
+        }}
+        title="Delete Record"
+        message="Are you sure you want to delete this record? This action cannot be undone."
+        confirmLabel="Delete"
+        variant="destructive"
+        isLoading={deleteMutation.isPending}
       />
     </div>
   );

@@ -27,9 +27,9 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'employee', label: 'Employee', type: 'text', required: true, placeholder: 'Employee ID or name' },
+  { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
   { key: 'interview_date', label: 'Interview Date', type: 'date', required: true },
-  { key: 'interviewer', label: 'Interviewer', type: 'text', required: true, placeholder: 'Interviewer name' },
+  { key: 'interviewer', label: 'Interviewer', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
   { key: 'overall_experience_rating', label: 'Rating (1-5)', type: 'number', placeholder: '1-5' },
   { key: 'would_recommend', label: 'Would Recommend', type: 'checkbox' },
 ];
@@ -97,6 +97,35 @@ export default function ExitInterviews() {
         fields={createFields}
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
+      />
+
+      {/* Edit Modal */}
+      <CrudModal
+        isOpen={!!editRecord}
+        onClose={() => setEditRecord(null)}
+        title="Edit"
+        fields={createFields}
+        initialValues={editRecord ?? undefined}
+        onSubmit={handleEdit}
+        isLoading={editLoading}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) {
+            deleteMutation.mutate(deleteId, {
+              onSuccess: () => setDeleteId(null),
+            });
+          }
+        }}
+        title="Delete Record"
+        message="Are you sure you want to delete this record? This action cannot be undone."
+        confirmLabel="Delete"
+        variant="destructive"
+        isLoading={deleteMutation.isPending}
       />
     </div>
   );

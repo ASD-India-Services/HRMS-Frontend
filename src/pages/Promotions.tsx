@@ -26,11 +26,9 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'employee', label: 'Employee', type: 'text', required: true, placeholder: 'Employee name or ID' },
-  { key: 'from_designation', label: 'From Designation', type: 'text', required: true, placeholder: 'Current designation' },
-  { key: 'to_designation', label: 'To Designation', type: 'text', required: true, placeholder: 'New designation' },
-  { key: 'promotion_date', label: 'Promotion Date', type: 'date', required: true },
-  { key: 'reason', label: 'Reason', type: 'textarea', placeholder: 'Reason for promotion' },
+  { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
+  { key: 'new_designation', label: 'To Designation', type: 'select', required: true, optionsEndpoint: '/api/v1/designations/', optionsLabelKey: 'title' },
+  { key: 'effective_date', label: 'Effective Date', type: 'date', required: true },
 ];
 
 export default function Promotions() {
@@ -96,6 +94,35 @@ export default function Promotions() {
         fields={createFields}
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
+      />
+
+      {/* Edit Modal */}
+      <CrudModal
+        isOpen={!!editRecord}
+        onClose={() => setEditRecord(null)}
+        title="Edit"
+        fields={createFields}
+        initialValues={editRecord ?? undefined}
+        onSubmit={handleEdit}
+        isLoading={editLoading}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) {
+            deleteMutation.mutate(deleteId, {
+              onSuccess: () => setDeleteId(null),
+            });
+          }
+        }}
+        title="Delete Record"
+        message="Are you sure you want to delete this record? This action cannot be undone."
+        confirmLabel="Delete"
+        variant="destructive"
+        isLoading={deleteMutation.isPending}
       />
     </div>
   );

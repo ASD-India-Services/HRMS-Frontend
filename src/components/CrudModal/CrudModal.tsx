@@ -8,6 +8,8 @@
  */
 
 import { useState, useEffect, useCallback, type FormEvent } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/api';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -29,8 +31,12 @@ export interface FieldConfig {
   placeholder?: string;
   /** Whether the field is required */
   required?: boolean;
-  /** Options for select fields */
+  /** Options for select fields (static) */
   options?: FieldOption[];
+  /** Endpoint to fetch options dynamically (for select fields) */
+  optionsEndpoint?: string;
+  /** Key to use as the label from API response items (defaults to 'name') */
+  optionsLabelKey?: string;
 }
 
 export interface CrudModalProps {
@@ -54,19 +60,21 @@ export interface CrudModalProps {
 // Component
 // ---------------------------------------------------------------------------
 
+const EMPTY_INITIAL_VALUES: Record<string, unknown> = {};
+
 export function CrudModal({
   isOpen,
   onClose,
   title,
   fields,
-  initialValues = {},
+  initialValues = EMPTY_INITIAL_VALUES,
   onSubmit,
   isLoading = false,
 }: CrudModalProps) {
   const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Reset form when modal opens/closes or initialValues change
+  // Reset form when modal opens or initialValues change
   useEffect(() => {
     if (isOpen) {
       const defaults: Record<string, unknown> = {};
@@ -80,7 +88,8 @@ export function CrudModal({
       setFormData(defaults);
       setErrors({});
     }
-  }, [isOpen, initialValues, fields]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const handleChange = useCallback((key: string, value: unknown) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -168,18 +177,12 @@ export function CrudModal({
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
                       />
                     ) : field.type === 'select' ? (
-                      <select
-                        id={`crud-field-${field.key}`}
+                      <AsyncSelectField
+                        field={field}
                         value={(formData[field.key] as string) ?? ''}
-                        onChange={(e) => handleChange(field.key, e.target.value)}
+                        onChange={(val) => handleChange(field.key, val)}
                         disabled={isLoading}
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
-                      >
-                        <option value="">Select {field.label}</option>
-                        {field.options?.map((opt) => (
-                          <option key={opt.value} value={opt.value}>{opt.label}</option>
-                        ))}
-                      </select>
+                      />
                     ) : (
                       <input
                         id={`crud-field-${field.key}`}
@@ -227,5 +230,63 @@ export function CrudModal({
         </form>
       </div>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// AsyncSelectField — Handles both static and API-fetched options
+// ---------------------------------------------------------------------------
+
+function AsyncSelectField({
+  field,
+  value,
+  onChange,
+  disabled,
+}: {
+  field: FieldConfig;
+  value: string;
+  onChange: (value: string) => void;
+  disabled: boolean;
+}) {
+  const labelKey = field.optionsLabelKey ?? 'name';
+
+  const { data: fetchedOptions } = useQuery<FieldOption[]>({
+    queryKey: ['crud-modal-options', field.optionsEndpoint],
+    queryFn: async () => {
+      if (!field.optionsEndpoint) return [];
+      const res = await api.get(field.optionsEndpoint);
+      const rawData = res.data;
+      const items = Array.isArray(rawData) ? rawData : rawData.results ?? [];
+      return items.map((item: Record<string, unknown>) => ({
+        value: String(item.id ?? ''),
+        label: String(
+          item[labelKey] ??
+          item.name ??
+          item.title ??
+          (item.first_name ? `${item.first_name} ${item.last_name ?? ''}`.trim() : null) ??
+          item.id ??
+          ''
+        ),
+      }));
+    },
+    enabled: !!field.optionsEndpoint,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const options = field.options ?? fetchedOptions ?? [];
+
+  return (
+    <select
+      id={`crud-field-${field.key}`}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
+    >
+      <option value="">Select {field.label}</option>
+      {options.map((opt) => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
   );
 }

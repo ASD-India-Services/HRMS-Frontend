@@ -44,11 +44,22 @@ export function FormField({
       const rawData = res.data;
       // Handle paginated responses ({count, results: [...]})
       const items = Array.isArray(rawData) ? rawData : rawData.results ?? [];
-      // Map to {value, label} — use id/name or id/title
-      return items.map((item: Record<string, unknown>) => ({
-        value: String(item.id ?? ''),
-        label: String(item.name ?? item.title ?? item.label ?? item.id ?? ''),
-      }));
+      const { labelKey } = field.optionsQuery;
+      // Map to {value, label} — use custom labelKey, or fall back to id/name/title
+      return items.map((item: Record<string, unknown>) => {
+        let label: string;
+        if (typeof labelKey === 'function') {
+          label = labelKey(item);
+        } else if (typeof labelKey === 'string') {
+          label = String(item[labelKey] ?? item.id ?? '');
+        } else {
+          label = String(item.name ?? item.title ?? item.label ?? item.id ?? '');
+        }
+        return {
+          value: String(item.id ?? ''),
+          label,
+        };
+      });
     },
     enabled: !!field.optionsQuery,
     staleTime: 5 * 60 * 1000,

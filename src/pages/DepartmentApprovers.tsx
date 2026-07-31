@@ -65,8 +65,8 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'department', label: 'Department', type: 'text', required: true, placeholder: 'Department name or ID' },
-  { key: 'approver', label: 'Approver', type: 'text', required: true, placeholder: 'Approver name or ID' },
+  { key: 'department', label: 'Department', type: 'select', required: true, optionsEndpoint: '/api/v1/departments/' },
+  { key: 'approver', label: 'Approver', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
   { key: 'approval_type', label: 'Approval Type', type: 'select', required: true, options: [{ value: 'leave', label: 'Leave' }, { value: 'expense', label: 'Expense' }, { value: 'travel', label: 'Travel' }, { value: 'overtime', label: 'Overtime' }, { value: 'shift', label: 'Shift' }, { value: 'attendance', label: 'Attendance' }] },
   { key: 'is_active', label: 'Active', type: 'checkbox' },
 ];

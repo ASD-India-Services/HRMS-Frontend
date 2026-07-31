@@ -28,7 +28,6 @@ const filters: FilterConfig[] = [
 const createFields: FieldConfig[] = [
   { key: 'name', label: 'Policy Name', type: 'text', required: true, placeholder: 'Enter policy name' },
   { key: 'effective_date', label: 'Effective Date', type: 'date', required: true },
-  { key: 'is_active', label: 'Active', type: 'checkbox' },
 ];
 
 export default function LeavePolicies() {
@@ -94,6 +93,35 @@ export default function LeavePolicies() {
         fields={createFields}
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
+      />
+
+      {/* Edit Modal */}
+      <CrudModal
+        isOpen={!!editRecord}
+        onClose={() => setEditRecord(null)}
+        title="Edit Leave Policy"
+        fields={createFields}
+        initialValues={editRecord ?? undefined}
+        onSubmit={handleEdit}
+        isLoading={editLoading}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) {
+            deleteMutation.mutate(deleteId, {
+              onSuccess: () => setDeleteId(null),
+            });
+          }
+        }}
+        title="Delete Leave Policy"
+        message="Are you sure you want to delete this leave policy? This action cannot be undone."
+        confirmLabel="Delete"
+        variant="destructive"
+        isLoading={deleteMutation.isPending}
       />
     </div>
   );

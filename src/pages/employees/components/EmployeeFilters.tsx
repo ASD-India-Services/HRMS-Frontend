@@ -11,7 +11,7 @@ interface EmployeeFiltersProps {
   onStatusChange: (value: EmploymentStatus | '') => void;
   onDepartmentChange: (value: string) => void;
   onEmploymentTypeChange: (value: EmploymentType | '') => void;
-  departments: { id: number; name: string }[];
+  departments: { id: string; name: string }[];
 }
 
 export function EmployeeFilters({
@@ -48,7 +48,7 @@ export function EmployeeFilters({
       >
         <option value="">All Departments</option>
         {departments.map((dept) => (
-          <option key={dept.id} value={dept.id.toString()}>
+          <option key={dept.id} value={dept.id}>
             {dept.name}
           </option>
         ))}

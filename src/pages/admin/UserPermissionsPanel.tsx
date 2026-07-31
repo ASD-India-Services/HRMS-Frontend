@@ -20,9 +20,6 @@ import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 
 interface UserPermissionsPanelProps {
   userId: string;
-  currentRole?: string;
-  currentRoleId?: string;
-  currentOverrides?: string[];
 }
 
 interface RoleOption {
@@ -39,6 +36,14 @@ interface PermissionItem {
   display_name: string;
 }
 
+interface RoleAssignmentResponse {
+  id?: string;
+  user_id?: string;
+  role?: string;
+  role_name?: string | null;
+  permissions_override?: string[];
+}
+
 type GroupedPermissions = Record<string, PermissionItem[]>;
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -47,23 +52,44 @@ const EMPTY_OVERRIDES: string[] = [];
 
 export function UserPermissionsPanel({
   userId,
-  currentRole,
-  currentRoleId,
-  currentOverrides = EMPTY_OVERRIDES,
 }: UserPermissionsPanelProps) {
   const queryClient = useQueryClient();
   const { hasPermission } = useHrmsPermissionsContext();
   const canManage = hasPermission('roles.manage');
 
+  // Fetch the employee's current role assignment from the backend
+  const { data: roleAssignment, isLoading: assignmentLoading } =
+    useQuery<RoleAssignmentResponse>({
+      queryKey: ['employee-role-assignment', userId],
+      queryFn: () =>
+        api
+          .get(`/api/v1/employees/${userId}/role-assignment/`)
+          .then((r) => r.data)
+          .catch((err) => {
+            // 404 means no login account — treat as no assignment
+            if (err?.response?.status === 404) {
+              return { role_name: null, permissions_override: [] };
+            }
+            throw err;
+          }),
+      enabled: !!userId,
+      staleTime: 30 * 1000,
+    });
+
+  const currentRoleId = roleAssignment?.role ?? '';
+  const currentOverrides: string[] = Array.isArray(roleAssignment?.permissions_override)
+    ? roleAssignment.permissions_override
+    : EMPTY_OVERRIDES;
+
   // Local state
-  const [selectedRoleId, setSelectedRoleId] = useState<string>(currentRoleId ?? '');
-  const [overrides, setOverrides] = useState<string[]>(currentOverrides);
+  const [selectedRoleId, setSelectedRoleId] = useState<string>('');
+  const [overrides, setOverrides] = useState<string[]>([]);
   const [showAddOverride, setShowAddOverride] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Sync props to local state when they change
+  // Sync fetched data to local state when it arrives or changes
   useEffect(() => {
-    setSelectedRoleId(currentRoleId ?? '');
+    setSelectedRoleId(currentRoleId);
   }, [currentRoleId]);
 
   useEffect(() => {
@@ -108,15 +134,17 @@ export function UserPermissionsPanel({
       api.put(`/api/v1/employees/${userId}/role-assignment/`, { role_id: roleId }),
     onSuccess: () => {
       showSuccess('Role updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['employee-role-assignment', userId] });
       queryClient.invalidateQueries({ queryKey: ['admin-roles'] });
     },
   });
 
   const overridesMutation = useMutation({
     mutationFn: (permissions: string[]) =>
-      api.patch(`/api/v1/users/${userId}/permissions/`, { permissions }),
+      api.patch(`/api/v1/employees/${userId}/role-assignment/`, { permissions_override: permissions }),
     onSuccess: () => {
       showSuccess('Permission overrides saved successfully');
+      queryClient.invalidateQueries({ queryKey: ['employee-role-assignment', userId] });
     },
   });
 
@@ -151,7 +179,7 @@ export function UserPermissionsPanel({
 
   // ─── Loading State ───────────────────────────────────────────────────────
 
-  if (rolesLoading || permissionsLoading) {
+  if (rolesLoading || permissionsLoading || assignmentLoading) {
     return (
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <div className="animate-pulse space-y-4">
@@ -231,7 +259,7 @@ export function UserPermissionsPanel({
         </Can>
         {!canManage && (
           <p className="mt-1 text-sm text-gray-600">
-            {currentRole ?? 'No role assigned'}
+            {roleAssignment?.role_name ?? 'No role assigned'}
           </p>
         )}
       </div>

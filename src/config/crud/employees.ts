@@ -114,6 +114,18 @@ export const employeeCrudConfig = {
         { value: 'freelance', label: 'Freelance' },
       ],
     },
+    {
+      name: 'reporting_manager_id',
+      label: 'Report To',
+      type: 'select',
+      step: 1,
+      optionsQuery: {
+        queryKey: ['employees-managers'],
+        endpoint: '/api/v1/employees/',
+        labelKey: (item: Record<string, unknown>) =>
+          `${item.first_name ?? ''} ${item.last_name ?? ''}`.trim(),
+      },
+    },
     { name: 'date_of_joining', label: 'Date of Joining', type: 'date', required: true, step: 1 },
     // Step 2: Address
     { name: 'address', label: 'Address', type: 'textarea', step: 2 },

@@ -10,8 +10,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, useUser } from '@platform/auth-sdk';
+import { useQuery } from '@tanstack/react-query';
 import { ProductSwitcher } from '@/components/ProductSwitcher';
 import { useNotifications } from '@/hooks/useNotifications';
+import api from '@/lib/api';
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -23,6 +25,15 @@ export function Header({ onMenuToggle }: HeaderProps) {
   const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+  // Fetch current employee's designation
+  const { data: currentEmployee } = useQuery<{ designation?: { title?: string } | null }>({
+    queryKey: ['employee', 'me'],
+    queryFn: () => api.get('/api/v1/employees/me/').then((r) => r.data),
+    staleTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+  const displayRole = currentEmployee?.designation?.title ?? role ?? 'Employee';
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
 
@@ -159,7 +170,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
             </div>
             <div className="hidden sm:block text-left">
               <p className="text-sm font-medium text-gray-900 leading-tight">{name ?? 'User'}</p>
-              <p className="text-xs text-gray-500 leading-tight capitalize">{role ?? 'employee'}</p>
+              <p className="text-xs text-gray-500 leading-tight capitalize">{displayRole}</p>
             </div>
             <svg className="hidden sm:block w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />

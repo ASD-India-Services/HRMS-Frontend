@@ -217,6 +217,18 @@ export const router = createBrowserRouter([
     element: <Suspense fallback={<PageLoader />}><ResetPassword /></Suspense>,
   },
 
+  // Self-Onboarding — protected but NO sidebar/header (outside AppShell)
+  {
+    path: '/onboarding/self',
+    element: (
+      <ProtectedRoute>
+        <Suspense fallback={<PageLoader />}>
+          <SelfOnboarding />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  },
+
   // Protected app routes
   {
     path: '/',
@@ -229,12 +241,6 @@ export const router = createBrowserRouter([
     children: [
       // Redirect root to dashboard
       { index: true, element: <Navigate to="/dashboard" replace /> },
-
-      // ─── Self-Onboarding (inside ProtectedRoute, outside OnboardingGuard) ─
-      {
-        path: 'onboarding/self',
-        element: <SelfOnboarding />,
-      },
 
       // ─── Dashboard ───────────────────────────────────────────────
       {

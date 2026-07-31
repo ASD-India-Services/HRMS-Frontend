@@ -26,12 +26,12 @@ export function useHrmsPermissions() {
   const { data, isLoading, error, refetch } = useQuery<PermissionsResponse>({
     queryKey: ['hrms-permissions'],
     queryFn: () => api.get<PermissionsResponse>('/api/v1/me/permissions/').then((r) => r.data),
-    staleTime: 10 * 60 * 1000, // 10 minutes — permissions rarely change mid-session
-    gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
-    refetchOnWindowFocus: false,
-    refetchOnMount: false, // Don't refetch on every component mount
-    enabled: isAuthenticated, // Only fetch when user has a valid token
-    retry: 2, // Retry up to 2 times on failure
+    staleTime: 2 * 60 * 1000, // 2 minutes — refetch after role changes
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true, // Refetch when user tabs back (catches role changes)
+    refetchOnMount: true, // Refetch on navigation to catch updates
+    enabled: isAuthenticated,
+    retry: 2,
   });
 
   const permissions = data?.permissions ?? [];

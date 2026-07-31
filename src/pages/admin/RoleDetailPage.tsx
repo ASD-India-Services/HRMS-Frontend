@@ -125,7 +125,7 @@ export default function RoleDetailPage() {
   // Save mutation
   const saveMutation = useMutation({
     mutationFn: (permissionIds: string[]) =>
-      api.put(`/api/v1/roles/${id}/`, { permission_ids: permissionIds }),
+      api.patch(`/api/v1/roles/${id}/`, { permission_ids: permissionIds }),
     onSuccess: () => {
       setSaveSuccess(true);
       setSaveError(null);

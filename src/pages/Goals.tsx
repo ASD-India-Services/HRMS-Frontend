@@ -21,8 +21,8 @@ const filters: FilterConfig[] = [
 
 const createFields: FieldConfig[] = [
   { key: 'goal_name', label: 'Goal Name', type: 'text', required: true, placeholder: 'Enter goal name' },
-  { key: 'employee', label: 'Employee', type: 'text', required: true, placeholder: 'Employee ID or name' },
-  { key: 'kra', label: 'KRA', type: 'text', placeholder: 'Associated KRA' },
+  { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
+  { key: 'kra', label: 'KRA', type: 'select', optionsEndpoint: '/api/v1/appraisals/kras/' },
   { key: 'status', label: 'Status', type: 'select', options: [{ value: 'not_started', label: 'Not Started' }, { value: 'in_progress', label: 'In Progress' }, { value: 'completed', label: 'Completed' }] },
   { key: 'progress_percentage', label: 'Progress %', type: 'number', placeholder: '0' },
 ];

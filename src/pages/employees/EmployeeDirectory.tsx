@@ -4,7 +4,7 @@
 
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEmployees } from '@/hooks/useEmployees';
 import { EmployeeCard } from './components/EmployeeCard';
 import { EmployeeFilters } from './components/EmployeeFilters';
@@ -13,18 +13,9 @@ import { EmptyState } from '@/components/EmptyState';
 import { CreateButton } from '@/components/ActionButton';
 import { BulkActions } from '@/components/BulkActions';
 import type { EmploymentStatus, EmploymentType } from '@/types/employee';
+import api from '@/lib/api';
 
 const PAGE_SIZE = 12;
-
-// TODO: Fetch departments from API when endpoint is available
-const DEPARTMENTS = [
-  { id: 1, name: 'Engineering' },
-  { id: 2, name: 'Human Resources' },
-  { id: 3, name: 'Marketing' },
-  { id: 4, name: 'Sales' },
-  { id: 5, name: 'Finance' },
-  { id: 6, name: 'Operations' },
-];
 
 export function EmployeeDirectory() {
   const queryClient = useQueryClient();
@@ -34,6 +25,18 @@ export function EmployeeDirectory() {
   const [department, setDepartment] = useState('');
   const [employmentType, setEmploymentType] = useState<EmploymentType | ''>('');
   const [page, setPage] = useState(1);
+
+  // Fetch departments from API for filter dropdown
+  const { data: departmentsData } = useQuery<{ id: string; name: string }[]>({
+    queryKey: ['departments', 'filter-options'],
+    queryFn: () =>
+      api.get('/api/v1/departments/').then((r) => {
+        const data = r.data;
+        return Array.isArray(data) ? data : data.results ?? [];
+      }),
+    staleTime: 5 * 60 * 1000,
+  });
+  const departments = departmentsData ?? [];
 
   // Debounce search input
   const debounceTimeout = useMemo(() => {
@@ -144,7 +147,7 @@ export function EmployeeDirectory() {
           onStatusChange={handleStatusChange}
           onDepartmentChange={handleDepartmentChange}
           onEmploymentTypeChange={handleEmploymentTypeChange}
-          departments={DEPARTMENTS}
+          departments={departments}
         />
       </div>
 

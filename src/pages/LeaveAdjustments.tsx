@@ -28,8 +28,8 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'employee', label: 'Employee', type: 'text', required: true, placeholder: 'Employee name or ID' },
-  { key: 'leave_type', label: 'Leave Type', type: 'text', required: true, placeholder: 'Leave type' },
+  { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
+  { key: 'leave_type', label: 'Leave Type', type: 'select', required: true, optionsEndpoint: '/api/v1/leaves/types/' },
   { key: 'adjustment_type', label: 'Adjustment Type', type: 'select', required: true, options: [{ value: 'credit', label: 'Credit' }, { value: 'debit', label: 'Debit' }] },
   { key: 'days', label: 'Days', type: 'number', required: true, placeholder: 'Number of days' },
   { key: 'reason', label: 'Reason', type: 'textarea', placeholder: 'Reason for adjustment' },
@@ -98,6 +98,35 @@ export default function LeaveAdjustments() {
         fields={createFields}
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
+      />
+
+      {/* Edit Modal */}
+      <CrudModal
+        isOpen={!!editRecord}
+        onClose={() => setEditRecord(null)}
+        title="Edit"
+        fields={createFields}
+        initialValues={editRecord ?? undefined}
+        onSubmit={handleEdit}
+        isLoading={editLoading}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) {
+            deleteMutation.mutate(deleteId, {
+              onSuccess: () => setDeleteId(null),
+            });
+          }
+        }}
+        title="Delete Record"
+        message="Are you sure you want to delete this record? This action cannot be undone."
+        confirmLabel="Delete"
+        variant="destructive"
+        isLoading={deleteMutation.isPending}
       />
     </div>
   );

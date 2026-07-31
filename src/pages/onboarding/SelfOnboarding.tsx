@@ -78,15 +78,17 @@ export default function SelfOnboarding() {
     }
   }, [statusData, navigate]);
 
-  // Set current step based on first incomplete step
+  // Set current step based on first incomplete step (only on initial load)
+  const [initialStepSet, setInitialStepSet] = useState(false);
   useEffect(() => {
-    if (statusData?.steps) {
+    if (!initialStepSet && statusData?.steps) {
       const firstIncomplete = statusData.steps.find((s) => !s.is_completed);
       if (firstIncomplete) {
         setCurrentStep(firstIncomplete.step_number);
       }
+      setInitialStepSet(true);
     }
-  }, [statusData]);
+  }, [statusData, initialStepSet]);
 
   // ─── Mutations ─────────────────────────────────────────────────────────────
 
@@ -133,9 +135,52 @@ export default function SelfOnboarding() {
     },
   });
 
+  // ─── Client-side validation per step ─────────────────────────────────────
+
+  const validateStep = (step: number): ValidationErrors => {
+    const stepErrors: ValidationErrors = {};
+
+    switch (step) {
+      case 1:
+        if (!personalDetails.date_of_birth) stepErrors.date_of_birth = ['Date of birth is required'];
+        if (!personalDetails.gender) stepErrors.gender = ['Gender is required'];
+        if (!personalDetails.phone) stepErrors.phone = ['Phone number is required'];
+        break;
+      case 2:
+        if (!address.address_line_1) stepErrors.address_line_1 = ['Address is required'];
+        if (!address.city) stepErrors.city = ['City is required'];
+        if (!address.state) stepErrors.state = ['State is required'];
+        if (!address.postal_code) stepErrors.postal_code = ['Postal code is required'];
+        if (!address.country) stepErrors.country = ['Country is required'];
+        break;
+      case 3:
+        if (!emergencyContact.emergency_contact_name) stepErrors.emergency_contact_name = ['Contact name is required'];
+        if (!emergencyContact.emergency_contact_phone) stepErrors.emergency_contact_phone = ['Contact phone is required'];
+        if (!emergencyContact.emergency_contact_relationship) stepErrors.emergency_contact_relationship = ['Relationship is required'];
+        break;
+      case 4:
+        if (!bankDetails.bank_name) stepErrors.bank_name = ['Bank name is required'];
+        if (!bankDetails.account_number) stepErrors.account_number = ['Account number is required'];
+        if (!bankDetails.ifsc_code) stepErrors.ifsc_code = ['IFSC code is required'];
+        break;
+      case 5:
+        if (!documentFile) stepErrors.id_proof = ['Please upload an ID proof document'];
+        break;
+    }
+
+    return stepErrors;
+  };
+
   // ─── Handlers ──────────────────────────────────────────────────────────────
 
   const handleSaveAndContinue = async () => {
+    // Client-side validation first
+    const stepErrors = validateStep(currentStep);
+    if (Object.keys(stepErrors).length > 0) {
+      setErrors(stepErrors);
+      return;
+    }
+
     let data: StepData | FormData;
 
     switch (currentStep) {
@@ -163,21 +208,35 @@ export default function SelfOnboarding() {
         return;
     }
 
-    await saveStepMutation.mutateAsync({ stepNumber: currentStep, data });
-
-    if (currentStep < 5) {
-      setCurrentStep((prev) => prev + 1);
+    try {
+      await saveStepMutation.mutateAsync({ stepNumber: currentStep, data });
+      if (currentStep < 5) {
+        setCurrentStep((prev) => prev + 1);
+      }
+    } catch {
+      // Errors are handled by the mutation's onError callback
     }
   };
 
   const handleComplete = async () => {
+    // Validate step 5 (document upload required)
+    const stepErrors = validateStep(5);
+    if (Object.keys(stepErrors).length > 0) {
+      setErrors(stepErrors);
+      return;
+    }
+
     // Save step 5 first, then complete
     const formData = new FormData();
     if (documentFile) {
       formData.append('id_proof', documentFile);
     }
-    await saveStepMutation.mutateAsync({ stepNumber: 5, data: formData });
-    completeMutation.mutate();
+    try {
+      await saveStepMutation.mutateAsync({ stepNumber: 5, data: formData });
+      completeMutation.mutate();
+    } catch {
+      // Errors handled by onError
+    }
   };
 
   const handleBack = () => {
@@ -272,7 +331,7 @@ export default function SelfOnboarding() {
             disabled={saveStepMutation.isPending}
             className="rounded-md bg-primary-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:opacity-50"
           >
-            {saveStepMutation.isPending ? 'Saving...' : 'Save & Continue'}
+            {saveStepMutation.isPending ? 'Saving...' : 'Next'}
           </button>
         ) : (
           <button
@@ -359,26 +418,26 @@ function PersonalDetailsForm({
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div>
         <label htmlFor="date_of_birth" className="block text-sm font-medium text-gray-700">
-          Date of Birth
+          Date of Birth<span className="text-red-500 ml-0.5">*</span>
         </label>
         <input
           id="date_of_birth"
           type="date"
           value={data.date_of_birth}
           onChange={(e) => onChange({ ...data, date_of_birth: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.date_of_birth ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         />
         <FieldError errors={errors} field="date_of_birth" />
       </div>
       <div>
         <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
-          Gender
+          Gender<span className="text-red-500 ml-0.5">*</span>
         </label>
         <select
           id="gender"
           value={data.gender}
           onChange={(e) => onChange({ ...data, gender: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.gender ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         >
           <option value="">Select Gender</option>
           <option value="male">Male</option>
@@ -390,7 +449,7 @@ function PersonalDetailsForm({
       </div>
       <div className="sm:col-span-2">
         <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-          Phone Number
+          Phone Number<span className="text-red-500 ml-0.5">*</span>
         </label>
         <input
           id="phone"
@@ -398,7 +457,7 @@ function PersonalDetailsForm({
           value={data.phone}
           onChange={(e) => onChange({ ...data, phone: e.target.value })}
           placeholder="+91 98765 43210"
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         />
         <FieldError errors={errors} field="phone" />
       </div>
@@ -419,59 +478,59 @@ function AddressForm({
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="sm:col-span-2">
         <label htmlFor="address_line_1" className="block text-sm font-medium text-gray-700">
-          Address Line 1
+          Address Line 1<span className="text-red-500 ml-0.5">*</span>
         </label>
         <input
           id="address_line_1"
           type="text"
           value={data.address_line_1}
           onChange={(e) => onChange({ ...data, address_line_1: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.address_line_1 ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         />
         <FieldError errors={errors} field="address_line_1" />
       </div>
       <div>
         <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-          City
+          City<span className="text-red-500 ml-0.5">*</span>
         </label>
         <input
           id="city"
           type="text"
           value={data.city}
           onChange={(e) => onChange({ ...data, city: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.city ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         />
         <FieldError errors={errors} field="city" />
       </div>
       <div>
         <label htmlFor="state" className="block text-sm font-medium text-gray-700">
-          State
+          State<span className="text-red-500 ml-0.5">*</span>
         </label>
         <input
           id="state"
           type="text"
           value={data.state}
           onChange={(e) => onChange({ ...data, state: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.state ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         />
         <FieldError errors={errors} field="state" />
       </div>
       <div>
         <label htmlFor="postal_code" className="block text-sm font-medium text-gray-700">
-          Postal Code
+          Postal Code<span className="text-red-500 ml-0.5">*</span>
         </label>
         <input
           id="postal_code"
           type="text"
           value={data.postal_code}
           onChange={(e) => onChange({ ...data, postal_code: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.postal_code ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         />
         <FieldError errors={errors} field="postal_code" />
       </div>
       <div>
         <label htmlFor="country" className="block text-sm font-medium text-gray-700">
-          Country
+          Country<span className="text-red-500 ml-0.5">*</span>
         </label>
         <input
           id="country"
@@ -479,7 +538,7 @@ function AddressForm({
           value={data.country}
           onChange={(e) => onChange({ ...data, country: e.target.value })}
           placeholder="India"
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.country ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         />
         <FieldError errors={errors} field="country" />
       </div>
@@ -500,39 +559,39 @@ function EmergencyContactForm({
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div>
         <label htmlFor="emergency_contact_name" className="block text-sm font-medium text-gray-700">
-          Contact Name
+          Contact Name<span className="text-red-500 ml-0.5">*</span>
         </label>
         <input
           id="emergency_contact_name"
           type="text"
           value={data.emergency_contact_name}
           onChange={(e) => onChange({ ...data, emergency_contact_name: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.emergency_contact_name ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         />
         <FieldError errors={errors} field="emergency_contact_name" />
       </div>
       <div>
         <label htmlFor="emergency_contact_phone" className="block text-sm font-medium text-gray-700">
-          Contact Phone
+          Contact Phone<span className="text-red-500 ml-0.5">*</span>
         </label>
         <input
           id="emergency_contact_phone"
           type="tel"
           value={data.emergency_contact_phone}
           onChange={(e) => onChange({ ...data, emergency_contact_phone: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.emergency_contact_phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         />
         <FieldError errors={errors} field="emergency_contact_phone" />
       </div>
       <div className="sm:col-span-2">
         <label htmlFor="emergency_contact_relationship" className="block text-sm font-medium text-gray-700">
-          Relationship
+          Relationship<span className="text-red-500 ml-0.5">*</span>
         </label>
         <select
           id="emergency_contact_relationship"
           value={data.emergency_contact_relationship}
           onChange={(e) => onChange({ ...data, emergency_contact_relationship: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.emergency_contact_relationship ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         >
           <option value="">Select Relationship</option>
           <option value="spouse">Spouse</option>
@@ -560,33 +619,33 @@ function BankDetailsForm({
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="sm:col-span-2">
         <label htmlFor="bank_name" className="block text-sm font-medium text-gray-700">
-          Bank Name
+          Bank Name<span className="text-red-500 ml-0.5">*</span>
         </label>
         <input
           id="bank_name"
           type="text"
           value={data.bank_name}
           onChange={(e) => onChange({ ...data, bank_name: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.bank_name ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         />
         <FieldError errors={errors} field="bank_name" />
       </div>
       <div>
         <label htmlFor="account_number" className="block text-sm font-medium text-gray-700">
-          Account Number
+          Account Number<span className="text-red-500 ml-0.5">*</span>
         </label>
         <input
           id="account_number"
           type="text"
           value={data.account_number}
           onChange={(e) => onChange({ ...data, account_number: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.account_number ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         />
         <FieldError errors={errors} field="account_number" />
       </div>
       <div>
         <label htmlFor="ifsc_code" className="block text-sm font-medium text-gray-700">
-          IFSC Code
+          IFSC Code<span className="text-red-500 ml-0.5">*</span>
         </label>
         <input
           id="ifsc_code"
@@ -594,7 +653,7 @@ function BankDetailsForm({
           value={data.ifsc_code}
           onChange={(e) => onChange({ ...data, ifsc_code: e.target.value.toUpperCase() })}
           placeholder="e.g. SBIN0001234"
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.ifsc_code ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
         />
         <FieldError errors={errors} field="ifsc_code" />
       </div>
@@ -614,7 +673,7 @@ function DocumentUploadForm({
   return (
     <div>
       <label htmlFor="id_proof" className="block text-sm font-medium text-gray-700">
-        ID Proof (Aadhaar, PAN, Passport, etc.)
+        ID Proof (Aadhaar, PAN, Passport, etc.)<span className="text-red-500 ml-0.5">*</span>
       </label>
       <div className="mt-2">
         <input

@@ -16,18 +16,28 @@ export function LeaveApply() {
   const applyLeave = useApplyLeave();
 
   const [leaveType, setLeaveType] = useState('');
+  const [customLeaveType, setCustomLeaveType] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [reason, setReason] = useState('');
 
-  const isFormValid = leaveType && fromDate && toDate && reason.trim();
+  // Check if the selected leave type is "Others"
+  const selectedType = leaveTypes?.find((t) => t.id === leaveType);
+  const isOthers = selectedType?.name?.toLowerCase() === 'others';
+
+  const isFormValid = leaveType && fromDate && toDate && reason.trim() && (!isOthers || customLeaveType.trim());
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isFormValid) return;
 
     applyLeave.mutate(
-      { leave_type: leaveType, from_date: fromDate, to_date: toDate, reason: reason.trim() },
+      {
+        leave_type: leaveType,
+        from_date: fromDate,
+        to_date: toDate,
+        reason: isOthers ? `[${customLeaveType.trim()}] ${reason.trim()}` : reason.trim(),
+      },
       { onSuccess: () => navigate('/leaves') },
     );
   }
@@ -76,12 +86,29 @@ export function LeaveApply() {
               required
             >
               <option value="">Select leave type</option>
-              {leaveTypes?.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.name}
-                </option>
-              ))}
+              {leaveTypes
+                ?.slice()
+                .sort((a, b) => {
+                  if (a.name.toLowerCase() === 'others') return 1;
+                  if (b.name.toLowerCase() === 'others') return -1;
+                  return 0;
+                })
+                .map((type) => (
+                  <option key={type.id} value={type.id}>
+                    {type.name}
+                  </option>
+                ))}
             </select>
+            {isOthers && (
+              <input
+                type="text"
+                value={customLeaveType}
+                onChange={(e) => setCustomLeaveType(e.target.value)}
+                placeholder="Please specify the leave type"
+                className="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                required
+              />
+            )}
           </div>
 
           {/* From Date */}

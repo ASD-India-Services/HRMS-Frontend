@@ -13,6 +13,7 @@
  */
 
 import { useUser } from '@platform/auth-sdk';
+import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import type { WorkflowConfig, WorkflowTransition } from '@/types/workflow';
 
 interface TransitionActionsProps {
@@ -42,12 +43,15 @@ export function TransitionActions({
   isLoading = false,
 }: TransitionActionsProps) {
   const { role } = useUser();
+  const { roleName } = useHrmsPermissionsContext();
 
   // Filter transitions: `from` matches current status AND user has an allowed role
   const availableTransitions = config.transitions.filter((t) => {
     if (t.from !== record.status) return false;
-    if (!role) return false;
-    return t.allowedRoles.includes(role);
+    // Check both JWT role and HRMS role
+    const jwtMatch = role && t.allowedRoles.includes(role);
+    const hrmsMatch = roleName && t.allowedRoles.includes(roleName);
+    return jwtMatch || hrmsMatch;
   });
 
   if (availableTransitions.length === 0) {

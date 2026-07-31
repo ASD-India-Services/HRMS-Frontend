@@ -42,16 +42,14 @@ interface CanProps {
  */
 export function Can({ roles, permissions, fallback = null, children }: CanProps) {
   const { role } = useUser();
-  const { hasPermission } = useHrmsPermissionsContext();
+  const { hasPermission, roleName } = useHrmsPermissionsContext();
 
-  // If user has no role (not authenticated), deny access
-  if (!role) {
-    return <>{fallback}</>;
-  }
-
-  // Check roles (legacy): user must have at least one of the specified roles
+  // Check roles: user must have at least one of the specified roles
+  // Check both JWT role (legacy) and HRMS role name (primary)
   if (roles && roles.length > 0) {
-    if (!roles.includes(role)) {
+    const jwtRoleMatch = role && roles.includes(role);
+    const hrmsRoleMatch = roleName && roles.includes(roleName);
+    if (!jwtRoleMatch && !hrmsRoleMatch) {
       return <>{fallback}</>;
     }
   }

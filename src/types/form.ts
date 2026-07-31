@@ -25,7 +25,12 @@ export interface FieldSchema {
   validation?: ValidationRule[];
   options?: { value: string; label: string }[];
   /** Async options loader (e.g., for department select) */
-  optionsQuery?: { queryKey: string[]; endpoint: string };
+  optionsQuery?: {
+    queryKey: string[];
+    endpoint: string;
+    /** Custom label key or function to derive the label from API items (default: name/title/label/id) */
+    labelKey?: string | ((item: Record<string, unknown>) => string);
+  };
   placeholder?: string;
   helpText?: string;
   /** Group forms into steps for multi-step forms */

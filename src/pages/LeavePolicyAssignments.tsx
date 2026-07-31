@@ -27,8 +27,13 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'policy', label: 'Policy', type: 'text', required: true, placeholder: 'Leave policy name' },
-  { key: 'employee', label: 'Employee', type: 'text', required: true, placeholder: 'Employee name or ID' },
+  { key: 'leave_policy', label: 'Leave Policy', type: 'select', required: true, optionsEndpoint: '/api/v1/leaves/policies/' },
+  { key: 'assignment_type', label: 'Assignment Type', type: 'select', required: true, options: [
+    { value: 'employee', label: 'Employee' },
+    { value: 'department', label: 'Department' },
+    { value: 'grade', label: 'Grade' },
+  ]},
+  { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
   { key: 'effective_from', label: 'Effective From', type: 'date', required: true },
 ];
 
@@ -95,6 +100,35 @@ export default function LeavePolicyAssignments() {
         fields={createFields}
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
+      />
+
+      {/* Edit Modal */}
+      <CrudModal
+        isOpen={!!editRecord}
+        onClose={() => setEditRecord(null)}
+        title="Edit"
+        fields={createFields}
+        initialValues={editRecord ?? undefined}
+        onSubmit={handleEdit}
+        isLoading={editLoading}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) {
+            deleteMutation.mutate(deleteId, {
+              onSuccess: () => setDeleteId(null),
+            });
+          }
+        }}
+        title="Delete Record"
+        message="Are you sure you want to delete this record? This action cannot be undone."
+        confirmLabel="Delete"
+        variant="destructive"
+        isLoading={deleteMutation.isPending}
       />
     </div>
   );

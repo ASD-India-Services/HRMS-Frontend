@@ -15,10 +15,10 @@ const crud = createCrudHooks<Record<string, unknown>>({
 });
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
-  { key: 'employee', header: 'Employee', sortable: true },
-  { key: 'from_department', header: 'From Department', sortable: true },
-  { key: 'to_department', header: 'To Department', sortable: true },
-  { key: 'transfer_date', header: 'Transfer Date', sortable: true },
+  { key: 'employee_name', header: 'Employee', sortable: true },
+  { key: 'new_department_name', header: 'To Department', sortable: true },
+  { key: 'new_designation_name', header: 'To Designation', sortable: true },
+  { key: 'effective_date', header: 'Effective Date', sortable: true },
   { key: 'status', header: 'Status', sortable: true },
 ];
 
@@ -28,11 +28,11 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'employee', label: 'Employee', type: 'text', required: true, placeholder: 'Employee name or ID' },
-  { key: 'from_department', label: 'From Department', type: 'text', required: true, placeholder: 'Current department' },
-  { key: 'to_department', label: 'To Department', type: 'text', required: true, placeholder: 'Target department' },
-  { key: 'transfer_date', label: 'Transfer Date', type: 'date', required: true },
-  { key: 'reason', label: 'Reason', type: 'textarea', placeholder: 'Reason for transfer' },
+  { key: 'employee', label: 'Employee', type: 'text', required: true, placeholder: 'Enter Employee ID (e.g. EMP-0001)' },
+  { key: 'new_department', label: 'To Department', type: 'select', required: true, optionsEndpoint: '/api/v1/departments/' },
+  { key: 'new_designation', label: 'To Designation', type: 'select', optionsEndpoint: '/api/v1/designations/', optionsLabelKey: 'title' },
+  { key: 'effective_date', label: 'Effective Date', type: 'date', required: true },
+  { key: 'new_branch', label: 'New Branch', type: 'text', placeholder: 'Branch name (optional)' },
 ];
 
 export default function Transfers() {
@@ -62,7 +62,20 @@ export default function Transfers() {
     },
   ];
 
-  const handleCreate = (data: Record<string, unknown>) => {
+  const handleCreate = async (data: Record<string, unknown>) => {
+    // Resolve employee_id string (e.g. "EMP-0008") to UUID
+    if (data.employee && typeof data.employee === 'string') {
+      try {
+        const res = await api.get('/api/v1/employees/', { params: { search: data.employee, page_size: 1 } });
+        const results = res.data?.results ?? [];
+        const match = results.find((emp: Record<string, unknown>) => emp.employee_id === data.employee);
+        if (match) {
+          data.employee = match.id;
+        }
+      } catch {
+        // If lookup fails, submit as-is and let the backend return the error
+      }
+    }
     createMutation.mutate(data, {
       onSuccess: () => setShowCreate(false),
     });
@@ -98,6 +111,35 @@ export default function Transfers() {
         fields={createFields}
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
+      />
+
+      {/* Edit Modal */}
+      <CrudModal
+        isOpen={!!editRecord}
+        onClose={() => setEditRecord(null)}
+        title="Edit"
+        fields={createFields}
+        initialValues={editRecord ?? undefined}
+        onSubmit={handleEdit}
+        isLoading={editLoading}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) {
+            deleteMutation.mutate(deleteId, {
+              onSuccess: () => setDeleteId(null),
+            });
+          }
+        }}
+        title="Delete Record"
+        message="Are you sure you want to delete this record? This action cannot be undone."
+        confirmLabel="Delete"
+        variant="destructive"
+        isLoading={deleteMutation.isPending}
       />
     </div>
   );

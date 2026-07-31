@@ -26,9 +26,9 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'holiday_list', label: 'Holiday List', type: 'text', required: true, placeholder: 'Holiday list name' },
-  { key: 'department', label: 'Department', type: 'text', placeholder: 'Department name' },
-  { key: 'employee', label: 'Employee', type: 'text', placeholder: 'Employee name or ID' },
+  { key: 'holiday_list', label: 'Holiday List', type: 'select', required: true, optionsEndpoint: '/api/v1/holidays/' },
+  { key: 'department', label: 'Department', type: 'select', optionsEndpoint: '/api/v1/departments/' },
+  { key: 'employee', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
 ];
 
 export default function HolidayListAssignments() {
@@ -94,6 +94,35 @@ export default function HolidayListAssignments() {
         fields={createFields}
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
+      />
+
+      {/* Edit Modal */}
+      <CrudModal
+        isOpen={!!editRecord}
+        onClose={() => setEditRecord(null)}
+        title="Edit"
+        fields={createFields}
+        initialValues={editRecord ?? undefined}
+        onSubmit={handleEdit}
+        isLoading={editLoading}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) {
+            deleteMutation.mutate(deleteId, {
+              onSuccess: () => setDeleteId(null),
+            });
+          }
+        }}
+        title="Delete Record"
+        message="Are you sure you want to delete this record? This action cannot be undone."
+        confirmLabel="Delete"
+        variant="destructive"
+        isLoading={deleteMutation.isPending}
       />
     </div>
   );
