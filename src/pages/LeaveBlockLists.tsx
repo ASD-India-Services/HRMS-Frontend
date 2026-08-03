@@ -15,8 +15,13 @@ const crud = createCrudHooks<Record<string, unknown>>({
 });
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
-  { key: 'name', header: 'Name', sortable: true },
-  { key: 'applies_to_all', header: 'Applies to All', sortable: true, render: (v: unknown) => (v ? 'Yes' : 'No') },
+  { key: 'name', header: 'Name', sortable: true, render: (v: unknown) => v ? String(v) : '–' },
+  { key: 'applies_to_all', header: 'All Depts', sortable: true, render: (v: unknown) => (v ? 'Yes' : 'No') },
+  { key: 'block_dates', header: 'Blocked Dates', sortable: false, render: (v: unknown) => {
+    const dates = v as Array<{ date?: string; reason?: string }> | null;
+    if (!dates || dates.length === 0) return <span className="text-gray-500 text-xs">–</span>;
+    return <span className="text-xs">{dates.map(d => d.date).join(', ')}</span>;
+  }},
   { key: 'is_active', header: 'Active', sortable: true, render: (v: unknown) => (v ? 'Yes' : 'No') },
 ];
 
@@ -25,9 +30,11 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'name', label: 'Name', type: 'text', required: true, placeholder: 'Block list name' },
+  { key: 'name', label: 'Name', type: 'text', required: true, placeholder: 'Block list name (e.g. Month-End Closing)' },
+  { key: 'applies_to_all', label: 'Applies to All Departments', type: 'select', required: true, options: [{ value: 'true', label: 'Yes - All Departments' }, { value: 'false', label: 'No - Specific Departments' }] },
+  { key: 'departments', label: 'Department', type: 'select', optionsEndpoint: '/api/v1/departments/', optionsLabelKey: 'name' },
   { key: 'block_date', label: 'Block Date', type: 'date', required: true },
-  { key: 'reason', label: 'Reason', type: 'text', required: true, placeholder: 'Reason for blocking' },
+  { key: 'reason', label: 'Reason', type: 'text', placeholder: 'Reason for blocking (e.g. Financial closing)' },
 ];
 
 export default function LeaveBlockLists() {
@@ -58,7 +65,20 @@ export default function LeaveBlockLists() {
   ];
 
   const handleCreate = (data: Record<string, unknown>) => {
-    createMutation.mutate(data, {
+    const { block_date, reason, applies_to_all, departments, ...rest } = data;
+    const isAll = applies_to_all === 'true' || applies_to_all === true;
+    const payload: Record<string, unknown> = {
+      ...rest,
+      applies_to_all: isAll,
+      block_dates: [{ date: block_date, reason: reason || '' }],
+    };
+    // Only include departments if not applying to all
+    if (!isAll && departments) {
+      payload.departments = Array.isArray(departments) ? departments : [departments];
+    } else {
+      payload.departments = [];
+    }
+    createMutation.mutate(payload, {
       onSuccess: () => setShowCreate(false),
     });
   };
@@ -67,7 +87,22 @@ export default function LeaveBlockLists() {
     if (!editRecord) return;
     setEditLoading(true);
     try {
-      await api.patch(`/api/v1/leaves/block-lists/${editRecord.id}/`, data);
+      const { block_date, reason, applies_to_all, departments, ...rest } = data;
+      const isAll = applies_to_all === 'true' || applies_to_all === true;
+      const payload: Record<string, unknown> = {
+        ...rest,
+        applies_to_all: isAll,
+      };
+      // Only update block_dates if a new date was provided
+      if (block_date) {
+        payload.block_dates = [{ date: block_date, reason: reason || '' }];
+      }
+      if (!isAll && departments) {
+        payload.departments = Array.isArray(departments) ? departments : [departments];
+      } else if (isAll) {
+        payload.departments = [];
+      }
+      await api.patch(`/api/v1/leaves/block-lists/${editRecord.id}/`, payload);
       setEditRecord(null);
       queryResult.refetch();
     } finally {

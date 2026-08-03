@@ -57,6 +57,11 @@ async function rejectLeave({ id, payload }: { id: string; payload: LeaveApproval
   return response.data;
 }
 
+async function cancelLeave(id: string): Promise<LeaveApplication> {
+  const response = await api.post<LeaveApplication>(`/api/v1/leaves/applications/${id}/cancel/`);
+  return response.data;
+}
+
 // --- Query Hooks ---
 
 export function useLeaveTypes() {
@@ -113,6 +118,18 @@ export function useRejectLeave() {
     mutationFn: rejectLeave,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['leave-applications'] });
+    },
+  });
+}
+
+export function useCancelLeave() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: cancelLeave,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leave-applications'] });
+      queryClient.invalidateQueries({ queryKey: ['leave-balances'] });
     },
   });
 }

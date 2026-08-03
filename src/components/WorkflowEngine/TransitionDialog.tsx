@@ -13,6 +13,7 @@
  */
 
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import type { WorkflowTransition } from '@/types/workflow';
 import type { FieldSchema } from '@/types/form';
 
@@ -129,22 +130,22 @@ export function TransitionDialog({
 
   const isReasonEmpty = transition.requiresReason && !reason.trim();
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-[9999] flex items-center justify-center"
       role="dialog"
       aria-modal="true"
       aria-labelledby="transition-dialog-title"
     >
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 transition-opacity"
+        className="fixed inset-0 z-[9999] bg-black/60"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Dialog panel */}
-      <div className="relative z-10 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+      <div className="relative z-[10000] mx-4 w-full max-w-lg rounded-lg bg-white p-6 shadow-2xl ring-1 ring-black/5">
         <h2
           id="transition-dialog-title"
           className="text-lg font-semibold text-gray-900"
@@ -207,12 +208,16 @@ export function TransitionDialog({
               disabled={isSubmitting}
               className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50"
             >
-              Cancel
+              Go Back
             </button>
             <button
               type="submit"
               disabled={isSubmitting || isReasonEmpty}
-              className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+                transition.variant === 'destructive'
+                  ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
+                  : 'bg-primary-600 hover:bg-primary-700 focus:ring-primary-500'
+              }`}
             >
               {isSubmitting && (
                 <svg
@@ -242,6 +247,7 @@ export function TransitionDialog({
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -50,8 +50,8 @@ const payrollRunFilters: FilterConfig[] = [
     options: [
       { value: '', label: 'All' },
       { value: 'draft', label: 'Draft' },
-      { value: 'submitted', label: 'Submitted' },
-      { value: 'disbursed', label: 'Disbursed' },
+      { value: 'processing', label: 'Processing' },
+      { value: 'completed', label: 'Completed' },
       { value: 'cancelled', label: 'Cancelled' },
     ],
   },
@@ -78,19 +78,21 @@ function usePayrollRunColumns(): ColumnDef<PayrollEntry>[] {
   return useMemo(
     () => [
       {
-        key: 'pay_period',
-        header: 'Pay Period',
+        key: 'month',
+        header: 'Month',
         sortable: true,
-        render: (value: unknown) => (
-          <span className="font-medium text-gray-900">{String(value || '—')}</span>
-        ),
+        render: (value: unknown) => {
+          const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          const idx = Number(value) - 1;
+          return <span className="font-medium text-gray-900">{MONTHS[idx] || String(value)}</span>;
+        },
       },
       {
-        key: 'department',
-        header: 'Department',
+        key: 'year',
+        header: 'Year',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm text-gray-700">{value ? String(value) : 'All Departments'}</span>
+          <span className="text-sm text-gray-700">{String(value)}</span>
         ),
       },
       {
@@ -104,18 +106,8 @@ function usePayrollRunColumns(): ColumnDef<PayrollEntry>[] {
         ),
       },
       {
-        key: 'total_gross',
-        header: 'Total Gross',
-        sortable: true,
-        render: (value: unknown) => (
-          <span className="text-sm font-medium text-gray-900">
-            {formatCurrency(value as number)}
-          </span>
-        ),
-      },
-      {
-        key: 'total_net',
-        header: 'Total Net',
+        key: 'total_amount',
+        header: 'Total Amount',
         sortable: true,
         render: (value: unknown) => (
           <span className="text-sm font-medium text-green-700">
@@ -196,13 +188,37 @@ function PayrollRunsContent() {
 
   // Create mutation
   const createMutation = payrollEntriesCrud.useCreate();
+  const [createError, setCreateError] = useState<string | null>(null);
 
   /**
    * Handle payroll run creation form submission
    */
   async function handleCreateSubmit(data: Record<string, unknown>) {
-    await createMutation.mutateAsync(data);
-    setShowCreateForm(false);
+    setCreateError(null);
+    try {
+      await createMutation.mutateAsync(data);
+      setShowCreateForm(false);
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: Record<string, unknown> } };
+      const respData = axiosErr?.response?.data;
+      if (respData) {
+        // Extract non_field_errors or any general error message
+        const nonField = respData.non_field_errors;
+        if (Array.isArray(nonField)) {
+          setCreateError(nonField.join(' '));
+        } else if (typeof respData.detail === 'string') {
+          setCreateError(respData.detail);
+        } else {
+          // Collect all field errors into one message
+          const messages = Object.values(respData)
+            .flat()
+            .filter((v) => typeof v === 'string');
+          setCreateError(messages.join(' ') || 'Failed to create payroll run.');
+        }
+      } else {
+        setCreateError('Failed to create payroll run. Please try again.');
+      }
+    }
   }
 
   return (
@@ -300,10 +316,15 @@ function PayrollRunsContent() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="mx-4 w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
             <h2 className="mb-4 text-lg font-semibold text-gray-900">Create Payroll Run</h2>
+            {createError && (
+              <div className="mb-4 rounded-md bg-red-50 border border-red-200 p-3">
+                <p className="text-sm text-red-700">{createError}</p>
+              </div>
+            )}
             <FormBuilder
               fields={payrollEntryFormFields}
               onSubmit={handleCreateSubmit}
-              onCancel={() => setShowCreateForm(false)}
+              onCancel={() => { setShowCreateForm(false); setCreateError(null); }}
               isSubmitting={createMutation.isPending}
               isDialog
             />

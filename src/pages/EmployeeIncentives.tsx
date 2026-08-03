@@ -15,10 +15,11 @@ const crud = createCrudHooks<Record<string, unknown>>({
 });
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
-  { key: 'employee', header: 'Employee', sortable: true },
-  { key: 'incentive_date', header: 'Date', sortable: true },
+  { key: 'employee_name', header: 'Employee', sortable: true },
+  { key: 'payroll_date', header: 'Payroll Date', sortable: true },
   { key: 'incentive_amount', header: 'Amount', sortable: true },
   { key: 'reason', header: 'Reason', sortable: false },
+  { key: 'status', header: 'Status', sortable: true },
 ];
 
 const filters: FilterConfig[] = [
@@ -27,9 +28,10 @@ const filters: FilterConfig[] = [
 
 const createFields: FieldConfig[] = [
   { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
-  { key: 'incentive_date', label: 'Incentive Date', type: 'date', required: true },
+  { key: 'payroll_date', label: 'Payroll Date', type: 'date', required: true },
   { key: 'incentive_amount', label: 'Amount', type: 'number', required: true, placeholder: '0.00' },
   { key: 'reason', label: 'Reason', type: 'textarea', placeholder: 'Reason for incentive' },
+  { key: 'status', label: 'Status', type: 'select', required: true, options: [{ value: 'draft', label: 'Draft' }, { value: 'approved', label: 'Approved' }] },
 ];
 
 export default function EmployeeIncentives() {

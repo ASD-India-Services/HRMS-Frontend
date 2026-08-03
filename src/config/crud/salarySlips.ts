@@ -14,25 +14,32 @@ import type { CrudEndpoints } from '@/hooks/useCrud';
 
 export interface SalarySlip {
   id: string;
-  employee_name: string;
-  pay_period: string;
+  employee_id: string;
+  month: number;
+  year: number;
   gross_pay: number;
   total_deductions: number;
   net_pay: number;
   status: string;
+  payment_date: string | null;
   created_at: string;
   updated_at: string;
 }
 
 export const salarySlipColumns: ColumnDef<SalarySlip>[] = [
   {
-    key: 'employee_name',
+    key: 'employee_id',
     header: 'Employee',
     sortable: true,
   },
   {
-    key: 'pay_period',
-    header: 'Pay Period',
+    key: 'month',
+    header: 'Month',
+    sortable: true,
+  },
+  {
+    key: 'year',
+    header: 'Year',
     sortable: true,
   },
   {
@@ -76,14 +83,6 @@ export const salarySlipFilters: FilterConfig[] = [
       { value: 'cancelled', label: 'Cancelled' },
     ],
   },
-  {
-    key: 'pay_period',
-    label: 'Pay Period',
-    type: 'select',
-    options: [
-      { value: '', label: 'All Periods' },
-    ],
-  },
 ];
 
 export const salarySlipFormFields: FieldSchema[] = [
@@ -99,11 +98,32 @@ export const salarySlipFormFields: FieldSchema[] = [
     },
   },
   {
-    name: 'pay_period',
-    label: 'Pay Period',
-    type: 'text',
+    name: 'month',
+    label: 'Month',
+    type: 'select',
     required: true,
-    placeholder: 'e.g. 2024-01',
+    placeholder: 'Select month',
+    options: [
+      { value: '1', label: 'January' },
+      { value: '2', label: 'February' },
+      { value: '3', label: 'March' },
+      { value: '4', label: 'April' },
+      { value: '5', label: 'May' },
+      { value: '6', label: 'June' },
+      { value: '7', label: 'July' },
+      { value: '8', label: 'August' },
+      { value: '9', label: 'September' },
+      { value: '10', label: 'October' },
+      { value: '11', label: 'November' },
+      { value: '12', label: 'December' },
+    ],
+  },
+  {
+    name: 'year',
+    label: 'Year',
+    type: 'number',
+    required: true,
+    placeholder: 'e.g. 2025',
   },
   {
     name: 'salary_structure',

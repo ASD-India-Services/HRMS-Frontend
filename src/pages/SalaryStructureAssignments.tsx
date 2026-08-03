@@ -14,6 +14,7 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import type { AxiosError } from 'axios';
 
 const assignmentCrud = createCrudHooks<Record<string, unknown>>({
   queryKey: 'salary-structure-assignments',
@@ -21,17 +22,41 @@ const assignmentCrud = createCrudHooks<Record<string, unknown>>({
 });
 
 const createFields: FieldConfig[] = [
-  { key: 'employee', label: 'Employee', type: 'text', required: true, placeholder: 'Employee name or ID' },
-  { key: 'salary_structure', label: 'Salary Structure', type: 'text', required: true, placeholder: 'Salary structure name' },
+  { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
+  { key: 'salary_structure', label: 'Salary Structure', type: 'select', required: true, optionsEndpoint: '/api/v1/salary-structures/', optionsLabelKey: 'name' },
   { key: 'from_date', label: 'From Date', type: 'date', required: true },
   { key: 'base_amount', label: 'Base Amount', type: 'number', required: true, placeholder: '0.00' },
+  { key: 'variable_amount', label: 'Variable Amount', type: 'number', placeholder: '0.00' },
+  { key: 'is_active', label: 'Active', type: 'checkbox' },
 ];
+
+/**
+ * Extract field-level error messages from an Axios 400 response.
+ * Backend returns: { field_name: ["error message", ...], ... }
+ */
+function extractApiErrors(error: unknown): Record<string, string> {
+  const axiosErr = error as AxiosError<Record<string, string[] | string>>;
+  const data = axiosErr?.response?.data;
+  if (!data || typeof data !== 'object') return {};
+
+  const errors: Record<string, string> = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (Array.isArray(value)) {
+      errors[key] = value.join(' ');
+    } else if (typeof value === 'string') {
+      errors[key] = value;
+    }
+  }
+  return errors;
+}
 
 export default function SalaryStructureAssignments() {
   const [showCreate, setShowCreate] = useState(false);
   const [editRecord, setEditRecord] = useState<Record<string, unknown> | null>(null);
   const [editLoading, setEditLoading] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [createErrors, setCreateErrors] = useState<Record<string, string>>({});
+  const [editErrors, setEditErrors] = useState<Record<string, string>>({});
 
   const { filterValues, setFilter, clearFilters, page, pageSize, setPage, setPageSize } =
     useFilterSync({ filters: salaryStructureAssignmentCrudConfig.filters });
@@ -55,7 +80,7 @@ export default function SalaryStructureAssignments() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <EditButton label="Edit" size="sm" onClick={() => { setEditRecord(row); setEditErrors({}); }} />
           <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
@@ -63,19 +88,50 @@ export default function SalaryStructureAssignments() {
   ];
 
   const handleCreate = (data: Record<string, unknown>) => {
-    createMutation.mutate(data, { onSuccess: () => setShowCreate(false) });
+    const payload = { ...data };
+    if (!payload.variable_amount && payload.variable_amount !== 0) {
+      payload.variable_amount = 0;
+    }
+    setCreateErrors({});
+    createMutation.mutate(payload, {
+      onSuccess: () => {
+        setShowCreate(false);
+        setCreateErrors({});
+      },
+      onError: (error) => {
+        setCreateErrors(extractApiErrors(error));
+      },
+    });
   };
 
   const handleEdit = async (data: Record<string, unknown>) => {
     if (!editRecord) return;
     setEditLoading(true);
+    setEditErrors({});
     try {
-      await api.patch(`/api/v1/salary-structure-assignments/${editRecord.id}/`, data);
+      const payload = { ...data };
+      if (!payload.variable_amount && payload.variable_amount !== 0) {
+        payload.variable_amount = 0;
+      }
+      await api.patch(`/api/v1/salary-structure-assignments/${editRecord.id}/`, payload);
       setEditRecord(null);
+      setEditErrors({});
       queryResult.refetch();
+    } catch (error) {
+      setEditErrors(extractApiErrors(error));
     } finally {
       setEditLoading(false);
     }
+  };
+
+  const handleCloseCreate = () => {
+    setShowCreate(false);
+    setCreateErrors({});
+  };
+
+  const handleCloseEdit = () => {
+    setEditRecord(null);
+    setEditErrors({});
   };
 
   return (
@@ -85,7 +141,7 @@ export default function SalaryStructureAssignments() {
           <h1 className="text-2xl font-bold text-gray-900">Salary Structure Assignments</h1>
           <p className="mt-1 text-sm text-gray-600">Manage employee salary structure assignments</p>
         </div>
-        <CreateButton label="Create Assignment" onClick={() => setShowCreate(true)} />
+        <CreateButton label="Create Assignment" onClick={() => { setShowCreate(true); setCreateErrors({}); }} />
       </div>
 
       <FilterBar
@@ -101,8 +157,26 @@ export default function SalaryStructureAssignments() {
         <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />
       )}
 
-      <CrudModal isOpen={showCreate} onClose={() => setShowCreate(false)} title="Create Salary Structure Assignment" fields={createFields} onSubmit={handleCreate} isLoading={createMutation.isPending} />
-      <CrudModal isOpen={!!editRecord} onClose={() => setEditRecord(null)} title="Edit Salary Structure Assignment" fields={createFields} onSubmit={handleEdit} isLoading={editLoading} initialValues={editRecord ?? {}} />
+      <CrudModal
+        isOpen={showCreate}
+        onClose={handleCloseCreate}
+        title="Create Salary Structure Assignment"
+        fields={createFields}
+        onSubmit={handleCreate}
+        isLoading={createMutation.isPending}
+        initialValues={{ is_active: true, variable_amount: 0 }}
+        apiErrors={createErrors}
+      />
+      <CrudModal
+        isOpen={!!editRecord}
+        onClose={handleCloseEdit}
+        title="Edit Salary Structure Assignment"
+        fields={createFields}
+        onSubmit={handleEdit}
+        isLoading={editLoading}
+        initialValues={editRecord ?? {}}
+        apiErrors={editErrors}
+      />
       <ConfirmDialog isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={() => { deleteMutation.mutate(deleteId!, { onSuccess: () => setDeleteId(null) }); }} title="Delete Assignment" message="Are you sure? This action cannot be undone." confirmLabel="Delete" variant="destructive" isLoading={deleteMutation.isPending} />
     </div>
   );

@@ -10,12 +10,15 @@ interface LeaveBalanceCardProps {
 }
 
 export function LeaveBalanceCard({ balance }: LeaveBalanceCardProps) {
-  const { leave_type, allocated_days, used_days, remaining_days } = balance;
+  const allocated_days = Number(balance.allocated_days) || 0;
+  const used_days = Number(balance.used_days) || 0;
+  const remaining_days = balance.remaining_days ?? balance.available_balance ?? (allocated_days - used_days);
+  const leave_type_name = balance.leave_type_name ?? balance.leave_type?.name ?? 'Unknown';
   const usagePercent = allocated_days > 0 ? (used_days / allocated_days) * 100 : 0;
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-      <h4 className="text-sm font-semibold text-gray-900">{leave_type.name}</h4>
+      <h4 className="text-sm font-semibold text-gray-900">{leave_type_name}</h4>
 
       <div className="mt-3 flex items-end justify-between">
         <div>
@@ -37,7 +40,7 @@ export function LeaveBalanceCard({ balance }: LeaveBalanceCardProps) {
           aria-valuenow={used_days}
           aria-valuemin={0}
           aria-valuemax={allocated_days}
-          aria-label={`${leave_type.name} usage: ${used_days} of ${allocated_days} days used`}
+          aria-label={`${leave_type_name} usage: ${used_days} of ${allocated_days} days used`}
         />
       </div>
     </div>

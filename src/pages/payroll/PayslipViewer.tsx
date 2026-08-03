@@ -43,7 +43,10 @@ function ComponentTable({ title, components, variant }: {
   components: SalaryComponent[];
   variant: 'earnings' | 'deductions';
 }) {
-  const total = components.reduce((sum, c) => sum + c.amount, 0);
+  const total = components.reduce((sum, c) => {
+    const amt = typeof c.amount === 'string' ? parseFloat(c.amount) : c.amount;
+    return sum + (isNaN(amt) ? 0 : amt);
+  }, 0);
   const textColor = variant === 'earnings' ? 'text-green-700' : 'text-red-700';
   const headerBg = variant === 'earnings' ? 'bg-green-50' : 'bg-red-50';
 
@@ -60,12 +63,16 @@ function ComponentTable({ title, components, variant }: {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-50">
-          {components.map((component) => (
-            <tr key={component.name}>
-              <td className="px-4 py-2 text-sm text-gray-700">{component.name}</td>
-              <td className="px-4 py-2 text-right text-sm text-gray-900">{formatCurrency(component.amount)}</td>
-            </tr>
-          ))}
+          {components.map((component, idx) => {
+            const name = component.name || (component as unknown as Record<string, unknown>).component as string || '';
+            const amt = typeof component.amount === 'string' ? parseFloat(component.amount) : component.amount;
+            return (
+              <tr key={name || idx}>
+                <td className="px-4 py-2 text-sm text-gray-700">{name}</td>
+                <td className="px-4 py-2 text-right text-sm text-gray-900">{formatCurrency(amt)}</td>
+              </tr>
+            );
+          })}
         </tbody>
         <tfoot>
           <tr className="border-t border-gray-200 bg-gray-50">
@@ -124,17 +131,16 @@ export function PayslipViewer() {
           </select>
         </div>
         <div>
-          <label htmlFor="year-select" className="block text-xs font-medium text-gray-600">Year</label>
-          <select
-            id="year-select"
+          <label htmlFor="year-input" className="block text-xs font-medium text-gray-600">Year</label>
+          <input
+            id="year-input"
+            type="number"
             value={year}
             onChange={(e) => { setYear(Number(e.target.value)); setSelectedSlipId(null); }}
-            className="mt-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          >
-            {getYearOptions().map((y) => (
-              <option key={y} value={y}>{y}</option>
-            ))}
-          </select>
+            className="mt-1 w-24 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            min={2020}
+            max={2099}
+          />
         </div>
       </div>
 
@@ -158,14 +164,65 @@ export function PayslipViewer() {
             </div>
           ) : slipsData && slipsData.results.length > 0 ? (
             <div className="space-y-3">
-              {slipsData.results.map((slip) => (
-                <PayslipCard
-                  key={slip.id}
-                  slip={slip}
-                  isSelected={selectedSlipId === slip.id}
-                  onSelect={setSelectedSlipId}
-                />
-              ))}
+              {(() => {
+                // Group slips by employee ID
+                const grouped: Record<string, typeof slipsData.results> = {};
+                for (const slip of slipsData.results) {
+                  const empId = slip.employee.employee_id;
+                  if (!grouped[empId]) grouped[empId] = [];
+                  grouped[empId].push(slip);
+                }
+
+                return Object.entries(grouped).map(([empId, slips]) => {
+                  const mainSlip = slips.find(s => s.gross_pay > 0 && s.net_pay > 5000) || slips[0];
+                  const correctionSlips = slips.filter(s => s.id !== mainSlip.id);
+                  const hasCorrections = correctionSlips.length > 0;
+                  const totalNet = slips.reduce((sum, s) => sum + (parseFloat(String(s.net_pay)) || 0), 0);
+
+                  return (
+                    <div key={empId} className="space-y-1">
+                      {/* Main slip card */}
+                      <PayslipCard
+                        slip={mainSlip}
+                        isSelected={selectedSlipId === mainSlip.id}
+                        onSelect={setSelectedSlipId}
+                      />
+                      {/* Correction slip cards */}
+                      {correctionSlips.map((cs) => (
+                        <button
+                          key={cs.id}
+                          type="button"
+                          onClick={() => setSelectedSlipId(cs.id)}
+                          className={`w-full ml-4 rounded-lg border p-3 text-left transition-all hover:shadow-sm ${
+                            selectedSlipId === cs.id
+                              ? 'border-orange-400 bg-orange-50 ring-1 ring-orange-400'
+                              : 'border-orange-200 bg-orange-50/50 hover:border-orange-300'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-medium text-orange-700">↳ Correction Slip</span>
+                            <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800">
+                              Supplementary
+                            </span>
+                          </div>
+                          <div className="mt-1 flex gap-4 text-xs">
+                            <span className="text-gray-600">Net: <span className="font-semibold text-orange-700">{formatCurrency(cs.net_pay)}</span></span>
+                          </div>
+                        </button>
+                      ))}
+                      {/* Total row if corrections exist */}
+                      {hasCorrections && (
+                        <div className="ml-4 rounded-md bg-blue-50 border border-blue-200 px-3 py-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs font-medium text-blue-700">Total Net for Month</span>
+                            <span className="text-sm font-bold text-blue-800">{formatCurrency(totalNet)}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                });
+              })()}
             </div>
           ) : (
             <div className="rounded-lg border border-gray-200 bg-white p-6 text-center">
@@ -184,6 +241,30 @@ export function PayslipViewer() {
                 <div className="h-48 animate-pulse rounded-lg bg-gray-100" />
               </div>
             ) : slipDetail ? (
+              (() => {
+                // Check if this is a correction slip (has very few earnings, typically just "Correction Adjustment")
+                const isCorrectionSlip = slipDetail.earnings_breakdown.some(
+                  (e) => e.name === 'Correction Adjustment' || e.name === 'Correction Recovery'
+                ) || (slipDetail.earnings_breakdown.length <= 1 && slipDetail.gross_pay < 50000 && slipsData?.results && slipsData.results.filter(s => s.employee.employee_id === slipDetail.employee.employee_id).length > 1);
+
+                // Find the original slip for same employee in same month
+                const allEmployeeSlips = slipsData?.results?.filter(
+                  s => s.employee.employee_id === slipDetail.employee.employee_id
+                ) || [];
+                const originalSlip = allEmployeeSlips.find(s => s.id !== slipDetail.id && s.gross_pay > slipDetail.gross_pay);
+
+                // Calculate combined totals if this is a correction slip
+                const combinedGross = isCorrectionSlip && originalSlip
+                  ? (parseFloat(String(originalSlip.gross_pay)) || 0) + (parseFloat(String(slipDetail.gross_pay)) || 0)
+                  : slipDetail.gross_pay;
+                const combinedDeductions = isCorrectionSlip && originalSlip
+                  ? (parseFloat(String(originalSlip.total_deductions)) || 0) + (parseFloat(String(slipDetail.total_deductions)) || 0)
+                  : slipDetail.total_deductions;
+                const combinedNet = isCorrectionSlip && originalSlip
+                  ? (parseFloat(String(originalSlip.net_pay)) || 0) + (parseFloat(String(slipDetail.net_pay)) || 0)
+                  : slipDetail.net_pay;
+
+                return (
               <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
                 {/* Detail Header */}
                 <div className="flex items-start justify-between border-b border-gray-100 pb-4">
@@ -199,6 +280,11 @@ export function PayslipViewer() {
                       {MONTHS[slipDetail.month - 1]} {slipDetail.year}
                       {slipDetail.salary_structure && ` • ${slipDetail.salary_structure.name}`}
                     </p>
+                    {isCorrectionSlip && (
+                      <span className="mt-1 inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-800">
+                        Correction Slip (Supplementary)
+                      </span>
+                    )}
                   </div>
                   <button
                     type="button"
@@ -214,43 +300,106 @@ export function PayslipViewer() {
                   </button>
                 </div>
 
-                {/* Summary Cards */}
-                <div className="mt-4 grid grid-cols-3 gap-4">
-                  <div className="rounded-lg bg-green-50 p-3 text-center">
-                    <p className="text-xs font-medium text-green-600">Gross Pay</p>
-                    <p className="mt-1 text-lg font-bold text-green-800">{formatCurrency(slipDetail.gross_pay)}</p>
-                  </div>
-                  <div className="rounded-lg bg-red-50 p-3 text-center">
-                    <p className="text-xs font-medium text-red-600">Deductions</p>
-                    <p className="mt-1 text-lg font-bold text-red-800">{formatCurrency(slipDetail.total_deductions)}</p>
-                  </div>
-                  <div className="rounded-lg bg-primary-50 p-3 text-center">
-                    <p className="text-xs font-medium text-primary-600">Net Pay</p>
-                    <p className="mt-1 text-lg font-bold text-primary-800">{formatCurrency(slipDetail.net_pay)}</p>
-                  </div>
-                </div>
+                {/* Combined Summary (original + correction) if correction slip */}
+                {isCorrectionSlip && originalSlip ? (
+                  <>
+                    {/* Final combined totals */}
+                    <div className="mt-4 grid grid-cols-3 gap-4">
+                      <div className="rounded-lg bg-green-50 p-3 text-center">
+                        <p className="text-xs font-medium text-green-600">Total Gross Pay</p>
+                        <p className="mt-1 text-lg font-bold text-green-800">{formatCurrency(combinedGross)}</p>
+                      </div>
+                      <div className="rounded-lg bg-red-50 p-3 text-center">
+                        <p className="text-xs font-medium text-red-600">Total Deductions</p>
+                        <p className="mt-1 text-lg font-bold text-red-800">{formatCurrency(combinedDeductions)}</p>
+                      </div>
+                      <div className="rounded-lg bg-primary-50 p-3 text-center">
+                        <p className="text-xs font-medium text-primary-600">Final Net Pay</p>
+                        <p className="mt-1 text-lg font-bold text-primary-800">{formatCurrency(combinedNet)}</p>
+                      </div>
+                    </div>
 
-                {/* Working Days Info */}
-                {slipDetail.days_worked != null && slipDetail.total_working_days != null && (
-                  <div className="mt-4 rounded-md bg-gray-50 px-4 py-2 text-sm text-gray-600">
-                    Days Worked: <span className="font-medium text-gray-900">{slipDetail.days_worked}</span> / {slipDetail.total_working_days}
-                  </div>
+                    {/* Original slip breakdown */}
+                    <div className="mt-5 rounded-lg border border-gray-200 p-4">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-3">Original Salary Slip</h4>
+                      <div className="grid grid-cols-3 gap-3 text-center text-sm">
+                        <div><span className="text-gray-500">Gross</span> <span className="font-medium">{formatCurrency(originalSlip.gross_pay)}</span></div>
+                        <div><span className="text-gray-500">Deductions</span> <span className="font-medium text-red-600">{formatCurrency(originalSlip.total_deductions)}</span></div>
+                        <div><span className="text-gray-500">Net</span> <span className="font-bold">{formatCurrency(originalSlip.net_pay)}</span></div>
+                      </div>
+                    </div>
+
+                    {/* Correction adjustment */}
+                    <div className="mt-3 rounded-lg border border-orange-200 bg-orange-50 p-4">
+                      <h4 className="text-sm font-semibold text-orange-700 mb-3">Correction Adjustment</h4>
+                      <div className="grid grid-cols-3 gap-3 text-center text-sm">
+                        <div><span className="text-gray-500">Added</span> <span className="font-medium text-green-700">+{formatCurrency(slipDetail.gross_pay)}</span></div>
+                        <div><span className="text-gray-500">Deducted</span> <span className="font-medium text-red-600">{formatCurrency(slipDetail.total_deductions)}</span></div>
+                        <div><span className="text-gray-500">Net Adj</span> <span className="font-bold text-orange-700">{formatCurrency(slipDetail.net_pay)}</span></div>
+                      </div>
+                    </div>
+
+                    {/* Earnings & Deductions combined */}
+                    <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <ComponentTable
+                        title="Earnings (incl. correction)"
+                        components={[
+                          ...(slipDetail.earnings_breakdown || []),
+                        ]}
+                        variant="earnings"
+                      />
+                      <ComponentTable
+                        title="Deductions"
+                        components={[
+                          ...(slipDetail.deductions_breakdown || []),
+                        ]}
+                        variant="deductions"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Normal slip display */}
+                    <div className="mt-4 grid grid-cols-3 gap-4">
+                      <div className="rounded-lg bg-green-50 p-3 text-center">
+                        <p className="text-xs font-medium text-green-600">Gross Pay</p>
+                        <p className="mt-1 text-lg font-bold text-green-800">{formatCurrency(slipDetail.gross_pay)}</p>
+                      </div>
+                      <div className="rounded-lg bg-red-50 p-3 text-center">
+                        <p className="text-xs font-medium text-red-600">Deductions</p>
+                        <p className="mt-1 text-lg font-bold text-red-800">{formatCurrency(slipDetail.total_deductions)}</p>
+                      </div>
+                      <div className="rounded-lg bg-primary-50 p-3 text-center">
+                        <p className="text-xs font-medium text-primary-600">Net Pay</p>
+                        <p className="mt-1 text-lg font-bold text-primary-800">{formatCurrency(slipDetail.net_pay)}</p>
+                      </div>
+                    </div>
+
+                    {/* Working Days Info */}
+                    {slipDetail.days_worked != null && slipDetail.total_working_days != null && (
+                      <div className="mt-4 rounded-md bg-gray-50 px-4 py-2 text-sm text-gray-600">
+                        Days Worked: <span className="font-medium text-gray-900">{slipDetail.days_worked}</span> / {slipDetail.total_working_days}
+                      </div>
+                    )}
+
+                    {/* Earnings & Deductions Breakdown */}
+                    <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <ComponentTable
+                        title="Earnings"
+                        components={slipDetail.earnings_breakdown}
+                        variant="earnings"
+                      />
+                      <ComponentTable
+                        title="Deductions"
+                        components={slipDetail.deductions_breakdown}
+                        variant="deductions"
+                      />
+                    </div>
+                  </>
                 )}
-
-                {/* Earnings & Deductions Breakdown */}
-                <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <ComponentTable
-                    title="Earnings"
-                    components={slipDetail.earnings_breakdown}
-                    variant="earnings"
-                  />
-                  <ComponentTable
-                    title="Deductions"
-                    components={slipDetail.deductions_breakdown}
-                    variant="deductions"
-                  />
-                </div>
               </div>
+                );
+              })()
             ) : null
           ) : (
             <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50">

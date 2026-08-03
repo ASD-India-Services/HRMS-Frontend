@@ -6,7 +6,7 @@
 
 import { useMemo, useState } from 'react';
 import { createCrudHooks } from '@/hooks/useCrud';
-import { EMPLOYEE_GRADES } from '@/lib/endpoints';
+import { EMPLOYEE_GRADES, PAYROLL } from '@/lib/endpoints';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
 import { CreateButton, EditButton, DeleteButton } from '@/components/ActionButton';
 import { CrudModal } from '@/components/CrudModal';
@@ -28,7 +28,7 @@ interface EmployeeGrade {
 const columns: ColumnDef<EmployeeGrade>[] = [
   { key: 'name', header: 'Name', sortable: true },
   { key: 'description', header: 'Description', sortable: false },
-  { key: 'default_salary_structure', header: 'Default Salary Structure', sortable: true },
+  { key: 'default_salary_structure_name', header: 'Default Salary Structure', sortable: false, render: (value: unknown) => (value as string) || '—' },
   {
     key: 'is_active',
     header: 'Active',
@@ -54,7 +54,7 @@ const filters: FilterConfig[] = [
 const createFields: FieldConfig[] = [
   { key: 'name', label: 'Grade Name', type: 'text', required: true, placeholder: 'e.g., Senior Engineer' },
   { key: 'description', label: 'Description', type: 'textarea', placeholder: 'Describe this grade' },
-  { key: 'default_salary_structure', label: 'Default Salary Structure', type: 'text', placeholder: 'Salary structure name' },
+  { key: 'default_salary_structure', label: 'Default Salary Structure', type: 'select', placeholder: 'Select a salary structure', optionsEndpoint: PAYROLL.SALARY_STRUCTURES, optionsLabelKey: 'name' },
   { key: 'is_active', label: 'Active', type: 'checkbox' },
 ];
 

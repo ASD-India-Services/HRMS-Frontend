@@ -17,6 +17,8 @@ export interface WorkflowConfig {
   statuses: WorkflowStatusDef[];
   /** Valid transitions between statuses */
   transitions: WorkflowTransition[];
+  /** Optional messages to display for terminal/locked states (keyed by status) */
+  terminalMessage?: Record<string, string>;
 }
 
 export interface WorkflowStatusDef {
@@ -34,7 +36,7 @@ export interface WorkflowTransition {
   /** API endpoint to call for this transition */
   endpoint: (id: string) => string;
   /** HTTP method (default: POST) */
-  method?: 'POST' | 'PATCH';
+  method?: 'POST' | 'PATCH' | 'DELETE';
   /** Roles that can perform this transition */
   allowedRoles: string[];
   /** Whether a reason/comment field is required */

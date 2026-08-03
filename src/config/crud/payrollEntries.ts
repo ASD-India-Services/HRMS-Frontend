@@ -14,25 +14,26 @@ import type { CrudEndpoints } from '@/hooks/useCrud';
 
 export interface PayrollEntry {
   id: string;
-  pay_period: string;
-  department: string;
+  month: number;
+  year: number;
   status: string;
+  created_by: string;
   total_employees: number;
-  total_gross: number;
-  total_net: number;
+  total_amount: number;
+  processed_at: string | null;
   created_at: string;
   updated_at: string;
 }
 
 export const payrollEntryColumns: ColumnDef<PayrollEntry>[] = [
   {
-    key: 'pay_period',
-    header: 'Pay Period',
+    key: 'month',
+    header: 'Month',
     sortable: true,
   },
   {
-    key: 'department',
-    header: 'Department',
+    key: 'year',
+    header: 'Year',
     sortable: true,
   },
   {
@@ -46,13 +47,8 @@ export const payrollEntryColumns: ColumnDef<PayrollEntry>[] = [
     sortable: true,
   },
   {
-    key: 'total_gross',
-    header: 'Total Gross',
-    sortable: true,
-  },
-  {
-    key: 'total_net',
-    header: 'Total Net',
+    key: 'total_amount',
+    header: 'Total Amount',
     sortable: true,
   },
 ];
@@ -71,8 +67,8 @@ export const payrollEntryFilters: FilterConfig[] = [
     options: [
       { value: '', label: 'All' },
       { value: 'draft', label: 'Draft' },
-      { value: 'submitted', label: 'Submitted' },
-      { value: 'disbursed', label: 'Disbursed' },
+      { value: 'processing', label: 'Processing' },
+      { value: 'completed', label: 'Completed' },
       { value: 'cancelled', label: 'Cancelled' },
     ],
   },
@@ -80,31 +76,52 @@ export const payrollEntryFilters: FilterConfig[] = [
 
 export const payrollEntryFormFields: FieldSchema[] = [
   {
-    name: 'pay_period',
-    label: 'Pay Period',
-    type: 'text',
+    name: 'month',
+    label: 'Month',
+    type: 'select',
     required: true,
-    placeholder: 'e.g. 2024-01',
+    placeholder: 'Select month',
+    options: [
+      { value: '1', label: 'January' },
+      { value: '2', label: 'February' },
+      { value: '3', label: 'March' },
+      { value: '4', label: 'April' },
+      { value: '5', label: 'May' },
+      { value: '6', label: 'June' },
+      { value: '7', label: 'July' },
+      { value: '8', label: 'August' },
+      { value: '9', label: 'September' },
+      { value: '10', label: 'October' },
+      { value: '11', label: 'November' },
+      { value: '12', label: 'December' },
+    ],
+    validation: [
+      { type: 'required', message: 'Month is required' },
+    ],
   },
   {
-    name: 'department',
-    label: 'Department',
-    type: 'select',
-    placeholder: 'Select department (optional for all)',
-    optionsQuery: {
-      queryKey: ['departments', 'options'],
-      endpoint: '/api/v1/departments/',
-    },
+    name: 'year',
+    label: 'Year',
+    type: 'number',
+    required: true,
+    placeholder: 'e.g. 2025',
+    validation: [
+      { type: 'required', message: 'Year is required' },
+    ],
   },
   {
-    name: 'salary_structure',
-    label: 'Salary Structure',
+    name: 'created_by',
+    label: 'Created By',
     type: 'select',
-    placeholder: 'Select salary structure',
+    required: true,
+    placeholder: 'Select',
     optionsQuery: {
-      queryKey: ['salary-structures', 'options'],
-      endpoint: PAYROLL.SALARY_STRUCTURES,
+      queryKey: ['payroll-managers'],
+      endpoint: '/api/v1/employees-with-permission/?permission=payroll.create',
     },
+    validation: [
+      { type: 'required', message: 'Created by is required' },
+    ],
   },
 ];
 

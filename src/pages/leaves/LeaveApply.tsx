@@ -61,7 +61,7 @@ export function LeaveApply() {
         ) : balances && balances.length > 0 ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {balances.map((balance) => (
-              <LeaveBalanceCard key={balance.id} balance={balance} />
+              <LeaveBalanceCard key={balance.leave_type_id ?? balance.id} balance={balance} />
             ))}
           </div>
         ) : (
@@ -162,8 +162,19 @@ export function LeaveApply() {
 
         {/* Error message */}
         {applyLeave.isError && (
-          <div className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700" role="alert">
-            Failed to submit leave application. Please try again.
+          <div className="mt-4 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700" role="alert">
+            {(() => {
+              const err = applyLeave.error as { response?: { data?: Record<string, unknown> } } | null;
+              const data = err?.response?.data;
+              if (data) {
+                // Extract error messages from Django REST Framework response
+                const messages = Object.values(data).flat().filter(Boolean);
+                if (messages.length > 0) {
+                  return messages.map((msg, i) => <p key={i}>{String(msg)}</p>);
+                }
+              }
+              return <p>Failed to submit leave application. Please try again.</p>;
+            })()}
           </div>
         )}
 

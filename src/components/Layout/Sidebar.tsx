@@ -61,11 +61,16 @@ function NavIcon({ path, isActive }: { path: string; isActive: boolean }) {
 
 export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: SidebarProps) {
   const { hasFeature } = usePermissions();
-  const { hasPermission } = useHrmsPermissionsContext();
+  const { hasPermission, roleName } = useHrmsPermissionsContext();
   const location = useLocation();
 
+  // org_admin and hr_manager see everything (matches RoleGatedRoute bypass)
+  const effectiveHasPermission = (roleName === 'org_admin' || roleName === 'hr_manager')
+    ? () => true
+    : hasPermission;
+
   // Filter navigation based on HRMS permissions and feature flags
-  const visibleGroups = getFilteredNavigation(hasPermission, hasFeature);
+  const visibleGroups = getFilteredNavigation(effectiveHasPermission, hasFeature);
 
   // Track collapsed/expanded state per group
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});

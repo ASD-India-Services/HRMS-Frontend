@@ -12,11 +12,17 @@ export interface LeaveType {
 }
 
 export interface LeaveBalance {
-  id: string;
-  leave_type: LeaveType;
+  id?: string;
+  leave_type_id: string;
+  leave_type_name: string;
   allocated_days: number;
   used_days: number;
-  remaining_days: number;
+  carry_forwarded: number;
+  available_balance: number;
+  remaining_days?: number;
+  fiscal_year: string;
+  /** @deprecated Use leave_type_name directly */
+  leave_type?: LeaveType;
 }
 
 export type LeaveApplicationStatus = 'pending' | 'approved' | 'rejected';

@@ -15,10 +15,10 @@ const crud = createCrudHooks<Record<string, unknown>>({
 });
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
-  { key: 'leave_policy_name', header: 'Leave Policy', sortable: true },
-  { key: 'assignment_type', header: 'Assignment Type', sortable: true },
-  { key: 'employee', header: 'Employee/Dept/Grade', sortable: false },
-  { key: 'effective_from', header: 'Effective From', sortable: true },
+  { key: 'leave_policy_name', header: 'Leave Policy', sortable: true, render: (v: unknown) => v ? String(v) : '–' },
+  { key: 'assignment_type', header: 'Assignment Type', sortable: true, render: (v: unknown) => v ? String(v) : '–' },
+  { key: 'target_name', header: 'Assigned To', sortable: false, render: (v: unknown) => v ? String(v) : '–' },
+  { key: 'effective_from', header: 'Effective From', sortable: true, render: (v: unknown) => v ? String(v) : '–' },
   { key: 'is_active', header: 'Active', sortable: true, render: (v: unknown) => (v ? 'Yes' : 'No') },
 ];
 

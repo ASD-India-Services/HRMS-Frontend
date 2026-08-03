@@ -110,6 +110,7 @@ const Shifts = lazy(() => import('@/pages/Shifts'));
 const PayslipViewer = lazy(() => import('@/pages/payroll/PayslipViewer').then((m) => ({ default: m.PayslipViewer })));
 const PayrollRuns = lazy(() => import('@/pages/payroll/PayrollRuns').then((m) => ({ default: m.PayrollRuns })));
 const SalaryComponents = lazy(() => import('@/pages/SalaryComponents'));
+const SalaryStructures = lazy(() => import('@/pages/SalaryStructures'));
 const SalaryStructureAssignments = lazy(() => import('@/pages/SalaryStructureAssignments'));
 
 // Recruitment — direct component imports
@@ -330,6 +331,10 @@ export const router = createBrowserRouter([
       {
         path: 'salary-components',
         element: gated('payroll_enabled', 'Payroll', 'payroll.view', <SalaryComponents />),
+      },
+      {
+        path: 'salary-structures',
+        element: gated('payroll_enabled', 'Payroll', 'payroll.manage', <SalaryStructures />),
       },
       {
         path: 'salary-structure-assignments',

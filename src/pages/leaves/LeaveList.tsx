@@ -1,14 +1,20 @@
 /**
  * Leave List Page — displays leave applications with status filter tabs.
+ * For employees: shows only their own applications ("My Leave Applications").
+ * For managers/admins: shows all team applications ("Team Leave Applications")
+ * with additional columns for employee name and approved/rejected by.
  * Requirements: 27.2
  */
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useLeaveApplications } from '@/hooks/useLeaves';
+import { useQuery } from '@tanstack/react-query';
+import { useLeaveApplications, useCancelLeave } from '@/hooks/useLeaves';
+import { useHrmsPermissions } from '@/hooks/useHrmsPermissions';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
 import { BulkActions } from '@/components/BulkActions';
+import api from '@/lib/api';
 import type { LeaveApplicationStatus } from '@/types/leave';
 
 const STATUS_TABS: { label: string; value: LeaveApplicationStatus | '' }[] = [
@@ -16,12 +22,15 @@ const STATUS_TABS: { label: string; value: LeaveApplicationStatus | '' }[] = [
   { label: 'Pending', value: 'pending' },
   { label: 'Approved', value: 'approved' },
   { label: 'Rejected', value: 'rejected' },
+  { label: 'Cancelled', value: 'cancelled' },
 ];
 
-const statusStyles: Record<LeaveApplicationStatus, string> = {
+const statusStyles: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
   approved: 'bg-green-100 text-green-800',
   rejected: 'bg-red-100 text-red-800',
+  cancelled: 'bg-gray-100 text-gray-800',
+  draft: 'bg-blue-100 text-blue-800',
 };
 
 function formatDate(dateStr: string): string {
@@ -36,20 +45,39 @@ export function LeaveList() {
   const [activeStatus, setActiveStatus] = useState<LeaveApplicationStatus | ''>('');
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
+  const { hasPermission } = useHrmsPermissions();
+
+  // If the user has "leaves.approve" permission, they are a manager/admin
+  // and the backend returns ALL applications (not just their own)
+  const isManagerOrAdmin = hasPermission('leaves.approve');
+
+  // Fetch current user's employee ID to restrict cancel to own applications
+  const { data: currentEmployee } = useQuery({
+    queryKey: ['employee', 'me'],
+    queryFn: async () => {
+      const response = await api.get<{ id: number }>('/api/v1/employees/me/');
+      return response.data;
+    },
+  });
 
   const { data, isLoading, isError, refetch } = useLeaveApplications({
     status: activeStatus || undefined,
     page,
     page_size: 10,
   });
+  const cancelLeave = useCancelLeave();
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
+    <div className="mx-auto max-w-6xl px-4 py-8">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Leave Applications</h1>
-          <p className="mt-1 text-sm text-gray-600">View and manage your leave requests</p>
+          <p className="mt-1 text-sm text-gray-600">
+            {isManagerOrAdmin
+              ? 'View all team leave applications and apply for your own leave'
+              : 'View and manage your leave requests'}
+          </p>
         </div>
         <Link
           to="/leaves/apply"
@@ -100,17 +128,35 @@ export function LeaveList() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
+                  {isManagerOrAdmin && (
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Applied By</th>
+                  )}
                   <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Leave Type</th>
                   <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">From</th>
                   <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">To</th>
                   <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Days</th>
                   <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Status</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Applied On</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                    {isManagerOrAdmin ? 'Approved / Rejected By' : 'Applied On'}
+                  </th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {data.results.map((application) => (
                   <tr key={application.id} className="hover:bg-gray-50">
+                    {isManagerOrAdmin && (
+                      <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
+                        <div>
+                          <p className="font-medium">
+                            {application.employee.first_name} {application.employee.last_name}
+                          </p>
+                          {application.employee.department && (
+                            <p className="text-xs text-gray-500">{application.employee.department.name}</p>
+                          )}
+                        </div>
+                      </td>
+                    )}
                     <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900">
                       {application.leave_type.name}
                     </td>
@@ -124,12 +170,49 @@ export function LeaveList() {
                       {application.total_days}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusStyles[application.status]}`}>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusStyles[application.status] || 'bg-gray-100 text-gray-800'}`}>
                         {application.status}
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
-                      {formatDate(application.created_at)}
+                      {isManagerOrAdmin ? (
+                        application.approved_by ? (
+                          <span className="text-gray-700">
+                            {application.approved_by.first_name} {application.approved_by.last_name}
+                          </span>
+                        ) : (
+                          <span className="italic text-gray-400">Pending</span>
+                        )
+                      ) : (
+                        formatDate(application.created_at)
+                      )}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-sm">
+                      {(() => {
+                        const today = new Date().toISOString().split('T')[0];
+                        const isCompleted = application.status === 'approved' && application.to_date < today;
+                        const isOwnApplication = currentEmployee && application.employee.id === currentEmployee.id;
+                        const canCancel = isOwnApplication && (application.status === 'pending' || (application.status === 'approved' && !isCompleted));
+                        if (canCancel) {
+                          return (
+                            <button
+                              onClick={() => {
+                                if (confirm('Are you sure you want to cancel this leave application?')) {
+                                  cancelLeave.mutate(application.id);
+                                }
+                              }}
+                              className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 border border-red-200"
+                              disabled={cancelLeave.isPending}
+                            >
+                              Cancel
+                            </button>
+                          );
+                        }
+                        if (isCompleted) {
+                          return <span className="text-xs text-gray-400">Completed</span>;
+                        }
+                        return <span className="text-xs text-gray-400">–</span>;
+                      })()}
                     </td>
                   </tr>
                 ))}

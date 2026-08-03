@@ -7,7 +7,7 @@
  * Field types: text, textarea, select, date, number, checkbox
  */
 
-import { useState, useEffect, useCallback, type FormEvent } from 'react';
+import { useState, useEffect, useCallback, useMemo, type FormEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 
@@ -54,6 +54,8 @@ export interface CrudModalProps {
   onSubmit: (data: Record<string, unknown>) => void;
   /** Loading state (disables form during submission) */
   isLoading?: boolean;
+  /** Server-side validation errors (field key → error message) */
+  apiErrors?: Record<string, string>;
 }
 
 // ---------------------------------------------------------------------------
@@ -70,9 +72,15 @@ export function CrudModal({
   initialValues = EMPTY_INITIAL_VALUES,
   onSubmit,
   isLoading = false,
+  apiErrors,
 }: CrudModalProps) {
   const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Merge apiErrors into displayed errors
+  const displayErrors = useMemo(() => {
+    return { ...errors, ...(apiErrors ?? {}) };
+  }, [errors, apiErrors]);
 
   // Reset form when modal opens or initialValues change
   useEffect(() => {
@@ -196,8 +204,8 @@ export function CrudModal({
                     )}
                   </>
                 )}
-                {errors[field.key] && (
-                  <p className="mt-1 text-xs text-red-600">{errors[field.key]}</p>
+                {displayErrors[field.key] && (
+                  <p className="mt-1 text-xs text-red-600">{displayErrors[field.key]}</p>
                 )}
               </div>
             ))}
