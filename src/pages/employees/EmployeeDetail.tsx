@@ -233,6 +233,8 @@ export function EmployeeDetail() {
           <dl className="space-y-3">
             <DetailRow label="Department" value={employee.department?.name} />
             <DetailRow label="Designation" value={employee.designation?.title} />
+            <DetailRow label="Grade" value={employee.grade?.name} />
+            <DetailRow label="Branch" value={employee.branch?.name} />
             <DetailRow
               label="Employment Type"
               value={employee.employment_type?.replace('_', ' ')}

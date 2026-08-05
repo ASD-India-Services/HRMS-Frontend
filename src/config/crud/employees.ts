@@ -101,6 +101,13 @@ export const employeeCrudConfig = {
       optionsQuery: { queryKey: ['branches'], endpoint: '/api/v1/branches/' },
     },
     {
+      name: 'grade_id',
+      label: 'Grade',
+      type: 'select',
+      step: 1,
+      optionsQuery: { queryKey: ['employee-grades'], endpoint: '/api/v1/employee-grades/' },
+    },
+    {
       name: 'employment_type',
       label: 'Employment Type',
       type: 'select',

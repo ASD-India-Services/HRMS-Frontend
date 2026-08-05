@@ -88,7 +88,7 @@ function useTravelColumns(): ColumnDef<TravelRequest>[] {
 export function TravelApprovals() {
   return (
     <Can
-      roles={['org_admin', 'hr_manager', 'department_head']}
+      permissions={['travel.view']}
       fallback={<AccessDenied />}
     >
       <TravelApprovalsContent />

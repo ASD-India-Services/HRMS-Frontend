@@ -24,12 +24,12 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
     )
   }
 
-  const checkInTime = record?.check_in_time
-    ? formatTime(record.check_in_time)
+  const checkInTime = record?.check_in
+    ? formatTime(record.check_in)
     : '—'
 
-  const checkOutTime = record?.check_out_time
-    ? formatTime(record.check_out_time)
+  const checkOutTime = record?.check_out
+    ? formatTime(record.check_out)
     : '—'
 
   const workingHours = record?.working_hours
@@ -56,7 +56,7 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
             </svg>
           }
-          subtext={record?.late_entry ? 'Late entry' : undefined}
+          subtext={record?.is_late ? 'Late entry' : undefined}
           subtextColor="text-amber-600"
         />
 
@@ -68,8 +68,6 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
           }
-          subtext={record?.early_exit ? 'Early exit' : undefined}
-          subtextColor="text-amber-600"
         />
 
         <InfoCard
@@ -84,21 +82,15 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
 
         <InfoCard
           label="Location"
-          value={record?.latitude_in ? 'Captured' : 'Not available'}
+          value={record?.is_outside_geofence ? 'Outside fence' : record?.check_in ? 'Captured' : 'Not available'}
           icon={
             <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           }
-          subtext={
-            record?.geo_fence_flagged
-              ? 'Outside geo-fence'
-              : record?.latitude_in
-                ? `${record.latitude_in.toFixed(4)}, ${record.longitude_in?.toFixed(4)}`
-                : undefined
-          }
-          subtextColor={record?.geo_fence_flagged ? 'text-red-600' : 'text-gray-500'}
+          subtext={record?.is_outside_geofence ? 'Outside geo-fence' : undefined}
+          subtextColor={record?.is_outside_geofence ? 'text-red-600' : 'text-gray-500'}
         />
       </div>
     </div>
@@ -147,12 +139,23 @@ function InfoCard({ label, value, icon, subtext, subtextColor = 'text-gray-500' 
   )
 }
 
-function formatTime(isoTime: string): string {
+function formatTime(timeStr: string): string {
   try {
-    const date = new Date(isoTime)
+    // Backend returns time as "HH:MM:SS" or "HH:MM:SS.microseconds"
+    const match = timeStr.match(/^(\d{2}):(\d{2})/)
+    if (match) {
+      const h = parseInt(match[1], 10)
+      const m = match[2]
+      const ampm = h >= 12 ? 'PM' : 'AM'
+      const h12 = h % 12 || 12
+      return `${h12}:${m} ${ampm}`
+    }
+    // Fallback: try parsing as full ISO date
+    const date = new Date(timeStr)
+    if (isNaN(date.getTime())) return timeStr
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   } catch {
-    return isoTime
+    return timeStr
   }
 }
 

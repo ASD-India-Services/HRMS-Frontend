@@ -163,7 +163,7 @@ function useApprovalColumns(): ColumnDef<LeaveApplication>[] {
 export function LeaveApprovals() {
   return (
     <Can
-      roles={['org_admin', 'hr_manager', 'department_head']}
+      permissions={['leaves.approve']}
       fallback={<AccessDenied />}
     >
       <LeaveApprovalsContent />

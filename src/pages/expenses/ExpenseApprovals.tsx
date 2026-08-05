@@ -125,7 +125,7 @@ export function ExpenseApprovals() {
 
   return (
     <Can
-      roles={['org_admin', 'hr_manager', 'department_head']}
+      permissions={['expenses.view']}
       fallback={
         <div className="mx-auto max-w-5xl px-4 py-8">
           <div className="rounded-lg border border-red-200 bg-red-50 p-8 text-center">

@@ -33,7 +33,9 @@ const createFields: FieldConfig[] = [
     { value: 'department', label: 'Department' },
     { value: 'grade', label: 'Grade' },
   ]},
-  { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
+  { key: 'employee', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
+  { key: 'department', label: 'Department', type: 'select', optionsEndpoint: '/api/v1/departments/' },
+  { key: 'grade', label: 'Grade', type: 'select', optionsEndpoint: '/api/v1/employee-grades/' },
   { key: 'effective_from', label: 'Effective From', type: 'date', required: true },
 ];
 

@@ -113,6 +113,11 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
         if (emp.branch && typeof emp.branch === 'object') {
           flat.branch_id = (emp.branch as Record<string, unknown>).id;
         }
+        if (emp.grade && typeof emp.grade === 'object') {
+          flat.grade_id = (emp.grade as Record<string, unknown>).id;
+        } else if (emp.grade && typeof emp.grade === 'string') {
+          flat.grade_id = emp.grade;
+        }
         if (emp.reporting_manager && typeof emp.reporting_manager === 'object') {
           flat.reporting_manager_id = (emp.reporting_manager as Record<string, unknown>).id;
         }

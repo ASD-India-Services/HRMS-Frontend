@@ -89,7 +89,7 @@ function useOvertimeColumns(): ColumnDef<OvertimeSlip>[] {
 export function OvertimeApprovals() {
   return (
     <Can
-      roles={['org_admin', 'hr_manager', 'department_head']}
+      permissions={['overtime.view']}
       fallback={<AccessDenied />}
     >
       <OvertimeApprovalsContent />

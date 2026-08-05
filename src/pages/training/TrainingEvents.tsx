@@ -89,7 +89,7 @@ function useTrainingColumns(): ColumnDef<TrainingEvent>[] {
 export function TrainingEvents() {
   return (
     <Can
-      roles={['org_admin', 'hr_manager']}
+      permissions={['training.view']}
       fallback={<AccessDenied />}
     >
       <TrainingEventsContent />

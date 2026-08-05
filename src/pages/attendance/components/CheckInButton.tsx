@@ -31,8 +31,8 @@ export function CheckInButton({ record }: CheckInButtonProps) {
   const checkIn = useCheckIn()
   const checkOut = useCheckOut()
 
-  const hasCheckedIn = !!record?.check_in_time
-  const hasCheckedOut = !!record?.check_out_time
+  const hasCheckedIn = !!record?.check_in
+  const hasCheckedOut = !!record?.check_out
   const isCompleted = hasCheckedIn && hasCheckedOut
 
   const handleAction = async () => {
@@ -55,8 +55,8 @@ export function CheckInButton({ record }: CheckInButtonProps) {
       const deviceId = getDeviceId()
       const payload = {
         device_id: deviceId,
-        latitude: coords.latitude,
-        longitude: coords.longitude,
+        latitude: parseFloat(coords.latitude.toFixed(7)),
+        longitude: parseFloat(coords.longitude.toFixed(7)),
       }
 
       let response: unknown

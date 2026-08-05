@@ -26,8 +26,8 @@ export function useHrmsPermissions() {
   const { data, isLoading, error, refetch } = useQuery<PermissionsResponse>({
     queryKey: ['hrms-permissions'],
     queryFn: () => api.get<PermissionsResponse>('/api/v1/me/permissions/').then((r) => r.data),
-    staleTime: 2 * 60 * 1000, // 2 minutes — refetch after role changes
-    gcTime: 10 * 60 * 1000,
+    staleTime: 30 * 1000, // 30 seconds — quick permission updates after role/approver changes
+    gcTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true, // Refetch when user tabs back (catches role changes)
     refetchOnMount: true, // Refetch on navigation to catch updates
     enabled: isAuthenticated,

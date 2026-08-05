@@ -16,6 +16,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useOnboardingStatus } from '@/hooks/useOnboardingStatus';
+import { useAuth } from '@platform/auth-sdk';
 import api from '@/lib/api';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -41,6 +42,7 @@ const STEPS = [
 export default function SelfOnboarding() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { logout } = useAuth();
   const { data: statusData, isLoading: statusLoading } = useOnboardingStatus();
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -258,6 +260,20 @@ export default function SelfOnboarding() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* Logout button */}
+      <div className="mb-4 flex justify-end">
+        <button
+          type="button"
+          onClick={() => void logout()}
+          className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 hover:text-red-600 transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+          </svg>
+          Sign out
+        </button>
+      </div>
+
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-bold text-gray-900">Welcome! Complete Your Onboarding</h1>
         <p className="mt-2 text-sm text-gray-600">

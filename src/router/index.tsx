@@ -105,6 +105,7 @@ const Attendance = lazy(() => import('@/pages/Attendance'));
 
 // Shifts — direct component imports (no sub-routing in Shifts.tsx)
 const Shifts = lazy(() => import('@/pages/Shifts'));
+const ShiftTypes = lazy(() => import('@/pages/ShiftTypes'));
 
 // Payroll — direct component imports
 const PayslipViewer = lazy(() => import('@/pages/payroll/PayslipViewer').then((m) => ({ default: m.PayslipViewer })));
@@ -317,6 +318,10 @@ export const router = createBrowserRouter([
       {
         path: 'shifts',
         element: gated('shifts_enabled', 'Shift Management', 'attendance.view', <Shifts />),
+      },
+      {
+        path: 'shift-types',
+        element: gated('shifts_enabled', 'Shift Types', 'attendance.manage', <ShiftTypes />),
       },
 
       // ─── Payroll (explicit sub-routes, no wildcard) ────────────

@@ -7,19 +7,18 @@ import { ATTENDANCE } from '@/lib/endpoints'
  */
 export interface AttendanceRecord {
   id: string
-  employee_id: string
-  date: string
-  check_in_time: string | null
-  check_out_time: string | null
+  employee: string
+  attendance_date: string
+  check_in: string | null
+  check_out: string | null
   working_hours: number | null
-  status: 'present' | 'absent' | 'half_day' | 'on_leave'
-  late_entry: boolean
-  early_exit: boolean
-  latitude_in: number | null
-  longitude_in: number | null
-  latitude_out: number | null
-  longitude_out: number | null
-  geo_fence_flagged: boolean
+  status: 'present' | 'absent' | 'half_day' | 'on_leave' | 'holiday'
+  shift: string | null
+  is_late: boolean
+  late_reason: string
+  is_outside_geofence: boolean
+  created_at: string
+  updated_at: string
 }
 
 interface CheckInPayload {

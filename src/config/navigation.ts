@@ -117,6 +117,7 @@ export const navigationConfig: NavGroup[] = [
       { label: 'Attendance Upload', href: '/attendance-upload', icon: ICONS.attendance, requiredPermission: 'attendance.manage', featureFlag: 'attendance_enabled' },
       { label: 'Geo Locations', href: '/geofence-locations', icon: ICONS.attendance, requiredPermission: 'attendance.manage', featureFlag: 'attendance_enabled' },
       { label: 'Shifts', href: '/shifts', icon: ICONS.shifts, requiredPermission: 'attendance.manage', featureFlag: 'shifts_enabled' },
+      { label: 'Shift Types', href: '/shift-types', icon: ICONS.shifts, requiredPermission: 'attendance.manage', featureFlag: 'shifts_enabled' },
       { label: 'Shift Requests', href: '/shift-requests', icon: ICONS.shifts, requiredPermission: 'attendance.view', featureFlag: 'shifts_enabled' },
       { label: 'Shift Schedules', href: '/shift-schedules', icon: ICONS.shifts, requiredPermission: 'attendance.manage', featureFlag: 'shifts_enabled' },
     ],

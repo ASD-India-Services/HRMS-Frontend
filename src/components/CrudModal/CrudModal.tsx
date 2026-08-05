@@ -97,7 +97,7 @@ export function CrudModal({
       setErrors({});
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+  }, [isOpen, initialValues]);
 
   const handleChange = useCallback((key: string, value: unknown) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
