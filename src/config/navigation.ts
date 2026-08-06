@@ -113,10 +113,11 @@ export const navigationConfig: NavGroup[] = [
     label: 'Attendance',
     items: [
       { label: 'Attendance', href: '/attendance', icon: ICONS.attendance, requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
+      { label: 'Attendance Register', href: '/attendance-register', icon: ICONS.attendance, requiredPermission: 'attendance.manage', featureFlag: 'attendance_enabled' },
       { label: 'Attendance Requests', href: '/attendance-requests', icon: ICONS.attendance, requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
       { label: 'Attendance Upload', href: '/attendance-upload', icon: ICONS.attendance, requiredPermission: 'attendance.manage', featureFlag: 'attendance_enabled' },
       { label: 'Geo Locations', href: '/geofence-locations', icon: ICONS.attendance, requiredPermission: 'attendance.manage', featureFlag: 'attendance_enabled' },
-      { label: 'Shifts', href: '/shifts', icon: ICONS.shifts, requiredPermission: 'attendance.manage', featureFlag: 'shifts_enabled' },
+      { label: 'Shifts', href: '/shifts', icon: ICONS.shifts, requiredPermission: 'attendance.view', featureFlag: 'shifts_enabled' },
       { label: 'Shift Types', href: '/shift-types', icon: ICONS.shifts, requiredPermission: 'attendance.manage', featureFlag: 'shifts_enabled' },
       { label: 'Shift Requests', href: '/shift-requests', icon: ICONS.shifts, requiredPermission: 'attendance.view', featureFlag: 'shifts_enabled' },
       { label: 'Shift Schedules', href: '/shift-schedules', icon: ICONS.shifts, requiredPermission: 'attendance.manage', featureFlag: 'shifts_enabled' },
@@ -139,11 +140,11 @@ export const navigationConfig: NavGroup[] = [
   {
     label: 'Recruitment',
     items: [
+      { label: 'Job Openings', href: '/recruitment/job-openings', icon: ICONS.recruitment, requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
       { label: 'Pipeline', href: '/recruitment/pipeline', icon: ICONS.pipeline, requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
-      { label: 'Job Openings', href: '/recruitment', icon: ICONS.recruitment, requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
+      { label: 'Referrals', href: '/referrals', icon: ICONS.recruitment, requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
       { label: 'Interview Types', href: '/interview-types', icon: ICONS.recruitment, requiredPermission: 'recruitment.manage', featureFlag: 'recruitment_enabled' },
       { label: 'Job Templates', href: '/job-templates', icon: ICONS.recruitment, requiredPermission: 'recruitment.manage', featureFlag: 'recruitment_enabled' },
-      { label: 'Referrals', href: '/referrals', icon: ICONS.recruitment, requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
     ],
   },
   {

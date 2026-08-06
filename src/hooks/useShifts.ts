@@ -8,7 +8,6 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import api from '@/lib/api';
 import type {
   ShiftType,
-  ShiftAssignment,
   ShiftAssignmentFilters,
   PaginatedShiftAssignmentResponse,
 } from '@/types/shift';
@@ -25,8 +24,11 @@ async function fetchShiftAssignments(
 ): Promise<PaginatedShiftAssignmentResponse> {
   const params: Record<string, string | number> = {};
 
+  if (filters.mine) params.mine = filters.mine;
   if (filters.employee) params.employee = filters.employee;
   if (filters.date) params.date = filters.date;
+  if (filters.from_date) params.from_date = filters.from_date;
+  if (filters.to_date) params.to_date = filters.to_date;
   if (filters.department) params.department = filters.department;
   if (filters.page) params.page = filters.page;
   if (filters.page_size) params.page_size = filters.page_size;

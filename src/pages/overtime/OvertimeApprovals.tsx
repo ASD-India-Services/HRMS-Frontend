@@ -10,7 +10,8 @@
  * Requirements: 14.1, 14.2, 14.3, 14.4
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createCrudHooks } from '@/hooks/useCrud';
 import {
   overtimeSlipsCrudConfig,
@@ -19,9 +20,20 @@ import {
 import { overtimeApprovalWorkflow } from '@/config/workflows/overtimeApproval';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
 import { WorkflowEngine } from '@/components/WorkflowEngine';
+import { CreateButton } from '@/components/ActionButton';
+import { CrudModal } from '@/components/CrudModal';
+import type { FieldConfig } from '@/components/CrudModal';
 import { Can } from '@/components/Can';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
+import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
+
+const createFields: FieldConfig[] = [
+  { key: 'employee', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name', required: true },
+  { key: 'date', label: 'Date', type: 'date', required: true },
+  { key: 'hours', label: 'Hours', type: 'number', required: true, placeholder: '2' },
+  { key: 'reason', label: 'Reason', type: 'textarea', placeholder: 'Reason for overtime' },
+];
 
 const overtimeCrud = createCrudHooks<OvertimeSlip>({
   queryKey: overtimeSlipsCrudConfig.queryKey,
@@ -98,6 +110,16 @@ export function OvertimeApprovals() {
 }
 
 function OvertimeApprovalsContent() {
+  const [showCreate, setShowCreate] = useState(false);
+  const queryClient = useQueryClient();
+  const createMutation = useMutation({
+    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/overtime/', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['overtime'] });
+      setShowCreate(false);
+    },
+  });
+
   const columns = useOvertimeColumns();
   const filters = overtimeSlipsCrudConfig.filters;
 
@@ -123,11 +145,14 @@ function OvertimeApprovalsContent() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Overtime Approvals</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Review and approve or reject pending overtime slips.
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Overtime Approvals</h1>
+          <p className="mt-1 text-sm text-gray-600">
+            Review and approve or reject pending overtime slips.
+          </p>
+        </div>
+        <CreateButton label="Log Overtime" onClick={() => setShowCreate(true)} />
       </div>
 
       {queryResult.data && (
@@ -162,6 +187,15 @@ function OvertimeApprovalsContent() {
           onPageSizeChange={setPageSize}
         />
       )}
+
+      <CrudModal
+        isOpen={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="Log Overtime"
+        fields={createFields}
+        onSubmit={(data) => createMutation.mutate(data)}
+        isLoading={createMutation.isPending}
+      />
     </div>
   );
 }

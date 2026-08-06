@@ -84,26 +84,29 @@ export function CheckInButton({ record }: CheckInButtonProps) {
         return
       }
 
-      // Handle API errors
+      // Handle axios-style errors with response data (e.g., geo-fence rejection)
+      if (typeof err === 'object' && err !== null && 'response' in err) {
+        const axiosErr = err as { response?: { data?: { geofence_error?: boolean; message?: string; distance?: number; detail?: string } } }
+        if (axiosErr.response?.data?.geofence_error) {
+          const data = axiosErr.response.data
+          const friendlyMsg = `You are not within the allowed office area. Please check in from your designated office location.\n\nDistance: ${data.distance ? Math.round(data.distance) + 'm away' : 'unknown'}`
+          setError(friendlyMsg)
+          return
+        }
+        if (axiosErr.response?.data?.detail) {
+          setError(axiosErr.response.data.detail)
+          return
+        }
+        if (axiosErr.response?.data?.message) {
+          setError(axiosErr.response.data.message)
+          return
+        }
+      }
+
+      // Handle generic API errors
       if (err instanceof Error) {
         setError(err.message)
         return
-      }
-
-      // Handle axios-style errors with response data (e.g., geo-fence rejection)
-      if (typeof err === 'object' && err !== null && 'response' in err) {
-        const axiosErr = err as { response?: { data?: { geofence_error?: boolean; message?: string; distance?: number } } }
-        if (axiosErr.response?.data?.geofence_error) {
-          setError(axiosErr.response.data.message || 'Check-in rejected: you are outside the allowed geo-fence area.')
-          return
-        }
-        if (axiosErr.response?.data && typeof axiosErr.response.data === 'object') {
-          const detail = (axiosErr.response.data as Record<string, unknown>).detail
-          if (typeof detail === 'string') {
-            setError(detail)
-            return
-          }
-        }
       }
 
       setError('An unexpected error occurred. Please try again.')
@@ -240,6 +243,8 @@ function isGeolocationError(err: unknown): err is GeolocationError {
     err !== null &&
     'code' in err &&
     'message' in err &&
-    typeof (err as GeolocationError).message === 'string'
+    typeof (err as GeolocationError).code === 'number' &&
+    typeof (err as GeolocationError).message === 'string' &&
+    !('response' in err)
   )
 }

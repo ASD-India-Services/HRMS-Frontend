@@ -57,7 +57,7 @@ export function useAttendanceToday() {
     queryKey: ['attendance', 'today', today],
     queryFn: async () => {
       const response = await api.get(ATTENDANCE.LIST, {
-        params: { date: today },
+        params: { date: today, mine: 'true' },
       })
       // API may return a list; take the first record for the current user
       const records = response.data?.results ?? response.data

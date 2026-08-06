@@ -9,16 +9,33 @@
  * Requirements: 19.1, 19.2, 19.3, 19.4, 19.5
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createCrudHooks } from '@/hooks/useCrud';
 import { SETTLEMENT } from '@/lib/endpoints';
 import { settlementWorkflow } from '@/config/workflows/settlement';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
 import { WorkflowEngine } from '@/components/WorkflowEngine';
+import { CreateButton } from '@/components/ActionButton';
+import { CrudModal } from '@/components/CrudModal';
+import type { FieldConfig } from '@/components/CrudModal';
 import { Can } from '@/components/Can';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
+import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { CrudEndpoints } from '@/hooks/useCrud';
+
+const createFields: FieldConfig[] = [
+  { key: 'employee', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name', required: true },
+  { key: 'last_working_date', label: 'Last Working Date', type: 'date', required: true },
+  { key: 'reason', label: 'Reason', type: 'select', options: [
+    { value: 'resignation', label: 'Resignation' },
+    { value: 'termination', label: 'Termination' },
+    { value: 'retirement', label: 'Retirement' },
+    { value: 'end_of_contract', label: 'End of Contract' },
+  ]},
+  { key: 'notes', label: 'Notes', type: 'textarea' },
+];
 
 export interface Settlement {
   id: string;
@@ -127,6 +144,16 @@ export function SettlementWorkflow() {
 }
 
 function SettlementWorkflowContent() {
+  const [showCreate, setShowCreate] = useState(false);
+  const queryClient = useQueryClient();
+  const createMutation = useMutation({
+    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/settlements/', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['settlements'] });
+      setShowCreate(false);
+    },
+  });
+
   const columns = useSettlementColumns();
 
   const {
@@ -150,11 +177,14 @@ function SettlementWorkflowContent() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Full & Final Settlements</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Manage employee exit settlements — submit, approve, or reject final payouts.
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Full & Final Settlements</h1>
+          <p className="mt-1 text-sm text-gray-600">
+            Manage employee exit settlements — submit, approve, or reject final payouts.
+          </p>
+        </div>
+        <CreateButton label="Create Settlement" onClick={() => setShowCreate(true)} />
       </div>
 
       <FilterBar
@@ -178,6 +208,15 @@ function SettlementWorkflowContent() {
           onPageSizeChange={setPageSize}
         />
       )}
+
+      <CrudModal
+        isOpen={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="Create Settlement"
+        fields={createFields}
+        onSubmit={(data) => createMutation.mutate(data)}
+        isLoading={createMutation.isPending}
+      />
     </div>
   );
 }

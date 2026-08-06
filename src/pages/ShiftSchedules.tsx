@@ -144,6 +144,31 @@ export default function ShiftSchedules() {
     });
   }, []);
 
+  const [generateLoading, setGenerateLoading] = useState<string | null>(null);
+  const [generateResult, setGenerateResult] = useState<string | null>(null);
+
+  const handleGenerate = async (scheduleId: string) => {
+    setGenerateLoading(scheduleId);
+    setGenerateResult(null);
+    try {
+      const res = await api.post(`${ENDPOINT}${scheduleId}/generate/`);
+      const data = res.data as { created_count?: number; skipped_count?: number };
+      if ((data.created_count ?? 0) > 0) {
+        setGenerateResult(`✓ Successfully created ${data.created_count} shift assignment(s) for employees.${data.skipped_count ? ` ${data.skipped_count} already existed and were skipped.` : ''}`);
+      } else if ((data.skipped_count ?? 0) > 0) {
+        setGenerateResult(`All ${data.skipped_count} assignments already exist. No new assignments needed.`);
+      } else {
+        setGenerateResult('No assignments were generated. Check that employees exist in the target department.');
+      }
+      queryResult.refetch();
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      setGenerateResult(error.response?.data?.detail || 'Generation failed.');
+    } finally {
+      setGenerateLoading(null);
+    }
+  };
+
   const columnsWithActions: ColumnDef<Record<string, unknown>>[] = [
     ...columns,
     {
@@ -152,6 +177,14 @@ export default function ShiftSchedules() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => handleGenerate(row.id as string)}
+            disabled={generateLoading === (row.id as string)}
+            className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20 hover:bg-blue-100 transition-colors disabled:opacity-50"
+          >
+            {generateLoading === (row.id as string) ? 'Generating...' : 'Generate'}
+          </button>
           <EditButton label="Edit" size="sm" onClick={() => openEdit(row)} />
           <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
@@ -261,6 +294,23 @@ export default function ShiftSchedules() {
       </div>
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
+      {generateResult && (
+        <div className={`mb-4 rounded-md border px-4 py-3 text-sm ${
+          generateResult.includes('failed') || generateResult.includes('Failed')
+            ? 'bg-red-50 border-red-200 text-red-800'
+            : 'bg-green-50 border-green-200 text-green-800'
+        }`}>
+          <div className="flex items-center gap-2">
+            {generateResult.includes('failed') || generateResult.includes('Failed') ? (
+              <svg className="w-5 h-5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/></svg>
+            ) : (
+              <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+            )}
+            <span>{generateResult}</span>
+          </div>
+          <button onClick={() => setGenerateResult(null)} className="mt-1 text-xs underline opacity-70 hover:opacity-100">Dismiss</button>
+        </div>
+      )}
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && (
         <Pagination

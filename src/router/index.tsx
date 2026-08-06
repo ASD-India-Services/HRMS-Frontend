@@ -102,6 +102,7 @@ const LeaveApprovals = lazy(() => import('@/pages/leaves/LeaveApprovals').then((
 
 // Attendance
 const Attendance = lazy(() => import('@/pages/Attendance'));
+const AttendanceRegister = lazy(() => import('@/pages/AttendanceRegister'));
 
 // Shifts — direct component imports (no sub-routing in Shifts.tsx)
 const Shifts = lazy(() => import('@/pages/Shifts'));
@@ -313,6 +314,10 @@ export const router = createBrowserRouter([
         path: 'attendance',
         element: gated('attendance_enabled', 'Attendance', 'attendance.view', <Attendance />),
       },
+      {
+        path: 'attendance-register',
+        element: gated('attendance_enabled', 'Attendance Register', 'attendance.manage', <AttendanceRegister />),
+      },
 
       // ─── Shifts ──────────────────────────────────────────────────
       {
@@ -349,6 +354,18 @@ export const router = createBrowserRouter([
       // ─── Recruitment (explicit sub-routes, no wildcard) ────────
       {
         path: 'recruitment',
+        element: gated('recruitment_enabled', 'Recruitment', 'recruitment.view', <Recruitment />),
+      },
+      {
+        path: 'recruitment/job-openings',
+        element: gated('recruitment_enabled', 'Recruitment', 'recruitment.view', <Recruitment />),
+      },
+      {
+        path: 'recruitment/candidates',
+        element: gated('recruitment_enabled', 'Recruitment', 'recruitment.view', <Recruitment />),
+      },
+      {
+        path: 'recruitment/interviews',
         element: gated('recruitment_enabled', 'Recruitment', 'recruitment.view', <Recruitment />),
       },
       {

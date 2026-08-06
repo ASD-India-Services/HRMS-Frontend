@@ -16,8 +16,8 @@ const crud = createCrudHooks<Record<string, unknown>>({
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
   { key: 'name', header: 'Name', sortable: true },
-  { key: 'designation', header: 'Designation', sortable: true },
-  { key: 'department', header: 'Department', sortable: true },
+  { key: 'designation_name', header: 'Designation', sortable: false, render: (v: unknown) => (v as string) || '—' },
+  { key: 'department_name', header: 'Department', sortable: false, render: (v: unknown) => (v as string) || '—' },
   { key: 'is_active', header: 'Active', sortable: true, render: (v: unknown) => (v ? 'Yes' : 'No') },
 ];
 
@@ -26,9 +26,12 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'title', label: 'Title', type: 'text', required: true, placeholder: 'Template title' },
-  { key: 'description', label: 'Description', type: 'textarea', placeholder: 'Job description template' },
-  { key: 'department', label: 'Department', type: 'text', placeholder: 'Department name' },
+  { key: 'name', label: 'Template Name', type: 'text', required: true, placeholder: 'e.g. Full Stack Developer' },
+  { key: 'designation', label: 'Designation', type: 'select', optionsEndpoint: '/api/v1/designations/', optionsLabelKey: 'title' },
+  { key: 'department', label: 'Department', type: 'select', optionsEndpoint: '/api/v1/departments/' },
+  { key: 'description', label: 'Job Description', type: 'textarea', placeholder: 'What the role involves...' },
+  { key: 'requirements_text', label: 'Requirements', type: 'textarea', placeholder: 'Skills, experience, qualifications needed...' },
+  { key: 'responsibilities_text', label: 'Responsibilities', type: 'textarea', placeholder: 'Day-to-day tasks and duties...' },
 ];
 
 export default function JobOpeningTemplates() {

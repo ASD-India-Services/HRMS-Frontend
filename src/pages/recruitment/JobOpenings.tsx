@@ -4,10 +4,36 @@
  */
 
 import { useState, useMemo } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useJobOpenings } from '@/hooks/useRecruitment';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
+import { CreateButton } from '@/components/ActionButton';
+import { CrudModal } from '@/components/CrudModal';
+import type { FieldConfig } from '@/components/CrudModal';
+import api from '@/lib/api';
 import type { JobOpeningStatus } from '@/types/recruitment';
+
+const JOB_OPENING_FIELDS: FieldConfig[] = [
+  { key: 'title', label: 'Title', type: 'text', required: true },
+  { key: 'department', label: 'Department', type: 'select', optionsEndpoint: '/api/v1/departments/' },
+  { key: 'designation', label: 'Designation', type: 'select', optionsEndpoint: '/api/v1/designations/', optionsLabelKey: 'title' },
+  { key: 'description', label: 'Description', type: 'textarea' },
+  { key: 'vacancies', label: 'Vacancies', type: 'number', required: true, placeholder: '1' },
+  {
+    key: 'status',
+    label: 'Status',
+    type: 'select',
+    options: [
+      { value: 'open', label: 'Open' },
+      { value: 'closed', label: 'Closed' },
+      { value: 'on_hold', label: 'On Hold' },
+      { value: 'cancelled', label: 'Cancelled' },
+    ],
+  },
+  { key: 'posted_on', label: 'Posted On', type: 'date' },
+  { key: 'closes_on', label: 'Closes On', type: 'date' },
+];
 
 const PAGE_SIZE = 10;
 
@@ -27,6 +53,16 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [status, setStatus] = useState<JobOpeningStatus | ''>('');
   const [page, setPage] = useState(1);
+  const [showCreate, setShowCreate] = useState(false);
+
+  const queryClient = useQueryClient();
+  const createMutation = useMutation({
+    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/recruitment/job-openings/', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['job-openings'] });
+      setShowCreate(false);
+    },
+  });
 
   const debounceTimeout = useMemo(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -63,6 +99,7 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
             {data ? `${data.count} opening${data.count !== 1 ? 's' : ''}` : 'Loading...'}
           </p>
         </div>
+        <CreateButton label="Create Job Opening" onClick={() => setShowCreate(true)} />
       </div>
 
       {/* Search and Filter */}
@@ -192,6 +229,16 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
           </div>
         </nav>
       )}
+
+      {/* Create Modal */}
+      <CrudModal
+        isOpen={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="Create Job Opening"
+        fields={JOB_OPENING_FIELDS}
+        onSubmit={(data) => createMutation.mutate(data)}
+        isLoading={createMutation.isPending}
+      />
     </div>
   );
 }

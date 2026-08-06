@@ -14,7 +14,8 @@ interface ShiftCardProps {
 /**
  * Format a time string (HH:MM:SS) to a human-readable format (h:mm AM/PM).
  */
-function formatTime(time: string): string {
+function formatTime(time: string | undefined | null): string {
+  if (!time) return '—';
   const [hours, minutes] = time.split(':').map(Number);
   const period = hours >= 12 ? 'PM' : 'AM';
   const displayHours = hours % 12 || 12;
@@ -22,7 +23,10 @@ function formatTime(time: string): string {
 }
 
 export function ShiftCard({ shiftType, compact = false }: ShiftCardProps) {
-  const { name, start_time, end_time, is_night_shift } = shiftType;
+  const name = shiftType?.name ?? 'Unknown Shift';
+  const start_time = shiftType?.start_time;
+  const end_time = shiftType?.end_time;
+  const is_night_shift = shiftType?.is_night_shift ?? false;
 
   if (compact) {
     return (

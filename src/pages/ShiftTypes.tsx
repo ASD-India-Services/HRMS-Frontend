@@ -62,16 +62,14 @@ const formFields: FieldConfig[] = [
   {
     key: 'start_time',
     label: 'Start Time',
-    type: 'text',
+    type: 'time',
     required: true,
-    placeholder: 'HH:MM (e.g. 09:00)',
   },
   {
     key: 'end_time',
     label: 'End Time',
-    type: 'text',
+    type: 'time',
     required: true,
-    placeholder: 'HH:MM (e.g. 18:00)',
   },
   {
     key: 'is_night_shift',

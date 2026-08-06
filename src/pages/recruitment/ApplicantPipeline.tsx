@@ -5,8 +5,22 @@
  */
 
 import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApplicants, useChangeApplicantStatus, useJobOpenings } from '@/hooks/useRecruitment';
+import { CreateButton } from '@/components/ActionButton';
+import { CrudModal } from '@/components/CrudModal';
+import type { FieldConfig } from '@/components/CrudModal';
+import api from '@/lib/api';
 import type { ApplicantStatus, JobApplicant } from '@/types/recruitment';
+
+const APPLICANT_FIELDS: FieldConfig[] = [
+  { key: 'name', label: 'Name', type: 'text', required: true },
+  { key: 'email', label: 'Email', type: 'text', required: true, placeholder: 'applicant@example.com' },
+  { key: 'phone', label: 'Phone', type: 'text', placeholder: '+91...' },
+  { key: 'job_opening', label: 'Job Opening', type: 'select', optionsEndpoint: '/api/v1/recruitment/job-openings/', optionsLabelKey: 'title' },
+  { key: 'resume_url', label: 'Resume URL', type: 'text', placeholder: 'https://...' },
+  { key: 'notes', label: 'Notes', type: 'textarea' },
+];
 
 const PIPELINE_STAGES: { key: ApplicantStatus; label: string; color: string }[] = [
   { key: 'applied', label: 'Applied', color: 'border-blue-400 bg-blue-50' },
@@ -23,6 +37,16 @@ interface ApplicantPipelineProps {
 
 export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelineProps) {
   const [selectedJobOpening, setSelectedJobOpening] = useState(jobOpeningId || '');
+  const [showCreate, setShowCreate] = useState(false);
+
+  const queryClient = useQueryClient();
+  const createMutation = useMutation({
+    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/recruitment/applicants/', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['applicants'] });
+      setShowCreate(false);
+    },
+  });
 
   // Fetch job openings for the dropdown filter
   const { data: openingsData } = useJobOpenings({ page_size: 100 });
@@ -81,19 +105,22 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
         </div>
 
         {/* Job Opening Filter */}
-        <select
-          value={selectedJobOpening}
-          onChange={(e) => setSelectedJobOpening(e.target.value)}
-          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          aria-label="Filter by job opening"
-        >
-          <option value="">All Job Openings</option>
-          {openingsData?.results.map((opening) => (
-            <option key={opening.id} value={opening.id}>
-              {opening.title}
-            </option>
-          ))}
-        </select>
+        <div className="flex items-center gap-2">
+          <CreateButton label="Add Applicant" onClick={() => setShowCreate(true)} />
+          <select
+            value={selectedJobOpening}
+            onChange={(e) => setSelectedJobOpening(e.target.value)}
+            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            aria-label="Filter by job opening"
+          >
+            <option value="">All Job Openings</option>
+            {openingsData?.results.map((opening) => (
+              <option key={opening.id} value={opening.id}>
+                {opening.title}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Loading */}
@@ -151,6 +178,16 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
           })}
         </div>
       )}
+
+      {/* Create Applicant Modal */}
+      <CrudModal
+        isOpen={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="Add Applicant"
+        fields={APPLICANT_FIELDS}
+        onSubmit={(data) => createMutation.mutate(data)}
+        isLoading={createMutation.isPending}
+      />
     </div>
   );
 }

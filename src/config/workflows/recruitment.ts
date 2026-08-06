@@ -4,7 +4,8 @@
  * Defines the state machine for recruitment/applicant tracking including
  * statuses, transitions, role-based access, and confirmation dialogs.
  *
- * Requirements: 7.1, 7.3, 7.5
+ * Stages: Applied → Screening → Interview → Selected → Hired (Onboarded)
+ * Can be Rejected at any stage.
  */
 
 import type { WorkflowConfig } from '@/types/workflow';
@@ -16,8 +17,8 @@ export const recruitmentWorkflow: WorkflowConfig = {
     { key: 'applied', label: 'Applied', color: 'gray' },
     { key: 'screening', label: 'Screening', color: 'yellow' },
     { key: 'interview', label: 'Interview', color: 'blue' },
-    { key: 'offer_made', label: 'Offer Made', color: 'blue' },
-    { key: 'hired', label: 'Hired', color: 'green', terminal: true },
+    { key: 'selected', label: 'Selected', color: 'green' },
+    { key: 'onboarded', label: 'Hired', color: 'green', terminal: true },
     { key: 'rejected', label: 'Rejected', color: 'red', terminal: true },
   ],
   transitions: [
@@ -43,7 +44,7 @@ export const recruitmentWorkflow: WorkflowConfig = {
     {
       from: 'screening',
       to: 'interview',
-      action: 'Schedule Interview',
+      action: 'Move to Interview',
       endpoint: (id) => RECRUITMENT.JOB_APPLICANT_DETAIL(id),
       method: 'PATCH',
       allowedRoles: ['org_admin', 'hr_manager'],
@@ -61,8 +62,8 @@ export const recruitmentWorkflow: WorkflowConfig = {
     },
     {
       from: 'interview',
-      to: 'offer_made',
-      action: 'Make Offer',
+      to: 'selected',
+      action: 'Select Candidate',
       endpoint: (id) => RECRUITMENT.JOB_APPLICANT_DETAIL(id),
       method: 'PATCH',
       allowedRoles: ['org_admin', 'hr_manager'],
@@ -79,20 +80,20 @@ export const recruitmentWorkflow: WorkflowConfig = {
       variant: 'destructive',
     },
     {
-      from: 'offer_made',
-      to: 'hired',
-      action: 'Mark as Hired',
-      endpoint: (id) => RECRUITMENT.JOB_APPLICANT_DETAIL(id),
-      method: 'PATCH',
+      from: 'selected',
+      to: 'onboarded',
+      action: 'Hire & Onboard',
+      endpoint: (id) => `${RECRUITMENT.JOB_APPLICANTS}${id}/hire/`,
+      method: 'POST',
       allowedRoles: ['org_admin', 'hr_manager'],
       variant: 'primary',
       confirm: {
         title: 'Confirm Hire',
-        message: 'Mark this applicant as hired?',
+        message: 'This will create an employee account for this candidate and send them an invitation. Continue?',
       },
     },
     {
-      from: 'offer_made',
+      from: 'selected',
       to: 'rejected',
       action: 'Reject',
       endpoint: (id) => RECRUITMENT.JOB_APPLICANT_DETAIL(id),

@@ -10,7 +10,8 @@
  * Requirements: 13.1, 13.2, 13.3, 13.4
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createCrudHooks } from '@/hooks/useCrud';
 import {
   travelRequestsCrudConfig,
@@ -19,9 +20,22 @@ import {
 import { travelApprovalWorkflow } from '@/config/workflows/travelApproval';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
 import { WorkflowEngine } from '@/components/WorkflowEngine';
+import { CreateButton } from '@/components/ActionButton';
+import { CrudModal } from '@/components/CrudModal';
+import type { FieldConfig } from '@/components/CrudModal';
 import { Can } from '@/components/Can';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
+import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
+
+const createFields: FieldConfig[] = [
+  { key: 'employee', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name', required: true },
+  { key: 'purpose', label: 'Purpose', type: 'text', required: true, placeholder: 'Purpose of travel' },
+  { key: 'destination', label: 'Destination', type: 'text', required: true },
+  { key: 'from_date', label: 'From Date', type: 'date', required: true },
+  { key: 'to_date', label: 'To Date', type: 'date', required: true },
+  { key: 'estimated_cost', label: 'Estimated Cost', type: 'number', placeholder: '0.00' },
+];
 
 const travelCrud = createCrudHooks<TravelRequest>({
   queryKey: travelRequestsCrudConfig.queryKey,
@@ -97,6 +111,16 @@ export function TravelApprovals() {
 }
 
 function TravelApprovalsContent() {
+  const [showCreate, setShowCreate] = useState(false);
+  const queryClient = useQueryClient();
+  const createMutation = useMutation({
+    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/travel-requests/', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['travel-requests'] });
+      setShowCreate(false);
+    },
+  });
+
   const columns = useTravelColumns();
   const filters = travelRequestsCrudConfig.filters;
 
@@ -122,11 +146,14 @@ function TravelApprovalsContent() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Travel Approvals</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Review and approve or reject pending travel requests.
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Travel Approvals</h1>
+          <p className="mt-1 text-sm text-gray-600">
+            Review and approve or reject pending travel requests.
+          </p>
+        </div>
+        <CreateButton label="Create Travel Request" onClick={() => setShowCreate(true)} />
       </div>
 
       {queryResult.data && (
@@ -161,6 +188,15 @@ function TravelApprovalsContent() {
           onPageSizeChange={setPageSize}
         />
       )}
+
+      <CrudModal
+        isOpen={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="Create Travel Request"
+        fields={createFields}
+        onSubmit={(data) => createMutation.mutate(data)}
+        isLoading={createMutation.isPending}
+      />
     </div>
   );
 }

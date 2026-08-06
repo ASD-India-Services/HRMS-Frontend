@@ -21,8 +21,22 @@ import { recruitmentWorkflow } from '@/config/workflows/recruitment';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
 import { WorkflowEngine } from '@/components/WorkflowEngine';
 import { StatusBadge } from '@/components/WorkflowEngine/StatusBadge';
+import { CreateButton } from '@/components/ActionButton';
+import { CrudModal } from '@/components/CrudModal';
+import type { FieldConfig } from '@/components/CrudModal';
 import { Can } from '@/components/Can';
+import api from '@/lib/api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { ColumnDef } from '@/types/datatable';
+
+const APPLICANT_FIELDS: FieldConfig[] = [
+  { key: 'name', label: 'Applicant Name', type: 'text', required: true },
+  { key: 'email', label: 'Email', type: 'text', required: true, placeholder: 'applicant@example.com' },
+  { key: 'phone', label: 'Phone', type: 'text', placeholder: '+91...' },
+  { key: 'job_opening', label: 'Job Opening', type: 'select', required: true, optionsEndpoint: '/api/v1/recruitment/job-openings/', optionsLabelKey: 'title' },
+  { key: 'resume_url', label: 'Resume URL', type: 'text', placeholder: 'https://...' },
+  { key: 'notes', label: 'Notes', type: 'textarea' },
+];
 
 // Create CRUD hooks from the job applicants config
 const applicantCrud = createCrudHooks<Record<string, unknown>>({
@@ -50,6 +64,16 @@ interface ApplicantRow {
 
 export function RecruitmentPipeline() {
   const [expandedApplicantId, setExpandedApplicantId] = useState<string | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+
+  const queryClient = useQueryClient();
+  const createMutation = useMutation({
+    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/recruitment/applicants/', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [jobApplicantsCrudConfig.queryKey] });
+      setShowCreate(false);
+    },
+  });
 
   // URL-synced filters and pagination
   const { filterValues, setFilter, clearFilters, page, pageSize, setPage, setPageSize } =
@@ -108,11 +132,14 @@ export function RecruitmentPipeline() {
     <Can roles={['org_admin', 'hr_manager']}>
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Page header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Recruitment Pipeline</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Track and manage applicants through the hiring process
-          </p>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Pipeline — All Candidates</h1>
+            <p className="mt-1 text-sm text-gray-600">
+              See all candidates across all job openings. Click a row to change their stage.
+            </p>
+          </div>
+          <CreateButton label="Add Applicant" onClick={() => setShowCreate(true)} />
         </div>
 
         {/* Filter bar */}
@@ -152,6 +179,16 @@ export function RecruitmentPipeline() {
             onPageSizeChange={setPageSize}
           />
         )}
+
+        {/* Add Applicant Modal */}
+        <CrudModal
+          isOpen={showCreate}
+          onClose={() => setShowCreate(false)}
+          title="Add Applicant"
+          fields={APPLICANT_FIELDS}
+          onSubmit={(data) => createMutation.mutate(data)}
+          isLoading={createMutation.isPending}
+        />
       </div>
     </Can>
   );

@@ -41,10 +41,12 @@ export function ShiftRoster() {
 
   const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
   const weekStartStr = toDateString(weekStart);
+  const weekEndStr = toDateString(weekDays[6]);
 
   // Fetch all team assignments for the selected week
   const { data, isLoading, isError } = useShiftAssignments({
-    date: weekStartStr,
+    from_date: weekStartStr,
+    to_date: weekEndStr,
     department: department || undefined,
     page_size: 200,
   });
@@ -55,12 +57,12 @@ export function ShiftRoster() {
   const employeeMap = useMemo(() => {
     const map = new Map<string, { name: string; assignments: ShiftAssignment[] }>();
     for (const assignment of assignments) {
-      const existing = map.get(assignment.employee_id);
+      const existing = map.get(assignment.employee);
       if (existing) {
         existing.assignments.push(assignment);
       } else {
-        map.set(assignment.employee_id, {
-          name: assignment.employee_name,
+        map.set(assignment.employee, {
+          name: assignment.employee_name || 'Unknown',
           assignments: [assignment],
         });
       }

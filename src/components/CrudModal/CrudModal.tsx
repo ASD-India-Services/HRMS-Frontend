@@ -26,7 +26,7 @@ export interface FieldConfig {
   /** Display label */
   label: string;
   /** Input type */
-  type: 'text' | 'textarea' | 'select' | 'date' | 'number' | 'checkbox';
+  type: 'text' | 'textarea' | 'select' | 'date' | 'number' | 'checkbox' | 'time';
   /** Placeholder text */
   placeholder?: string;
   /** Whether the field is required */
@@ -191,6 +191,12 @@ export function CrudModal({
                         onChange={(val) => handleChange(field.key, val)}
                         disabled={isLoading}
                       />
+                    ) : field.type === 'time' ? (
+                      <TimePickerField
+                        value={(formData[field.key] as string) ?? ''}
+                        onChange={(val) => handleChange(field.key, val)}
+                        disabled={isLoading}
+                      />
                     ) : (
                       <input
                         id={`crud-field-${field.key}`}
@@ -237,6 +243,77 @@ export function CrudModal({
           </div>
         </form>
       </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// TimePickerField — Hour/Minute/AM-PM dropdown picker
+// ---------------------------------------------------------------------------
+
+function TimePickerField({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  disabled: boolean;
+}) {
+  // Parse existing value (HH:MM format in 24h) into 12h components
+  let hour = 9;
+  let minute = 0;
+  let period: 'AM' | 'PM' = 'AM';
+
+  if (value) {
+    const match = value.match(/^(\d{1,2}):(\d{2})/);
+    if (match) {
+      const h24 = parseInt(match[1], 10);
+      minute = parseInt(match[2], 10);
+      period = h24 >= 12 ? 'PM' : 'AM';
+      hour = h24 % 12 || 12;
+    }
+  }
+
+  const updateTime = (h: number, m: number, p: 'AM' | 'PM') => {
+    let h24 = h % 12;
+    if (p === 'PM') h24 += 12;
+    const timeStr = `${String(h24).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    onChange(timeStr);
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <select
+        value={hour}
+        onChange={(e) => updateTime(parseInt(e.target.value), minute, period)}
+        disabled={disabled}
+        className="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-2 px-3"
+      >
+        {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
+          <option key={h} value={h}>{h}</option>
+        ))}
+      </select>
+      <span className="text-gray-500 font-medium">:</span>
+      <select
+        value={minute}
+        onChange={(e) => updateTime(hour, parseInt(e.target.value), period)}
+        disabled={disabled}
+        className="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-2 px-3"
+      >
+        {Array.from({ length: 12 }, (_, i) => i * 5).map((m) => (
+          <option key={m} value={m}>{String(m).padStart(2, '0')}</option>
+        ))}
+      </select>
+      <select
+        value={period}
+        onChange={(e) => updateTime(hour, minute, e.target.value as 'AM' | 'PM')}
+        disabled={disabled}
+        className="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-2 px-3 font-medium"
+      >
+        <option value="AM">AM</option>
+        <option value="PM">PM</option>
+      </select>
     </div>
   );
 }

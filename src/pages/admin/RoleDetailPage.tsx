@@ -16,6 +16,100 @@ import api from '@/lib/api';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
+// Detailed descriptions shown below each permission checkbox
+const PERMISSION_DESCRIPTIONS: Record<string, string> = {
+  // Employees
+  'employees.view': 'Access the employee directory, view profiles, and see employee details',
+  'employees.create': 'Add new employees to the system and fill their profile information',
+  'employees.edit': 'Update employee personal details, job info, and profile data',
+  'employees.delete': 'Permanently remove employee records from the system',
+  'employees.manage': 'Access Departments, Designations, Grades, Branches, Approvers, Transfers, Promotions, and org structure settings',
+  // Leaves
+  'leaves.view': 'View leave applications, balances, and leave calendar',
+  'leaves.create': 'Submit leave applications on behalf of self or others',
+  'leaves.edit': 'Modify existing leave records and adjust balances',
+  'leaves.delete': 'Remove leave application records',
+  'leaves.approve': 'Approve or reject pending leave applications from team members',
+  'leaves.manage': 'Access Leave Policies, Policy Assignments, Block Lists, Adjustments, and Earned Leave Schedules settings',
+  // Attendance
+  'attendance.view': 'View attendance records, check in/out for self, and see shift schedule',
+  'attendance.create': 'Manually create attendance entries for employees',
+  'attendance.edit': 'Edit attendance records and approve/reject attendance correction requests',
+  'attendance.delete': 'Delete attendance records from the system',
+  'attendance.manage': 'Access Attendance Upload (CSV), Geo-fence Locations setup, Shift Types, and Shift Schedules management',
+  // Payroll
+  'payroll.view': 'View salary slips, payroll summaries, and compensation data',
+  'payroll.create': 'Generate new payroll runs and create salary slips',
+  'payroll.edit': 'Modify salary components, structures, and payroll corrections',
+  'payroll.delete': 'Delete payroll records and salary slips',
+  'payroll.approve': 'Approve payroll runs for final processing and disbursement',
+  'payroll.manage': 'Access Payroll Runs, Salary Components, Structures, Assignments, Periods, Corrections, Incentives, and Gratuity settings',
+  // Recruitment
+  'recruitment.view': 'Access Job Openings, Candidates pipeline (kanban), Pipeline (table view), Interviews schedule, and Referrals pages',
+  'recruitment.create': 'Create new job openings, add candidates/applicants, schedule interviews, and submit referrals',
+  'recruitment.edit': 'Edit job openings, update candidate details, change applicant stage (move through pipeline), and modify interview schedules',
+  'recruitment.delete': 'Delete job openings, remove candidates, and cancel interviews',
+  'recruitment.manage': 'Access Interview Types and Job Templates settings pages (configure interview rounds and reusable job descriptions)',
+  // Appraisals
+  'appraisals.view': 'View appraisal cycles, goals, KRAs, and performance feedback',
+  'appraisals.create': 'Create new appraisal cycles, set goals, and give feedback',
+  'appraisals.edit': 'Edit appraisal records, goals, and ratings',
+  'appraisals.delete': 'Delete appraisal records',
+  'appraisals.approve': 'Review and approve submitted appraisals and ratings',
+  'appraisals.manage': 'Access KRA definitions, Appraisal Templates, and performance settings',
+  // Expenses
+  'expenses.view': 'View expense claims and reimbursement history',
+  'expenses.create': 'Submit new expense claims with receipts',
+  'expenses.edit': 'Modify expense claim details',
+  'expenses.delete': 'Delete expense claims',
+  'expenses.approve': 'Approve or reject expense claims from team members',
+  'expenses.manage': 'Access Expense Categories and Tax configuration settings',
+  // Onboarding
+  'onboarding.view': 'View onboarding checklists and new hire tasks',
+  'onboarding.create': 'Create onboarding plans for new employees',
+  'onboarding.edit': 'Edit onboarding tasks and checklists',
+  'onboarding.delete': 'Delete onboarding records',
+  // Training
+  'training.view': 'View training events, schedules, and enrollments',
+  'training.create': 'Create training sessions and enroll employees',
+  'training.edit': 'Edit training event details',
+  'training.delete': 'Delete training records',
+  'training.manage': 'Access Training Programs and Training Results management',
+  // Grievances
+  'grievances.view': 'View submitted grievance tickets',
+  'grievances.create': 'Submit new grievance complaints',
+  'grievances.edit': 'Update grievance status and details',
+  'grievances.delete': 'Delete grievance records',
+  // Travel
+  'travel.view': 'View travel requests and itineraries',
+  'travel.create': 'Submit travel requests with trip details',
+  'travel.edit': 'Modify travel request information',
+  'travel.delete': 'Delete travel records',
+  'travel.approve': 'Approve or reject travel requests from employees',
+  // Overtime
+  'overtime.view': 'View overtime logs and hours worked',
+  'overtime.create': 'Log overtime hours for self or team',
+  'overtime.edit': 'Edit overtime entries',
+  'overtime.delete': 'Delete overtime records',
+  'overtime.approve': 'Approve overtime claims for payroll processing',
+  // Settlements
+  'settlements.view': 'View full & final settlement records',
+  'settlements.create': 'Initiate settlement process for exiting employees',
+  'settlements.edit': 'Modify settlement calculations and details',
+  'settlements.delete': 'Delete settlement records',
+  'settlements.approve': 'Approve final settlement payouts',
+  // Shifts
+  'shifts.view': 'View shift types, assignments, and personal shift schedule',
+  'shifts.create': 'Create new shift types and manual shift assignments',
+  'shifts.edit': 'Edit shift configurations and approve/reject shift change requests',
+  'shifts.delete': 'Delete shift types and assignments',
+  // Admin
+  'roles.manage': 'Full access to Roles & Permissions, HR Settings, and Audit Logs in the Admin section',
+  'permissions.view': 'View the list of all available permissions in the system',
+  // Dashboard
+  'dashboard.view': 'Access the main dashboard with charts and metrics',
+};
+
 interface PermissionItem {
   id: string;
   code: string;
@@ -390,21 +484,25 @@ export default function RoleDetailPage() {
                 {modulePerms.map((perm) => (
                   <label
                     key={perm.id}
-                    className="flex items-center gap-2 cursor-pointer"
+                    className="flex items-start gap-2 cursor-pointer"
                   >
                     <input
                       type="checkbox"
                       checked={selectedIds.has(perm.id)}
                       onChange={() => togglePermission(perm.id)}
-                      className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                      className="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                       aria-label={perm.display_name}
                     />
-                    <span className="text-sm text-gray-700">
-                      {perm.display_name}
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      ({perm.code})
-                    </span>
+                    <div>
+                      <span className="text-sm font-medium text-gray-700">
+                        {perm.display_name}
+                      </span>
+                      {PERMISSION_DESCRIPTIONS[perm.code] && (
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {PERMISSION_DESCRIPTIONS[perm.code]}
+                        </p>
+                      )}
+                    </div>
                   </label>
                 ))}
               </div>

@@ -4,7 +4,31 @@
  */
 
 import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useInterviews } from '@/hooks/useRecruitment';
+import { CreateButton } from '@/components/ActionButton';
+import { CrudModal } from '@/components/CrudModal';
+import type { FieldConfig } from '@/components/CrudModal';
+import api from '@/lib/api';
+
+const INTERVIEW_FIELDS: FieldConfig[] = [
+  { key: 'applicant', label: 'Applicant', type: 'select', optionsEndpoint: '/api/v1/recruitment/applicants/', optionsLabelKey: 'name' },
+  { key: 'interviewer', label: 'Interviewer', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
+  { key: 'scheduled_at', label: 'Scheduled At', type: 'date', required: true },
+  { key: 'duration_minutes', label: 'Duration (minutes)', type: 'number', placeholder: '60' },
+  { key: 'location', label: 'Location', type: 'text', placeholder: 'Conference Room / Video Link' },
+  {
+    key: 'interview_type',
+    label: 'Interview Type',
+    type: 'select',
+    options: [
+      { value: 'in_person', label: 'In Person' },
+      { value: 'video', label: 'Video' },
+      { value: 'phone', label: 'Phone' },
+    ],
+  },
+  { key: 'notes', label: 'Notes', type: 'textarea' },
+];
 
 const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   scheduled: { label: 'Scheduled', className: 'bg-blue-100 text-blue-800' },
@@ -17,6 +41,16 @@ const PAGE_SIZE = 10;
 export function InterviewSchedule() {
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
+  const [showCreate, setShowCreate] = useState(false);
+
+  const queryClient = useQueryClient();
+  const createMutation = useMutation({
+    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/recruitment/interviews/', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['interviews'] });
+      setShowCreate(false);
+    },
+  });
 
   const { data, isLoading, isError, error, isFetching } = useInterviews({
     status: statusFilter || undefined,
@@ -36,17 +70,20 @@ export function InterviewSchedule() {
             {data ? `${data.count} interview${data.count !== 1 ? 's' : ''}` : 'Loading...'}
           </p>
         </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-          aria-label="Filter by interview status"
-        >
-          <option value="">All Statuses</option>
-          <option value="scheduled">Scheduled</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
+        <div className="flex items-center gap-2">
+          <CreateButton label="Schedule Interview" onClick={() => setShowCreate(true)} />
+          <select
+            value={statusFilter}
+            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            aria-label="Filter by interview status"
+          >
+            <option value="">All Statuses</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
       </div>
 
       {/* Loading */}
@@ -91,14 +128,14 @@ export function InterviewSchedule() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <p className="truncate text-sm font-medium text-gray-900">
-                        {interview.applicant.name}
+                        {interview.applicant_name || 'Unknown Applicant'}
                       </p>
                       <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusStyle.className}`}>
                         {statusStyle.label}
                       </span>
                     </div>
                     <p className="mt-0.5 truncate text-xs text-gray-500">
-                      {interview.job_opening.title}
+                      {interview.job_opening_title || '—'}
                     </p>
                   </div>
 
@@ -108,13 +145,13 @@ export function InterviewSchedule() {
                       <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      <span>{new Date(interview.scheduled_date).toLocaleDateString()}</span>
+                      <span>{interview.scheduled_at ? new Date(interview.scheduled_at).toLocaleDateString() : '—'}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span>{interview.scheduled_time}</span>
+                      <span>{interview.scheduled_at ? new Date(interview.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}</span>
                       <span className="text-xs text-gray-400">({interview.duration_minutes} min)</span>
                     </div>
                   </div>
@@ -124,7 +161,7 @@ export function InterviewSchedule() {
                 <div className="mt-3 flex flex-col gap-2 border-t border-gray-100 pt-3 sm:flex-row sm:items-center sm:justify-between">
                   <p className="text-xs text-gray-500">
                     <span className="font-medium text-gray-700">Interviewer:</span>{' '}
-                    {interview.interviewer.first_name} {interview.interviewer.last_name}
+                    {interview.interviewer_name || '—'}
                   </p>
                   {interview.rating !== undefined && interview.rating !== null && (
                     <div className="flex items-center gap-1">
@@ -184,6 +221,16 @@ export function InterviewSchedule() {
           </div>
         </nav>
       )}
+
+      {/* Schedule Interview Modal */}
+      <CrudModal
+        isOpen={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="Schedule Interview"
+        fields={INTERVIEW_FIELDS}
+        onSubmit={(data) => createMutation.mutate(data)}
+        isLoading={createMutation.isPending}
+      />
     </div>
   );
 }

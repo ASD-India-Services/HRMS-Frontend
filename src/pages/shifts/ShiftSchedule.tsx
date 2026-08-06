@@ -1,11 +1,10 @@
 /**
- * Shift Schedule — weekly calendar view showing shift assignments for the current user.
+ * Shift Schedule — weekly calendar view showing the current user's shift assignments.
  * Allows navigating between weeks and shows assignments mapped to each day.
  * Requirements: 27.5
  */
 
 import { useState, useMemo } from 'react';
-import { useUser } from '@platform/auth-sdk';
 import { useShiftAssignments } from '@/hooks/useShifts';
 import { ShiftCard } from './components/ShiftCard';
 import type { ShiftAssignment } from '@/types/shift';
@@ -38,16 +37,17 @@ function getWeekDays(monday: Date): Date[] {
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export function ShiftSchedule() {
-  const user = useUser();
   const [weekStart, setWeekStart] = useState<Date>(() => getWeekStart(new Date()));
 
   const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
   const weekStartStr = toDateString(weekStart);
+  const weekEndStr = toDateString(weekDays[6]);
 
   // Fetch assignments for the current user overlapping this week
   const { data, isLoading, isError } = useShiftAssignments({
-    employee: user?.id ?? '',
-    date: weekStartStr,
+    mine: 'true',
+    from_date: weekStartStr,
+    to_date: weekEndStr,
     page_size: 50,
   });
 
@@ -76,7 +76,6 @@ export function ShiftSchedule() {
     setWeekStart(getWeekStart(new Date()));
   }
 
-  const weekEndStr = toDateString(weekDays[6]);
   const today = toDateString(new Date());
 
   return (

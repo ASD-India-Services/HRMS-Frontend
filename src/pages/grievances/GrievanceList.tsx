@@ -9,7 +9,8 @@
  * Requirements: 12.1, 12.2, 12.3, 12.4
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createCrudHooks } from '@/hooks/useCrud';
 import {
   grievancesCrudConfig,
@@ -18,9 +19,26 @@ import {
 import { grievanceWorkflow } from '@/config/workflows/grievance';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
 import { WorkflowEngine } from '@/components/WorkflowEngine';
+import { CreateButton } from '@/components/ActionButton';
+import { CrudModal } from '@/components/CrudModal';
+import type { FieldConfig } from '@/components/CrudModal';
 import { Can } from '@/components/Can';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
+import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
+
+const createFields: FieldConfig[] = [
+  { key: 'employee', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name', required: true },
+  { key: 'subject', label: 'Subject', type: 'text', required: true },
+  { key: 'description', label: 'Description', type: 'textarea', required: true },
+  { key: 'grievance_type', label: 'Grievance Type', type: 'select', options: [
+    { value: 'workplace', label: 'Workplace' },
+    { value: 'harassment', label: 'Harassment' },
+    { value: 'policy', label: 'Policy' },
+    { value: 'compensation', label: 'Compensation' },
+    { value: 'other', label: 'Other' },
+  ]},
+];
 
 const grievanceCrud = createCrudHooks<Grievance>({
   queryKey: grievancesCrudConfig.queryKey,
@@ -81,6 +99,16 @@ export function GrievanceList() {
 }
 
 function GrievanceListContent() {
+  const [showCreate, setShowCreate] = useState(false);
+  const queryClient = useQueryClient();
+  const createMutation = useMutation({
+    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/grievances/', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['grievances'] });
+      setShowCreate(false);
+    },
+  });
+
   const columns = useGrievanceColumns();
   const filters = grievancesCrudConfig.filters;
 
@@ -105,11 +133,14 @@ function GrievanceListContent() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Grievances</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Review and manage employee grievances through investigation and resolution.
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Grievances</h1>
+          <p className="mt-1 text-sm text-gray-600">
+            Review and manage employee grievances through investigation and resolution.
+          </p>
+        </div>
+        <CreateButton label="File Grievance" onClick={() => setShowCreate(true)} />
       </div>
 
       {queryResult.data && (
@@ -143,6 +174,15 @@ function GrievanceListContent() {
           onPageSizeChange={setPageSize}
         />
       )}
+
+      <CrudModal
+        isOpen={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="File Grievance"
+        fields={createFields}
+        onSubmit={(data) => createMutation.mutate(data)}
+        isLoading={createMutation.isPending}
+      />
     </div>
   );
 }

@@ -9,7 +9,8 @@
  * Requirements: 11.1, 11.2, 11.3, 11.4, 11.5
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createCrudHooks } from '@/hooks/useCrud';
 import {
   trainingEventsCrudConfig,
@@ -18,9 +19,28 @@ import {
 import { trainingWorkflow } from '@/config/workflows/training';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
 import { WorkflowEngine } from '@/components/WorkflowEngine';
+import { CreateButton } from '@/components/ActionButton';
+import { CrudModal } from '@/components/CrudModal';
+import type { FieldConfig } from '@/components/CrudModal';
 import { Can } from '@/components/Can';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
+import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
+
+const createFields: FieldConfig[] = [
+  { key: 'name', label: 'Event Name', type: 'text', required: true },
+  { key: 'trainer_name', label: 'Trainer Name', type: 'text', placeholder: 'Trainer name' },
+  { key: 'start_date', label: 'Start Date', type: 'date', required: true },
+  { key: 'end_date', label: 'End Date', type: 'date' },
+  { key: 'location', label: 'Location', type: 'text', placeholder: 'Location or online link' },
+  { key: 'max_attendees', label: 'Max Attendees', type: 'number', placeholder: '30' },
+  { key: 'status', label: 'Status', type: 'select', options: [
+    { value: 'upcoming', label: 'Upcoming' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'cancelled', label: 'Cancelled' },
+  ]},
+];
 
 const trainingCrud = createCrudHooks<TrainingEvent>({
   queryKey: trainingEventsCrudConfig.queryKey,
@@ -98,6 +118,16 @@ export function TrainingEvents() {
 }
 
 function TrainingEventsContent() {
+  const [showCreate, setShowCreate] = useState(false);
+  const queryClient = useQueryClient();
+  const createMutation = useMutation({
+    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/training/events/', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['training-events'] });
+      setShowCreate(false);
+    },
+  });
+
   const columns = useTrainingColumns();
   const filters = trainingEventsCrudConfig.filters;
 
@@ -122,11 +152,14 @@ function TrainingEventsContent() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Training Events</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Manage training events, track statuses, and control lifecycle.
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Training Events</h1>
+          <p className="mt-1 text-sm text-gray-600">
+            Manage training events, track statuses, and control lifecycle.
+          </p>
+        </div>
+        <CreateButton label="Create Training Event" onClick={() => setShowCreate(true)} />
       </div>
 
       <FilterBar
@@ -150,6 +183,15 @@ function TrainingEventsContent() {
           onPageSizeChange={setPageSize}
         />
       )}
+
+      <CrudModal
+        isOpen={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="Create Training Event"
+        fields={createFields}
+        onSubmit={(data) => createMutation.mutate(data)}
+        isLoading={createMutation.isPending}
+      />
     </div>
   );
 }
