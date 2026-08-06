@@ -31,8 +31,16 @@ async function fetchTrainingEvents(filters: TrainingFilters): Promise<PaginatedR
 }
 
 async function fetchTrainingEvent(id: string): Promise<TrainingEventDetail> {
-  const response = await api.get<TrainingEventDetail>(`/api/v1/training/events/${id}/`);
-  return response.data;
+  const [eventResponse, enrollmentsResponse] = await Promise.all([
+    api.get(`/api/v1/training/events/${id}/`),
+    api.get(`/api/v1/training/events/${id}/enrollments/`),
+  ]);
+  return {
+    ...eventResponse.data,
+    enrollments: Array.isArray(enrollmentsResponse.data)
+      ? enrollmentsResponse.data
+      : enrollmentsResponse.data?.results || [],
+  } as TrainingEventDetail;
 }
 
 async function enrollInEvent(payload: EnrollPayload): Promise<TrainingEnrollment> {

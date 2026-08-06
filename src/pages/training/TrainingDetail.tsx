@@ -23,7 +23,7 @@ const ENROLLMENT_BADGES: Record<EnrollmentStatus, { label: string; className: st
 
 interface TrainingDetailProps {
   eventId: string;
-  employeeId: number;
+  employeeId: string | number;
   onBack?: () => void;
 }
 
@@ -37,7 +37,10 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
 
   // Find current employee's enrollment
-  const myEnrollment = event?.enrollments.find((e) => e.employee.id === employeeId);
+  const myEnrollment = event?.enrollments?.find((e) => {
+    const empId = typeof e.employee === 'object' ? e.employee?.id : e.employee;
+    return String(empId) === String(employeeId);
+  });
 
   const handleEnroll = () => {
     enrollMutation.mutate({ event: eventId, employee: employeeId });
@@ -147,11 +150,11 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
         )}
 
         {/* Prerequisites */}
-        {event.prerequisites.length > 0 && (
+        {event.prerequisites?.length > 0 && (
           <div className="mt-4 border-t border-gray-100 pt-4">
             <h4 className="text-xs font-medium uppercase tracking-wider text-gray-500">Prerequisites</h4>
             <ul className="mt-1 list-inside list-disc text-sm text-gray-700">
-              {event.prerequisites.map((prereq, idx) => (
+              {event.prerequisites?.map((prereq, idx) => (
                 <li key={idx}>{prereq}</li>
               ))}
             </ul>
@@ -178,7 +181,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
             {myEnrollment.status === 'completed' && myEnrollment.feedback_score !== null && (
               <div className="rounded-md bg-green-50 p-3">
                 <p className="text-sm text-green-800">
-                  <span className="font-medium">Rating:</span> {myEnrollment.feedback_score}/10
+                  <span className="font-medium">Rating:</span> {myEnrollment.feedback_score}/5
                 </p>
                 {myEnrollment.feedback_comments && (
                   <p className="mt-1 text-sm text-green-700">{myEnrollment.feedback_comments}</p>
@@ -203,21 +206,21 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
 
                 <div>
                   <label htmlFor="feedback-score" className="block text-xs font-medium text-gray-600">
-                    Score (1–10)
+                    Score (1–5)
                   </label>
                   <input
                     id="feedback-score"
                     type="range"
                     min={1}
-                    max={10}
+                    max={5}
                     value={feedbackScore}
                     onChange={(e) => setFeedbackScore(Number(e.target.value))}
                     className="mt-1 w-full"
                     aria-valuenow={feedbackScore}
                     aria-valuemin={1}
-                    aria-valuemax={10}
+                    aria-valuemax={5}
                   />
-                  <p className="mt-0.5 text-center text-sm font-medium text-primary-600">{feedbackScore}/10</p>
+                  <p className="mt-0.5 text-center text-sm font-medium text-primary-600">{feedbackScore}/5</p>
                 </div>
 
                 <div>
@@ -273,10 +276,10 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
       </div>
 
       {/* Enrollments list */}
-      {event.enrollments.length > 0 && (
+      {event.enrollments?.length > 0 && (
         <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
           <h3 className="mb-3 text-sm font-semibold text-gray-900">
-            Participants ({event.enrollments.length})
+            Participants ({event.enrollments?.length || 0})
           </h3>
           <div className="overflow-hidden rounded-md border border-gray-100">
             <table className="min-w-full divide-y divide-gray-200">
@@ -289,12 +292,12 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {event.enrollments.map((enrollment) => {
+                {event.enrollments?.map((enrollment) => {
                   const enrollBadge = ENROLLMENT_BADGES[enrollment.status];
                   return (
                     <tr key={enrollment.id}>
                       <td className="px-4 py-2 text-sm text-gray-900">
-                        {enrollment.employee.first_name} {enrollment.employee.last_name}
+                        {(enrollment as any).employee_name || (typeof enrollment.employee === 'object' ? `${(enrollment.employee as any).first_name} ${(enrollment.employee as any).last_name}` : '—')}
                       </td>
                       <td className="px-4 py-2">
                         <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${enrollBadge.className}`}>
@@ -305,7 +308,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
                         {new Date(enrollment.enrolled_at).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-2 text-sm text-gray-600">
-                        {enrollment.feedback_score !== null ? `${enrollment.feedback_score}/10` : '—'}
+                        {enrollment.feedback_score !== null ? `${enrollment.feedback_score}/5` : '—'}
                       </td>
                     </tr>
                   );

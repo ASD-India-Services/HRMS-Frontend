@@ -22,7 +22,7 @@ const filters: FilterConfig[] = [
 const createFields: FieldConfig[] = [
   { key: 'name', label: 'Name', type: 'text', required: true, placeholder: 'Enter KRA name' },
   { key: 'description', label: 'Description', type: 'textarea', placeholder: 'Describe the KRA' },
-  { key: 'department', label: 'Department', type: 'text', placeholder: 'Department name' },
+  { key: 'department', label: 'Department', type: 'select', optionsEndpoint: '/api/v1/departments/' },
 ];
 
 export default function KRAs() {
@@ -39,7 +39,7 @@ export default function KRAs() {
   const columns: ColumnDef<Record<string, unknown>>[] = [
     { key: 'name', header: 'Name', sortable: true },
     { key: 'description', header: 'Description', sortable: false },
-    { key: 'department', header: 'Department', sortable: true },
+    { key: 'department_name', header: 'Department', sortable: true, render: (v: unknown) => (v as string) || 'Global' },
     { key: 'is_active', header: 'Active', sortable: true, render: (v: unknown) => (v ? 'Yes' : 'No') },
     {
       key: 'id',

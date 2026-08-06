@@ -15,8 +15,8 @@ const crud = createCrudHooks<Record<string, unknown>>({
 });
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
-  { key: 'employee', header: 'Employee', sortable: true },
-  { key: 'feedback_by', header: 'Feedback By', sortable: true },
+  { key: 'employee_name', header: 'Employee', sortable: true, render: (v: unknown) => (v as string) || '—' },
+  { key: 'feedback_by_name', header: 'Feedback By', sortable: true, render: (v: unknown) => (v as string) || '—' },
   { key: 'feedback_date', header: 'Date', sortable: true },
   { key: 'overall_rating', header: 'Rating', sortable: true },
   { key: 'feedback_text', header: 'Feedback', sortable: false },
@@ -29,8 +29,9 @@ const filters: FilterConfig[] = [
 const createFields: FieldConfig[] = [
   { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
   { key: 'feedback_by', label: 'Feedback By', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
-  { key: 'rating', label: 'Rating', type: 'number', required: true, placeholder: 'Rating (1-5)' },
-  { key: 'comments', label: 'Comments', type: 'textarea', placeholder: 'Feedback comments' },
+  { key: 'feedback_date', label: 'Feedback Date', type: 'date', required: true },
+  { key: 'overall_rating', label: 'Rating (1-5)', type: 'number', required: true, placeholder: '1 to 5' },
+  { key: 'feedback_text', label: 'Feedback Comments', type: 'textarea', required: true, placeholder: 'Write your feedback...' },
 ];
 
 export default function PerformanceFeedback() {

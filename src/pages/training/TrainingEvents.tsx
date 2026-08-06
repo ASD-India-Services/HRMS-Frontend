@@ -29,13 +29,23 @@ import type { ColumnDef } from '@/types/datatable';
 
 const createFields: FieldConfig[] = [
   { key: 'name', label: 'Event Name', type: 'text', required: true },
-  { key: 'trainer_name', label: 'Trainer Name', type: 'text', placeholder: 'Trainer name' },
+  { key: 'event_type', label: 'Event Type', type: 'select', required: true, options: [
+    { value: 'workshop', label: 'Workshop' },
+    { value: 'seminar', label: 'Seminar' },
+    { value: 'webinar', label: 'Webinar' },
+    { value: 'certification', label: 'Certification' },
+    { value: 'on_the_job', label: 'On the Job' },
+    { value: 'self_paced', label: 'Self-Paced' },
+    { value: 'conference', label: 'Conference' },
+  ]},
+  { key: 'trainer', label: 'Trainer Name', type: 'text', placeholder: 'Trainer name' },
   { key: 'start_date', label: 'Start Date', type: 'date', required: true },
-  { key: 'end_date', label: 'End Date', type: 'date' },
+  { key: 'end_date', label: 'End Date', type: 'date', required: true },
   { key: 'location', label: 'Location', type: 'text', placeholder: 'Location or online link' },
-  { key: 'max_attendees', label: 'Max Attendees', type: 'number', placeholder: '30' },
+  { key: 'max_participants', label: 'Max Participants', type: 'number', placeholder: '30' },
   { key: 'status', label: 'Status', type: 'select', options: [
-    { value: 'upcoming', label: 'Upcoming' },
+    { value: 'draft', label: 'Draft' },
+    { value: 'scheduled', label: 'Scheduled' },
     { value: 'in_progress', label: 'In Progress' },
     { value: 'completed', label: 'Completed' },
     { value: 'cancelled', label: 'Cancelled' },
@@ -106,18 +116,18 @@ function useTrainingColumns(): ColumnDef<TrainingEvent>[] {
   );
 }
 
-export function TrainingEvents() {
+export function TrainingEvents({ onSelectEvent }: { onSelectEvent?: (id: string) => void }) {
   return (
     <Can
       permissions={['training.view']}
       fallback={<AccessDenied />}
     >
-      <TrainingEventsContent />
+      <TrainingEventsContent onSelectEvent={onSelectEvent} />
     </Can>
   );
 }
 
-function TrainingEventsContent() {
+function TrainingEventsContent({ onSelectEvent }: { onSelectEvent?: (id: string) => void }) {
   const [showCreate, setShowCreate] = useState(false);
   const queryClient = useQueryClient();
   const createMutation = useMutation({
@@ -172,6 +182,7 @@ function TrainingEventsContent() {
       <DataTable<TrainingEvent>
         queryResult={queryResult}
         columns={columns}
+        onRowClick={onSelectEvent ? (row) => onSelectEvent(row.id) : undefined}
       />
 
       {queryResult.data && queryResult.data.count > 0 && (

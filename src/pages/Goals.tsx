@@ -23,6 +23,8 @@ const createFields: FieldConfig[] = [
   { key: 'goal_name', label: 'Goal Name', type: 'text', required: true, placeholder: 'Enter goal name' },
   { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
   { key: 'kra', label: 'KRA', type: 'select', optionsEndpoint: '/api/v1/appraisals/kras/' },
+  { key: 'start_date', label: 'Start Date', type: 'date', required: true },
+  { key: 'end_date', label: 'End Date', type: 'date', required: true },
   { key: 'status', label: 'Status', type: 'select', options: [{ value: 'not_started', label: 'Not Started' }, { value: 'in_progress', label: 'In Progress' }, { value: 'completed', label: 'Completed' }] },
   { key: 'progress_percentage', label: 'Progress %', type: 'number', placeholder: '0' },
 ];
@@ -40,8 +42,8 @@ export default function Goals() {
 
   const columns: ColumnDef<Record<string, unknown>>[] = [
     { key: 'goal_name', header: 'Goal', sortable: true },
-    { key: 'employee', header: 'Employee', sortable: true },
-    { key: 'kra', header: 'KRA', sortable: true },
+    { key: 'employee_name', header: 'Employee', sortable: true, render: (v: unknown) => (v as string) || '—' },
+    { key: 'kra_name', header: 'KRA', sortable: true, render: (v: unknown) => (v as string) || '—' },
     { key: 'status', header: 'Status', sortable: true },
     { key: 'progress_percentage', header: 'Progress %', sortable: true },
     {

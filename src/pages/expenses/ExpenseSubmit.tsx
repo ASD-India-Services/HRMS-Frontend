@@ -65,7 +65,8 @@ export function ExpenseSubmit() {
       // First submit the expense claim
       const claim = await submitClaim.mutateAsync({
         expense_type: expenseType,
-        amount: parseFloat(amount),
+        title: description.trim().slice(0, 50) || 'Expense claim',
+        total_amount: parseFloat(amount),
         description: description.trim(),
         expense_date: expenseDate,
       });
@@ -203,7 +204,7 @@ export function ExpenseSubmit() {
                         className="sr-only"
                       />
                     </label>
-                    <span className="text-sm text-gray-500"> or drag and drop</span>
+                    <span className="text-sm text-gray-500"> to attach receipts</span>
                   </div>
                   <p className="mt-1 text-xs text-gray-500">
                     PNG, JPG, PDF up to 10MB each

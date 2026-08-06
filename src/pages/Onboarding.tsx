@@ -4,16 +4,19 @@
  * Requirements: 24.2
  */
 
+import { useQuery } from '@tanstack/react-query';
 import { OnboardingChecklist } from '@/pages/onboarding/OnboardingChecklist';
-import { useUser } from '@platform/auth-sdk';
+import api from '@/lib/api';
 
 export default function Onboarding() {
-  const { id: userId } = useUser();
+  // Fetch the actual employee record for the current user
+  const { data: currentEmployee } = useQuery<{ id: string }>({
+    queryKey: ['employee', 'me'],
+    queryFn: () => api.get('/api/v1/employees/me/').then((r) => r.data),
+    staleTime: 10 * 60 * 1000,
+  });
 
-  // The onboarding tasks are fetched by employee ID.
-  // In a full implementation, we'd fetch the employee record linked to this user.
-  // For now, pass the user ID and let the backend handle lookup.
-  const employeeId = userId ?? undefined;
+  const employeeId = currentEmployee?.id;
 
   return (
     <div>
@@ -25,7 +28,7 @@ export default function Onboarding() {
         {employeeId ? (
           <OnboardingChecklist employeeId={employeeId} />
         ) : (
-          <p className="text-sm text-gray-500">No onboarding tasks assigned.</p>
+          <p className="text-sm text-gray-500">Loading...</p>
         )}
       </div>
     </div>

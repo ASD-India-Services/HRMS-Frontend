@@ -87,6 +87,7 @@ const EmployeeCostCenters = lazy(() => import('@/pages/EmployeeCostCenters'));
 const DocumentTypes = lazy(() => import('@/pages/DocumentTypes'));
 const EmployeeDocuments = lazy(() => import('@/pages/EmployeeDocuments'));
 const ExpenseTaxes = lazy(() => import('@/pages/ExpenseTaxes'));
+const ExpenseTypes = lazy(() => import('@/pages/ExpenseTypes'));
 const EmployeeIncentives = lazy(() => import('@/pages/EmployeeIncentives'));
 const Transfers = lazy(() => import('@/pages/Transfers'));
 const Promotions = lazy(() => import('@/pages/Promotions'));
@@ -130,6 +131,8 @@ const ExpenseApprovals = lazy(() => import('@/pages/expenses/ExpenseApprovals').
 
 // Onboarding
 const Onboarding = lazy(() => import('@/pages/Onboarding'));
+const OnboardingTemplates = lazy(() => import('@/pages/OnboardingTemplates'));
+const OnboardingTracking = lazy(() => import('@/pages/onboarding/OnboardingTracking').then((m) => ({ default: m.OnboardingTracking as React.ComponentType })));
 
 // Training
 const Training = lazy(() => import('@/pages/Training'));
@@ -400,7 +403,15 @@ export const router = createBrowserRouter([
       // ─── Onboarding ──────────────────────────────────────────────
       {
         path: 'onboarding',
-        element: gated('onboarding_enabled', 'Onboarding', 'onboarding.view', <Onboarding />),
+        element: permGated('onboarding.view', <Onboarding />),
+      },
+      {
+        path: 'onboarding-templates',
+        element: permGated('onboarding.manage', <OnboardingTemplates />),
+      },
+      {
+        path: 'onboarding-tracking',
+        element: permGated('onboarding.manage', <OnboardingTracking />),
       },
 
       // ─── Training ────────────────────────────────────────────────
@@ -599,6 +610,10 @@ export const router = createBrowserRouter([
       {
         path: 'expense-taxes',
         element: gated('expenses_enabled', 'Expense Management', 'expenses.view', <ExpenseTaxes />),
+      },
+      {
+        path: 'expense-types',
+        element: gated('expenses_enabled', 'Expense Management', 'expenses.manage', <ExpenseTypes />),
       },
 
       // ─── Employee Incentives ───────────────────────────────────

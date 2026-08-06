@@ -71,9 +71,9 @@ export function calculateProgress(tasks: OnboardingTask[]): number {
 function useTrackingColumns(): ColumnDef<OnboardingTask>[] {
   return useMemo(
     () => [
-      { key: 'employee', header: 'Employee', sortable: true },
+      { key: 'employee_name', header: 'Employee', sortable: true, render: (v: unknown) => (v ? String(v) : '—') },
       { key: 'title', header: 'Task', sortable: true },
-      { key: 'category', header: 'Category', sortable: true },
+      { key: 'template_name', header: 'Template', sortable: true, render: (v: unknown) => (v ? String(v) : '—') },
       {
         key: 'status',
         header: 'Status',
@@ -95,12 +95,12 @@ function useTrackingColumns(): ColumnDef<OnboardingTask>[] {
         },
       },
       {
-        key: 'due_date',
-        header: 'Due Date',
+        key: 'due_days',
+        header: 'Due (days)',
         sortable: true,
         render: (value: unknown) => (
           <span className="text-sm text-gray-700">
-            {value ? new Date(value as string).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+            {value ? `${value} days` : '—'}
           </span>
         ),
       },

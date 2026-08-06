@@ -49,7 +49,7 @@ const approvalFilters = expenseClaimsCrudConfig.filters;
 const approvalColumns: ColumnDef<ExpenseClaimRecord>[] = [
   { key: 'employee_name', header: 'Employee', sortable: true },
   { key: 'title', header: 'Title', sortable: true },
-  { key: 'expense_type', header: 'Expense Type', sortable: true },
+  { key: 'expense_type_name', header: 'Expense Type', sortable: true },
   {
     key: 'total_amount',
     header: 'Amount',
@@ -95,7 +95,7 @@ export function ExpenseApprovals() {
   const queryParams: Record<string, string | number> = {
     page,
     page_size: pageSize,
-    status: filterValues.status || 'pending',
+    status: filterValues.status || '',
     ...Object.fromEntries(
       Object.entries(filterValues).filter(([key, val]) => val && key !== 'status')
     ),
@@ -149,7 +149,7 @@ export function ExpenseApprovals() {
         {/* Filter bar */}
         <FilterBar
           filters={approvalFilters}
-          values={{ ...filterValues, status: filterValues.status || 'pending' }}
+          values={{ ...filterValues, status: filterValues.status || '' }}
           onChange={handleFilterChange}
           onClearAll={clearFilters}
         />
@@ -223,7 +223,7 @@ function ExpandedClaimDetail({ claimId, claims, onCollapse }: ExpandedClaimDetai
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-gray-700">
             <span>
-              <span className="font-medium">Type:</span> {claim.expense_type}
+              <span className="font-medium">Type:</span> {claim.expense_type_name || claim.expense_type}
             </span>
             <span>
               <span className="font-medium">Amount:</span> {amount}

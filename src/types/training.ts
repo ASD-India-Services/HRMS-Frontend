@@ -27,12 +27,13 @@ export interface TrainingEnrollment {
   event: {
     id: string;
     name: string;
-  };
+  } | string;
   employee: {
-    id: number;
+    id: number | string;
     first_name: string;
     last_name: string;
-  };
+  } | string;
+  employee_name?: string;
   status: EnrollmentStatus;
   enrolled_at: string;
   completed_at: string | null;
@@ -55,7 +56,7 @@ export interface TrainingFilters {
 
 export interface EnrollPayload {
   event: string;
-  employee: number;
+  employee: string | number;
 }
 
 export interface CompleteFeedback {

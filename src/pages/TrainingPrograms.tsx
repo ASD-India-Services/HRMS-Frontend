@@ -28,7 +28,7 @@ const filters: FilterConfig[] = [
 const createFields: FieldConfig[] = [
   { key: 'name', label: 'Program Name', type: 'text', required: true, placeholder: 'Enter program name' },
   { key: 'description', label: 'Description', type: 'textarea', placeholder: 'Describe the training program' },
-  { key: 'status', label: 'Status', type: 'select', options: [{ value: 'scheduled', label: 'Scheduled' }, { value: 'in_progress', label: 'In Progress' }, { value: 'completed', label: 'Completed' }, { value: 'cancelled', label: 'Cancelled' }] },
+  { key: 'status', label: 'Status', type: 'select', options: [{ value: 'planned', label: 'Planned' }, { value: 'in_progress', label: 'In Progress' }, { value: 'completed', label: 'Completed' }] },
   { key: 'start_date', label: 'Start Date', type: 'date', required: true },
   { key: 'end_date', label: 'End Date', type: 'date', required: true },
 ];

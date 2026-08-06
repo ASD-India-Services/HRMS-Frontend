@@ -113,16 +113,16 @@ export function ExpenseList() {
                 {data.results.map((claim) => (
                   <tr key={claim.id} className="hover:bg-gray-50">
                     <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900">
-                      {claim.expense_type.name}
+                      {claim.expense_type_name || claim.expense_type?.name || '—'}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900">
-                      {formatCurrency(claim.amount)}
+                      {formatCurrency(claim.total_amount || claim.amount || 0)}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
                       {formatDate(claim.expense_date)}
                     </td>
-                    <td className="max-w-xs truncate px-4 py-3 text-sm text-gray-600" title={claim.description}>
-                      {claim.description}
+                    <td className="max-w-xs truncate px-4 py-3 text-sm text-gray-600" title={claim.description || claim.title || ''}>
+                      {claim.title || claim.description || '—'}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3">
                       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusStyles[claim.status]}`}>

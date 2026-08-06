@@ -15,8 +15,8 @@ const crud = createCrudHooks<Record<string, unknown>>({
 });
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
-  { key: 'employee', header: 'Employee', sortable: true },
-  { key: 'training_event', header: 'Training Event', sortable: true },
+  { key: 'employee_name', header: 'Employee', sortable: true },
+  { key: 'training_event_name', header: 'Training Event', sortable: true },
   { key: 'result_status', header: 'Result', sortable: true },
   { key: 'score', header: 'Score', sortable: true },
   { key: 'grade', header: 'Grade', sortable: true },
@@ -28,9 +28,11 @@ const filters: FilterConfig[] = [
 
 const createFields: FieldConfig[] = [
   { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
-  { key: 'training_event', label: 'Training Event', type: 'text', required: true, placeholder: 'Training event name' },
-  { key: 'result', label: 'Result', type: 'select', required: true, options: [{ value: 'pass', label: 'Pass' }, { value: 'fail', label: 'Fail' }, { value: 'pending', label: 'Pending' }] },
-  { key: 'score', label: 'Score', type: 'number', placeholder: 'Score achieved' },
+  { key: 'training_event', label: 'Training Event', type: 'select', required: true, optionsEndpoint: '/api/v1/training/events/', optionsLabelKey: 'name' },
+  { key: 'result_status', label: 'Result', type: 'select', required: true, options: [{ value: 'passed', label: 'Passed' }, { value: 'failed', label: 'Failed' }, { value: 'incomplete', label: 'Incomplete' }] },
+  { key: 'score', label: 'Score', type: 'number', placeholder: 'Score (e.g. 85.50)' },
+  { key: 'grade', label: 'Grade', type: 'text', placeholder: 'e.g. A, B+' },
+  { key: 'certified_on', label: 'Certified On', type: 'date' },
   { key: 'comments', label: 'Comments', type: 'textarea', placeholder: 'Additional comments' },
 ];
 

@@ -14,8 +14,8 @@ export const appraisalCycleWorkflow: WorkflowConfig = {
   statuses: [
     { key: 'draft', label: 'Draft', color: 'gray' },
     { key: 'active', label: 'Active', color: 'blue' },
-    { key: 'in_progress', label: 'In Progress', color: 'yellow' },
     { key: 'completed', label: 'Completed', color: 'green', terminal: true },
+    { key: 'cancelled', label: 'Cancelled', color: 'red', terminal: true },
   ],
   transitions: [
     {
@@ -29,20 +29,11 @@ export const appraisalCycleWorkflow: WorkflowConfig = {
       confirm: {
         title: 'Activate Appraisal Cycle',
         message:
-          'This will create individual appraisals for all participants. Continue?',
+          'This will make the cycle active and allow reviews to begin. Continue?',
       },
     },
     {
       from: 'active',
-      to: 'in_progress',
-      action: 'Start Reviews',
-      endpoint: (id) => `/api/v1/appraisals/cycles/${id}/`,
-      method: 'PATCH',
-      allowedRoles: ['org_admin', 'hr_manager'],
-      variant: 'primary',
-    },
-    {
-      from: 'in_progress',
       to: 'completed',
       action: 'Complete Cycle',
       endpoint: (id) => `/api/v1/appraisals/cycles/${id}/`,
@@ -54,6 +45,15 @@ export const appraisalCycleWorkflow: WorkflowConfig = {
         message:
           'All appraisals in this cycle will be finalized. Continue?',
       },
+    },
+    {
+      from: 'active',
+      to: 'cancelled',
+      action: 'Cancel Cycle',
+      endpoint: (id) => `/api/v1/appraisals/cycles/${id}/`,
+      method: 'PATCH',
+      allowedRoles: ['org_admin', 'hr_manager'],
+      variant: 'destructive',
     },
   ],
 };

@@ -5,35 +5,32 @@
  */
 
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { TrainingEvents } from '@/pages/training/TrainingEvents';
 import { TrainingDetail } from '@/pages/training/TrainingDetail';
+import api from '@/lib/api';
 
 export default function Training() {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
-  // In production, employeeId comes from auth context / user profile.
-  const employeeId = 1; // TODO: replace with actual auth employee ID
+  // Get the actual employee record for the current user (not auth user ID)
+  const { data: currentEmployee } = useQuery<{ id: string }>({
+    queryKey: ['employee', 'me'],
+    queryFn: () => api.get('/api/v1/employees/me/').then((r) => r.data),
+    staleTime: 10 * 60 * 1000,
+  });
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-gray-900">Training</h1>
-      <p className="mt-1 text-sm text-gray-600">
-        Training events, enrollments, and learning management.
-      </p>
-      <div className="mt-6">
-        {selectedEventId ? (
-          <TrainingDetail
-            eventId={selectedEventId}
-            employeeId={employeeId}
-            onBack={() => setSelectedEventId(null)}
-          />
-        ) : (
-          <TrainingEvents
-            employeeId={employeeId}
-            onSelectEvent={setSelectedEventId}
-          />
-        )}
-      </div>
+      {selectedEventId ? (
+        <TrainingDetail
+          eventId={selectedEventId}
+          employeeId={currentEmployee?.id || ''}
+          onBack={() => setSelectedEventId(null)}
+        />
+      ) : (
+        <TrainingEvents onSelectEvent={setSelectedEventId} />
+      )}
     </div>
   );
 }

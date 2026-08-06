@@ -162,13 +162,16 @@ export const navigationConfig: NavGroup[] = [
     items: [
       { label: 'My Expenses', href: '/expenses', icon: ICONS.expenses, requiredPermission: 'expenses.view', featureFlag: 'expenses_enabled' },
       { label: 'Expense Approvals', href: '/expenses/approvals', icon: ICONS.expenseApprovals, requiredPermission: 'expenses.approve', featureFlag: 'expenses_enabled' },
+      { label: 'Expense Types', href: '/expense-types', icon: ICONS.expenses, requiredPermission: 'expenses.manage', featureFlag: 'expenses_enabled' },
       { label: 'Expense Taxes', href: '/expense-taxes', icon: ICONS.expenses, requiredPermission: 'expenses.manage', featureFlag: 'expenses_enabled' },
     ],
   },
   {
     label: 'Learning',
     items: [
-      { label: 'Onboarding', href: '/onboarding', icon: ICONS.onboarding, requiredPermission: 'onboarding.view', featureFlag: 'onboarding_enabled' },
+      { label: 'Onboarding', href: '/onboarding', icon: ICONS.onboarding, requiredPermission: 'onboarding.view' },
+      { label: 'Onboarding Templates', href: '/onboarding-templates', icon: ICONS.onboarding, requiredPermission: 'onboarding.manage' },
+      { label: 'Onboarding Tracking', href: '/onboarding-tracking', icon: ICONS.onboarding, requiredPermission: 'onboarding.manage' },
       { label: 'Training', href: '/training', icon: ICONS.training, requiredPermission: 'training.view', featureFlag: 'training_enabled' },
       { label: 'Training Programs', href: '/training-programs', icon: ICONS.training, requiredPermission: 'training.manage', featureFlag: 'training_enabled' },
       { label: 'Training Results', href: '/training-results', icon: ICONS.training, requiredPermission: 'training.manage', featureFlag: 'training_enabled' },
