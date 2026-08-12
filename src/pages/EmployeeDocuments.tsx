@@ -34,6 +34,19 @@ const createFields: FieldConfig[] = [
   { key: 'expiry_date', label: 'Expiry Date', type: 'date' },
 ];
 
+const editFields: FieldConfig[] = [
+  { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
+  { key: 'document_type', label: 'Document Type', type: 'select', required: true, optionsEndpoint: '/api/v1/document-types/' },
+  { key: 'document_number', label: 'Document Number', type: 'text', required: true, placeholder: 'Document number' },
+  { key: 'issue_date', label: 'Issue Date', type: 'date' },
+  { key: 'expiry_date', label: 'Expiry Date', type: 'date' },
+  { key: 'verification_status', label: 'Verification Status', type: 'select', options: [
+    { value: 'pending', label: 'Pending' },
+    { value: 'verified', label: 'Verified' },
+    { value: 'expired', label: 'Expired' },
+  ]},
+];
+
 export default function EmployeeDocuments() {
   const [showCreate, setShowCreate] = useState(false);
   const [editRecord, setEditRecord] = useState<Record<string, unknown> | null>(null);
@@ -106,8 +119,8 @@ export default function EmployeeDocuments() {
       <CrudModal
         isOpen={!!editRecord}
         onClose={() => setEditRecord(null)}
-        title="Edit"
-        fields={createFields}
+        title="Edit Document"
+        fields={editFields}
         initialValues={editRecord ?? undefined}
         onSubmit={handleEdit}
         isLoading={editLoading}

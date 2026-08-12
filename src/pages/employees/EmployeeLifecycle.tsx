@@ -321,7 +321,7 @@ export function EmployeeLifecycle() {
 
       {/* Action buttons — guarded by RBAC */}
       <div className="mb-8 flex flex-wrap gap-3">
-        <Can roles={['org_admin', 'hr_manager']}>
+        <Can permissions={['employees.edit']}>
           {isActive && (
             <>
               <button

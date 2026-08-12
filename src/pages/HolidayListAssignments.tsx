@@ -15,9 +15,13 @@ const crud = createCrudHooks<Record<string, unknown>>({
 });
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
-  { key: 'holiday_list', header: 'Holiday List', sortable: true },
+  { key: 'holiday_list_name', header: 'Holiday List', sortable: true, render: (v: unknown) => (v ? String(v) : '—') },
   { key: 'assignment_type', header: 'Assignment Type', sortable: true },
-  { key: 'employee', header: 'Employee/Department', sortable: false },
+  { key: 'employee_name', header: 'Employee/Department', sortable: false, render: (_v: unknown, row: Record<string, unknown>) => {
+    if (row.employee_name) return String(row.employee_name);
+    if (row.department_name) return String(row.department_name);
+    return '—';
+  }},
   { key: 'effective_date', header: 'Effective Date', sortable: true },
 ];
 

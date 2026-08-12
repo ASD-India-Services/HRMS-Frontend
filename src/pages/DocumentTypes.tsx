@@ -48,7 +48,7 @@ export default function DocumentTypes() {
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
           <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} permission="employees.delete" />
+          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },

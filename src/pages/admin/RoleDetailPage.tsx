@@ -69,6 +69,7 @@ const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   'onboarding.create': 'Create onboarding plans for new employees',
   'onboarding.edit': 'Edit onboarding tasks and checklists',
   'onboarding.delete': 'Delete onboarding records',
+  'onboarding.manage': 'Access Onboarding Templates, task assignments, and onboarding tracking dashboard',
   // Training
   'training.view': 'View training events, schedules, and enrollments',
   'training.create': 'Create training sessions and enroll employees',
@@ -108,6 +109,24 @@ const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   'permissions.view': 'View the list of all available permissions in the system',
   // Dashboard
   'dashboard.view': 'Access the main dashboard with charts and metrics',
+  // Exit Interviews
+  'exit_interviews.view': 'View exit interview records for departing employees',
+  'exit_interviews.manage': 'Create, edit, and delete exit interview records',
+  // Holidays
+  'holidays.view': 'View holiday lists and their entries',
+  'holidays.manage': 'Create, edit, and delete holiday lists, entries, and assignments to employees/departments',
+  // Health Insurance
+  'health_insurance.view': 'View employee health insurance records',
+  'health_insurance.manage': 'Create, edit, and delete health insurance records for employees',
+  // Cost Centers
+  'cost_centers.view': 'View employee cost center assignments',
+  'cost_centers.manage': 'Create, edit, and delete cost center allocations',
+  // Documents
+  'documents.view': 'View document types and employee uploaded documents',
+  'documents.manage': 'Create, edit, and delete document types and manage employee document submissions',
+  // Appointment Letters
+  'appointment_letters.view': 'View appointment letter templates',
+  'appointment_letters.manage': 'Create, edit, and delete appointment letter templates and generate letters',
 };
 
 interface PermissionItem {

@@ -129,7 +129,7 @@ export function RecruitmentPipeline() {
   );
 
   return (
-    <Can roles={['org_admin', 'hr_manager']}>
+    <Can permissions={['recruitment.view']}>
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Page header */}
         <div className="mb-6 flex items-center justify-between">

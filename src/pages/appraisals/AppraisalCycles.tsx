@@ -92,7 +92,7 @@ function useAppraisalColumns(): ColumnDef<AppraisalCycle>[] {
 export function AppraisalCycles() {
   return (
     <Can
-      roles={['org_admin', 'hr_manager']}
+      permissions={['appraisals.view']}
       fallback={<AccessDenied />}
     >
       <AppraisalCyclesContent />

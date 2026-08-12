@@ -556,7 +556,7 @@ export const router = createBrowserRouter([
       // ─── Exit Interviews ───────────────────────────────────────
       {
         path: 'exit-interviews',
-        element: permGated('employees.view', <ExitInterviews />),
+        element: permGated('exit_interviews.view', <ExitInterviews />),
       },
 
       // ─── Payroll Periods & Corrections ─────────────────────────
@@ -576,7 +576,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'holiday-lists',
-        element: permGated('employees.manage', <HolidayLists />),
+        element: permGated('holidays.manage', <HolidayLists />),
       },
 
       // ─── Recruitment: Interview Types, Templates, Referrals ────
@@ -606,19 +606,19 @@ export const router = createBrowserRouter([
       // ─── Employee Records ──────────────────────────────────────
       {
         path: 'health-insurance',
-        element: gated('employees_enabled', 'Employees', 'employees.view', <EmployeeHealthInsurance />),
+        element: permGated('health_insurance.view', <EmployeeHealthInsurance />),
       },
       {
         path: 'cost-centers',
-        element: gated('employees_enabled', 'Employees', 'employees.view', <EmployeeCostCenters />),
+        element: permGated('cost_centers.view', <EmployeeCostCenters />),
       },
       {
         path: 'document-types',
-        element: gated('employees_enabled', 'Employees', 'employees.view', <DocumentTypes />),
+        element: permGated('documents.manage', <DocumentTypes />),
       },
       {
         path: 'employee-documents',
-        element: gated('employees_enabled', 'Employees', 'employees.view', <EmployeeDocuments />),
+        element: permGated('documents.view', <EmployeeDocuments />),
       },
 
       // ─── Expense Taxes ─────────────────────────────────────────
@@ -652,7 +652,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'appointment-letters',
-        element: gated('employees_enabled', 'Employees', 'employees.view', <AppointmentLetters />),
+        element: permGated('appointment_letters.view', <AppointmentLetters />),
       },
       {
         path: 'hr-settings',
