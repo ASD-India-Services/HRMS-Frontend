@@ -108,7 +108,7 @@ const columns: ColumnDef<AuditLogEntry>[] = [
 export default function AuditLogs() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const { filterValues, page, pageSize, setPage, setPageSize } = useFilterSync({ filters });
+  const { filterValues, setFilter, clearFilters, page, pageSize, setPage, setPageSize } = useFilterSync({ filters });
 
   const params = useMemo(() => {
     const p: Record<string, string | number> = { page, page_size: pageSize };
@@ -142,7 +142,7 @@ export default function AuditLogs() {
 
       <div className="rounded-lg border border-gray-200 bg-white">
         <div className="border-b border-gray-200 p-4">
-          <FilterBar filters={filters} />
+          <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
         </div>
 
         <DataTable
