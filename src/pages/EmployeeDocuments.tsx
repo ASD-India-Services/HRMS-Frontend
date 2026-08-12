@@ -15,8 +15,8 @@ const crud = createCrudHooks<Record<string, unknown>>({
 });
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
-  { key: 'employee', header: 'Employee', sortable: true },
-  { key: 'document_type', header: 'Document Type', sortable: true },
+  { key: 'employee_name', header: 'Employee', sortable: true, render: (v: unknown) => (v ? String(v) : '—') },
+  { key: 'document_type_name', header: 'Document Type', sortable: true, render: (v: unknown) => (v ? String(v) : '—') },
   { key: 'document_number', header: 'Document Number', sortable: true },
   { key: 'expiry_date', header: 'Expiry Date', sortable: true },
   { key: 'verification_status', header: 'Verification', sortable: true },
@@ -62,7 +62,10 @@ export default function EmployeeDocuments() {
   ];
 
   const handleCreate = (data: Record<string, unknown>) => {
-    createMutation.mutate(data, {
+    const payload = { ...data };
+    if (!payload.issue_date) delete payload.issue_date;
+    if (!payload.expiry_date) delete payload.expiry_date;
+    createMutation.mutate(payload, {
       onSuccess: () => setShowCreate(false),
     });
   };

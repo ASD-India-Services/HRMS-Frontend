@@ -2,41 +2,41 @@
  * Full & Final Settlement Workflow Configuration
  *
  * Defines the state machine for employee settlement processing:
- * draft → pending_approval → approved/rejected.
+ * draft → pending_approval → approved → paid.
  *
  * Requirements: 19.1, 19.3, 19.4
  */
 
 import type { WorkflowConfig } from '@/types/workflow';
-import { SETTLEMENT } from '@/lib/endpoints';
 
 export const settlementWorkflow: WorkflowConfig = {
   id: 'settlement',
   statuses: [
     { key: 'draft', label: 'Draft', color: 'gray' },
     { key: 'pending_approval', label: 'Pending Approval', color: 'yellow' },
-    { key: 'approved', label: 'Approved', color: 'green', terminal: true },
-    { key: 'rejected', label: 'Rejected', color: 'red' },
+    { key: 'approved', label: 'Approved', color: 'green' },
+    { key: 'paid', label: 'Paid', color: 'blue', terminal: true },
   ],
   transitions: [
     {
       from: 'draft',
       to: 'pending_approval',
       action: 'Submit for Approval',
-      endpoint: (id) => SETTLEMENT.DETAIL(id),
-      method: 'PATCH',
+      endpoint: (id) => `/api/v1/full-final-settlement/${id}/submit/`,
+      method: 'POST',
       allowedRoles: ['org_admin', 'hr_manager'],
       variant: 'primary',
       confirm: {
         title: 'Submit Settlement',
-        message: 'Submit this settlement for approval?',
+        message: 'Submit this settlement for approval? Ensure all amounts are verified.',
       },
     },
     {
       from: 'pending_approval',
       to: 'approved',
       action: 'Approve',
-      endpoint: (id) => SETTLEMENT.APPROVE(id),
+      endpoint: (id) => `/api/v1/full-final-settlement/${id}/approve/`,
+      method: 'POST',
       allowedRoles: ['org_admin'],
       variant: 'primary',
       confirm: {
@@ -46,13 +46,39 @@ export const settlementWorkflow: WorkflowConfig = {
     },
     {
       from: 'pending_approval',
-      to: 'rejected',
+      to: 'draft',
       action: 'Reject',
-      endpoint: (id) => SETTLEMENT.DETAIL(id),
-      method: 'PATCH',
-      allowedRoles: ['org_admin', 'hr_manager'],
+      endpoint: (id) => `/api/v1/full-final-settlement/${id}/approve/`,
+      method: 'POST',
+      allowedRoles: ['org_admin'],
       requiresReason: true,
       variant: 'destructive',
+    },
+    {
+      from: 'approved',
+      to: 'paid',
+      action: 'Mark as Paid',
+      endpoint: (id) => `/api/v1/full-final-settlement/${id}/mark-paid/`,
+      method: 'POST',
+      allowedRoles: ['org_admin'],
+      variant: 'primary',
+      confirm: {
+        title: 'Mark as Paid',
+        message: 'Confirm that the settlement amount has been disbursed to the employee.',
+      },
+    },
+    {
+      from: 'draft',
+      to: 'deleted',
+      action: 'Delete',
+      endpoint: (id) => `/api/v1/full-final-settlement/${id}/`,
+      method: 'DELETE',
+      allowedRoles: ['org_admin', 'hr_manager'],
+      variant: 'destructive',
+      confirm: {
+        title: 'Delete Settlement',
+        message: 'Permanently delete this draft settlement?',
+      },
     },
   ],
 };

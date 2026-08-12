@@ -8,34 +8,35 @@
  */
 
 import type { WorkflowConfig } from '@/types/workflow';
-import { GRIEVANCES } from '@/lib/endpoints';
 
 export const grievanceWorkflow: WorkflowConfig = {
   id: 'grievance',
   statuses: [
     { key: 'open', label: 'Open', color: 'yellow' },
-    { key: 'under_investigation', label: 'Under Investigation', color: 'blue' },
+    { key: 'investigating', label: 'Investigating', color: 'blue' },
     { key: 'resolved', label: 'Resolved', color: 'green', terminal: true },
     { key: 'closed', label: 'Closed', color: 'gray', terminal: true },
   ],
   transitions: [
     {
       from: 'open',
-      to: 'under_investigation',
+      to: 'investigating',
       action: 'Assign Investigator',
-      endpoint: (id) => GRIEVANCES.DETAIL(id),
-      method: 'PATCH',
+      endpoint: (id) => `/api/v1/grievances/${id}/assign/`,
+      method: 'POST',
       allowedRoles: ['org_admin', 'hr_manager'],
       variant: 'primary',
+      formFields: [
+        { name: 'handler_id', label: 'Investigator', type: 'select', required: true, optionsQuery: { queryKey: ['employees', 'options'], endpoint: '/api/v1/employees/' } },
+      ],
     },
     {
-      from: 'under_investigation',
+      from: 'investigating',
       to: 'resolved',
       action: 'Mark Resolved',
-      endpoint: (id) => GRIEVANCES.DETAIL(id),
-      method: 'PATCH',
+      endpoint: (id) => `/api/v1/grievances/${id}/status/`,
+      method: 'POST',
       allowedRoles: ['org_admin', 'hr_manager'],
-      requiresReason: true,
       variant: 'primary',
       confirm: {
         title: 'Resolve Grievance',
@@ -43,11 +44,20 @@ export const grievanceWorkflow: WorkflowConfig = {
       },
     },
     {
-      from: 'resolved',
+      from: 'open',
       to: 'closed',
       action: 'Close',
-      endpoint: (id) => GRIEVANCES.DETAIL(id),
-      method: 'PATCH',
+      endpoint: (id) => `/api/v1/grievances/${id}/status/`,
+      method: 'POST',
+      allowedRoles: ['org_admin', 'hr_manager'],
+      variant: 'secondary',
+    },
+    {
+      from: 'investigating',
+      to: 'closed',
+      action: 'Close',
+      endpoint: (id) => `/api/v1/grievances/${id}/status/`,
+      method: 'POST',
       allowedRoles: ['org_admin', 'hr_manager'],
       variant: 'secondary',
     },

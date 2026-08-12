@@ -74,9 +74,12 @@ const AppraisalTemplates = lazy(() => import('@/pages/AppraisalTemplates'));
 const Goals = lazy(() => import('@/pages/Goals'));
 const PerformanceFeedback = lazy(() => import('@/pages/PerformanceFeedback'));
 const ExitInterviews = lazy(() => import('@/pages/ExitInterviews'));
+const GrievanceTypes = lazy(() => import('@/pages/GrievanceTypes'));
+const OvertimeTypes = lazy(() => import('@/pages/OvertimeTypes'));
 const PayrollPeriods = lazy(() => import('@/pages/PayrollPeriods'));
 const PayrollCorrections = lazy(() => import('@/pages/PayrollCorrections'));
 const HolidayListAssignments = lazy(() => import('@/pages/HolidayListAssignments'));
+const HolidayLists = lazy(() => import('@/pages/HolidayLists'));
 const InterviewTypes = lazy(() => import('@/pages/InterviewTypes'));
 const TrainingPrograms = lazy(() => import('@/pages/TrainingPrograms'));
 const TrainingResults = lazy(() => import('@/pages/TrainingResults'));
@@ -425,6 +428,10 @@ export const router = createBrowserRouter([
         path: 'grievances',
         element: gated('grievances_enabled', 'Grievances', 'grievances.view', <GrievanceList />),
       },
+      {
+        path: 'grievance-types',
+        element: permGated('grievances.edit', <GrievanceTypes />),
+      },
 
       // ─── Travel ──────────────────────────────────────────────────
       {
@@ -436,6 +443,10 @@ export const router = createBrowserRouter([
       {
         path: 'overtime',
         element: permGated('overtime.view', <OvertimeApprovals />),
+      },
+      {
+        path: 'overtime-types',
+        element: permGated('overtime.edit', <OvertimeTypes />),
       },
 
       // ─── Settlements ─────────────────────────────────────────────
@@ -562,6 +573,10 @@ export const router = createBrowserRouter([
       {
         path: 'holiday-assignments',
         element: gated('holidays_enabled', 'Holiday Lists', 'employees.view', <HolidayListAssignments />),
+      },
+      {
+        path: 'holiday-lists',
+        element: permGated('employees.manage', <HolidayLists />),
       },
 
       // ─── Recruitment: Interview Types, Templates, Referrals ────

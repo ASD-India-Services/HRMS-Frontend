@@ -30,9 +30,11 @@ import type { ColumnDef } from '@/types/datatable';
 
 const createFields: FieldConfig[] = [
   { key: 'employee', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name', required: true },
+  { key: 'overtime_type', label: 'Overtime Type', type: 'select', required: true, optionsEndpoint: '/api/v1/overtime-types/', optionsLabelKey: 'name' },
   { key: 'date', label: 'Date', type: 'date', required: true },
   { key: 'hours', label: 'Hours', type: 'number', required: true, placeholder: '2' },
-  { key: 'reason', label: 'Reason', type: 'textarea', placeholder: 'Reason for overtime' },
+  { key: 'base_hourly_rate', label: 'Hourly Rate', type: 'number', required: true, placeholder: '0.00' },
+  { key: 'remarks', label: 'Remarks', type: 'textarea', placeholder: 'Reason for overtime' },
 ];
 
 const overtimeCrud = createCrudHooks<OvertimeSlip>({
@@ -52,7 +54,7 @@ function formatDate(dateStr: string): string {
 function useOvertimeColumns(): ColumnDef<OvertimeSlip>[] {
   return useMemo(
     () => [
-      { key: 'employee', header: 'Employee', sortable: true },
+      { key: 'employee_name', header: 'Employee', sortable: true, render: (v: unknown) => (v ? String(v) : '—') },
       {
         key: 'date',
         header: 'Date',
@@ -72,8 +74,8 @@ function useOvertimeColumns(): ColumnDef<OvertimeSlip>[] {
         ),
       },
       {
-        key: 'reason',
-        header: 'Reason',
+        key: 'remarks',
+        header: 'Remarks',
         sortable: false,
         render: (value: unknown) => (
           <span className="text-sm text-gray-600 line-clamp-2 max-w-[200px]">
@@ -113,9 +115,9 @@ function OvertimeApprovalsContent() {
   const [showCreate, setShowCreate] = useState(false);
   const queryClient = useQueryClient();
   const createMutation = useMutation({
-    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/overtime/', data),
+    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/overtime-slips/', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['overtime'] });
+      queryClient.invalidateQueries({ queryKey: ['overtime-slips'] });
       setShowCreate(false);
     },
   });
@@ -135,8 +137,7 @@ function OvertimeApprovalsContent() {
 
   const apiParams = useMemo(() => {
     const params: Record<string, string | number> = { page, page_size: pageSize };
-    const statusFilter = filterValues.status || 'pending_approval';
-    params.status = statusFilter;
+    if (filterValues.status) params.status = filterValues.status;
     if (filterValues.search) params.search = filterValues.search;
     return params;
   }, [filterValues, page, pageSize]);
@@ -168,7 +169,7 @@ function OvertimeApprovalsContent() {
 
       <FilterBar
         filters={filters}
-        values={{ ...filterValues, status: filterValues.status || 'pending_approval' }}
+        values={{ ...filterValues, status: filterValues.status || '' }}
         onChange={setFilter}
         onClearAll={clearFilters}
       />

@@ -31,13 +31,7 @@ const createFields: FieldConfig[] = [
   { key: 'employee', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name', required: true },
   { key: 'subject', label: 'Subject', type: 'text', required: true },
   { key: 'description', label: 'Description', type: 'textarea', required: true },
-  { key: 'grievance_type', label: 'Grievance Type', type: 'select', options: [
-    { value: 'workplace', label: 'Workplace' },
-    { value: 'harassment', label: 'Harassment' },
-    { value: 'policy', label: 'Policy' },
-    { value: 'compensation', label: 'Compensation' },
-    { value: 'other', label: 'Other' },
-  ]},
+  { key: 'grievance_type', label: 'Grievance Type', type: 'select', required: true, optionsEndpoint: '/api/v1/grievance-types/', optionsLabelKey: 'name' },
 ];
 
 const grievanceCrud = createCrudHooks<Grievance>({
@@ -48,28 +42,8 @@ const grievanceCrud = createCrudHooks<Grievance>({
 function useGrievanceColumns(): ColumnDef<Grievance>[] {
   return useMemo(
     () => [
-      { key: 'employee', header: 'Employee', sortable: true },
-      { key: 'type', header: 'Type', sortable: true },
-      {
-        key: 'priority',
-        header: 'Priority',
-        sortable: true,
-        render: (value: unknown) => {
-          const priority = value as string;
-          const colors: Record<string, string> = {
-            high: 'bg-red-100 text-red-700',
-            medium: 'bg-yellow-100 text-yellow-700',
-            low: 'bg-green-100 text-green-700',
-          };
-          return (
-            <span
-              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${colors[priority] || 'bg-gray-100 text-gray-700'}`}
-            >
-              {priority || '—'}
-            </span>
-          );
-        },
-      },
+      { key: 'employee_name', header: 'Employee', sortable: true, render: (v: unknown) => (v ? String(v) : '—') },
+      { key: 'grievance_type_name', header: 'Type', sortable: true, render: (v: unknown) => (v ? String(v) : '—') },
       {
         key: 'status',
         header: 'Status & Actions',
@@ -90,7 +64,7 @@ function useGrievanceColumns(): ColumnDef<Grievance>[] {
 export function GrievanceList() {
   return (
     <Can
-      roles={['org_admin', 'hr_manager']}
+      permissions={['grievances.view']}
       fallback={<AccessDenied />}
     >
       <GrievanceListContent />

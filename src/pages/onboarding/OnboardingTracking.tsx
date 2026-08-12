@@ -112,7 +112,7 @@ function useTrackingColumns(): ColumnDef<OnboardingTask>[] {
 export function OnboardingTracking() {
   return (
     <Can
-      roles={['org_admin', 'hr_manager']}
+      permissions={['onboarding.manage']}
       fallback={<AccessDenied />}
     >
       <OnboardingTrackingContent />

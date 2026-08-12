@@ -15,7 +15,7 @@ const crud = createCrudHooks<Record<string, unknown>>({
 });
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
-  { key: 'employee', header: 'Employee', sortable: true },
+  { key: 'employee_name', header: 'Employee', sortable: true },
   { key: 'insurance_provider', header: 'Provider', sortable: true },
   { key: 'policy_number', header: 'Policy Number', sortable: true },
   { key: 'coverage_type', header: 'Coverage', sortable: true },
@@ -28,11 +28,12 @@ const filters: FilterConfig[] = [
 
 const createFields: FieldConfig[] = [
   { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
-  { key: 'provider', label: 'Provider', type: 'text', required: true, placeholder: 'Insurance provider' },
+  { key: 'insurance_provider', label: 'Insurance Provider', type: 'text', required: true, placeholder: 'Provider name' },
   { key: 'policy_number', label: 'Policy Number', type: 'text', required: true, placeholder: 'Policy number' },
-  { key: 'valid_from', label: 'Valid From', type: 'date', required: true },
-  { key: 'valid_to', label: 'Valid To', type: 'date', required: true },
-  { key: 'premium_amount', label: 'Premium Amount', type: 'number', required: true, placeholder: 'Monthly premium' },
+  { key: 'coverage_type', label: 'Coverage Type', type: 'select', required: true, options: [{ value: 'individual', label: 'Individual' }, { value: 'family', label: 'Family' }] },
+  { key: 'premium_amount', label: 'Premium Amount', type: 'number', required: true, placeholder: 'Total premium' },
+  { key: 'start_date', label: 'Start Date', type: 'date', required: true },
+  { key: 'end_date', label: 'End Date', type: 'date' },
 ];
 
 export default function EmployeeHealthInsurance() {

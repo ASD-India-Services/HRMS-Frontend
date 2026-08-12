@@ -16,7 +16,7 @@ const crud = createCrudHooks<Record<string, unknown>>({
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
   { key: 'name', header: 'Name', sortable: true },
-  { key: 'created_at', header: 'Created At', sortable: true },
+  { key: 'created_at', header: 'Created At', sortable: true, render: (v: unknown) => v ? new Date(v as string).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '' },
 ];
 
 const filters: FilterConfig[] = [
@@ -25,7 +25,7 @@ const filters: FilterConfig[] = [
 
 const createFields: FieldConfig[] = [
   { key: 'name', label: 'Name', type: 'text', required: true, placeholder: 'Template name' },
-  { key: 'content', label: 'Content', type: 'textarea', required: true, placeholder: 'Letter template content' },
+  { key: 'content_html', label: 'Content', type: 'textarea', required: true, placeholder: 'Letter template content (HTML supported)' },
 ];
 
 export default function AppointmentLetters() {

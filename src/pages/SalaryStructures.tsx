@@ -152,7 +152,8 @@ function SalaryStructureFormModal({
   initialValues,
   onSubmit,
   isLoading,
-  componentOptions,
+  earningOptions,
+  deductionOptions,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -160,7 +161,8 @@ function SalaryStructureFormModal({
   initialValues: SalaryStructureFormData;
   onSubmit: (data: SalaryStructureFormData) => void;
   isLoading: boolean;
-  componentOptions: { value: string; label: string }[];
+  earningOptions: { value: string; label: string }[];
+  deductionOptions: { value: string; label: string }[];
 }) {
   const [formData, setFormData] = useState<SalaryStructureFormData>(initialValues);
 
@@ -221,7 +223,7 @@ function SalaryStructureFormModal({
             rows={formData.earnings}
             onChange={(earnings) => setFormData((prev) => ({ ...prev, earnings }))}
             label="Earnings"
-            componentOptions={componentOptions}
+            componentOptions={earningOptions}
           />
 
           {/* Deductions */}
@@ -229,7 +231,7 @@ function SalaryStructureFormModal({
             rows={formData.deductions}
             onChange={(deductions) => setFormData((prev) => ({ ...prev, deductions }))}
             label="Deductions"
-            componentOptions={componentOptions}
+            componentOptions={deductionOptions}
           />
 
           {/* Actions */}
@@ -299,12 +301,18 @@ export default function SalaryStructures() {
     },
   });
 
-  const componentOptions = useMemo(() => {
+  const earningOptions = useMemo(() => {
     const items = componentsData?.results || componentsData || [];
-    return (items as { id: string; name: string }[]).map((c) => ({
-      value: c.name,
-      label: c.name,
-    }));
+    return (items as { id: string; name: string; type: string }[])
+      .filter((c) => c.type === 'earning')
+      .map((c) => ({ value: c.name, label: c.name }));
+  }, [componentsData]);
+
+  const deductionOptions = useMemo(() => {
+    const items = componentsData?.results || componentsData || [];
+    return (items as { id: string; name: string; type: string }[])
+      .filter((c) => c.type === 'deduction')
+      .map((c) => ({ value: c.name, label: c.name }));
   }, [componentsData]);
 
   // Columns with earnings/deductions count for readability
@@ -416,7 +424,8 @@ export default function SalaryStructures() {
         initialValues={emptyForm}
         onSubmit={handleCreate}
         isLoading={createMutation.isPending}
-        componentOptions={componentOptions}
+        earningOptions={earningOptions}
+        deductionOptions={deductionOptions}
       />
 
       {/* Edit Modal */}
@@ -427,7 +436,8 @@ export default function SalaryStructures() {
         initialValues={editInitialValues}
         onSubmit={handleEdit}
         isLoading={editLoading}
-        componentOptions={componentOptions}
+        earningOptions={earningOptions}
+        deductionOptions={deductionOptions}
       />
 
       {/* Delete Confirmation */}

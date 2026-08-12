@@ -32,9 +32,11 @@ const createFields: FieldConfig[] = [
   { key: 'employee', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name', required: true },
   { key: 'purpose', label: 'Purpose', type: 'text', required: true, placeholder: 'Purpose of travel' },
   { key: 'destination', label: 'Destination', type: 'text', required: true },
-  { key: 'from_date', label: 'From Date', type: 'date', required: true },
-  { key: 'to_date', label: 'To Date', type: 'date', required: true },
-  { key: 'estimated_cost', label: 'Estimated Cost', type: 'number', placeholder: '0.00' },
+  { key: 'travel_from_date', label: 'From Date', type: 'date', required: true },
+  { key: 'travel_to_date', label: 'To Date', type: 'date', required: true },
+  { key: 'estimated_cost_travel', label: 'Travel Cost', type: 'number', placeholder: '0.00' },
+  { key: 'estimated_cost_lodging', label: 'Lodging Cost', type: 'number', placeholder: '0.00' },
+  { key: 'estimated_cost_meals', label: 'Meals Cost', type: 'number', placeholder: '0.00' },
 ];
 
 const travelCrud = createCrudHooks<TravelRequest>({
@@ -54,10 +56,10 @@ function formatDate(dateStr: string): string {
 function useTravelColumns(): ColumnDef<TravelRequest>[] {
   return useMemo(
     () => [
-      { key: 'employee', header: 'Employee', sortable: true },
+      { key: 'employee_name', header: 'Employee', sortable: true, render: (v: unknown) => (v ? String(v) : '—') },
       { key: 'destination', header: 'Destination', sortable: true },
       {
-        key: 'from_date',
+        key: 'travel_from_date',
         header: 'From',
         sortable: true,
         render: (value: unknown) => (
@@ -65,7 +67,7 @@ function useTravelColumns(): ColumnDef<TravelRequest>[] {
         ),
       },
       {
-        key: 'to_date',
+        key: 'travel_to_date',
         header: 'To',
         sortable: true,
         render: (value: unknown) => (
@@ -136,8 +138,7 @@ function TravelApprovalsContent() {
 
   const apiParams = useMemo(() => {
     const params: Record<string, string | number> = { page, page_size: pageSize };
-    const statusFilter = filterValues.status || 'pending_approval';
-    params.status = statusFilter;
+    if (filterValues.status) params.status = filterValues.status;
     if (filterValues.search) params.search = filterValues.search;
     return params;
   }, [filterValues, page, pageSize]);
@@ -169,7 +170,7 @@ function TravelApprovalsContent() {
 
       <FilterBar
         filters={filters}
-        values={{ ...filterValues, status: filterValues.status || 'pending_approval' }}
+        values={{ ...filterValues, status: filterValues.status || '' }}
         onChange={setFilter}
         onClearAll={clearFilters}
       />

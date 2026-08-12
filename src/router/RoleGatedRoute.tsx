@@ -58,8 +58,8 @@ export function RoleGatedRoute({
     );
   }
 
-  // org_admin and hr_manager roles bypass permission checks (full access)
-  if (roleName === 'org_admin' || roleName === 'hr_manager') {
+  // org_admin role bypasses permission checks (full access)
+  if (roleName === 'org_admin') {
     return <>{children}</>;
   }
 

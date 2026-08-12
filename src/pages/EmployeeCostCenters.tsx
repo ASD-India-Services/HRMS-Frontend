@@ -15,7 +15,7 @@ const crud = createCrudHooks<Record<string, unknown>>({
 });
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
-  { key: 'employee', header: 'Employee', sortable: true },
+  { key: 'employee_name', header: 'Employee', sortable: true },
   { key: 'cost_center_name', header: 'Cost Center', sortable: true },
   { key: 'allocation_percentage', header: 'Allocation %', sortable: true },
   { key: 'effective_from', header: 'Effective From', sortable: true },
@@ -28,8 +28,10 @@ const filters: FilterConfig[] = [
 
 const createFields: FieldConfig[] = [
   { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
-  { key: 'cost_center', label: 'Cost Center', type: 'text', required: true, placeholder: 'Cost center name' },
-  { key: 'percentage', label: 'Percentage', type: 'number', required: true, placeholder: 'Allocation percentage' },
+  { key: 'cost_center_name', label: 'Cost Center', type: 'text', required: true, placeholder: 'Cost center name' },
+  { key: 'allocation_percentage', label: 'Allocation (%)', type: 'number', required: true, placeholder: 'e.g. 100' },
+  { key: 'effective_from', label: 'Effective From', type: 'date', required: true },
+  { key: 'effective_to', label: 'Effective To', type: 'date' },
 ];
 
 export default function EmployeeCostCenters() {

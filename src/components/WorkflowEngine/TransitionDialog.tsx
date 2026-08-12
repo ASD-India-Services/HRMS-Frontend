@@ -13,7 +13,9 @@
  */
 
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { createPortal } from 'react-dom';
+import api from '@/lib/api';
 import type { WorkflowTransition } from '@/types/workflow';
 import type { FieldSchema } from '@/types/form';
 
@@ -60,19 +62,12 @@ function renderField(field: FieldSchema, value: unknown, onChange: (val: unknown
       );
     case 'select':
       return (
-        <select
+        <AsyncTransitionSelect
           id={id}
+          field={field}
           value={(value as string) ?? ''}
-          onChange={(e) => onChange(e.target.value)}
-          className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-        >
-          <option value="">{field.placeholder ?? 'Select...'}</option>
-          {field.options?.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+          onChange={onChange}
+        />
       );
     case 'textarea':
       return (
@@ -249,5 +244,64 @@ export function TransitionDialog({
       </div>
     </div>,
     document.body
+  );
+}
+
+// ---------------------------------------------------------------------------
+// AsyncTransitionSelect — fetches options from API if optionsQuery is provided
+// ---------------------------------------------------------------------------
+
+function AsyncTransitionSelect({
+  id,
+  field,
+  value,
+  onChange,
+}: {
+  id: string;
+  field: FieldSchema;
+  value: string;
+  onChange: (val: unknown) => void;
+}) {
+  const endpoint = field.optionsQuery?.endpoint;
+
+  const { data: fetchedOptions } = useQuery<{ value: string; label: string }[]>({
+    queryKey: ['transition-select-options', endpoint],
+    queryFn: async () => {
+      if (!endpoint) return [];
+      const res = await api.get(endpoint);
+      const rawData = res.data;
+      const items = Array.isArray(rawData) ? rawData : rawData.results ?? [];
+      return items.map((item: Record<string, unknown>) => ({
+        value: String(item.id ?? ''),
+        label: String(
+          item.full_name ??
+          item.name ??
+          item.title ??
+          (item.first_name ? `${item.first_name} ${item.last_name ?? ''}`.trim() : null) ??
+          item.id ??
+          ''
+        ),
+      }));
+    },
+    enabled: !!endpoint,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const options = field.options ?? fetchedOptions ?? [];
+
+  return (
+    <select
+      id={id}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+    >
+      <option value="">{field.placeholder ?? 'Select...'}</option>
+      {options.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      ))}
+    </select>
   );
 }

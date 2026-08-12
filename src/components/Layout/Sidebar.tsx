@@ -64,8 +64,8 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
   const { hasPermission, roleName } = useHrmsPermissionsContext();
   const location = useLocation();
 
-  // org_admin and hr_manager see everything (matches RoleGatedRoute bypass)
-  const effectiveHasPermission = (roleName === 'org_admin' || roleName === 'hr_manager')
+  // org_admin sees everything; other roles are checked against their actual permissions
+  const effectiveHasPermission = roleName === 'org_admin'
     ? () => true
     : hasPermission;
 

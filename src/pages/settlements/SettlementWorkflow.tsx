@@ -26,22 +26,17 @@ import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { CrudEndpoints } from '@/hooks/useCrud';
 
 const createFields: FieldConfig[] = [
-  { key: 'employee', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name', required: true },
-  { key: 'last_working_date', label: 'Last Working Date', type: 'date', required: true },
-  { key: 'reason', label: 'Reason', type: 'select', options: [
-    { value: 'resignation', label: 'Resignation' },
-    { value: 'termination', label: 'Termination' },
-    { value: 'retirement', label: 'Retirement' },
-    { value: 'end_of_contract', label: 'End of Contract' },
-  ]},
+  { key: 'employee_id', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name', required: true },
+  { key: 'separation_date', label: 'Separation Date', type: 'date', required: true },
   { key: 'notes', label: 'Notes', type: 'textarea' },
 ];
 
 export interface Settlement {
   id: string;
   employee: string;
+  employee_name: string;
   status: string;
-  total_amount: number;
+  final_amount: number;
   separation_date: string;
   created_at: string;
   updated_at: string;
@@ -88,10 +83,10 @@ function formatCurrency(amount: number): string {
 function useSettlementColumns(): ColumnDef<Settlement>[] {
   return useMemo(
     () => [
-      { key: 'employee', header: 'Employee', sortable: true },
+      { key: 'employee_name', header: 'Employee', sortable: true, render: (v: unknown) => (v ? String(v) : '—') },
       {
-        key: 'total_amount',
-        header: 'Total Amount',
+        key: 'final_amount',
+        header: 'Final Amount',
         sortable: true,
         render: (value: unknown) => (
           <span className="text-sm font-medium text-gray-900">
@@ -135,7 +130,7 @@ function useSettlementColumns(): ColumnDef<Settlement>[] {
 export function SettlementWorkflow() {
   return (
     <Can
-      roles={['org_admin', 'hr_manager']}
+      permissions={['settlements.view']}
       fallback={<AccessDenied />}
     >
       <SettlementWorkflowContent />
@@ -147,7 +142,7 @@ function SettlementWorkflowContent() {
   const [showCreate, setShowCreate] = useState(false);
   const queryClient = useQueryClient();
   const createMutation = useMutation({
-    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/settlements/', data),
+    mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/full-final-settlement/', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['settlements'] });
       setShowCreate(false);

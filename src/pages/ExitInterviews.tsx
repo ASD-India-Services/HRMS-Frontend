@@ -15,9 +15,9 @@ const crud = createCrudHooks<Record<string, unknown>>({
 });
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
-  { key: 'employee', header: 'Employee', sortable: true },
+  { key: 'employee_name', header: 'Employee', sortable: true },
   { key: 'interview_date', header: 'Interview Date', sortable: true },
-  { key: 'interviewer', header: 'Interviewer', sortable: true },
+  { key: 'interviewer_name', header: 'Interviewer', sortable: true },
   { key: 'overall_experience_rating', header: 'Rating', sortable: true },
   { key: 'would_recommend', header: 'Would Recommend', sortable: true, render: (v: unknown) => (v ? 'Yes' : 'No') },
 ];
@@ -30,6 +30,7 @@ const createFields: FieldConfig[] = [
   { key: 'employee', label: 'Employee', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
   { key: 'interview_date', label: 'Interview Date', type: 'date', required: true },
   { key: 'interviewer', label: 'Interviewer', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
+  { key: 'separation_reason', label: 'Separation Reason', type: 'text', required: true, placeholder: 'e.g. Better opportunity, Relocation' },
   { key: 'overall_experience_rating', label: 'Rating (1-5)', type: 'number', placeholder: '1-5' },
   { key: 'would_recommend', label: 'Would Recommend', type: 'checkbox' },
 ];

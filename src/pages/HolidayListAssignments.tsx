@@ -26,9 +26,11 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'holiday_list', label: 'Holiday List', type: 'select', required: true, optionsEndpoint: '/api/v1/holidays/' },
-  { key: 'department', label: 'Department', type: 'select', optionsEndpoint: '/api/v1/departments/' },
+  { key: 'holiday_list', label: 'Holiday List', type: 'select', required: true, optionsEndpoint: '/api/v1/holidays/holiday-lists/', optionsLabelKey: 'name' },
+  { key: 'assignment_type', label: 'Assign To', type: 'select', required: true, options: [{ value: 'employee', label: 'Employee' }, { value: 'department', label: 'Department' }] },
   { key: 'employee', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
+  { key: 'department', label: 'Department', type: 'select', optionsEndpoint: '/api/v1/departments/', optionsLabelKey: 'name' },
+  { key: 'effective_date', label: 'Effective Date', type: 'date', required: true },
 ];
 
 export default function HolidayListAssignments() {
