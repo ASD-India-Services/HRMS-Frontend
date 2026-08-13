@@ -72,11 +72,17 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
   // Filter navigation based on HRMS permissions and feature flags
   const visibleGroups = getFilteredNavigation(effectiveHasPermission, hasFeature);
 
-  // Track collapsed/expanded state per group
-  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
+  // Track which group is expanded (accordion — only one open at a time)
+  // Auto-expand the group containing the active route on first render
+  const [expandedGroup, setExpandedGroup] = useState<string | null>(() => {
+    const active = visibleGroups.find((g) =>
+      g.items.some((item) => location.pathname === item.href || location.pathname.startsWith(item.href + '/'))
+    );
+    return active?.label ?? null;
+  });
 
   const toggleGroup = (label: string) => {
-    setCollapsedGroups((prev) => ({ ...prev, [label]: !prev[label] }));
+    setExpandedGroup((prev) => (prev === label ? null : label));
   };
 
   /** Check if any item in a group is active */
@@ -150,7 +156,7 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
         <nav className="flex-1 overflow-y-auto py-3 px-2" aria-label="Main navigation">
           <div className={isCollapsed ? 'space-y-1' : 'space-y-4'}>
             {visibleGroups.map((group, groupIdx) => {
-              const groupCollapsed = collapsedGroups[group.label] ?? false;
+              const groupExpanded = expandedGroup === group.label;
               const _groupActive = isGroupActive(group);
 
               return (
@@ -168,12 +174,12 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
                       className="flex w-full items-center justify-between px-2 py-1 mb-0.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-gray-500 transition-colors"
                     >
                       <span>{group.label}</span>
-                      <ChevronIcon expanded={!groupCollapsed} />
+                      <ChevronIcon expanded={groupExpanded} />
                     </button>
                   )}
 
                   {/* Group items */}
-                  {(!groupCollapsed || isCollapsed) && (
+                  {(groupExpanded || isCollapsed) && (
                     <ul className={isCollapsed ? 'space-y-0.5' : 'space-y-px'}>
                       {group.items.map((item) => (
                         <li key={item.href} className="relative">

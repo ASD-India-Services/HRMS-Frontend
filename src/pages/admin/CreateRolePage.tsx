@@ -10,7 +10,7 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -67,6 +67,7 @@ function PermissionGridSkeleton() {
 
 export default function CreateRolePage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const {
     data: allPermissions,
@@ -85,6 +86,7 @@ export default function CreateRolePage() {
     mutationFn: (payload: { name: string; description?: string; permission_ids: string[] }) =>
       api.post('/api/v1/roles/', payload),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['roles'] });
       navigate('/admin/roles');
     },
     onError: (err: unknown) => {
