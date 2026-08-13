@@ -70,8 +70,7 @@ export function Pagination({
   const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newSize = Number(e.target.value);
     onPageSizeChange(newSize);
-    // Reset to page 1 when changing page size
-    onPageChange(1);
+    // Note: page reset is handled by onPageSizeChange internally
   };
 
   return (

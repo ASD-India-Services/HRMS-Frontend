@@ -52,11 +52,16 @@ function useDebouncedCallback(callback: (value: string) => void, delay: number) 
 }
 
 export function FilterBar({ filters, values, onChange, onClearAll }: FilterBarProps) {
+  // Skip search-type filters — DataTable has a built-in search bar
+  const nonSearchFilters = filters.filter((f) => f.type !== 'search');
   const hasActiveFilters = Object.values(values).some((v) => v !== '');
+
+  // Don't render anything if only search filters exist
+  if (nonSearchFilters.length === 0 && !hasActiveFilters) return null;
 
   return (
     <div className="flex flex-wrap items-center gap-3 mb-4">
-      {filters.map((filter) => (
+      {nonSearchFilters.map((filter) => (
         <FilterInput
           key={filter.key}
           config={filter}
