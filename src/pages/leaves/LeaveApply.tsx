@@ -38,7 +38,7 @@ export function LeaveApply() {
         to_date: toDate,
         reason: isOthers ? `[${customLeaveType.trim()}] ${reason.trim()}` : reason.trim(),
       },
-      { onSuccess: () => navigate('/leaves') },
+      { onSuccess: () => navigate('/leaves/my') },
     );
   }
 

@@ -179,7 +179,7 @@ export const navigationConfig: NavGroup[] = [
     label: 'Leaves',
     items: [
       { label: 'Leave Applications', href: '/leaves', icon: ICONS.leaves, requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
-      { label: 'Leave Approvals', href: '/leaves/approvals', icon: ICONS.leaveApprovals, requiredPermission: 'leaves.approve', featureFlag: 'leaves_enabled' },
+      { label: 'Leave Approvals', href: '/leaves/approvals', icon: ICONS.leaveApprovals, requiredPermission: 'leaves.manage', featureFlag: 'leaves_enabled' },
       { label: 'Leave Policies', href: '/leave-policies', icon: ICONS.leavePolicies, requiredPermission: 'leaves.manage', featureFlag: 'leaves_enabled' },
       { label: 'Policy Assignments', href: '/leave-policy-assignments', icon: ICONS.leaveAdjust, requiredPermission: 'leaves.manage', featureFlag: 'leaves_enabled' },
       { label: 'Block Lists', href: '/leave-block-lists', icon: ICONS.leaveBlock, requiredPermission: 'leaves.manage', featureFlag: 'leaves_enabled' },
@@ -191,6 +191,7 @@ export const navigationConfig: NavGroup[] = [
     label: 'Attendance',
     items: [
       { label: 'Attendance', href: '/attendance', icon: ICONS.attendance, requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
+      { label: 'My Attendance', href: '/my-attendance', icon: ICONS.attendanceRegister, requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
       { label: 'Attendance Register', href: '/attendance-register', icon: ICONS.attendanceRegister, requiredPermission: 'attendance.manage', featureFlag: 'attendance_enabled' },
       { label: 'Attendance Requests', href: '/attendance-requests', icon: ICONS.attendanceRequest, requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
       { label: 'Attendance Upload', href: '/attendance-upload', icon: ICONS.attendanceUpload, requiredPermission: 'attendance.manage', featureFlag: 'attendance_enabled' },

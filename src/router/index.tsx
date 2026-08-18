@@ -107,6 +107,7 @@ const LeaveApprovals = lazy(() => import('@/pages/leaves/LeaveApprovals').then((
 // Attendance
 const Attendance = lazy(() => import('@/pages/Attendance'));
 const AttendanceRegister = lazy(() => import('@/pages/AttendanceRegister'));
+const MyAttendanceHistory = lazy(() => import('@/pages/attendance/MyAttendanceHistory'));
 
 // Shifts — direct component imports (no sub-routing in Shifts.tsx)
 const Shifts = lazy(() => import('@/pages/Shifts'));
@@ -319,6 +320,10 @@ export const router = createBrowserRouter([
       {
         path: 'attendance',
         element: gated('attendance_enabled', 'Attendance', 'attendance.view', <Attendance />),
+      },
+      {
+        path: 'my-attendance',
+        element: gated('attendance_enabled', 'My Attendance', 'attendance.view', <MyAttendanceHistory />),
       },
       {
         path: 'attendance-register',
