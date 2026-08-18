@@ -9,7 +9,13 @@ import { useNavigate } from 'react-router-dom';
 import { useLeaveTypes, useLeaveBalances, useApplyLeave } from '@/hooks/useLeaves';
 import { LeaveBalanceCard } from './components/LeaveBalanceCard';
 
-export function LeaveApply() {
+interface LeaveApplyProps {
+  onSuccess?: () => void;
+  onCancel?: () => void;
+  hideHeader?: boolean;
+}
+
+export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApplyProps = {}) {
   const navigate = useNavigate();
   const { data: leaveTypes, isLoading: typesLoading } = useLeaveTypes();
   const { data: balances, isLoading: balancesLoading } = useLeaveBalances();
@@ -38,24 +44,42 @@ export function LeaveApply() {
         to_date: toDate,
         reason: isOthers ? `[${customLeaveType.trim()}] ${reason.trim()}` : reason.trim(),
       },
-      { onSuccess: () => navigate('/leaves/my') },
+      {
+        onSuccess: () => {
+          if (onSuccess) {
+            onSuccess();
+          } else {
+            navigate('/my-leaves');
+          }
+        },
+      },
     );
   }
 
+  function handleCancel() {
+    if (onCancel) {
+      onCancel();
+    } else {
+      navigate('/my-leaves');
+    }
+  }
+
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Apply for Leave</h1>
-        <p className="mt-1 text-sm text-gray-600">Submit a new leave application</p>
-      </div>
+    <div className={hideHeader ? 'w-full' : 'mx-auto max-w-4xl px-4 py-8'}>
+      {!hideHeader && (
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Apply for Leave</h1>
+          <p className="mt-1 text-sm text-gray-600">Submit a new leave application</p>
+        </div>
+      )}
 
       {/* Leave Balances */}
-      <section className="mb-8" aria-label="Leave balances">
+      <section className="mb-6" aria-label="Leave balances">
         <h2 className="mb-3 text-sm font-medium text-gray-700">Your Leave Balances</h2>
         {balancesLoading ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-28 animate-pulse rounded-lg bg-gray-100" />
+              <div key={i} className="h-24 animate-pulse rounded-lg bg-gray-100" />
             ))}
           </div>
         ) : balances && balances.length > 0 ? (
@@ -167,7 +191,6 @@ export function LeaveApply() {
               const err = applyLeave.error as { response?: { data?: Record<string, unknown> } } | null;
               const data = err?.response?.data;
               if (data) {
-                // Extract error messages from Django REST Framework response
                 const messages = Object.values(data).flat().filter(Boolean);
                 if (messages.length > 0) {
                   return messages.map((msg, i) => <p key={i}>{String(msg)}</p>);
@@ -182,7 +205,7 @@ export function LeaveApply() {
         <div className="mt-6 flex items-center justify-end gap-3">
           <button
             type="button"
-            onClick={() => navigate('/leaves')}
+            onClick={handleCancel}
             className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
             Cancel

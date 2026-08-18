@@ -178,8 +178,8 @@ export const navigationConfig: NavGroup[] = [
   {
     label: 'Leaves',
     items: [
-      { label: 'Leave Applications', href: '/leaves', icon: ICONS.leaves, requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
-      { label: 'Leave Approvals', href: '/leaves/approvals', icon: ICONS.leaveApprovals, requiredPermission: 'leaves.manage', featureFlag: 'leaves_enabled' },
+      { label: 'My Leaves', href: '/my-leaves', icon: ICONS.leaves, requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
+      { label: 'Leave Approvals', href: '/leaves/approvals', icon: ICONS.leaveApprovals, requiredPermission: 'leaves.approve', featureFlag: 'leaves_enabled' },
       { label: 'Leave Policies', href: '/leave-policies', icon: ICONS.leavePolicies, requiredPermission: 'leaves.manage', featureFlag: 'leaves_enabled' },
       { label: 'Policy Assignments', href: '/leave-policy-assignments', icon: ICONS.leaveAdjust, requiredPermission: 'leaves.manage', featureFlag: 'leaves_enabled' },
       { label: 'Block Lists', href: '/leave-block-lists', icon: ICONS.leaveBlock, requiredPermission: 'leaves.manage', featureFlag: 'leaves_enabled' },

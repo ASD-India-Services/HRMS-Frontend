@@ -25,11 +25,11 @@ const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   'employees.delete': 'Permanently remove employee records from the system',
   'employees.manage': 'Access Departments, Designations, Grades, Branches, Approvers, Transfers, Promotions, and org structure settings',
   // Leaves
-  'leaves.view': 'View leave applications, balances, and leave calendar',
+  'leaves.view': 'Access My Leaves section to view personal leave balances, status, and apply for leaves',
   'leaves.create': 'Submit leave applications on behalf of self or others',
   'leaves.edit': 'Modify existing leave records and adjust balances',
   'leaves.delete': 'Remove leave application records',
-  'leaves.approve': 'Approve or reject pending leave applications from team members',
+  'leaves.approve': 'Access Leave Approvals section to view leave applicants and approve or reject leave applications',
   'leaves.manage': 'Access Leave Policies, Policy Assignments, Block Lists, Adjustments, and Earned Leave Schedules settings',
   // Attendance
   'attendance.view': 'View attendance records, check in/out for self, and see shift schedule',
@@ -244,6 +244,7 @@ export default function RoleDetailPage() {
       setSaveError(null);
       queryClient.invalidateQueries({ queryKey: ['roles', 'detail', id] });
       queryClient.invalidateQueries({ queryKey: ['roles'] });
+      queryClient.invalidateQueries({ queryKey: ['hrms-permissions'] });
     },
     onError: (err: unknown) => {
       setSaveSuccess(false);

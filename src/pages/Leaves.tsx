@@ -4,8 +4,8 @@
  * Requirements: 27.2, 27.7
  */
 
-import { LeaveList } from './leaves/LeaveList';
+import MyLeaves from './leaves/MyLeaves';
 
 export default function Leaves() {
-  return <LeaveList />;
+  return <MyLeaves />;
 }

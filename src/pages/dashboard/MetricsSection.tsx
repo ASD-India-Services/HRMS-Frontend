@@ -11,6 +11,7 @@
 import { MetricCard } from '@/components/MetricCard';
 import { useDashboardMetrics } from '@/hooks/useDashboardMetrics';
 import { CardSkeleton } from '@/components/Skeleton';
+import { Can } from '@/components/Can';
 
 export function MetricsSection() {
   const { data, isLoading } = useDashboardMetrics();
@@ -32,16 +33,18 @@ export function MetricsSection() {
         title="On Leave Today"
         value={data?.employees_on_leave_today ?? null}
         icon="🏖️"
-        href="/leaves"
+        href="/my-leaves"
         isLoading={false}
       />
-      <MetricCard
-        title="Pending Approvals"
-        value={data?.pending_approvals ?? null}
-        icon="⏳"
-        href="/leaves/approvals"
-        isLoading={false}
-      />
+      <Can permissions={['leaves.approve']}>
+        <MetricCard
+          title="Pending Approvals"
+          value={data?.pending_approvals ?? null}
+          icon="⏳"
+          href="/leaves/approvals"
+          isLoading={false}
+        />
+      </Can>
       <MetricCard
         title="Open Positions"
         value={data?.open_positions ?? null}

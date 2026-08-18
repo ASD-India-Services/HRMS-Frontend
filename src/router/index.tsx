@@ -100,6 +100,7 @@ const HRSettings = lazy(() => import('@/pages/HRSettings'));
 const AuditLogs = lazy(() => import('@/pages/AuditLogs'));
 
 // Leaves — direct component imports (no sub-routing in Leaves.tsx)
+const MyLeaves = lazy(() => import('@/pages/leaves/MyLeaves'));
 const LeaveList = lazy(() => import('@/pages/leaves/LeaveList').then((m) => ({ default: m.LeaveList })));
 const LeaveApply = lazy(() => import('@/pages/leaves/LeaveApply').then((m) => ({ default: m.LeaveApply })));
 const LeaveApprovals = lazy(() => import('@/pages/leaves/LeaveApprovals').then((m) => ({ default: m.LeaveApprovals })));
@@ -304,12 +305,20 @@ export const router = createBrowserRouter([
 
       // ─── Leaves (explicit sub-routes, no wildcard) ─────────────
       {
+        path: 'my-leaves',
+        element: gated('leaves_enabled', 'My Leaves', 'leaves.view', <MyLeaves />),
+      },
+      {
+        path: 'my-leaves/apply',
+        element: gated('leaves_enabled', 'Leave Management', 'leaves.view', <LeaveApply />),
+      },
+      {
         path: 'leaves',
-        element: gated('leaves_enabled', 'Leave Management', 'leaves.view', <LeaveList />),
+        element: <Navigate to="/my-leaves" replace />,
       },
       {
         path: 'leaves/apply',
-        element: gated('leaves_enabled', 'Leave Management', 'leaves.view', <LeaveApply />),
+        element: <Navigate to="/my-leaves/apply" replace />,
       },
       {
         path: 'leaves/approvals',
