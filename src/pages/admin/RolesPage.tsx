@@ -19,6 +19,7 @@ interface RoleListItem {
   name: string;
   description: string;
   is_system: boolean;
+  data_scope?: 'organisation' | 'department' | 'self';
   permissions: { id: string; code: string; display_name: string }[];
   member_count: number;
   created_at: string;
@@ -45,7 +46,7 @@ export default function RolesPage() {
   if (permissionsLoading) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <DataTableSkeleton columnCount={5} rowCount={5} />
+        <DataTableSkeleton columnCount={6} rowCount={5} />
       </div>
     );
   }
@@ -69,7 +70,7 @@ export default function RolesPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Roles</h1>
           <p className="mt-1 text-sm text-gray-600">
-            Manage roles and their permission assignments
+            Manage roles, data access scopes, and their permission assignments
           </p>
         </div>
         <button
@@ -95,7 +96,7 @@ export default function RolesPage() {
       </div>
 
       {/* Loading State */}
-      {isLoading && <DataTableSkeleton columnCount={5} rowCount={5} />}
+      {isLoading && <DataTableSkeleton columnCount={6} rowCount={5} />}
 
       {/* Error State */}
       {isError && (
@@ -164,6 +165,9 @@ export default function RolesPage() {
                   Description
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  Data Scope
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Type
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
@@ -186,6 +190,21 @@ export default function RolesPage() {
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-500 max-w-xs truncate">
                     {role.description || '—'}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3 text-sm">
+                    {role.data_scope === 'department' ? (
+                      <span className="inline-flex items-center rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+                        Own Department
+                      </span>
+                    ) : role.data_scope === 'self' ? (
+                      <span className="inline-flex items-center rounded-full bg-gray-100 border border-gray-200 px-2.5 py-0.5 text-xs font-medium text-gray-700">
+                        Self Only
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-xs font-medium text-purple-700">
+                        Organisation-wide
+                      </span>
+                    )}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm">
                     {role.is_system ? (

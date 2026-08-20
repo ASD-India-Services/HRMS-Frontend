@@ -55,8 +55,8 @@ export function CheckInButton({ record }: CheckInButtonProps) {
       const deviceId = getDeviceId()
       const payload = {
         device_id: deviceId,
-        latitude: parseFloat(coords.latitude.toFixed(7)),
-        longitude: parseFloat(coords.longitude.toFixed(7)),
+        latitude: parseFloat(coords.latitude.toFixed(6)),
+        longitude: parseFloat(coords.longitude.toFixed(6)),
       }
 
       let response: unknown

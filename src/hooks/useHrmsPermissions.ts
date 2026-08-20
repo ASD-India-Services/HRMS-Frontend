@@ -6,6 +6,10 @@
  * merged with user overrides) and provides a `hasPermission` helper for
  * UI gating. It is independent of the Identity Center JWT claims.
  *
+ * Now also exposes `permissionScopes` — a map of permission code to the
+ * list of department IDs that permission is restricted to. Empty list means
+ * org-wide (no restriction).
+ *
  * The query is only enabled when the user is authenticated (has a valid
  * access token). This prevents a 401 race condition on initial page load.
  */
@@ -18,6 +22,8 @@ import api from '@/lib/api';
 interface PermissionsResponse {
   role_name: string | null;
   permissions: string[];
+  /** permission_code → dept IDs ([] = all departments / no restriction) */
+  permission_scopes: Record<string, string[]>;
 }
 
 export function useHrmsPermissions() {
@@ -36,6 +42,7 @@ export function useHrmsPermissions() {
 
   const permissions = data?.permissions ?? [];
   const roleName = data?.role_name ?? null;
+  const permissionScopes = data?.permission_scopes ?? {};
 
   const hasPermission = useCallback(
     (perm: string): boolean => {
@@ -44,10 +51,25 @@ export function useHrmsPermissions() {
     [permissions],
   );
 
+  /**
+   * Returns the department IDs this permission is scoped to.
+   * Empty array = org-wide (no restriction).
+   * null = user doesn't have this permission at all.
+   */
+  const getPermissionScope = useCallback(
+    (perm: string): string[] | null => {
+      if (!permissions.includes(perm)) return null;
+      return permissionScopes[perm] ?? [];
+    },
+    [permissions, permissionScopes],
+  );
+
   return {
     permissions,
     roleName,
+    permissionScopes,
     hasPermission,
+    getPermissionScope,
     isLoading: isLoading || !isAuthenticated,
     error,
     refetch,

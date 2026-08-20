@@ -159,7 +159,7 @@ export const navigationConfig: NavGroup[] = [
   {
     label: 'Overview',
     items: [
-      { label: 'Dashboard', href: '/dashboard', icon: ICONS.dashboard, requiredPermission: 'employees.view', featureFlag: null },
+      { label: 'Dashboard', href: '/dashboard', icon: ICONS.dashboard, requiredPermission: 'dashboard.view', featureFlag: null },
     ],
   },
   {

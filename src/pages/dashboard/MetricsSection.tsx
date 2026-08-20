@@ -22,21 +22,25 @@ export function MetricsSection() {
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <MetricCard
-        title="Total Active Employees"
-        value={data?.total_active_employees ?? null}
-        icon="👥"
-        href="/employees"
-        isLoading={false}
-      />
-      <MetricCard
-        title="On Leave Today"
-        value={data?.employees_on_leave_today ?? null}
-        icon="🏖️"
-        href="/my-leaves"
-        isLoading={false}
-      />
-      <Can permissions={['leaves.approve']}>
+      <Can permissions={['employees.view']}>
+        <MetricCard
+          title="Total Active Employees"
+          value={data?.total_active_employees ?? null}
+          icon="👥"
+          href="/employees"
+          isLoading={false}
+        />
+      </Can>
+      <Can permissions={['leaves.view']}>
+        <MetricCard
+          title="On Leave Today"
+          value={data?.employees_on_leave_today ?? null}
+          icon="🏖️"
+          href="/my-leaves"
+          isLoading={false}
+        />
+      </Can>
+      <Can permissions={['leaves.approve', 'expenses.approve']} requireAll={false}>
         <MetricCard
           title="Pending Approvals"
           value={data?.pending_approvals ?? null}
@@ -45,13 +49,15 @@ export function MetricsSection() {
           isLoading={false}
         />
       </Can>
-      <MetricCard
-        title="Open Positions"
-        value={data?.open_positions ?? null}
-        icon="💼"
-        href="/recruitment"
-        isLoading={false}
-      />
+      <Can permissions={['recruitment.view']}>
+        <MetricCard
+          title="Open Positions"
+          value={data?.open_positions ?? null}
+          icon="💼"
+          href="/recruitment"
+          isLoading={false}
+        />
+      </Can>
     </div>
   );
 }

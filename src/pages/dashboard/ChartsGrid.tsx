@@ -9,6 +9,7 @@
  */
 
 import { ChartWidget } from '@/components/ChartWidget';
+import { Can } from '@/components/Can';
 
 const CHARTS_ENDPOINT = '/api/v1/reports/dashboard-charts/';
 
@@ -19,54 +20,71 @@ interface ChartsGridProps {
 export function ChartsGrid({ dateRange }: ChartsGridProps) {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-      <ChartWidget
-        title="Headcount Trend"
-        queryKey={['chart', 'headcount-trend']}
-        endpoint={CHARTS_ENDPOINT}
-        extraParams={{ chart: 'headcount-trend' }}
-        type="line"
-        dateRange={dateRange}
-      />
-      <ChartWidget
-        title="Department Distribution"
-        queryKey={['chart', 'department-distribution']}
-        endpoint={CHARTS_ENDPOINT}
-        extraParams={{ chart: 'department-distribution' }}
-        type="pie"
-        dateRange={dateRange}
-      />
-      <ChartWidget
-        title="Attendance Overview"
-        queryKey={['chart', 'attendance-overview']}
-        endpoint={CHARTS_ENDPOINT}
-        extraParams={{ chart: 'attendance-overview' }}
-        type="bar"
-        dateRange={dateRange}
-      />
-      <ChartWidget
-        title="Leave Statistics"
-        queryKey={['chart', 'leave-statistics']}
-        endpoint={CHARTS_ENDPOINT}
-        extraParams={{ chart: 'leave-statistics' }}
-        type="donut"
-        dateRange={dateRange}
-      />
-      <ChartWidget
-        title="Payroll Summary"
-        queryKey={['chart', 'payroll-summary']}
-        endpoint={CHARTS_ENDPOINT}
-        extraParams={{ chart: 'payroll-summary' }}
-        type="bar"
-        dateRange={dateRange}
-      />
-      <ChartWidget
-        title="Recruitment Pipeline"
-        queryKey={['chart', 'recruitment-pipeline']}
-        endpoint={CHARTS_ENDPOINT}
-        extraParams={{ chart: 'recruitment-pipeline' }}
-        type="funnel"
-        dateRange={dateRange}
-      />
+      <Can permissions={['employees.view']}>
+        <ChartWidget
+          title="Headcount Trend"
+          queryKey={['chart', 'headcount-trend']}
+          endpoint={CHARTS_ENDPOINT}
+          extraParams={{ chart: 'headcount-trend' }}
+          type="line"
+          dateRange={dateRange}
+        />
+      </Can>
+
+      <Can permissions={['employees.view']}>
+        <ChartWidget
+          title="Department Distribution"
+          queryKey={['chart', 'department-distribution']}
+          endpoint={CHARTS_ENDPOINT}
+          extraParams={{ chart: 'department-distribution' }}
+          type="pie"
+          dateRange={dateRange}
+        />
+      </Can>
+
+      <Can permissions={['attendance.view']}>
+        <ChartWidget
+          title="Attendance Overview"
+          queryKey={['chart', 'attendance-overview']}
+          endpoint={CHARTS_ENDPOINT}
+          extraParams={{ chart: 'attendance-overview' }}
+          type="bar"
+          dateRange={dateRange}
+        />
+      </Can>
+
+      <Can permissions={['leaves.view']}>
+        <ChartWidget
+          title="Leave Statistics"
+          queryKey={['chart', 'leave-statistics']}
+          endpoint={CHARTS_ENDPOINT}
+          extraParams={{ chart: 'leave-statistics' }}
+          type="donut"
+          dateRange={dateRange}
+        />
+      </Can>
+
+      <Can permissions={['payroll.manage']}>
+        <ChartWidget
+          title="Payroll Summary"
+          queryKey={['chart', 'payroll-summary']}
+          endpoint={CHARTS_ENDPOINT}
+          extraParams={{ chart: 'payroll-summary' }}
+          type="bar"
+          dateRange={dateRange}
+        />
+      </Can>
+
+      <Can permissions={['recruitment.view']}>
+        <ChartWidget
+          title="Recruitment Pipeline"
+          queryKey={['chart', 'recruitment-pipeline']}
+          endpoint={CHARTS_ENDPOINT}
+          extraParams={{ chart: 'recruitment-pipeline' }}
+          type="funnel"
+          dateRange={dateRange}
+        />
+      </Can>
     </div>
   );
 }

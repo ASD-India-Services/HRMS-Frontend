@@ -256,7 +256,7 @@ export const router = createBrowserRouter([
       // ─── Dashboard ───────────────────────────────────────────────
       {
         path: 'dashboard',
-        element: permGated('employees.view', <Dashboard />),
+        element: permGated('dashboard.view', <Dashboard />),
       },
 
       // ─── Profile ─────────────────────────────────────────────────
@@ -284,23 +284,23 @@ export const router = createBrowserRouter([
       },
       {
         path: 'departments',
-        element: gated('employees_enabled', 'Employees', 'employees.view', <Departments />),
+        element: gated('employees_enabled', 'Employees', 'employees.manage', <Departments />),
       },
       {
         path: 'designations',
-        element: gated('employees_enabled', 'Employees', 'employees.view', <Designations />),
+        element: gated('employees_enabled', 'Employees', 'employees.manage', <Designations />),
       },
       {
         path: 'employee-grades',
-        element: gated('employees_enabled', 'Employees', 'employees.view', <EmployeeGrades />),
+        element: gated('employees_enabled', 'Employees', 'employees.manage', <EmployeeGrades />),
       },
       {
         path: 'department-approvers',
-        element: gated('employees_enabled', 'Employees', 'employees.view', <DepartmentApprovers />),
+        element: gated('employees_enabled', 'Employees', 'employees.manage', <DepartmentApprovers />),
       },
       {
         path: 'branches',
-        element: gated('employees_enabled', 'Employees', 'employees.view', <Branches />),
+        element: gated('employees_enabled', 'Employees', 'employees.manage', <Branches />),
       },
 
       // ─── Leaves (explicit sub-routes, no wildcard) ─────────────
@@ -356,11 +356,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'payroll/runs',
-        element: gated('payroll_enabled', 'Payroll', 'payroll.view', <PayrollRuns />),
+        element: gated('payroll_enabled', 'Payroll', 'payroll.manage', <PayrollRuns />),
       },
       {
         path: 'salary-components',
-        element: gated('payroll_enabled', 'Payroll', 'payroll.view', <SalaryComponents />),
+        element: gated('payroll_enabled', 'Payroll', 'payroll.manage', <SalaryComponents />),
       },
       {
         path: 'salary-structures',
@@ -368,7 +368,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'salary-structure-assignments',
-        element: gated('payroll_enabled', 'Payroll', 'payroll.view', <SalaryStructureAssignments />),
+        element: gated('payroll_enabled', 'Payroll', 'payroll.manage', <SalaryStructureAssignments />),
       },
 
       // ─── Recruitment (explicit sub-routes, no wildcard) ────────
@@ -506,23 +506,23 @@ export const router = createBrowserRouter([
       // ─── Leave Policies & Configuration ────────────────────────
       {
         path: 'leave-policies',
-        element: gated('leaves_enabled', 'Leave Management', 'leaves.view', <LeavePolicies />),
+        element: gated('leaves_enabled', 'Leave Management', 'leaves.manage', <LeavePolicies />),
       },
       {
         path: 'leave-policy-assignments',
-        element: gated('leaves_enabled', 'Leave Management', 'leaves.view', <LeavePolicyAssignments />),
+        element: gated('leaves_enabled', 'Leave Management', 'leaves.manage', <LeavePolicyAssignments />),
       },
       {
         path: 'leave-block-lists',
-        element: gated('leaves_enabled', 'Leave Management', 'leaves.view', <LeaveBlockLists />),
+        element: gated('leaves_enabled', 'Leave Management', 'leaves.manage', <LeaveBlockLists />),
       },
       {
         path: 'leave-adjustments',
-        element: gated('leaves_enabled', 'Leave Management', 'leaves.view', <LeaveAdjustments />),
+        element: gated('leaves_enabled', 'Leave Management', 'leaves.manage', <LeaveAdjustments />),
       },
       {
         path: 'earned-leave-schedules',
-        element: gated('leaves_enabled', 'Leave Management', 'leaves.view', <EarnedLeaveSchedules />),
+        element: gated('leaves_enabled', 'Leave Management', 'leaves.manage', <EarnedLeaveSchedules />),
       },
 
       // ─── Shift Requests & Schedules ────────────────────────────
@@ -532,7 +532,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'shift-schedules',
-        element: gated('shifts_enabled', 'Shift Management', 'attendance.view', <ShiftSchedules />),
+        element: gated('shifts_enabled', 'Shift Management', 'attendance.manage', <ShiftSchedules />),
       },
 
       // ─── Attendance Requests & Upload ──────────────────────────
@@ -542,21 +542,21 @@ export const router = createBrowserRouter([
       },
       {
         path: 'attendance-upload',
-        element: gated('attendance_enabled', 'Attendance', 'attendance.view', <AttendanceUpload />),
+        element: gated('attendance_enabled', 'Attendance', 'attendance.manage', <AttendanceUpload />),
       },
       {
         path: 'geofence-locations',
-        element: gated('attendance_enabled', 'Attendance', 'attendance.view', <GeoFenceLocations />),
+        element: gated('attendance_enabled', 'Attendance', 'attendance.manage', <GeoFenceLocations />),
       },
 
       // ─── Performance: KRAs, Templates, Goals, Feedback ─────────
       {
         path: 'kras',
-        element: gated('appraisals_enabled', 'Appraisals', 'appraisals.view', <KRAs />),
+        element: gated('appraisals_enabled', 'Appraisals', 'appraisals.manage', <KRAs />),
       },
       {
         path: 'appraisal-templates',
-        element: gated('appraisals_enabled', 'Appraisals', 'appraisals.view', <AppraisalTemplates />),
+        element: gated('appraisals_enabled', 'Appraisals', 'appraisals.manage', <AppraisalTemplates />),
       },
       {
         path: 'goals',
@@ -576,17 +576,17 @@ export const router = createBrowserRouter([
       // ─── Payroll Periods & Corrections ─────────────────────────
       {
         path: 'payroll-periods',
-        element: gated('payroll_enabled', 'Payroll', 'payroll.view', <PayrollPeriods />),
+        element: gated('payroll_enabled', 'Payroll', 'payroll.manage', <PayrollPeriods />),
       },
       {
         path: 'payroll-corrections',
-        element: gated('payroll_enabled', 'Payroll', 'payroll.view', <PayrollCorrections />),
+        element: gated('payroll_enabled', 'Payroll', 'payroll.manage', <PayrollCorrections />),
       },
 
       // ─── Holiday Assignments ───────────────────────────────────
       {
         path: 'holiday-assignments',
-        element: gated('holidays_enabled', 'Holiday Lists', 'employees.view', <HolidayListAssignments />),
+        element: gated('holidays_enabled', 'Holiday Lists', 'holidays.manage', <HolidayListAssignments />),
       },
       {
         path: 'holiday-lists',
@@ -596,11 +596,11 @@ export const router = createBrowserRouter([
       // ─── Recruitment: Interview Types, Templates, Referrals ────
       {
         path: 'interview-types',
-        element: gated('recruitment_enabled', 'Recruitment', 'recruitment.view', <InterviewTypes />),
+        element: gated('recruitment_enabled', 'Recruitment', 'recruitment.manage', <InterviewTypes />),
       },
       {
         path: 'job-templates',
-        element: gated('recruitment_enabled', 'Recruitment', 'recruitment.view', <JobOpeningTemplates />),
+        element: gated('recruitment_enabled', 'Recruitment', 'recruitment.manage', <JobOpeningTemplates />),
       },
       {
         path: 'referrals',
