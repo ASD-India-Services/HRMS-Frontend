@@ -14,7 +14,7 @@ export const payrollRunWorkflow: WorkflowConfig = {
   statuses: [
     { key: 'draft', label: 'Draft', color: 'gray' },
     { key: 'submitted', label: 'Submitted', color: 'yellow' },
-    { key: 'disbursed', label: 'Disbursed', color: 'green', terminal: true },
+    { key: 'disbursed', label: 'Disbursed', color: 'green' },
   ],
   transitions: [
     {
@@ -69,6 +69,19 @@ export const payrollRunWorkflow: WorkflowConfig = {
       confirm: {
         title: 'Reject Payroll Run',
         message: 'This will permanently delete this payroll run and all salary slips. Use this if the payroll has errors and needs to be re-done from scratch.',
+      },
+    },
+    {
+      from: 'disbursed',
+      to: 'cancelled',
+      action: 'Delete & Re-run',
+      endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
+      method: 'DELETE',
+      allowedRoles: ['org_admin', 'hr_manager'],
+      variant: 'destructive',
+      confirm: {
+        title: 'Delete Disbursed Payroll Run',
+        message: 'This will permanently delete this payroll run and all salary slips for this period. You can then create a new payroll run for the same month. This cannot be undone.',
       },
     },
   ],

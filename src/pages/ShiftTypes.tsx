@@ -45,6 +45,12 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     header: 'Grace Period (min)',
     sortable: true,
   },
+  {
+    key: 'late_deduction_per_day',
+    header: 'Late Deduction/Day',
+    sortable: true,
+    render: (v: unknown) => (v && Number(v) > 0 ? `₹${v}` : '—'),
+  },
 ];
 
 const filters: FilterConfig[] = [
@@ -81,6 +87,12 @@ const formFields: FieldConfig[] = [
     label: 'Grace Period (minutes)',
     type: 'number',
     placeholder: '15',
+  },
+  {
+    key: 'late_deduction_per_day',
+    label: 'Late Arrival Deduction Per Day (₹)',
+    type: 'number',
+    placeholder: '0',
   },
 ];
 
@@ -121,12 +133,14 @@ export default function ShiftTypes() {
   ];
 
   const handleCreate = (data: Record<string, unknown>) => {
-    // Ensure grace_period_minutes is a number
     const payload = {
       ...data,
       grace_period_minutes: data.grace_period_minutes
         ? Number(data.grace_period_minutes)
         : 15,
+      late_deduction_per_day: data.late_deduction_per_day
+        ? Number(data.late_deduction_per_day)
+        : 0,
       is_night_shift: !!data.is_night_shift,
     };
     createMutation.mutate(payload, {
@@ -143,6 +157,9 @@ export default function ShiftTypes() {
         grace_period_minutes: data.grace_period_minutes
           ? Number(data.grace_period_minutes)
           : 15,
+        late_deduction_per_day: data.late_deduction_per_day
+          ? Number(data.late_deduction_per_day)
+          : 0,
         is_night_shift: !!data.is_night_shift,
       };
       await api.patch(`${ENDPOINT}${editRecord.id}/`, payload);
