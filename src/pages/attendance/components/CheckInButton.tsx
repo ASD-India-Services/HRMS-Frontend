@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { getCurrentPosition, isGeolocationSupported } from '@/utils/geolocation'
 import type { Coordinates, GeolocationError } from '@/utils/geolocation'
 import { useCheckIn, useCheckOut, getDeviceId } from '@/hooks/useAttendance'
 import type { AttendanceRecord } from '@/hooks/useAttendance'
+import { useShiftAssignments } from '@/hooks/useShifts'
 
 interface CheckInButtonProps {
   /** Current attendance record for today */
@@ -12,12 +13,76 @@ interface CheckInButtonProps {
 type ActionState = 'idle' | 'locating' | 'submitting'
 
 /**
+ * Determines if the current time is within the shift window.
+ * For check-in: allowed from shift start_time onwards (no early limit for check-out).
+ * For check-out: allowed until shift end_time (with some buffer).
+ * Returns: { allowed, message }
+ */
+function getShiftTimeStatus(
+  shiftStartTime: string,
+  shiftEndTime: string,
+  isNightShift: boolean,
+  isCheckOut: boolean,
+): { allowed: boolean; message: string | null } {
+  const now = new Date()
+  const currentMinutes = now.getHours() * 60 + now.getMinutes()
+
+  const [startH, startM] = shiftStartTime.split(':').map(Number)
+  const [endH, endM] = shiftEndTime.split(':').map(Number)
+  const shiftStartMinutes = startH * 60 + startM
+  const shiftEndMinutes = endH * 60 + endM
+
+  // Format time for display
+  const fmtTime = (h: number, m: number) => {
+    const period = h >= 12 ? 'PM' : 'AM'
+    const hour12 = h % 12 || 12
+    return `${hour12}:${m.toString().padStart(2, '0')} ${period}`
+  }
+
+  const shiftStartDisplay = fmtTime(startH, startM)
+  const shiftEndDisplay = fmtTime(endH, endM)
+
+  if (isNightShift) {
+    // Night shift spans midnight: start_time > end_time (e.g. 22:00 - 06:00)
+    // Allowed window: from start_time (evening) OR before end_time (morning)
+    if (isCheckOut) {
+      return { allowed: true, message: null }
+    }
+    // For check-in during a night shift: allowed if currentTime >= startTime OR currentTime <= endTime
+    if (currentMinutes >= shiftStartMinutes || currentMinutes <= shiftEndMinutes) {
+      return { allowed: true, message: null }
+    }
+    if (currentMinutes < shiftStartMinutes) {
+      return { allowed: false, message: `Shift hasn't started yet. Your shift begins at ${shiftStartDisplay}.` }
+    }
+    return { allowed: false, message: `Shift time has ended. Your shift was ${shiftStartDisplay} – ${shiftEndDisplay}.` }
+  }
+
+  // Regular day shift
+  if (isCheckOut) {
+    // Allow check-out anytime after check-in (don't block)
+    return { allowed: true, message: null }
+  }
+
+  // For check-in: allowed from shift start time until shift end time
+  if (currentMinutes < shiftStartMinutes) {
+    return { allowed: false, message: `Shift hasn't started yet. Your shift begins at ${shiftStartDisplay}.` }
+  }
+  if (currentMinutes > shiftEndMinutes) {
+    return { allowed: false, message: `Shift time has ended. Your shift was ${shiftStartDisplay} – ${shiftEndDisplay}.` }
+  }
+
+  return { allowed: true, message: null }
+}
+
+/**
  * Large action button that handles GPS capture and submits check-in or check-out.
  * Shows appropriate state based on today's attendance record:
  * - No record / no check-in → Show Check In button
  * - Checked in, not checked out → Show Check Out button
  * - Both checked in and out → Show completed state
  *
+ * Validates shift timing before allowing check-in.
  * Handles geo-fence errors from the backend:
  * - Strict mode: displays rejection message with distance info
  * - Warn mode: displays a warning but allows the check-in
@@ -31,9 +96,28 @@ export function CheckInButton({ record }: CheckInButtonProps) {
   const checkIn = useCheckIn()
   const checkOut = useCheckOut()
 
+  // Fetch current user's shift assignment for today
+  const today = new Date().toISOString().split('T')[0]
+  const { data: shiftData, isLoading: shiftLoading } = useShiftAssignments({ mine: 'true', date: today, page_size: 1 })
+  const todayShift = shiftData?.results?.[0]?.shift_type ?? null
+  const hasNoShift = !shiftLoading && shiftData !== undefined && !todayShift
+
   const hasCheckedIn = !!record?.check_in
   const hasCheckedOut = !!record?.check_out
   const isCompleted = hasCheckedIn && hasCheckedOut
+
+  // Check if current time is within shift window
+  const shiftTimeStatus = useMemo(() => {
+    if (hasNoShift) return { allowed: false, message: 'No shift assigned for today. Please contact your manager or HR to assign a shift before marking attendance.' }
+    if (!todayShift) return { allowed: true, message: null } // Still loading
+    const isCheckOut = hasCheckedIn && !hasCheckedOut
+    return getShiftTimeStatus(
+      todayShift.start_time,
+      todayShift.end_time,
+      todayShift.is_night_shift,
+      isCheckOut,
+    )
+  }, [todayShift, hasNoShift, hasCheckedIn, hasCheckedOut])
 
   const handleAction = async () => {
     setError(null)
@@ -131,13 +215,26 @@ export function CheckInButton({ record }: CheckInButtonProps) {
 
   const isCheckIn = !hasCheckedIn
   const isProcessing = actionState !== 'idle'
+  const isDisabledByShift = !shiftTimeStatus.allowed
 
   return (
     <div className="text-center">
+      {/* Shift time restriction message */}
+      {isDisabledByShift && shiftTimeStatus.message && (
+        <div className="mb-4 mx-auto max-w-sm rounded-md bg-amber-50 border border-amber-200 p-3" role="alert">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+            </svg>
+            <p className="text-sm text-amber-700">{shiftTimeStatus.message}</p>
+          </div>
+        </div>
+      )}
+
       <button
         type="button"
         onClick={handleAction}
-        disabled={isProcessing}
+        disabled={isProcessing || isDisabledByShift}
         aria-label={isCheckIn ? 'Check in for attendance' : 'Check out from attendance'}
         className={`
           inline-flex items-center justify-center
@@ -145,7 +242,7 @@ export function CheckInButton({ record }: CheckInButtonProps) {
           text-white font-semibold text-lg
           shadow-lg transition-all duration-200
           focus:outline-none focus:ring-4
-          disabled:opacity-70 disabled:cursor-not-allowed
+          disabled:opacity-40 disabled:cursor-not-allowed disabled:blur-[1px]
           ${isCheckIn
             ? 'bg-green-500 hover:bg-green-600 focus:ring-green-200 active:scale-95'
             : 'bg-red-500 hover:bg-red-600 focus:ring-red-200 active:scale-95'

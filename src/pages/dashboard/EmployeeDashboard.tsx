@@ -10,43 +10,18 @@
  */
 
 import { Link } from 'react-router-dom';
-import { useAttendanceToday, useCheckIn, useCheckOut, getDeviceId } from '@/hooks/useAttendance';
+import { useAttendanceToday } from '@/hooks/useAttendance';
 import { useLeaveBalances, useLeaveApplications } from '@/hooks/useLeaves';
 import { useExpenseClaims } from '@/hooks/useExpenses';
 import { Can } from '@/components/Can';
+import { CheckInButton } from '@/pages/attendance/components/CheckInButton';
 
 export function EmployeeDashboard() {
   const { data: attendanceToday, isLoading: attendanceLoading } = useAttendanceToday();
-  const checkInMut = useCheckIn();
-  const checkOutMut = useCheckOut();
 
   const { data: balances = [], isLoading: balancesLoading } = useLeaveBalances();
   const { data: applicationsData, isLoading: appsLoading } = useLeaveApplications({ page: 1, page_size: 5 });
   const { data: expensesData, isLoading: expensesLoading } = useExpenseClaims({ page: 1, page_size: 5 });
-
-  const triggerCheckIn = () => {
-    const doCheckIn = (lat = 0, lng = 0) =>
-      checkInMut.mutate({ device_id: getDeviceId(), latitude: parseFloat(lat.toFixed(6)), longitude: parseFloat(lng.toFixed(6)) });
-
-    navigator.geolocation
-      ? navigator.geolocation.getCurrentPosition(
-          (p) => doCheckIn(p.coords.latitude, p.coords.longitude),
-          () => doCheckIn(),
-        )
-      : doCheckIn();
-  };
-
-  const triggerCheckOut = () => {
-    const doCheckOut = (lat = 0, lng = 0) =>
-      checkOutMut.mutate({ device_id: getDeviceId(), latitude: parseFloat(lat.toFixed(6)), longitude: parseFloat(lng.toFixed(6)) });
-
-    navigator.geolocation
-      ? navigator.geolocation.getCurrentPosition(
-          (p) => doCheckOut(p.coords.latitude, p.coords.longitude),
-          () => doCheckOut(),
-        )
-      : doCheckOut();
-  };
 
   const isCheckedIn = !!attendanceToday?.check_in;
   const isCheckedOut = !!attendanceToday?.check_out;
@@ -134,31 +109,7 @@ export function EmployeeDashboard() {
                   </div>
                 </div>
 
-                <div>
-                  {!isCheckedIn && !isCheckedOut && (
-                    <button
-                      onClick={triggerCheckIn}
-                      disabled={checkInMut.isPending}
-                      className="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white shadow hover:bg-emerald-700 disabled:opacity-50 transition-colors"
-                    >
-                      {checkInMut.isPending ? 'Clocking In…' : 'Clock In Now'}
-                    </button>
-                  )}
-                  {isCheckedIn && !isCheckedOut && (
-                    <button
-                      onClick={triggerCheckOut}
-                      disabled={checkOutMut.isPending}
-                      className="w-full rounded-lg bg-rose-600 py-2.5 text-sm font-semibold text-white shadow hover:bg-rose-700 disabled:opacity-50 transition-colors"
-                    >
-                      {checkOutMut.isPending ? 'Clocking Out…' : 'Clock Out Now'}
-                    </button>
-                  )}
-                  {isCheckedOut && (
-                    <p className="w-full text-center text-xs font-medium text-gray-500 py-2">
-                      ✅ Shift completed for today
-                    </p>
-                  )}
-                </div>
+                <CheckInButton record={attendanceToday} />
               </div>
             )}
           </div>

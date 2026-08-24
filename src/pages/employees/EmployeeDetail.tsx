@@ -88,9 +88,11 @@ export function EmployeeDetail() {
   });
 
   const promoteFields: FieldConfig[] = [
-    { key: 'to_designation', label: 'New Designation', type: 'text', required: true, placeholder: 'e.g., Senior Engineer' },
-    { key: 'promotion_date', label: 'Effective Date', type: 'date', required: true },
-    { key: 'reason', label: 'Reason', type: 'textarea', placeholder: 'Reason for promotion' },
+    { key: 'new_designation', label: 'New Designation', type: 'select', required: true, optionsEndpoint: '/api/v1/designations/', optionsLabelKey: 'name' },
+    { key: 'new_department', label: 'New Department', type: 'select', required: false, optionsEndpoint: '/api/v1/departments/', optionsLabelKey: 'name' },
+    { key: 'new_grade', label: 'New Grade', type: 'select', required: false, optionsEndpoint: '/api/v1/employee-grades/', optionsLabelKey: 'name' },
+    { key: 'revised_base_amount', label: 'New Base Pay', type: 'text', required: false, placeholder: 'Leave empty to keep current base pay' },
+    { key: 'effective_date', label: 'Effective Date', type: 'date', required: true },
   ];
 
   if (isLoading) {
@@ -333,7 +335,7 @@ export function EmployeeDetail() {
         onClose={() => setShowPromote(false)}
         title={`Promote ${fullName}`}
         fields={promoteFields}
-        onSubmit={(data) => promoteMutation.mutate({ ...data, employee: employee.id, from_designation: employee.designation?.title })}
+        onSubmit={(data) => promoteMutation.mutate({ ...data, employee: employee.id })}
         isLoading={promoteMutation.isPending}
       />
 
