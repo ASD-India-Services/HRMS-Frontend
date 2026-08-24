@@ -67,6 +67,7 @@ export interface LeaveFilters {
   status?: LeaveApplicationStatus | '';
   page?: number;
   page_size?: number;
+  mine?: boolean;
 }
 
 export interface PaginatedLeaveResponse {

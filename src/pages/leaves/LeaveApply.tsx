@@ -4,10 +4,19 @@
  * Requirements: 27.2
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLeaveTypes, useLeaveBalances, useApplyLeave } from '@/hooks/useLeaves';
 import { LeaveBalanceCard } from './components/LeaveBalanceCard';
+import api from '@/lib/api';
+
+interface LopPolicy {
+  is_active: boolean;
+  max_days_per_year: string | null;
+  used_days: string;
+  remaining_days: string | null;
+  deduction_per_day: string;
+}
 
 interface LeaveApplyProps {
   onSuccess?: () => void;
@@ -21,6 +30,14 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
   const { data: balances, isLoading: balancesLoading } = useLeaveBalances();
   const applyLeave = useApplyLeave();
 
+  const [lopPolicy, setLopPolicy] = useState<LopPolicy | null>(null);
+
+  useEffect(() => {
+    api.get('/api/v1/leaves/lop-policy/balance/')
+      .then((res) => setLopPolicy(res.data))
+      .catch(() => setLopPolicy(null));
+  }, []);
+
   const [leaveType, setLeaveType] = useState('');
   const [customLeaveType, setCustomLeaveType] = useState('');
   const [fromDate, setFromDate] = useState('');
@@ -30,6 +47,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
   // Check if the selected leave type is "Others"
   const selectedType = leaveTypes?.find((t) => t.id === leaveType);
   const isOthers = selectedType?.name?.toLowerCase() === 'others';
+  const isLop = leaveType === '__lop__';
 
   const isFormValid = leaveType && fromDate && toDate && reason.trim() && (!isOthers || customLeaveType.trim());
 
@@ -39,11 +57,12 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
 
     applyLeave.mutate(
       {
-        leave_type: leaveType,
+        leave_type: isLop ? '__lop__' : leaveType,
         from_date: fromDate,
         to_date: toDate,
         reason: isOthers ? `[${customLeaveType.trim()}] ${reason.trim()}` : reason.trim(),
-      },
+        is_lop: isLop || undefined,
+      } as Record<string, unknown>,
       {
         onSuccess: () => {
           if (onSuccess) {
@@ -87,6 +106,26 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
             {balances.map((balance) => (
               <LeaveBalanceCard key={balance.leave_type_id ?? balance.id} balance={balance} />
             ))}
+            {lopPolicy && (
+              <div className="rounded-lg border border-orange-200 bg-orange-50 p-4 shadow-sm">
+                <h4 className="text-sm font-semibold text-orange-900">Loss of Pay</h4>
+                <div className="mt-3 flex items-end justify-between">
+                  <div>
+                    <p className="text-2xl font-bold text-orange-600">
+                      {lopPolicy.remaining_days !== null ? lopPolicy.remaining_days : '∞'}
+                    </p>
+                    <p className="text-xs text-gray-500">remaining</p>
+                  </div>
+                  <div className="text-right text-xs text-gray-500">
+                    <p>{lopPolicy.used_days} used</p>
+                    <p>{lopPolicy.max_days_per_year ?? '∞'} max/year</p>
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-orange-700">
+                  ₹{lopPolicy.deduction_per_day} deducted per day
+                </p>
+              </div>
+            )}
           </div>
         ) : (
           <p className="text-sm text-gray-500">No leave balances found.</p>
@@ -122,6 +161,9 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
                     {type.name}
                   </option>
                 ))}
+              {lopPolicy && (
+                <option value="__lop__">Loss of Pay</option>
+              )}
             </select>
             {isOthers && (
               <input

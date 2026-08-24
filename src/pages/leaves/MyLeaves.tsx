@@ -13,6 +13,7 @@ import { Can } from '@/components/Can';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
+import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { LeaveApplicationStatus } from '@/types/leave';
 
@@ -71,9 +72,11 @@ function MyLeavesContent() {
     status: activeStatus || undefined,
     page,
     page_size: 10,
+    mine: true,
   });
 
   const cancelLeave = useCancelLeave();
+  const [cancelId, setCancelId] = useState<string | null>(null);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
@@ -198,17 +201,12 @@ function MyLeavesContent() {
                     <td className="whitespace-nowrap px-4 py-3 text-sm">
                       {(() => {
                         const today = new Date().toISOString().split('T')[0];
-                        const isCompleted = application.status === 'approved' && application.to_date < today;
-                        const isOwnApplication = !currentEmployee || application.employee.id === currentEmployee.id;
-                        const canCancel = isOwnApplication && (application.status === 'pending' || (application.status === 'approved' && !isCompleted));
+                        const hasStarted = application.from_date <= today;
+                        const canCancel = !hasStarted && (application.status === 'pending' || application.status === 'approved');
                         if (canCancel) {
                           return (
                             <button
-                              onClick={() => {
-                                if (confirm('Are you sure you want to cancel this leave application?')) {
-                                  cancelLeave.mutate(application.id);
-                                }
-                              }}
+                              onClick={() => setCancelId(application.id)}
                               className="rounded px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50 border border-red-200 transition-colors"
                               disabled={cancelLeave.isPending}
                             >
@@ -216,8 +214,8 @@ function MyLeavesContent() {
                             </button>
                           );
                         }
-                        if (isCompleted) {
-                          return <span className="text-xs text-gray-400">Completed</span>;
+                        if (hasStarted && (application.status === 'approved' || application.status === 'pending')) {
+                          return <span className="text-xs text-gray-400">Started</span>;
                         }
                         return <span className="text-xs text-gray-400">–</span>;
                       })()}
@@ -287,6 +285,24 @@ function MyLeavesContent() {
           </div>
         </div>
       )}
+
+      {/* Cancel Leave Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={!!cancelId}
+        onClose={() => setCancelId(null)}
+        onConfirm={() => {
+          if (cancelId) {
+            cancelLeave.mutate(cancelId, {
+              onSuccess: () => setCancelId(null),
+            });
+          }
+        }}
+        title="Cancel Leave Application"
+        message="Are you sure you want to cancel this leave? The leave balance will be restored."
+        confirmLabel="Yes, Cancel Leave"
+        variant="destructive"
+        isLoading={cancelLeave.isPending}
+      />
     </div>
   );
 }

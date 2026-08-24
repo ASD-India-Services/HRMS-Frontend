@@ -37,6 +37,7 @@ async function fetchLeaveApplications(filters: LeaveFilters): Promise<PaginatedL
   if (filters.status) params.status = filters.status;
   if (filters.page) params.page = filters.page;
   if (filters.page_size) params.page_size = filters.page_size;
+  if (filters.mine) params.mine = 'true';
 
   const response = await api.get<PaginatedLeaveResponse>('/api/v1/leaves/applications/', { params });
   return response.data;

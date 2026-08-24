@@ -51,6 +51,18 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     sortable: true,
     render: (v: unknown) => (v && Number(v) > 0 ? `₹${v}` : '—'),
   },
+  {
+    key: 'min_full_day_hours',
+    header: 'Min Full Day (hrs)',
+    sortable: true,
+    render: (v: unknown) => (v && Number(v) > 0 ? `${v}h` : '—'),
+  },
+  {
+    key: 'min_half_day_hours',
+    header: 'Min Half Day (hrs)',
+    sortable: true,
+    render: (v: unknown) => (v && Number(v) > 0 ? `${v}h` : '—'),
+  },
 ];
 
 const filters: FilterConfig[] = [
@@ -90,9 +102,21 @@ const formFields: FieldConfig[] = [
   },
   {
     key: 'late_deduction_per_day',
-    label: 'Late Arrival Deduction Per Day (₹)',
+    label: 'Late Arrival Deduction Per Day (₹) ',
     type: 'number',
-    placeholder: '0',
+    placeholder: '0 (no deduction)',
+  },
+  {
+    key: 'min_full_day_hours',
+    label: 'Min Hours for Full Day',
+    type: 'number',
+    placeholder: '0 (disabled)',
+  },
+  {
+    key: 'min_half_day_hours',
+    label: 'Min Hours for Half Day',
+    type: 'number',
+    placeholder: '0 (disabled)',
   },
 ];
 
@@ -141,6 +165,12 @@ export default function ShiftTypes() {
       late_deduction_per_day: data.late_deduction_per_day
         ? Number(data.late_deduction_per_day)
         : 0,
+      min_full_day_hours: data.min_full_day_hours
+        ? Number(data.min_full_day_hours)
+        : 0,
+      min_half_day_hours: data.min_half_day_hours
+        ? Number(data.min_half_day_hours)
+        : 0,
       is_night_shift: !!data.is_night_shift,
     };
     createMutation.mutate(payload, {
@@ -159,6 +189,12 @@ export default function ShiftTypes() {
           : 15,
         late_deduction_per_day: data.late_deduction_per_day
           ? Number(data.late_deduction_per_day)
+          : 0,
+        min_full_day_hours: data.min_full_day_hours
+          ? Number(data.min_full_day_hours)
+          : 0,
+        min_half_day_hours: data.min_half_day_hours
+          ? Number(data.min_half_day_hours)
           : 0,
         is_night_shift: !!data.is_night_shift,
       };

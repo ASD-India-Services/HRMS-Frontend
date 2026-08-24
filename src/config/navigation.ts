@@ -185,6 +185,7 @@ export const navigationConfig: NavGroup[] = [
       { label: 'Block Lists', href: '/leave-block-lists', icon: ICONS.leaveBlock, requiredPermission: 'leaves.manage', featureFlag: 'leaves_enabled' },
       { label: 'Adjustments', href: '/leave-adjustments', icon: ICONS.leaveAdjust, requiredPermission: 'leaves.manage', featureFlag: 'leaves_enabled' },
       { label: 'Earned Leave Schedules', href: '/earned-leave-schedules', icon: ICONS.leaveEarned, requiredPermission: 'leaves.manage', featureFlag: 'leaves_enabled' },
+      { label: 'Loss of Pay', href: '/loss-of-pay', icon: ICONS.leaveAdjust, requiredPermission: 'leaves.manage', featureFlag: 'leaves_enabled' },
     ],
   },
   {

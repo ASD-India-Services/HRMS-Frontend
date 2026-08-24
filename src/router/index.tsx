@@ -64,6 +64,7 @@ const LeavePolicyAssignments = lazy(() => import('@/pages/LeavePolicyAssignments
 const LeaveBlockLists = lazy(() => import('@/pages/LeaveBlockLists'));
 const LeaveAdjustments = lazy(() => import('@/pages/LeaveAdjustments'));
 const EarnedLeaveSchedules = lazy(() => import('@/pages/EarnedLeaveSchedules'));
+const LossOfPay = lazy(() => import('@/pages/LossOfPay'));
 const ShiftRequests = lazy(() => import('@/pages/ShiftRequests'));
 const ShiftSchedules = lazy(() => import('@/pages/ShiftSchedules'));
 const AttendanceRequests = lazy(() => import('@/pages/AttendanceRequests'));
@@ -523,6 +524,10 @@ export const router = createBrowserRouter([
       {
         path: 'earned-leave-schedules',
         element: gated('leaves_enabled', 'Leave Management', 'leaves.manage', <EarnedLeaveSchedules />),
+      },
+      {
+        path: 'loss-of-pay',
+        element: gated('leaves_enabled', 'Leave Management', 'leaves.manage', <LossOfPay />),
       },
 
       // ─── Shift Requests & Schedules ────────────────────────────

@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { getCurrentPosition, isGeolocationSupported } from '@/utils/geolocation'
 import type { Coordinates, GeolocationError } from '@/utils/geolocation'
 import { useCheckIn, useCheckOut, getDeviceId } from '@/hooks/useAttendance'
 import type { AttendanceRecord } from '@/hooks/useAttendance'
 import { useShiftAssignments } from '@/hooks/useShifts'
+import api from '@/lib/api'
 
 interface CheckInButtonProps {
   /** Current attendance record for today */
@@ -92,6 +93,7 @@ export function CheckInButton({ record }: CheckInButtonProps) {
   const [coordinates, setCoordinates] = useState<Coordinates | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [geofenceWarning, setGeofenceWarning] = useState<string | null>(null)
+  const [showCheckoutConfirm, setShowCheckoutConfirm] = useState(false)
 
   const checkIn = useCheckIn()
   const checkOut = useCheckOut()
@@ -105,6 +107,16 @@ export function CheckInButton({ record }: CheckInButtonProps) {
   const hasCheckedIn = !!record?.check_in
   const hasCheckedOut = !!record?.check_out
   const isCompleted = hasCheckedIn && hasCheckedOut
+
+  // Check if today is a working day (not holiday / not on leave)
+  const [workingDayCheck, setWorkingDayCheck] = useState<{ is_working_day: boolean; reason: string | null }>({ is_working_day: true, reason: null })
+  useEffect(() => {
+    api.get('/api/v1/attendance/working-day-check/')
+      .then((res) => setWorkingDayCheck(res.data))
+      .catch(() => setWorkingDayCheck({ is_working_day: true, reason: null }))
+  }, [])
+
+  const isNonWorkingDay = !workingDayCheck.is_working_day
 
   // Check if current time is within shift window
   const shiftTimeStatus = useMemo(() => {
@@ -216,11 +228,24 @@ export function CheckInButton({ record }: CheckInButtonProps) {
   const isCheckIn = !hasCheckedIn
   const isProcessing = actionState !== 'idle'
   const isDisabledByShift = !shiftTimeStatus.allowed
+  const isDisabled = isProcessing || isDisabledByShift || isNonWorkingDay
 
   return (
     <div className="text-center">
+      {/* Non-working day message (holiday or on leave) */}
+      {isNonWorkingDay && workingDayCheck.reason && (
+        <div className="mb-4 mx-auto max-w-sm rounded-md bg-blue-50 border border-blue-200 p-3" role="alert">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+            <p className="text-sm text-blue-700">{workingDayCheck.reason}. Attendance can only be entered on working days.</p>
+          </div>
+        </div>
+      )}
+
       {/* Shift time restriction message */}
-      {isDisabledByShift && shiftTimeStatus.message && (
+      {!isNonWorkingDay && isDisabledByShift && shiftTimeStatus.message && (
         <div className="mb-4 mx-auto max-w-sm rounded-md bg-amber-50 border border-amber-200 p-3" role="alert">
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -233,8 +258,15 @@ export function CheckInButton({ record }: CheckInButtonProps) {
 
       <button
         type="button"
-        onClick={handleAction}
-        disabled={isProcessing || isDisabledByShift}
+        onClick={() => {
+          if (!isCheckIn) {
+            // Show confirmation dialog before checkout
+            setShowCheckoutConfirm(true)
+          } else {
+            handleAction()
+          }
+        }}
+        disabled={isDisabled}
         aria-label={isCheckIn ? 'Check in for attendance' : 'Check out from attendance'}
         className={`
           inline-flex items-center justify-center
@@ -327,6 +359,47 @@ export function CheckInButton({ record }: CheckInButtonProps) {
               <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
             <p className="text-sm text-amber-700">{geofenceWarning}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Checkout Confirmation Dialog */}
+      {showCheckoutConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="dialog" aria-modal="true">
+          <div className="mx-4 w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+                <svg className="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Confirm Check Out</h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-2">
+              Are you sure you want to check out? Your attendance for today will be closed.
+            </p>
+            <p className="text-xs text-red-600 font-medium mb-5">
+              This action cannot be undone. You will not be able to check in again today.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowCheckoutConfirm(false)}
+                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowCheckoutConfirm(false)
+                  handleAction()
+                }}
+                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
+              >
+                Yes, Check Out
+              </button>
+            </div>
           </div>
         </div>
       )}
