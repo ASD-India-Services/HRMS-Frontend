@@ -86,8 +86,11 @@ function ComponentTable({ title, components, variant }: {
 }
 
 export function PayslipViewer() {
-  const [month, setMonth] = useState(getCurrentMonth());
-  const [year, setYear] = useState(getCurrentYear());
+  // Default to previous month since payroll is run for the month that just ended
+  const prevMonth = getCurrentMonth() === 1 ? 12 : getCurrentMonth() - 1;
+  const prevYear = getCurrentMonth() === 1 ? getCurrentYear() - 1 : getCurrentYear();
+  const [month, setMonth] = useState(prevMonth);
+  const [year, setYear] = useState(prevYear);
   const [selectedSlipId, setSelectedSlipId] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 

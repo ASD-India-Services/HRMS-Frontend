@@ -29,6 +29,7 @@ const createFields: FieldConfig[] = [
   { key: 'name', label: 'Period Name', type: 'text', required: true, placeholder: 'e.g., FY 2024-25' },
   { key: 'start_date', label: 'Start Date', type: 'date', required: true },
   { key: 'end_date', label: 'End Date', type: 'date', required: true },
+  { key: 'is_active', label: 'Active (open for payroll runs)', type: 'checkbox' },
 ];
 
 export default function PayrollPeriods() {

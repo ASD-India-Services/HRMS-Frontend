@@ -32,6 +32,8 @@ export default function MyAttendanceHistory() {
   // Stats
   const presentDays = records.filter((r: any) => r.status === 'present').length;
   const lateDays = records.filter((r: any) => r.is_late).length;
+  const absentDays = records.filter((r: any) => r.status === 'absent').length;
+  const onLeaveDays = records.filter((r: any) => r.status === 'on_leave').length;
   const totalHours = records.reduce((sum: number, r: any) => {
     const h = r.working_hours;
     // Try working_hours first
@@ -85,18 +87,26 @@ export default function MyAttendanceHistory() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-5 gap-4 mb-6">
         <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
           <p className="text-2xl font-bold text-indigo-600">{presentDays}</p>
-          <p className="text-xs text-gray-500 mt-1">Days Present</p>
+          <p className="text-xs text-gray-500 mt-1">Present</p>
+        </div>
+        <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
+          <p className="text-2xl font-bold text-red-600">{absentDays}</p>
+          <p className="text-xs text-gray-500 mt-1">Absent</p>
+        </div>
+        <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
+          <p className="text-2xl font-bold text-blue-600">{onLeaveDays}</p>
+          <p className="text-xs text-gray-500 mt-1">On Leave</p>
         </div>
         <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
           <p className="text-2xl font-bold text-amber-600">{lateDays}</p>
-          <p className="text-xs text-gray-500 mt-1">Late Arrivals</p>
+          <p className="text-xs text-gray-500 mt-1">Late</p>
         </div>
         <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
           <p className="text-2xl font-bold text-green-600">{totalHours.toFixed(1)}h</p>
-          <p className="text-xs text-gray-500 mt-1">Total Hours</p>
+          <p className="text-xs text-gray-500 mt-1">Hours</p>
         </div>
       </div>
 
@@ -135,9 +145,11 @@ export default function MyAttendanceHistory() {
                       r.status === 'present' ? 'bg-green-100 text-green-700' :
                       r.status === 'absent' ? 'bg-red-100 text-red-700' :
                       r.status === 'half_day' ? 'bg-amber-100 text-amber-700' :
+                      r.status === 'on_leave' ? 'bg-blue-100 text-blue-700' :
+                      r.status === 'holiday' ? 'bg-purple-100 text-purple-700' :
                       'bg-gray-100 text-gray-700'
                     }`}>
-                      {r.status}
+                      {r.status === 'on_leave' ? 'On Leave' : r.status === 'half_day' ? 'Half Day' : r.status}
                       {r.is_late && ' (Late)'}
                     </span>
                   </td>

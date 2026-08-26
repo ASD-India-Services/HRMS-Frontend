@@ -43,12 +43,19 @@ export function TransitionActions({
   isLoading = false,
 }: TransitionActionsProps) {
   const { role } = useUser();
-  const { roleName } = useHrmsPermissionsContext();
+  const { roleName, hasPermission } = useHrmsPermissionsContext();
 
-  // Filter transitions: `from` matches current status AND user has an allowed role
+  // Filter transitions: `from` matches current status AND user has access
+  // Priority: requiredPermission (dynamic) > allowedRoles (legacy)
   const availableTransitions = config.transitions.filter((t) => {
     if (t.from !== record.status) return false;
-    // Check both JWT role and HRMS role
+
+    // If requiredPermission is set, use permission-based check (works with any role)
+    if (t.requiredPermission) {
+      return hasPermission(t.requiredPermission);
+    }
+
+    // Fallback: check JWT role or HRMS role against allowedRoles
     const jwtMatch = role && t.allowedRoles.includes(role);
     const hrmsMatch = roleName && t.allowedRoles.includes(roleName);
     return jwtMatch || hrmsMatch;

@@ -37,8 +37,10 @@ export interface WorkflowTransition {
   endpoint: (id: string) => string;
   /** HTTP method (default: POST) */
   method?: 'POST' | 'PATCH' | 'DELETE';
-  /** Roles that can perform this transition */
+  /** Roles that can perform this transition (legacy — prefer requiredPermission) */
   allowedRoles: string[];
+  /** Permission required to perform this transition (dynamic, works with any role) */
+  requiredPermission?: string;
   /** Whether a reason/comment field is required */
   requiresReason?: boolean;
   /** Additional form fields required for this transition */

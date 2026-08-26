@@ -13,8 +13,10 @@ export const payrollRunWorkflow: WorkflowConfig = {
   id: 'payroll-run',
   statuses: [
     { key: 'draft', label: 'Draft', color: 'gray' },
+    { key: 'completed', label: 'Completed', color: 'blue' },
     { key: 'submitted', label: 'Submitted', color: 'yellow' },
     { key: 'disbursed', label: 'Disbursed', color: 'green' },
+    { key: 'cancelled', label: 'Cancelled', color: 'gray' },
   ],
   transitions: [
     {
@@ -23,7 +25,23 @@ export const payrollRunWorkflow: WorkflowConfig = {
       action: 'Submit for Approval',
       endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
       method: 'PATCH',
-      allowedRoles: ['org_admin', 'hr_manager'],
+      allowedRoles: [],
+      requiredPermission: 'payroll.manage',
+      variant: 'primary',
+      confirm: {
+        title: 'Submit Payroll',
+        message:
+          'Submit this payroll run for disbursement? Salary slips will be finalized.',
+      },
+    },
+    {
+      from: 'completed',
+      to: 'submitted',
+      action: 'Submit for Approval',
+      endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
+      method: 'PATCH',
+      allowedRoles: [],
+      requiredPermission: 'payroll.manage',
       variant: 'primary',
       confirm: {
         title: 'Submit Payroll',
@@ -37,7 +55,8 @@ export const payrollRunWorkflow: WorkflowConfig = {
       action: 'Mark as Disbursed',
       endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
       method: 'PATCH',
-      allowedRoles: ['org_admin'],
+      allowedRoles: [],
+      requiredPermission: 'payroll.manage',
       variant: 'primary',
       confirm: {
         title: 'Disburse Payroll',
@@ -51,7 +70,22 @@ export const payrollRunWorkflow: WorkflowConfig = {
       action: 'Delete',
       endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
       method: 'DELETE',
-      allowedRoles: ['org_admin', 'hr_manager'],
+      allowedRoles: [],
+      requiredPermission: 'payroll.manage',
+      variant: 'destructive',
+      confirm: {
+        title: 'Delete Payroll Run',
+        message: 'This will permanently delete this payroll run and all associated salary slips. This cannot be undone.',
+      },
+    },
+    {
+      from: 'completed',
+      to: 'cancelled',
+      action: 'Delete',
+      endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
+      method: 'DELETE',
+      allowedRoles: [],
+      requiredPermission: 'payroll.manage',
       variant: 'destructive',
       confirm: {
         title: 'Delete Payroll Run',
@@ -64,7 +98,8 @@ export const payrollRunWorkflow: WorkflowConfig = {
       action: 'Reject & Delete',
       endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
       method: 'DELETE',
-      allowedRoles: ['org_admin'],
+      allowedRoles: [],
+      requiredPermission: 'payroll.manage',
       variant: 'destructive',
       confirm: {
         title: 'Reject Payroll Run',
@@ -77,7 +112,8 @@ export const payrollRunWorkflow: WorkflowConfig = {
       action: 'Delete & Re-run',
       endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
       method: 'DELETE',
-      allowedRoles: ['org_admin', 'hr_manager'],
+      allowedRoles: [],
+      requiredPermission: 'payroll.manage',
       variant: 'destructive',
       confirm: {
         title: 'Delete Disbursed Payroll Run',
