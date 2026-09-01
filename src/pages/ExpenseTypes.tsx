@@ -49,8 +49,8 @@ export default function ExpenseTypes() {
       key: 'id', header: 'Actions', sortable: false,
       render: (_v: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+          <EditButton permission="expense_types.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="expense_types.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -63,7 +63,7 @@ export default function ExpenseTypes() {
           <h1 className="text-2xl font-bold text-gray-900">Expense Types</h1>
           <p className="mt-1 text-sm text-gray-600">Define categories of expenses employees can claim</p>
         </div>
-        <CreateButton label="Create Expense Type" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="expense_types.create" label="Create Expense Type" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />

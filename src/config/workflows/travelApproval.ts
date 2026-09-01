@@ -34,6 +34,7 @@ export const travelApprovalWorkflow: WorkflowConfig = {
       to: 'approved',
       action: 'Approve',
       endpoint: (id) => TRAVEL.REQUEST_APPROVE(id),
+      requiredPermission: 'travel.approve',
       allowedRoles: ['org_admin', 'hr_manager', 'department_head'],
       variant: 'primary',
       confirm: {
@@ -46,6 +47,7 @@ export const travelApprovalWorkflow: WorkflowConfig = {
       to: 'rejected',
       action: 'Reject',
       endpoint: (id) => TRAVEL.REQUEST_REJECT(id),
+      requiredPermission: 'travel.reject',
       allowedRoles: ['org_admin', 'hr_manager', 'department_head'],
       requiresReason: true,
       variant: 'destructive',

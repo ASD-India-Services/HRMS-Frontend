@@ -23,6 +23,7 @@ export const expenseApprovalWorkflow: WorkflowConfig = {
       to: 'approved',
       action: 'Approve',
       endpoint: (id) => `/api/v1/expenses/claims/${id}/approve/`,
+      requiredPermission: 'expenses.approve',
       allowedRoles: ['org_admin', 'hr_manager', 'department_head'],
       variant: 'primary',
       confirm: {
@@ -35,6 +36,7 @@ export const expenseApprovalWorkflow: WorkflowConfig = {
       to: 'rejected',
       action: 'Reject',
       endpoint: (id) => `/api/v1/expenses/claims/${id}/reject/`,
+      requiredPermission: 'expenses.reject',
       allowedRoles: ['org_admin', 'hr_manager', 'department_head'],
       requiresReason: true,
       variant: 'destructive',
@@ -44,6 +46,7 @@ export const expenseApprovalWorkflow: WorkflowConfig = {
       to: 'paid',
       action: 'Mark as Paid',
       endpoint: (id) => `/api/v1/expenses/claims/${id}/mark-paid/`,
+      requiredPermission: 'expenses.mark_paid',
       method: 'POST',
       allowedRoles: ['org_admin', 'hr_manager'],
       variant: 'primary',

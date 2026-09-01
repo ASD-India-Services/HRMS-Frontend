@@ -33,6 +33,7 @@ export const overtimeApprovalWorkflow: WorkflowConfig = {
       to: 'approved',
       action: 'Approve',
       endpoint: (id) => OVERTIME.SLIP_APPROVE(id),
+      requiredPermission: 'overtime.approve',
       allowedRoles: ['org_admin', 'hr_manager', 'department_head'],
       variant: 'primary',
       confirm: {
@@ -45,6 +46,7 @@ export const overtimeApprovalWorkflow: WorkflowConfig = {
       to: 'rejected',
       action: 'Reject',
       endpoint: (id) => OVERTIME.SLIP_REJECT(id),
+      requiredPermission: 'overtime.reject',
       allowedRoles: ['org_admin', 'hr_manager', 'department_head'],
       requiresReason: true,
       variant: 'destructive',

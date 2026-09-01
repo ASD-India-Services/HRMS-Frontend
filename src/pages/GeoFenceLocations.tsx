@@ -86,7 +86,7 @@ export default function GeoFenceLocations() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton
+          <EditButton permission="geofence_locations.edit"
             label="Edit"
             size="sm"
             onClick={() => {
@@ -94,11 +94,10 @@ export default function GeoFenceLocations() {
               setInitialValues(row);
             }}
           />
-          <DeleteButton
+          <DeleteButton permission="geofence_locations.delete"
             label="Delete"
             size="sm"
             onClick={() => setDeleteId(row.id as string)}
-            permission="attendance.delete"
           />
         </div>
       ),
@@ -163,7 +162,7 @@ export default function GeoFenceLocations() {
             Configure allowed check-in locations with radius-based validation
           </p>
         </div>
-        <CreateButton label="Add Location" onClick={handleOpenCreate} />
+        <CreateButton permission="geofence_locations.create" label="Add Location" onClick={handleOpenCreate} />
       </div>
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

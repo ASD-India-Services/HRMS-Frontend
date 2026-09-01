@@ -26,7 +26,7 @@ export const payrollRunWorkflow: WorkflowConfig = {
       endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
       method: 'PATCH',
       allowedRoles: [],
-      requiredPermission: 'payroll.manage',
+      requiredPermission: 'payroll.submit',
       variant: 'primary',
       confirm: {
         title: 'Submit Payroll',
@@ -41,7 +41,7 @@ export const payrollRunWorkflow: WorkflowConfig = {
       endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
       method: 'PATCH',
       allowedRoles: [],
-      requiredPermission: 'payroll.manage',
+      requiredPermission: 'payroll.submit',
       variant: 'primary',
       confirm: {
         title: 'Submit Payroll',
@@ -56,7 +56,7 @@ export const payrollRunWorkflow: WorkflowConfig = {
       endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
       method: 'PATCH',
       allowedRoles: [],
-      requiredPermission: 'payroll.manage',
+      requiredPermission: 'payroll.disburse',
       variant: 'primary',
       confirm: {
         title: 'Disburse Payroll',
@@ -71,7 +71,7 @@ export const payrollRunWorkflow: WorkflowConfig = {
       endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
       method: 'DELETE',
       allowedRoles: [],
-      requiredPermission: 'payroll.manage',
+      requiredPermission: 'payroll.delete',
       variant: 'destructive',
       confirm: {
         title: 'Delete Payroll Run',
@@ -85,7 +85,7 @@ export const payrollRunWorkflow: WorkflowConfig = {
       endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
       method: 'DELETE',
       allowedRoles: [],
-      requiredPermission: 'payroll.manage',
+      requiredPermission: 'payroll.delete',
       variant: 'destructive',
       confirm: {
         title: 'Delete Payroll Run',
@@ -99,7 +99,7 @@ export const payrollRunWorkflow: WorkflowConfig = {
       endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
       method: 'DELETE',
       allowedRoles: [],
-      requiredPermission: 'payroll.manage',
+      requiredPermission: 'payroll.delete',
       variant: 'destructive',
       confirm: {
         title: 'Reject Payroll Run',
@@ -113,7 +113,7 @@ export const payrollRunWorkflow: WorkflowConfig = {
       endpoint: (id) => `/api/v1/payroll-entries/${id}/`,
       method: 'DELETE',
       allowedRoles: [],
-      requiredPermission: 'payroll.manage',
+      requiredPermission: 'payroll.delete',
       variant: 'destructive',
       confirm: {
         title: 'Delete Disbursed Payroll Run',

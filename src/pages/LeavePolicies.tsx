@@ -82,8 +82,8 @@ export default function LeavePolicies() {
           >
             Allocations
           </button>
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+          <EditButton permission="leave_policies.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="leave_policies.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -144,7 +144,7 @@ export default function LeavePolicies() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div><h1 className="text-2xl font-bold text-gray-900">Leave Policies</h1><p className="mt-1 text-sm text-gray-600">Manage leave allocation policy templates</p></div>
-        <CreateButton label="Create Policy" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="leave_policies.create" label="Create Policy" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />

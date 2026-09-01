@@ -57,8 +57,8 @@ export default function HolidayLists() {
     { key: 'id', header: 'Actions', sortable: false, render: (_v: unknown, row: Record<string, unknown>) => (
       <div className="flex items-center gap-1">
         <button onClick={() => setSelectedList(row)} className="rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100">Entries</button>
-        <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-        <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+        <EditButton permission="holidays.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+        <DeleteButton permission="holidays.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
       </div>
     )},
   ];
@@ -78,7 +78,7 @@ export default function HolidayLists() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div><h1 className="text-2xl font-bold text-gray-900">Holiday Lists</h1><p className="mt-1 text-sm text-gray-600">Manage holiday calendars for the organization</p></div>
-        <CreateButton label="Create Holiday List" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="holidays.create" label="Create Holiday List" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
@@ -140,7 +140,7 @@ function HolidayEntries({ list, onBack }: { list: Record<string, unknown>; onBac
               {list.from_date as string} to {list.to_date as string} · {entries.length} holidays
             </p>
           </div>
-          <CreateButton label="Add Holiday" onClick={() => setShowCreate(true)} />
+          <CreateButton permission="holidays.create" label="Add Holiday" onClick={() => setShowCreate(true)} />
         </div>
       </div>
 
@@ -166,7 +166,7 @@ function HolidayEntries({ list, onBack }: { list: Record<string, unknown>; onBac
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-700">{entry.description as string}</td>
                   <td className="px-4 py-3 text-right">
-                    <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(entry.id as string)} />
+                    <DeleteButton permission="holidays.delete" label="Delete" size="sm" onClick={() => setDeleteId(entry.id as string)} />
                   </td>
                 </tr>
               ))}

@@ -50,8 +50,8 @@ export default function AppraisalTemplates() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+          <EditButton permission="appraisal_templates.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="appraisal_templates.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -80,7 +80,7 @@ export default function AppraisalTemplates() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div><h1 className="text-2xl font-bold text-gray-900">Appraisal Templates</h1><p className="mt-1 text-sm text-gray-600">Manage appraisal evaluation templates</p></div>
-        <CreateButton label="Create Template" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="appraisal_templates.create" label="Create Template" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />

@@ -56,8 +56,8 @@ export default function SalaryComponents() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+          <EditButton permission="salary_components.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="salary_components.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -86,7 +86,7 @@ export default function SalaryComponents() {
           <h1 className="text-2xl font-bold text-gray-900">Salary Components</h1>
           <p className="mt-1 text-sm text-gray-600">Manage salary earning and deduction components</p>
         </div>
-        <CreateButton label="Create Component" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="salary_components.create" label="Create Component" onClick={() => setShowCreate(true)} />
       </div>
 
       <FilterBar

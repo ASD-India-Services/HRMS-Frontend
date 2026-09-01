@@ -152,8 +152,8 @@ export default function ShiftSchedules() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => openEdit(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+          <EditButton permission="shift_schedules.edit" label="Edit" size="sm" onClick={() => openEdit(row)} />
+          <DeleteButton permission="shift_schedules.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -257,7 +257,7 @@ export default function ShiftSchedules() {
           <h1 className="text-2xl font-bold text-gray-900">Shift Schedules</h1>
           <p className="mt-1 text-sm text-gray-600">Manage recurring shift schedules</p>
         </div>
-        <CreateButton label="+ Create Schedule" onClick={openCreate} />
+        <CreateButton permission="shift_schedules.create" label="+ Create Schedule" onClick={openCreate} />
       </div>
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

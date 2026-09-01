@@ -101,8 +101,8 @@ export default function PayrollCorrections() {
           )}
           {row.status !== 'applied' && (
             <>
-              <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-              <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+              <EditButton permission="payroll_corrections.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+              <DeleteButton permission="payroll_corrections.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
             </>
           )}
           {row.status === 'applied' && (
@@ -138,7 +138,7 @@ export default function PayrollCorrections() {
           <h1 className="text-2xl font-bold text-gray-900">Payroll Corrections</h1>
           <p className="mt-1 text-sm text-gray-600">Manage salary correction entries</p>
         </div>
-        <CreateButton label="Create Correction" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="payroll_corrections.create" label="Create Correction" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />

@@ -244,8 +244,8 @@ export default function Gratuity() {
     ...rulesColumns,
     { key: 'id', header: 'Actions', sortable: false, render: (_: unknown, row: Record<string, unknown>) => (
       <div className="flex items-center gap-1">
-        <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-        <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+        <EditButton permission="gratuity.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+        <DeleteButton permission="gratuity.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
       </div>
     )},
   ];
@@ -361,7 +361,7 @@ export default function Gratuity() {
       <div className="rounded-lg border border-gray-200 bg-white p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900">Gratuity Rules</h2>
-          <CreateButton label="Create Rule" onClick={() => setShowCreate(true)} />
+          <CreateButton permission="gratuity.create" label="Create Rule" onClick={() => setShowCreate(true)} />
         </div>
         <DataTable queryResult={rulesQuery} columns={columnsWithActions} />
         {rulesQuery.data && rulesQuery.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={rulesQuery.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}

@@ -50,8 +50,8 @@ export default function OvertimeTypes() {
     ...columns,
     { key: 'id', header: 'Actions', sortable: false, render: (_v: unknown, row: Record<string, unknown>) => (
       <div className="flex items-center gap-1">
-        <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-        <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+        <EditButton permission="overtime_types.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+        <DeleteButton permission="overtime_types.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
       </div>
     )},
   ];
@@ -63,7 +63,7 @@ export default function OvertimeTypes() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div><h1 className="text-2xl font-bold text-gray-900">Overtime Types</h1><p className="mt-1 text-sm text-gray-600">Manage overtime rate configurations</p></div>
-        <CreateButton label="Create Type" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="overtime_types.create" label="Create Type" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />

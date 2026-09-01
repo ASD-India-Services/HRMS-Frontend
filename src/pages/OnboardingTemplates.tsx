@@ -159,8 +159,8 @@ function TemplatesTab() {
       key: 'id', header: 'Actions', sortable: false,
       render: (_v: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+          <EditButton permission="onboarding_templates.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="onboarding_templates.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -189,7 +189,7 @@ function TemplatesTab() {
   return (
     <>
       <div className="mb-4 flex justify-end">
-        <CreateButton label="Create Template" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="onboarding_templates.create" label="Create Template" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={templateFilters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
@@ -225,8 +225,8 @@ function TasksTab() {
       key: 'id', header: 'Actions', sortable: false,
       render: (_v: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+          <EditButton permission="onboarding_templates.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="onboarding_templates.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -254,7 +254,7 @@ function TasksTab() {
   return (
     <>
       <div className="mb-4 flex justify-end">
-        <CreateButton label="Create Task" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="onboarding_templates.create" label="Create Task" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={taskFilters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />

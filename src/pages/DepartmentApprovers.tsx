@@ -110,8 +110,8 @@ export default function DepartmentApprovers() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+          <EditButton permission="department_approvers.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="department_approvers.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -140,7 +140,7 @@ export default function DepartmentApprovers() {
           <h1 className="text-2xl font-bold text-gray-900">Department Approvers</h1>
           <p className="mt-1 text-sm text-gray-600">Configure approval workflows per department</p>
         </div>
-        <CreateButton label="Create Approver" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="department_approvers.create" label="Create Approver" onClick={() => setShowCreate(true)} />
       </div>
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

@@ -97,8 +97,8 @@ export default function EmployeeGrades() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+          <EditButton permission="employee_grades.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="employee_grades.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -127,7 +127,7 @@ export default function EmployeeGrades() {
           <h1 className="text-2xl font-bold text-gray-900">Employee Grades</h1>
           <p className="mt-1 text-sm text-gray-600">Manage employee grade classifications</p>
         </div>
-        <CreateButton label="Create Grade" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="employee_grades.create" label="Create Grade" onClick={() => setShowCreate(true)} />
       </div>
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

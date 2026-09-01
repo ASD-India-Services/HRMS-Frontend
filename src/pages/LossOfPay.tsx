@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 
 const POLICY_ENDPOINT = '/api/v1/leaves/lop-policy/';
 const RATES_ENDPOINT = '/api/v1/leaves/lop-rates/';
@@ -44,6 +45,11 @@ interface SelectOption {
 }
 
 export default function LossOfPay() {
+  const { hasPermission } = useHrmsPermissionsContext();
+  const canCreate = hasPermission('loss_of_pay.create');
+  const canEdit = hasPermission('loss_of_pay.edit');
+  const canDelete = hasPermission('loss_of_pay.delete');
+
   const [policy, setPolicy] = useState<LopPolicy | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -268,13 +274,15 @@ export default function LossOfPay() {
                 <h3 className="text-sm font-semibold text-gray-900">Deduction Rates</h3>
                 <p className="text-xs text-gray-500">Most specific wins: Employee &gt; Grade &gt; Department &gt; All Employees.</p>
               </div>
-              <button type="button" onClick={() => setShowRateForm(true)}
-                className="inline-flex items-center gap-1 rounded-md bg-primary-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-700">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Add Rate
-              </button>
+              {canCreate && (
+                <button type="button" onClick={() => setShowRateForm(true)}
+                  className="inline-flex items-center gap-1 rounded-md bg-primary-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-700">
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  Add Rate
+                </button>
+              )}
             </div>
 
             {/* Add Rate Form */}
@@ -356,10 +364,14 @@ export default function LossOfPay() {
                         <td className="px-4 py-2 text-sm text-gray-700">₹{rate.deduction_per_day}</td>
                         <td className="px-4 py-2 text-sm text-gray-500">{rate.max_days_per_year ?? 'Unlimited'}</td>
                         <td className="px-4 py-2">
-                          <button type="button" onClick={() => setDeleteRateId(rate.id)}
-                            className="rounded px-2 py-0.5 text-xs font-medium text-red-600 hover:bg-red-50 border border-red-200">
-                            Remove
-                          </button>
+                          {canDelete ? (
+                            <button type="button" onClick={() => setDeleteRateId(rate.id)}
+                              className="rounded px-2 py-0.5 text-xs font-medium text-red-600 hover:bg-red-50 border border-red-200">
+                              Remove
+                            </button>
+                          ) : (
+                            <span className="text-xs text-gray-400">—</span>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -374,13 +386,15 @@ export default function LossOfPay() {
           </div>
         )}
 
-        {/* Save button */}
-        <div className="mt-6 flex justify-end border-t border-gray-200 pt-5">
-          <button type="submit" disabled={saving}
-            className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:opacity-50">
-            {saving ? 'Saving...' : policy ? 'Update Policy' : 'Create Policy'}
-          </button>
-        </div>
+        {/* Save button — needs create (new policy) or edit (existing policy) */}
+        {(policy ? canEdit : canCreate) && (
+          <div className="mt-6 flex justify-end border-t border-gray-200 pt-5">
+            <button type="submit" disabled={saving}
+              className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:opacity-50">
+              {saving ? 'Saving...' : policy ? 'Update Policy' : 'Create Policy'}
+            </button>
+          </div>
+        )}
       </form>
 
       {/* Delete Rate Confirmation */}

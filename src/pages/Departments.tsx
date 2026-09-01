@@ -52,8 +52,8 @@ export default function Departments() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} permission="employees.delete" />
+          <EditButton permission="departments.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="departments.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -82,7 +82,7 @@ export default function Departments() {
           <h1 className="text-2xl font-bold text-gray-900">Departments</h1>
           <p className="mt-1 text-sm text-gray-600">Manage organizational departments</p>
         </div>
-        <CreateButton label="Add Department" onClick={() => setShowCreate(true)} permission="employees.create" />
+        <CreateButton permission="departments.create" label="Add Department" onClick={() => setShowCreate(true)} />
       </div>
 
       <FilterBar

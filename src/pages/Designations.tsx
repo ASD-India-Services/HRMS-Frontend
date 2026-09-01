@@ -52,8 +52,8 @@ export default function Designations() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} permission="employees.delete" />
+          <EditButton permission="designations.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="designations.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -82,7 +82,7 @@ export default function Designations() {
           <h1 className="text-2xl font-bold text-gray-900">Designations</h1>
           <p className="mt-1 text-sm text-gray-600">Manage job designations and titles</p>
         </div>
-        <CreateButton label="Add Designation" onClick={() => setShowCreate(true)} permission="employees.create" />
+        <CreateButton permission="designations.create" label="Add Designation" onClick={() => setShowCreate(true)} />
       </div>
 
       <FilterBar

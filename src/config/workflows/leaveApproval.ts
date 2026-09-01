@@ -23,6 +23,7 @@ export const leaveApprovalWorkflow: WorkflowConfig = {
       to: 'approved',
       action: 'Approve',
       endpoint: (id) => LEAVES.APPROVE(id),
+      requiredPermission: 'leaves.approve',
       allowedRoles: ['org_admin', 'hr_manager', 'department_head'],
       confirm: {
         title: 'Approve Leave',
@@ -35,6 +36,7 @@ export const leaveApprovalWorkflow: WorkflowConfig = {
       to: 'rejected',
       action: 'Reject',
       endpoint: (id) => LEAVES.REJECT(id),
+      requiredPermission: 'leaves.reject',
       allowedRoles: ['org_admin', 'hr_manager', 'department_head'],
       requiresReason: true,
       confirm: {

@@ -358,8 +358,8 @@ export default function SalaryStructures() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+          <EditButton permission="salary_structures.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="salary_structures.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -400,7 +400,7 @@ export default function SalaryStructures() {
           <h1 className="text-2xl font-bold text-gray-900">Salary Structures</h1>
           <p className="mt-1 text-sm text-gray-600">Manage salary structures with earnings and deductions</p>
         </div>
-        <CreateButton label="Create Structure" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="salary_structures.create" label="Create Structure" onClick={() => setShowCreate(true)} />
       </div>
 
       <FilterBar

@@ -140,7 +140,7 @@ function usePayrollRunColumns(): ColumnDef<PayrollEntry>[] {
 export function PayrollRuns() {
   return (
     <Can
-      permissions={['payroll.view']}
+      permissions={['payroll_runs.view']}
       fallback={<AccessDenied />}
     >
       <PayrollRunsContent />
@@ -231,7 +231,7 @@ function PayrollRunsContent() {
             Create, review, and manage payroll runs. Submit for approval and mark as disbursed.
           </p>
         </div>
-        <Can permissions={['payroll.manage']}>
+        <Can permissions={['payroll.create']}>
           <button
             type="button"
             onClick={() => setShowCreateForm(true)}

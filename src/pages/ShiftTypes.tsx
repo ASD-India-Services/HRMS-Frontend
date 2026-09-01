@@ -149,8 +149,8 @@ export default function ShiftTypes() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+          <EditButton permission="shift_types.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="shift_types.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -215,7 +215,7 @@ export default function ShiftTypes() {
             Define shift templates with timing and grace periods
           </p>
         </div>
-        <CreateButton label="Create Shift Type" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="shift_types.create" label="Create Shift Type" onClick={() => setShowCreate(true)} />
       </div>
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

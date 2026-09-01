@@ -112,16 +112,15 @@ export default function Branches() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <EditButton
+          <EditButton permission="branches.edit"
             label="Edit"
             size="sm"
             onClick={() => setEditRecord(row)}
           />
-          <DeleteButton
+          <DeleteButton permission="branches.delete"
             label="Delete"
             size="sm"
             onClick={() => setDeleteId(row.id as string)}
-            permission="employees.delete"
           />
         </div>
       ),
@@ -157,7 +156,7 @@ export default function Branches() {
             Manage office branches and locations across the organization
           </p>
         </div>
-        <CreateButton label="Add Branch" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="branches.create" label="Add Branch" onClick={() => setShowCreate(true)} />
       </div>
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

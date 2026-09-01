@@ -89,8 +89,8 @@ export default function Promotions() {
               ✓ Done
             </span>
           )}
-          <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-          <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+          <EditButton permission="promotions.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+          <DeleteButton permission="promotions.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
       ),
     },
@@ -119,7 +119,7 @@ export default function Promotions() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div><h1 className="text-2xl font-bold text-gray-900">Employee Promotions</h1><p className="mt-1 text-sm text-gray-600">Track and manage employee promotions</p></div>
-        <CreateButton label="Create Promotion" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="promotions.create" label="Create Promotion" onClick={() => setShowCreate(true)} />
       </div>
       {processMessage && (
         <div className="mb-4 rounded-md bg-blue-50 p-3 text-sm text-blue-700">

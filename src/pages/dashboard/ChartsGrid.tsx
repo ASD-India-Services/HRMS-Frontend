@@ -64,7 +64,7 @@ export function ChartsGrid({ dateRange }: ChartsGridProps) {
         />
       </Can>
 
-      <Can permissions={['payroll.manage']}>
+      <Can permissions={['payroll.view']}>
         <ChartWidget
           title="Payroll Summary"
           queryKey={['chart', 'payroll-summary']}
