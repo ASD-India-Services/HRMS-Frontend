@@ -111,6 +111,8 @@ export const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   'geofence_locations.delete': 'Delete geo-fence locations',
 
   'shifts.view': 'View shifts and personal shift schedule',
+  'shifts.view_own': 'View your own shift schedule (My Schedule tab)',
+  'shifts.view_team': 'View the team shift roster (Team Roster tab)',
   'shifts.create': 'Create manual shift assignments',
   'shifts.edit': 'Edit shift assignments',
   'shifts.delete': 'Delete shift assignments',

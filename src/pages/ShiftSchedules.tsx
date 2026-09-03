@@ -51,6 +51,27 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
       return <span>{v as string}</span>;
     },
   },
+  {
+    key: 'geofence_location_name',
+    header: 'Location',
+    sortable: false,
+    render: (v: unknown, row: Record<string, unknown>) => {
+      // Location was assigned but has since been deleted → flag it.
+      if (!v && row.geofence_required) {
+        return <span className="text-red-600">Location deleted</span>;
+      }
+      if (!v) return <span className="text-gray-400">—</span>;
+      const mode = row.geofence_location_mode as string | undefined;
+      return (
+        <span>
+          {v as string}
+          {mode && (
+            <span className="ml-1 text-xs text-gray-400">({mode})</span>
+          )}
+        </span>
+      );
+    },
+  },
   { key: 'start_date', header: 'Start Date', sortable: true },
   { key: 'end_date', header: 'End Date', sortable: true },
   {
@@ -82,11 +103,18 @@ interface SelectOption {
   last_name?: string;
 }
 
+interface GeofenceOption {
+  id: string;
+  name: string;
+  geofence_mode?: string;
+}
+
 interface FormState {
   name: string;
   shift_type: string;
   employee: string;
   department: string;
+  geofence_location: string;
   start_date: string;
   end_date: string;
   repeat_on: number[];
@@ -97,6 +125,7 @@ const emptyForm: FormState = {
   shift_type: '',
   employee: '',
   department: '',
+  geofence_location: '',
   start_date: '',
   end_date: '',
   repeat_on: [0, 1, 2, 3, 4], // Mon-Fri default
@@ -114,6 +143,7 @@ export default function ShiftSchedules() {
   const [shiftTypes, setShiftTypes] = useState<SelectOption[]>([]);
   const [employees, setEmployees] = useState<SelectOption[]>([]);
   const [departments, setDepartments] = useState<SelectOption[]>([]);
+  const [geofences, setGeofences] = useState<GeofenceOption[]>([]);
 
   const { filterValues, setFilter, clearFilters, page, pageSize, setPage, setPageSize } =
     useFilterSync({ filters });
@@ -141,6 +171,12 @@ export default function ShiftSchedules() {
     api.get('/api/v1/departments/').then((res) => {
       const data = res.data as { results?: SelectOption[] } | SelectOption[];
       setDepartments(Array.isArray(data) ? data : data.results || []);
+    });
+    // Only active locations are assignable. The list is read live, so any edit
+    // to a location in Geo Locations is reflected on the next check-in.
+    api.get('/api/v1/attendance/geofence-locations/?is_active=true').then((res) => {
+      const data = res.data as { results?: GeofenceOption[] } | GeofenceOption[];
+      setGeofences(Array.isArray(data) ? data : data.results || []);
     });
   }, []);
 
@@ -171,6 +207,7 @@ export default function ShiftSchedules() {
       shift_type: (row.shift_type as string) || '',
       employee: (row.employee as string) || '',
       department: (row.department as string) || '',
+      geofence_location: (row.geofence_location as string) || '',
       start_date: (row.start_date as string) || '',
       end_date: (row.end_date as string) || '',
       repeat_on: (row.repeat_on as number[]) || [0, 1, 2, 3, 4],
@@ -214,6 +251,8 @@ export default function ShiftSchedules() {
       start_date: formData.start_date,
       end_date: formData.end_date,
       repeat_on: formData.repeat_on,
+      // Always send location so it can be assigned or cleared. Empty → null.
+      geofence_location: formData.geofence_location || null,
     };
     if (formData.employee) payload.employee = formData.employee;
     if (formData.department) payload.department = formData.department;
@@ -369,6 +408,35 @@ export default function ShiftSchedules() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              {/* Work Location (Geo-fence) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Work Location{' '}
+                  <span className="text-xs text-gray-400">
+                    (optional — restricts attendance to this geo-fence)
+                  </span>
+                </label>
+                <select
+                  className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                  value={formData.geofence_location}
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, geofence_location: e.target.value }))
+                  }
+                >
+                  <option value="">— No location (no restriction) —</option>
+                  {geofences.map((loc) => (
+                    <option key={loc.id} value={loc.id}>
+                      {loc.name}
+                      {loc.geofence_mode ? ` (${loc.geofence_mode})` : ''}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-1 text-xs text-gray-400">
+                  The location&apos;s strict/warn mode is set in Geo Locations and
+                  applies automatically. Editing that location updates this instantly.
+                </p>
               </div>
 
               {/* Date Range */}

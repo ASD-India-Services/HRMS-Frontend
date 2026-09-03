@@ -128,7 +128,10 @@ export default function RoleDetailPage() {
       setSaveError(null);
       queryClient.invalidateQueries({ queryKey: ['roles', 'detail', id] });
       queryClient.invalidateQueries({ queryKey: ['roles'] });
-      queryClient.invalidateQueries({ queryKey: ['hrms-permissions'] });
+      // Force an immediate refetch of the current user's permissions so any
+      // page gated on them (e.g. Shift Management tabs) reflects the change
+      // right away, without waiting for the stale timer or a reload.
+      queryClient.refetchQueries({ queryKey: ['hrms-permissions'] });
     },
     onError: (err: unknown) => {
       setSaveSuccess(false);
@@ -251,19 +254,19 @@ export default function RoleDetailPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      {/* Back link */}
-      <Link
-        to="/admin/roles"
-        className="mb-4 inline-flex items-center text-sm text-primary-600 hover:text-primary-800"
-      >
-        <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        Back to Roles
-      </Link>
-
       {/* Header with Save Button — sticky so it stays visible while scrolling */}
       <div className="sticky top-0 z-30 -mx-4 mb-6 bg-gray-50/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        {/* Back link */}
+        <Link
+          to="/admin/roles"
+          className="mb-2 inline-flex items-center text-sm text-primary-600 hover:text-primary-800"
+        >
+          <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Roles
+        </Link>
+
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <h1 className="truncate text-2xl font-bold text-gray-900">{role.name}</h1>

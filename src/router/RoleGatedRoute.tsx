@@ -19,6 +19,8 @@ import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
 interface RoleGatedRouteProps {
   /** HRMS permission required to access this route (e.g. "employees.view") */
   requiredPermission?: string;
+  /** Grant access if the user has ANY one of these HRMS permissions. */
+  requiredAnyPermission?: string[];
   /** Legacy: roles that grant access to this route (uses @platform/auth-sdk) */
   allowedRoles?: string[];
   children: React.ReactNode;
@@ -32,6 +34,7 @@ interface RoleGatedRouteProps {
  */
 export function RoleGatedRoute({
   requiredPermission,
+  requiredAnyPermission,
   allowedRoles,
   children,
 }: RoleGatedRouteProps) {
@@ -61,6 +64,14 @@ export function RoleGatedRoute({
   // org_admin role bypasses permission checks (full access)
   if (roleName === 'org_admin') {
     return <>{children}</>;
+  }
+
+  // Any-of check: user needs at least one of the listed permissions.
+  if (requiredAnyPermission && requiredAnyPermission.length > 0) {
+    if (requiredAnyPermission.some((p) => hasPermission(p))) {
+      return <>{children}</>;
+    }
+    return <AccessDenied />;
   }
 
   // Primary check: HRMS permission-based

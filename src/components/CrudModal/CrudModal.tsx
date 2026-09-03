@@ -355,7 +355,11 @@ function AsyncSelectField({
       }));
     },
     enabled: !!field.optionsEndpoint,
-    staleTime: 5 * 60 * 1000,
+    // The modal unmounts when closed, so this field remounts each time it opens.
+    // Always refetch on mount so newly created options (e.g. a category added on
+    // another page) appear immediately without a full page reload.
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 
   const options = field.options ?? fetchedOptions ?? [];

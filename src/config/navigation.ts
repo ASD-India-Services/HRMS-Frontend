@@ -17,6 +17,8 @@ export interface NavItem {
   icon: string;
   /** Permission code required to see this item (e.g. "employees.view") */
   requiredPermission: string;
+  /** Optional: show the item if the user has ANY one of these permissions. */
+  requiredAnyPermission?: string[];
   /** Feature flag key required to access this module (null = always visible) */
   featureFlag?: string | null;
 }
@@ -197,7 +199,7 @@ export const navigationConfig: NavGroup[] = [
       { label: 'Attendance Requests', href: '/attendance-requests', icon: ICONS.attendanceRequest, requiredPermission: 'attendance_requests.view', featureFlag: 'attendance_enabled' },
       { label: 'Attendance Upload', href: '/attendance-upload', icon: ICONS.attendanceUpload, requiredPermission: 'attendance_upload.manage', featureFlag: 'attendance_enabled' },
       { label: 'Geo Locations', href: '/geofence-locations', icon: ICONS.geoLocations, requiredPermission: 'geofence_locations.view', featureFlag: 'attendance_enabled' },
-      { label: 'Shifts', href: '/shifts', icon: ICONS.shifts, requiredPermission: 'shifts.view', featureFlag: 'shifts_enabled' },
+      { label: 'Shifts', href: '/shifts', icon: ICONS.shifts, requiredPermission: 'shifts.view_own', requiredAnyPermission: ['shifts.view_own', 'shifts.view_team'], featureFlag: 'shifts_enabled' },
       { label: 'Shift Types', href: '/shift-types', icon: ICONS.shiftTypes, requiredPermission: 'shift_types.view', featureFlag: 'shifts_enabled' },
       { label: 'Shift Requests', href: '/shift-requests', icon: ICONS.shiftRequests, requiredPermission: 'shift_requests.view', featureFlag: 'shifts_enabled' },
       { label: 'Shift Schedules', href: '/shift-schedules', icon: ICONS.shifts, requiredPermission: 'shift_schedules.view', featureFlag: 'shifts_enabled' },
@@ -265,6 +267,7 @@ export const navigationConfig: NavGroup[] = [
       { label: 'Travel', href: '/travel', icon: ICONS.travel, requiredPermission: 'travel.view', featureFlag: 'travel_enabled' },
       { label: 'Overtime', href: '/overtime', icon: ICONS.overtime, requiredPermission: 'overtime.view', featureFlag: null },
       { label: 'Overtime Types', href: '/overtime-types', icon: ICONS.overtimeTypes, requiredPermission: 'overtime_types.view' },
+      { label: 'Overtime Categories', href: '/overtime-categories', icon: ICONS.overtimeTypes, requiredPermission: 'overtime_categories.view' },
       { label: 'Settlements', href: '/settlements', icon: ICONS.settlements, requiredPermission: 'settlements.view', featureFlag: 'settlements_enabled' },
       { label: 'Exit Interviews', href: '/exit-interviews', icon: ICONS.exitInterviews, requiredPermission: 'exit_interviews.view', featureFlag: null },
       { label: 'Holiday Assignments', href: '/holiday-assignments', icon: ICONS.holidayAssignments, requiredPermission: 'holiday_assignments.view', featureFlag: null },
@@ -301,8 +304,12 @@ export function getFilteredNavigation(
     .map((group) => ({
       ...group,
       items: group.items.filter((item) => {
-        // Check permission access
-        if (!hasPermission(item.requiredPermission)) return false;
+        // Check permission access: any-of list takes precedence when provided.
+        if (item.requiredAnyPermission && item.requiredAnyPermission.length > 0) {
+          if (!item.requiredAnyPermission.some((p) => hasPermission(p))) return false;
+        } else if (!hasPermission(item.requiredPermission)) {
+          return false;
+        }
         // Check feature flag
         if (item.featureFlag && !hasFeature(item.featureFlag)) return false;
         return true;

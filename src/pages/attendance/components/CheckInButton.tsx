@@ -1,9 +1,8 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { getCurrentPosition, isGeolocationSupported } from '@/utils/geolocation'
 import type { Coordinates, GeolocationError } from '@/utils/geolocation'
 import { useCheckIn, useCheckOut, getDeviceId } from '@/hooks/useAttendance'
 import type { AttendanceRecord } from '@/hooks/useAttendance'
-import { useShiftAssignments } from '@/hooks/useShifts'
 import api from '@/lib/api'
 
 interface CheckInButtonProps {
@@ -13,68 +12,7 @@ interface CheckInButtonProps {
 
 type ActionState = 'idle' | 'locating' | 'submitting'
 
-/**
- * Determines if the current time is within the shift window.
- * For check-in: allowed from shift start_time onwards (no early limit for check-out).
- * For check-out: allowed until shift end_time (with some buffer).
- * Returns: { allowed, message }
- */
-function getShiftTimeStatus(
-  shiftStartTime: string,
-  shiftEndTime: string,
-  isNightShift: boolean,
-  isCheckOut: boolean,
-): { allowed: boolean; message: string | null } {
-  const now = new Date()
-  const currentMinutes = now.getHours() * 60 + now.getMinutes()
-
-  const [startH, startM] = shiftStartTime.split(':').map(Number)
-  const [endH, endM] = shiftEndTime.split(':').map(Number)
-  const shiftStartMinutes = startH * 60 + startM
-  const shiftEndMinutes = endH * 60 + endM
-
-  // Format time for display
-  const fmtTime = (h: number, m: number) => {
-    const period = h >= 12 ? 'PM' : 'AM'
-    const hour12 = h % 12 || 12
-    return `${hour12}:${m.toString().padStart(2, '0')} ${period}`
-  }
-
-  const shiftStartDisplay = fmtTime(startH, startM)
-  const shiftEndDisplay = fmtTime(endH, endM)
-
-  if (isNightShift) {
-    // Night shift spans midnight: start_time > end_time (e.g. 22:00 - 06:00)
-    // Allowed window: from start_time (evening) OR before end_time (morning)
-    if (isCheckOut) {
-      return { allowed: true, message: null }
-    }
-    // For check-in during a night shift: allowed if currentTime >= startTime OR currentTime <= endTime
-    if (currentMinutes >= shiftStartMinutes || currentMinutes <= shiftEndMinutes) {
-      return { allowed: true, message: null }
-    }
-    if (currentMinutes < shiftStartMinutes) {
-      return { allowed: false, message: `Shift hasn't started yet. Your shift begins at ${shiftStartDisplay}.` }
-    }
-    return { allowed: false, message: `Shift time has ended. Your shift was ${shiftStartDisplay} – ${shiftEndDisplay}.` }
-  }
-
-  // Regular day shift
-  if (isCheckOut) {
-    // Allow check-out anytime after check-in (don't block)
-    return { allowed: true, message: null }
-  }
-
-  // For check-in: allowed from shift start time until shift end time
-  if (currentMinutes < shiftStartMinutes) {
-    return { allowed: false, message: `Shift hasn't started yet. Your shift begins at ${shiftStartDisplay}.` }
-  }
-  if (currentMinutes > shiftEndMinutes) {
-    return { allowed: false, message: `Shift time has ended. Your shift was ${shiftStartDisplay} – ${shiftEndDisplay}.` }
-  }
-
-  return { allowed: true, message: null }
-}
+// Shift-time gating removed: employees may check in / check out at any time of day.
 
 /**
  * Large action button that handles GPS capture and submits check-in or check-out.
@@ -98,12 +36,6 @@ export function CheckInButton({ record }: CheckInButtonProps) {
   const checkIn = useCheckIn()
   const checkOut = useCheckOut()
 
-  // Fetch current user's shift assignment for today
-  const today = new Date().toISOString().split('T')[0]
-  const { data: shiftData, isLoading: shiftLoading } = useShiftAssignments({ mine: 'true', date: today, page_size: 1 })
-  const todayShift = shiftData?.results?.[0]?.shift_type ?? null
-  const hasNoShift = !shiftLoading && shiftData !== undefined && !todayShift
-
   const hasCheckedIn = !!record?.check_in
   const hasCheckedOut = !!record?.check_out
   const isCompleted = hasCheckedIn && hasCheckedOut
@@ -118,18 +50,10 @@ export function CheckInButton({ record }: CheckInButtonProps) {
 
   const isNonWorkingDay = !workingDayCheck.is_working_day
 
-  // Check if current time is within shift window
-  const shiftTimeStatus = useMemo(() => {
-    if (hasNoShift) return { allowed: false, message: 'No shift assigned for today. Please contact your manager or HR to assign a shift before marking attendance.' }
-    if (!todayShift) return { allowed: true, message: null } // Still loading
-    const isCheckOut = hasCheckedIn && !hasCheckedOut
-    return getShiftTimeStatus(
-      todayShift.start_time,
-      todayShift.end_time,
-      todayShift.is_night_shift,
-      isCheckOut,
-    )
-  }, [todayShift, hasNoShift, hasCheckedIn, hasCheckedOut])
+  // Policy: employees may check in / check out at any time of day. The shift
+  // window no longer restricts attendance — the assigned shift is still used to
+  // FLAG late arrivals (server-side), but it never blocks punching in or out.
+  const shiftTimeStatus = { allowed: true, message: null as string | null }
 
   const handleAction = async () => {
     setError(null)

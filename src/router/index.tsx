@@ -77,6 +77,7 @@ const PerformanceFeedback = lazy(() => import('@/pages/PerformanceFeedback'));
 const ExitInterviews = lazy(() => import('@/pages/ExitInterviews'));
 const GrievanceTypes = lazy(() => import('@/pages/GrievanceTypes'));
 const OvertimeTypes = lazy(() => import('@/pages/OvertimeTypes'));
+const OvertimeCategories = lazy(() => import('@/pages/OvertimeCategories'));
 const PayrollPeriods = lazy(() => import('@/pages/PayrollPeriods'));
 const PayrollCorrections = lazy(() => import('@/pages/PayrollCorrections'));
 const HolidayListAssignments = lazy(() => import('@/pages/HolidayListAssignments'));
@@ -196,6 +197,24 @@ function permGated(requiredPermission: string, element: React.ReactNode) {
       <RoleGatedRoute requiredPermission={requiredPermission}>
         {element}
       </RoleGatedRoute>
+    </OnboardingGuard>
+  );
+}
+
+/** Like gated(), but grants access if the user has ANY of the given permissions. */
+function gatedAny(
+  featureFlag: string,
+  moduleName: string,
+  requiredAnyPermission: string[],
+  element: React.ReactNode,
+) {
+  return (
+    <OnboardingGuard>
+      <FeatureGatedRoute featureFlag={featureFlag} moduleName={moduleName}>
+        <RoleGatedRoute requiredAnyPermission={requiredAnyPermission}>
+          {element}
+        </RoleGatedRoute>
+      </FeatureGatedRoute>
     </OnboardingGuard>
   );
 }
@@ -343,7 +362,7 @@ export const router = createBrowserRouter([
       // ─── Shifts ──────────────────────────────────────────────────
       {
         path: 'shifts',
-        element: gated('shifts_enabled', 'Shift Management', 'shifts.view', <Shifts />),
+        element: gatedAny('shifts_enabled', 'Shift Management', ['shifts.view_own', 'shifts.view_team'], <Shifts />),
       },
       {
         path: 'shift-types',
@@ -462,6 +481,10 @@ export const router = createBrowserRouter([
       {
         path: 'overtime-types',
         element: permGated('overtime_types.view', <OvertimeTypes />),
+      },
+      {
+        path: 'overtime-categories',
+        element: permGated('overtime_categories.view', <OvertimeCategories />),
       },
 
       // ─── Settlements ─────────────────────────────────────────────

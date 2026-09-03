@@ -33,7 +33,6 @@ const createFields: FieldConfig[] = [
   { key: 'overtime_type', label: 'Overtime Type', type: 'select', required: true, optionsEndpoint: '/api/v1/overtime-types/', optionsLabelKey: 'name' },
   { key: 'date', label: 'Date', type: 'date', required: true },
   { key: 'hours', label: 'Hours', type: 'number', required: true, placeholder: '2' },
-  { key: 'base_hourly_rate', label: 'Hourly Rate', type: 'number', required: true, placeholder: '0.00' },
   { key: 'remarks', label: 'Remarks', type: 'textarea', placeholder: 'Reason for overtime' },
 ];
 
@@ -153,7 +152,7 @@ function OvertimeApprovalsContent() {
             Review and approve or reject pending overtime slips.
           </p>
         </div>
-        <CreateButton label="Log Overtime" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="overtime.create" label="Log Overtime" onClick={() => setShowCreate(true)} />
       </div>
 
       {queryResult.data && (

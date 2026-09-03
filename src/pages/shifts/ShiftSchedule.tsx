@@ -44,12 +44,18 @@ export function ShiftSchedule() {
   const weekEndStr = toDateString(weekDays[6]);
 
   // Fetch assignments for the current user overlapping this week
-  const { data, isLoading, isError } = useShiftAssignments({
+  const { data, isLoading, isError, error } = useShiftAssignments({
     mine: 'true',
     from_date: weekStartStr,
     to_date: weekEndStr,
     page_size: 50,
   });
+
+  // A 403 means the user isn't permitted to view their own schedule. The parent
+  // page already hides this tab in that case, so render a quiet message rather
+  // than a scary "failed to load" error during any brief permission refresh.
+  const isForbidden =
+    (error as { response?: { status?: number } } | null)?.response?.status === 403;
 
   const assignments = data?.results ?? [];
 
@@ -118,6 +124,10 @@ export function ShiftSchedule() {
         {isLoading ? (
           <div className="flex h-48 items-center justify-center">
             <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-500 border-t-transparent" />
+          </div>
+        ) : isForbidden ? (
+          <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
+            You don&apos;t have permission to view your shift schedule.
           </div>
         ) : isError ? (
           <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-sm text-red-700">
