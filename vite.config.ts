@@ -45,8 +45,9 @@ export default defineConfig({
       workbox: {
         // Only precache the app shell — lazy chunks load on demand
         globPatterns: ['**/*.html', '**/assets/react-*.js', '**/assets/react-*.css'],
-        // Skip precaching large chunks — let them cache at runtime
-        maximumFileSizeToCacheInBytes: 200 * 1024, // 200KB max per file
+        // Allow the precached app-shell chunks (react-*.js can exceed 300KB).
+        // Larger lazy chunks are handled by runtimeCaching below, not precache.
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4 MiB max per file
         runtimeCaching: [
           {
             // StaleWhileRevalidate for JS/CSS chunks — serve cached, update in background

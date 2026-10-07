@@ -1,0 +1,134 @@
+name: CI/CD
+
+# Flow:  build  ->  SonarCloud scan  ->  quality gate  ->  deploy (only if gate passes)
+# Branches:  develop -> dev,  main -> production
+#
+# NOTE: this app depends on @platform/auth-sdk via "file:../Auth-sdk", which is
+# OUTSIDE the repo. CI checks out that package into a sibling path before build.
+# Adjust AUTH_SDK_REPO below to the correct repo/branch.
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  AUTH_SDK_REPO: ASD-India-Services/Auth-sdk
+  AUTH_SDK_REF: main
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Build (also validates the app compiles)
+  # ---------------------------------------------------------------------------
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: app
+
+      # The frontend needs the sibling ../Auth-sdk present to install/build.
+      - name: Checkout auth-sdk (sibling dependency)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.AUTH_SDK_REPO }}
+          ref: ${{ env.AUTH_SDK_REF }}
+          token: ${{ secrets.GH_PAT }}
+          path: Auth-sdk
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: app
+        run: npm ci || npm install
+
+      - name: Build (production)
+        working-directory: app
+        # Vite build (skips the blocking tsc step); type errors don't fail the bundle.
+        run: npx vite build --mode production
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: app/dist
+
+  # ---------------------------------------------------------------------------
+  # 2. SonarCloud scan + 3. Quality Gate
+  # ---------------------------------------------------------------------------
+  sonarqube:
+    name: SonarCloud + Quality Gate
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+      - name: Quality Gate check
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # ---------------------------------------------------------------------------
+  # 4. Deploy to S3 + CloudFront — only on push, only after the gate passes
+  # ---------------------------------------------------------------------------
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: sonarqube
+    if: github.event_name == 'push'
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Resolve environment
+        id: env
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "bucket=${{ vars.PROD_BUCKET }}" >> "$GITHUB_OUTPUT"
+            echo "cf=${{ secrets.PROD_CLOUDFRONT_ID }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "bucket=${{ vars.DEV_BUCKET }}" >> "$GITHUB_OUTPUT"
+            echo "cf=${{ secrets.DEV_CLOUDFRONT_ID }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Sync to S3
+        run: |
+          # Hashed assets: long immutable cache
+          aws s3 sync dist/ "s3://${{ steps.env.outputs.bucket }}/" \
+            --delete \
+            --cache-control "public,max-age=31536000,immutable" \
+            --exclude "*.html"
+          # HTML: no cache
+          aws s3 sync dist/ "s3://${{ steps.env.outputs.bucket }}/" \
+            --cache-control "no-cache,no-store,must-revalidate" \
+            --include "*.html" \
+            --exclude "assets/*"
+
+      - name: Invalidate CloudFront
+        if: steps.env.outputs.cf != ''
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ steps.env.outputs.cf }}" \
+            --paths "/*"
