@@ -1,0 +1,34 @@
+name: Auto-merge to develop
+
+# Enables GitHub native auto-merge on any PR targeting `develop`.
+# The PR then merges automatically the moment all REQUIRED status checks
+# (test + SonarCloud quality gate — enforced by branch protection) pass.
+#
+# Place this file at: .github/workflows/auto-merge-to-develop.yml  in each repo.
+#
+# Requires (configured once in repo Settings — see RUNBOOK):
+#   - Branch protection on `develop` requiring the CI checks + "Require a PR".
+#   - "Allow auto-merge" enabled in repo Settings > General.
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    branches: [develop]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  enable-auto-merge:
+    runs-on: ubuntu-latest
+    # Skip drafts; only act on real PRs.
+    if: github.event.pull_request.draft == false
+    steps:
+      - name: Enable auto-merge (squash)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          # GitHub holds the merge until all required checks pass.
+          gh pr merge "$PR_URL" --squash --auto
