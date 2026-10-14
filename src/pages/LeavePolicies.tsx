@@ -1,9 +1,10 @@
 import { useMemo, useState, useEffect } from 'react';
 import { createCrudHooks } from '@/hooks/useCrud';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
-import { CreateButton, EditButton, DeleteButton } from '@/components/ActionButton';
+import { ActionButton, CreateButton, EditButton, DeleteButton } from '@/components/ActionButton';
 import { CrudModal } from '@/components/CrudModal';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { ManageLeaveTypesModal } from '@/components/leaves/ManageLeaveTypesModal';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
@@ -38,6 +39,9 @@ const createFields: FieldConfig[] = [
 interface LeaveTypeOption {
   id: string;
   name: string;
+  max_days_per_year?: number | string;
+  max_carry_forward_days?: number | string;
+  is_carry_forward?: boolean;
 }
 
 interface AllocationRow {
@@ -52,6 +56,7 @@ export default function LeavePolicies() {
   const [editLoading, setEditLoading] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showAllocations, setShowAllocations] = useState<Record<string, unknown> | null>(null);
+  const [showLeaveTypesModal, setShowLeaveTypesModal] = useState(false);
   const [allocations, setAllocations] = useState<AllocationRow[]>([]);
   const [allocLoading, setAllocLoading] = useState(false);
   const [leaveTypes, setLeaveTypes] = useState<LeaveTypeOption[]>([]);
@@ -61,11 +66,15 @@ export default function LeavePolicies() {
   const createMutation = crud.useCreate();
   const deleteMutation = crud.useDelete();
 
-  useEffect(() => {
+  const loadLeaveTypes = () => {
     api.get('/api/v1/leaves/types/').then(res => {
       const data = res.data as { results?: LeaveTypeOption[] } | LeaveTypeOption[];
       setLeaveTypes(Array.isArray(data) ? data : data.results || []);
     });
+  };
+
+  useEffect(() => {
+    loadLeaveTypes();
   }, []);
 
   const columnsWithActions: ColumnDef<Record<string, unknown>>[] = [
@@ -143,8 +152,20 @@ export default function LeavePolicies() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Leave Policies</h1><p className="mt-1 text-sm text-gray-600">Manage leave allocation policy templates</p></div>
-        <CreateButton permission="leave_policies.create" label="Create Policy" onClick={() => setShowCreate(true)} />
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Leave Policies</h1>
+          <p className="mt-1 text-sm text-gray-600">Manage leave allocation policy templates</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <ActionButton
+            permission="leave_types.create"
+            variant="secondary"
+            label="Manage Leave Types"
+            icon="M12 4.5v15m7.5-7.5h-15"
+            onClick={() => setShowLeaveTypesModal(true)}
+          />
+          <CreateButton permission="leave_policies.create" label="Create Policy" onClick={() => setShowCreate(true)} />
+        </div>
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
@@ -190,7 +211,12 @@ export default function LeavePolicies() {
                     value={row.leave_type}
                     onChange={e => {
                       const updated = [...allocations];
-                      updated[idx].leave_type = e.target.value;
+                      const selectedId = e.target.value;
+                      updated[idx].leave_type = selectedId;
+                      const matched = leaveTypes.find(lt => lt.id === selectedId);
+                      if (matched && !matched.is_carry_forward) {
+                        updated[idx].max_carry_forward = '0';
+                      }
                       setAllocations(updated);
                     }}
                   >
@@ -210,17 +236,27 @@ export default function LeavePolicies() {
                       setAllocations(updated);
                     }}
                   />
-                  <input
-                    type="number"
-                    placeholder="Carry fwd"
-                    className="w-24 rounded border border-gray-300 px-2 py-1.5 text-sm"
-                    value={row.max_carry_forward}
-                    onChange={e => {
-                      const updated = [...allocations];
-                      updated[idx].max_carry_forward = e.target.value;
-                      setAllocations(updated);
-                    }}
-                  />
+                  {(() => {
+                    const matched = leaveTypes.find(lt => lt.id === row.leave_type);
+                    const canCarry = matched ? matched.is_carry_forward : true;
+                    return (
+                      <input
+                        type="number"
+                        placeholder="Carry fwd"
+                        disabled={!canCarry}
+                        title={!canCarry ? 'Carry forward is not enabled on this leave type' : ''}
+                        className={`w-24 rounded border border-gray-300 px-2 py-1.5 text-sm ${
+                          !canCarry ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : ''
+                        }`}
+                        value={canCarry ? row.max_carry_forward : '0'}
+                        onChange={e => {
+                          const updated = [...allocations];
+                          updated[idx].max_carry_forward = e.target.value;
+                          setAllocations(updated);
+                        }}
+                      />
+                    );
+                  })()}
                   <button
                     className="text-red-500 hover:text-red-700 text-sm px-1"
                     onClick={() => setAllocations(allocations.filter((_, i) => i !== idx))}
@@ -272,6 +308,12 @@ export default function LeavePolicies() {
         confirmLabel="Delete"
         variant="destructive"
         isLoading={deleteMutation.isPending}
+      />
+
+      <ManageLeaveTypesModal
+        isOpen={showLeaveTypesModal}
+        onClose={() => setShowLeaveTypesModal(false)}
+        onLeaveTypesChanged={loadLeaveTypes}
       />
     </div>
   );
