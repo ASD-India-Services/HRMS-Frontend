@@ -17,6 +17,10 @@ dist-ssr
 .env.local
 .env.*.local
 
+# Package manager files
+package-lock.json
+npm-shrinkwrap.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
