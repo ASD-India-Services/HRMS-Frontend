@@ -35,3 +35,9 @@ dist-ssr
 .claude/
 CLAUDE.md
 AGENTS.md
+deploy.sh
+# Playwright E2E
+e2e/.env
+/test-results/
+/playwright-report/
+/playwright/.cache/
