@@ -3,19 +3,21 @@
  * Requirements: 24.2
  */
 
-export type TrainingEventStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
-export type EnrollmentStatus = 'enrolled' | 'completed' | 'cancelled' | 'waitlisted';
+export type TrainingEventStatus = 'draft' | 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
+export type EnrollmentStatus = 'enrolled' | 'completed' | 'cancelled' | 'waitlisted' | 'no_show';
 
 export interface TrainingEvent {
   id: string;
   name: string;
-  description: string;
-  type: string;
-  trainer: string;
+  description?: string;
+  type?: string;
+  event_type?: string;
+  trainer?: string;
   start_date: string;
   end_date: string;
-  location: string;
-  max_seats: number;
+  location?: string;
+  max_seats?: number;
+  max_participants?: number;
   enrolled_count: number;
   available_seats: number;
   status: TrainingEventStatus;

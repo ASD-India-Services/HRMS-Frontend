@@ -36,9 +36,13 @@ export function CheckInButton({ record }: CheckInButtonProps) {
   const checkIn = useCheckIn()
   const checkOut = useCheckOut()
 
-  const hasCheckedIn = !!record?.check_in
-  const hasCheckedOut = !!record?.check_out
-  const isCompleted = hasCheckedIn && hasCheckedOut
+  // Multi-session logic
+  const isCurrentlyIn = record?.is_currently_punched_in !== undefined
+    ? record.is_currently_punched_in
+    : (!!record?.check_in && !record?.check_out)
+
+  const hasPriorSessions = (record?.sessions && record.sessions.length > 0) || (!!record?.check_in && !!record?.check_out)
+  const isCheckIn = !isCurrentlyIn
 
   // Check if today is a working day (not holiday / not on leave)
   const [workingDayCheck, setWorkingDayCheck] = useState<{ is_working_day: boolean; reason: string | null }>({ is_working_day: true, reason: null })
@@ -80,7 +84,7 @@ export function CheckInButton({ record }: CheckInButtonProps) {
       }
 
       let response: unknown
-      if (!hasCheckedIn) {
+      if (isCheckIn) {
         response = await checkIn.mutateAsync(payload)
       } else {
         response = await checkOut.mutateAsync(payload)
@@ -133,23 +137,6 @@ export function CheckInButton({ record }: CheckInButtonProps) {
     }
   }
 
-  if (isCompleted) {
-    return (
-      <div className="text-center">
-        <div className="inline-flex items-center justify-center w-32 h-32 rounded-full bg-green-50 border-4 border-green-200 mb-4">
-          <svg className="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-        <p className="text-lg font-medium text-gray-900">Attendance Complete</p>
-        <p className="text-sm text-gray-500 mt-1">
-          You have checked in and out for today.
-        </p>
-      </div>
-    )
-  }
-
-  const isCheckIn = !hasCheckedIn
   const isProcessing = actionState !== 'idle'
   const isDisabledByShift = !shiftTimeStatus.allowed
   const isDisabled = isProcessing || isDisabledByShift || isNonWorkingDay
@@ -233,7 +220,12 @@ export function CheckInButton({ record }: CheckInButtonProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
             )}
-            <span>{isCheckIn ? 'Check In' : 'Check Out'}</span>
+            <span>
+              {isCheckIn
+                ? (hasPriorSessions ? 'Check In Again' : 'Check In')
+                : 'Check Out'
+              }
+            </span>
           </span>
         )}
       </button>
@@ -300,10 +292,10 @@ export function CheckInButton({ record }: CheckInButtonProps) {
               <h3 className="text-lg font-semibold text-gray-900">Confirm Check Out</h3>
             </div>
             <p className="text-sm text-gray-600 mb-2">
-              Are you sure you want to check out? Your attendance for today will be closed.
+              Are you sure you want to end your current work session?
             </p>
-            <p className="text-xs text-red-600 font-medium mb-5">
-              This action cannot be undone. You will not be able to check in again today.
+            <p className="text-xs text-indigo-600 font-medium mb-5">
+              Your session duration will be recorded. You can check back in at any time today to start a new session.
             </p>
             <div className="flex items-center justify-end gap-3">
               <button

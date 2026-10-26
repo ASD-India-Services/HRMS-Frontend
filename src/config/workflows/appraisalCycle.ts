@@ -24,6 +24,7 @@ export const appraisalCycleWorkflow: WorkflowConfig = {
       action: 'Activate Cycle',
       endpoint: (id) => `/api/v1/appraisals/cycles/${id}/`,
       method: 'PATCH',
+      requiredPermission: 'appraisals.edit',
       allowedRoles: ['org_admin', 'hr_manager'],
       variant: 'primary',
       confirm: {
@@ -38,6 +39,7 @@ export const appraisalCycleWorkflow: WorkflowConfig = {
       action: 'Complete Cycle',
       endpoint: (id) => `/api/v1/appraisals/cycles/${id}/`,
       method: 'PATCH',
+      requiredPermission: 'appraisals.edit',
       allowedRoles: ['org_admin', 'hr_manager'],
       variant: 'primary',
       confirm: {
@@ -52,6 +54,7 @@ export const appraisalCycleWorkflow: WorkflowConfig = {
       action: 'Cancel Cycle',
       endpoint: (id) => `/api/v1/appraisals/cycles/${id}/`,
       method: 'PATCH',
+      requiredPermission: 'appraisals.edit',
       allowedRoles: ['org_admin', 'hr_manager'],
       variant: 'destructive',
     },

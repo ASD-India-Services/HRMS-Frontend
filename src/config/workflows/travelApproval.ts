@@ -26,6 +26,7 @@ export const travelApprovalWorkflow: WorkflowConfig = {
       action: 'Submit',
       endpoint: (id) => `/api/v1/travel-requests/${id}/submit/`,
       method: 'POST',
+      requiredPermission: 'travel.create',
       allowedRoles: ['org_admin', 'hr_manager', 'department_head', 'employee'],
       variant: 'primary',
     },
@@ -58,6 +59,7 @@ export const travelApprovalWorkflow: WorkflowConfig = {
       action: 'Delete',
       endpoint: (id) => `/api/v1/travel-requests/${id}/`,
       method: 'DELETE',
+      requiredPermission: 'travel.delete',
       allowedRoles: ['org_admin', 'hr_manager', 'employee'],
       variant: 'destructive',
       confirm: {

@@ -99,7 +99,7 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
             {data ? `${data.count} opening${data.count !== 1 ? 's' : ''}` : 'Loading...'}
           </p>
         </div>
-        <CreateButton label="Create Job Opening" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="job_openings.create" label="Create Job Opening" onClick={() => setShowCreate(true)} />
       </div>
 
       {/* Search and Filter */}

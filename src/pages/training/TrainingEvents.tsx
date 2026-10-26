@@ -42,8 +42,8 @@ const createFields: FieldConfig[] = [
   { key: 'start_date', label: 'Start Date', type: 'date', required: true },
   { key: 'end_date', label: 'End Date', type: 'date', required: true },
   { key: 'location', label: 'Location', type: 'text', placeholder: 'Location or online link' },
-  { key: 'max_participants', label: 'Max Participants', type: 'number', placeholder: '30' },
-  { key: 'status', label: 'Status', type: 'select', options: [
+  { key: 'max_participants', label: 'Max Participants', type: 'number', placeholder: '30', required: true },
+  { key: 'status', label: 'Status', type: 'select', required: true, options: [
     { value: 'draft', label: 'Draft' },
     { value: 'scheduled', label: 'Scheduled' },
     { value: 'in_progress', label: 'In Progress' },
@@ -169,7 +169,11 @@ function TrainingEventsContent({ onSelectEvent }: { onSelectEvent?: (id: string)
             Manage training events, track statuses, and control lifecycle.
           </p>
         </div>
-        <CreateButton label="Create Training Event" onClick={() => setShowCreate(true)} />
+        <CreateButton
+          label="Create Training Event"
+          permission="training.create"
+          onClick={() => setShowCreate(true)}
+        />
       </div>
 
       <FilterBar

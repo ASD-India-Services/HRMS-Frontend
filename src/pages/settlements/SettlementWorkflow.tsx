@@ -179,7 +179,7 @@ function SettlementWorkflowContent() {
             Manage employee exit settlements — submit, approve, or reject final payouts.
           </p>
         </div>
-        <CreateButton label="Create Settlement" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="settlements.create" label="Create Settlement" onClick={() => setShowCreate(true)} />
       </div>
 
       <FilterBar

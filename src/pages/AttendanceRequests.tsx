@@ -66,7 +66,8 @@ export default function AttendanceRequests() {
   const [rejectReason, setRejectReason] = useState('');
 
   const { hasPermission } = useHrmsPermissionsContext();
-  const canManage = hasPermission('attendance.edit');
+  const canApprove = hasPermission('attendance_requests.approve');
+  const canReject = hasPermission('attendance_requests.reject');
 
   const { filterValues, setFilter, clearFilters, page, pageSize, setPage, setPageSize } = useFilterSync({ filters });
   const params = useMemo(() => { const p: Record<string, string | number> = { page, page_size: pageSize }; Object.entries(filterValues).forEach(([k, v]) => { if (v) p[k] = v; }); return p; }, [filterValues, page, pageSize]);
@@ -109,32 +110,36 @@ export default function AttendanceRequests() {
         const isPending = row.status === 'pending';
         return (
           <div className="flex items-center gap-1">
-            {isPending && canManage && (
+            {isPending && (
               <>
-                <button
-                  type="button"
-                  onClick={() => setApproveId(row.id as string)}
-                  className="inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 hover:bg-green-100 transition-colors"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Approve
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRejectId(row.id as string)}
-                  className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20 hover:bg-red-100 transition-colors"
-                >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  Reject
-                </button>
+                {canApprove && (
+                  <button
+                    type="button"
+                    onClick={() => setApproveId(row.id as string)}
+                    className="inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 hover:bg-green-100 transition-colors"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Approve
+                  </button>
+                )}
+                {canReject && (
+                  <button
+                    type="button"
+                    onClick={() => setRejectId(row.id as string)}
+                    className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20 hover:bg-red-100 transition-colors"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Reject
+                  </button>
+                )}
               </>
             )}
-            <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-            <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+            <EditButton permission="attendance_requests.create" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+            <DeleteButton permission="attendance_requests.create" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
           </div>
         );
       },
@@ -166,7 +171,7 @@ export default function AttendanceRequests() {
           <h1 className="text-2xl font-bold text-gray-900">Attendance Requests</h1>
           <p className="mt-1 text-sm text-gray-600">Manage attendance correction requests</p>
         </div>
-        <CreateButton label="Create Request" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="attendance_requests.create" label="Create Request" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />

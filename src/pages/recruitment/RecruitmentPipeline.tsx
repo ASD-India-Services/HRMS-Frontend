@@ -139,7 +139,7 @@ export function RecruitmentPipeline() {
               See all candidates across all job openings. Click a row to change their stage.
             </p>
           </div>
-          <CreateButton label="Add Applicant" onClick={() => setShowCreate(true)} />
+          <CreateButton permission="recruitment.create" label="Add Applicant" onClick={() => setShowCreate(true)} />
         </div>
 
         {/* Filter bar */}

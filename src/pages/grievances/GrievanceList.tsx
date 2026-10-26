@@ -114,7 +114,7 @@ function GrievanceListContent() {
             Review and manage employee grievances through investigation and resolution.
           </p>
         </div>
-        <CreateButton label="File Grievance" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="grievances.create" label="File Grievance" onClick={() => setShowCreate(true)} />
       </div>
 
       {queryResult.data && (

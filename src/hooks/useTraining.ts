@@ -33,7 +33,7 @@ async function fetchTrainingEvents(filters: TrainingFilters): Promise<PaginatedR
 async function fetchTrainingEvent(id: string): Promise<TrainingEventDetail> {
   const [eventResponse, enrollmentsResponse] = await Promise.all([
     api.get(`/api/v1/training/events/${id}/`),
-    api.get(`/api/v1/training/events/${id}/enrollments/`),
+    api.get(`/api/v1/training/events/${id}/enrollments/`).catch(() => ({ data: [] })),
   ]);
   return {
     ...eventResponse.data,

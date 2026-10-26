@@ -44,9 +44,10 @@ export const travelRequestFilters: FilterConfig[] = [
     options: [
       { value: '', label: 'All' },
       { value: 'draft', label: 'Draft' },
-      { value: 'pending', label: 'Pending' },
+      { value: 'submitted', label: 'Pending Approval' },
       { value: 'approved', label: 'Approved' },
       { value: 'rejected', label: 'Rejected' },
+      { value: 'completed', label: 'Completed' },
     ],
   },
 ];

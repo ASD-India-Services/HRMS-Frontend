@@ -142,6 +142,8 @@ function OvertimeApprovalsContent() {
   }, [filterValues, page, pageSize]);
 
   const queryResult = overtimeCrud.useList(apiParams);
+  const pendingQueryResult = overtimeCrud.useList({ status: 'submitted', page_size: 1 });
+  const pendingCount = pendingQueryResult.data?.count ?? 0;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -157,12 +159,82 @@ function OvertimeApprovalsContent() {
 
       {queryResult.data && (
         <div className="mb-4 flex items-center gap-4">
-          <div className="inline-flex items-center gap-2 rounded-lg bg-yellow-50 border border-yellow-200 px-4 py-2">
-            <span className="text-sm font-medium text-yellow-800">
-              {queryResult.data.count} slip{queryResult.data.count !== 1 ? 's' : ''}{' '}
-              {filterValues.status === 'pending_approval' || !filterValues.status ? 'pending review' : 'found'}
-            </span>
-          </div>
+          {(() => {
+            if (filterValues.status) {
+              if (filterValues.status === 'submitted' || filterValues.status === 'pending' || filterValues.status === 'pending_approval') {
+                if (queryResult.data.count > 0) {
+                  return (
+                    <div className="inline-flex items-center gap-2 rounded-lg bg-yellow-50 border border-yellow-200 px-4 py-2">
+                      <span className="text-sm font-medium text-yellow-800">
+                        {queryResult.data.count} slip{queryResult.data.count !== 1 ? 's' : ''} pending review
+                      </span>
+                    </div>
+                  );
+                }
+                return (
+                  <div className="inline-flex items-center gap-2 rounded-lg bg-green-50 border border-green-200 px-4 py-2">
+                    <span className="text-sm font-medium text-green-800">
+                      No overtime slips pending review
+                    </span>
+                  </div>
+                );
+              }
+
+              if (filterValues.status === 'approved') {
+                return (
+                  <div className="inline-flex items-center gap-2 rounded-lg bg-green-50 border border-green-200 px-4 py-2">
+                    <span className="text-sm font-medium text-green-800">
+                      {queryResult.data.count} slip{queryResult.data.count !== 1 ? 's' : ''} approved
+                    </span>
+                  </div>
+                );
+              }
+
+              if (filterValues.status === 'rejected') {
+                return (
+                  <div className="inline-flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-4 py-2">
+                    <span className="text-sm font-medium text-red-800">
+                      {queryResult.data.count} slip{queryResult.data.count !== 1 ? 's' : ''} rejected
+                    </span>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="inline-flex items-center gap-2 rounded-lg bg-gray-50 border border-gray-200 px-4 py-2">
+                  <span className="text-sm font-medium text-gray-800">
+                    {queryResult.data.count} slip{queryResult.data.count !== 1 ? 's' : ''} found
+                  </span>
+                </div>
+              );
+            }
+
+            // All slips view (no status filter)
+            if (pendingCount > 0) {
+              return (
+                <div className="inline-flex items-center gap-2 rounded-lg bg-yellow-50 border border-yellow-200 px-4 py-2">
+                  <span className="text-sm font-medium text-yellow-800">
+                    {pendingCount} slip{pendingCount !== 1 ? 's' : ''} pending review
+                  </span>
+                  <span className="text-xs text-yellow-600">({queryResult.data.count} total)</span>
+                </div>
+              );
+            }
+
+            return (
+              <div className="inline-flex items-center gap-2 rounded-lg bg-green-50 border border-green-200 px-4 py-2">
+                <svg className="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+                <span className="text-sm font-medium text-green-800">
+                  No overtime slips pending review
+                </span>
+                {queryResult.data.count > 0 && (
+                  <span className="text-xs text-green-700">({queryResult.data.count} total slips, all reviewed)</span>
+                )}
+              </div>
+            );
+          })()}
         </div>
       )}
 

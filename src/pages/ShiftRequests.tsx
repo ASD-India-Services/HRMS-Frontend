@@ -66,7 +66,8 @@ export default function ShiftRequests() {
   const [rejectReason, setRejectReason] = useState('');
 
   const { hasPermission } = useHrmsPermissionsContext();
-  const canManage = hasPermission('attendance.edit') || hasPermission('shifts.edit');
+  const canApprove = hasPermission('shift_requests.approve');
+  const canReject = hasPermission('shift_requests.reject');
 
   const { filterValues, setFilter, clearFilters, page, pageSize, setPage, setPageSize } = useFilterSync({ filters });
   const params = useMemo(() => { const p: Record<string, string | number> = { page, page_size: pageSize }; Object.entries(filterValues).forEach(([k, v]) => { if (v) p[k] = v; }); return p; }, [filterValues, page, pageSize]);
@@ -109,26 +110,30 @@ export default function ShiftRequests() {
         const isPending = row.status === 'pending';
         return (
           <div className="flex items-center gap-1">
-            {isPending && canManage && (
+            {isPending && (
               <>
-                <button
-                  type="button"
-                  onClick={() => setApproveId(row.id as string)}
-                  className="inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 hover:bg-green-100 transition-colors"
-                >
-                  Approve
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRejectId(row.id as string)}
-                  className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20 hover:bg-red-100 transition-colors"
-                >
-                  Reject
-                </button>
+                {canApprove && (
+                  <button
+                    type="button"
+                    onClick={() => setApproveId(row.id as string)}
+                    className="inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 hover:bg-green-100 transition-colors"
+                  >
+                    Approve
+                  </button>
+                )}
+                {canReject && (
+                  <button
+                    type="button"
+                    onClick={() => setRejectId(row.id as string)}
+                    className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20 hover:bg-red-100 transition-colors"
+                  >
+                    Reject
+                  </button>
+                )}
               </>
             )}
-            <EditButton label="Edit" size="sm" onClick={() => setEditRecord(row)} />
-            <DeleteButton label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
+            <EditButton permission="shift_requests.create" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
+            <DeleteButton permission="shift_requests.create" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
           </div>
         );
       },
@@ -158,7 +163,7 @@ export default function ShiftRequests() {
           <h1 className="text-2xl font-bold text-gray-900">Shift Requests</h1>
           <p className="mt-1 text-sm text-gray-600">Manage employee shift change requests</p>
         </div>
-        <CreateButton label="Create Request" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="shift_requests.create" label="Create Request" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />

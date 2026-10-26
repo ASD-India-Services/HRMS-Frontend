@@ -106,7 +106,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
 
         {/* Job Opening Filter */}
         <div className="flex items-center gap-2">
-          <CreateButton label="Add Applicant" onClick={() => setShowCreate(true)} />
+          <CreateButton permission="recruitment.create" label="Add Applicant" onClick={() => setShowCreate(true)} />
           <select
             value={selectedJobOpening}
             onChange={(e) => setSelectedJobOpening(e.target.value)}
