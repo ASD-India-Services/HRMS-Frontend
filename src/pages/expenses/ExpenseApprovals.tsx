@@ -96,6 +96,7 @@ export function ExpenseApprovals() {
     page,
     page_size: pageSize,
     status: filterValues.status || '',
+    approvals: 'true',
     ...Object.fromEntries(
       Object.entries(filterValues).filter(([key, val]) => val && key !== 'status')
     ),

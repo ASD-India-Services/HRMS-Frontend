@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { createCrudHooks } from '@/hooks/useCrud';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
 import { CreateButton, EditButton, DeleteButton } from '@/components/ActionButton';
@@ -68,9 +69,32 @@ export default function ShiftRequests() {
   const { hasPermission } = useHrmsPermissionsContext();
   const canApprove = hasPermission('shift_requests.approve');
   const canReject = hasPermission('shift_requests.reject');
+  const isApproverOrAdmin = canApprove || canReject;
+  const [viewTab, setViewTab] = useState<'mine' | 'approvals'>(isApproverOrAdmin ? 'approvals' : 'mine');
+
+  const { data: currentEmployee } = useQuery({
+    queryKey: ['employee', 'me'],
+    queryFn: async () => {
+      const response = await api.get<{ id: number; full_name?: string }>('/api/v1/employees/me/');
+      return response.data;
+    },
+  });
 
   const { filterValues, setFilter, clearFilters, page, pageSize, setPage, setPageSize } = useFilterSync({ filters });
-  const params = useMemo(() => { const p: Record<string, string | number> = { page, page_size: pageSize }; Object.entries(filterValues).forEach(([k, v]) => { if (v) p[k] = v; }); return p; }, [filterValues, page, pageSize]);
+  const params = useMemo(() => {
+    const p: Record<string, string | number> = { page, page_size: pageSize };
+    if (isApproverOrAdmin) {
+      if (viewTab === 'mine') p.mine = 'true';
+      else if (viewTab === 'approvals') p.approvals = 'true';
+    } else {
+      p.mine = 'true';
+    }
+    Object.entries(filterValues).forEach(([k, v]) => {
+      if (v) p[k] = v;
+    });
+    return p;
+  }, [filterValues, page, pageSize, viewTab, isApproverOrAdmin]);
+
   const queryResult = crud.useList(params);
   const createMutation = crud.useCreate();
   const deleteMutation = crud.useDelete();
@@ -108,11 +132,15 @@ export default function ShiftRequests() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => {
         const isPending = row.status === 'pending';
+        const isOwn = currentEmployee && (row.employee === currentEmployee.id || row.employee_id === currentEmployee.id);
+        const canApproveThis = canApprove && !isOwn;
+        const canRejectThis = canReject && !isOwn;
+
         return (
           <div className="flex items-center gap-1">
             {isPending && (
               <>
-                {canApprove && (
+                {canApproveThis && (
                   <button
                     type="button"
                     onClick={() => setApproveId(row.id as string)}
@@ -121,7 +149,7 @@ export default function ShiftRequests() {
                     Approve
                   </button>
                 )}
-                {canReject && (
+                {canRejectThis && (
                   <button
                     type="button"
                     onClick={() => setRejectId(row.id as string)}
@@ -141,7 +169,11 @@ export default function ShiftRequests() {
   ];
 
   const handleCreate = (data: Record<string, unknown>) => {
-    createMutation.mutate(data, { onSuccess: () => setShowCreate(false) });
+    const payload = { ...data };
+    if (!payload.employee && currentEmployee?.id) {
+      payload.employee = currentEmployee.id;
+    }
+    createMutation.mutate(payload, { onSuccess: () => setShowCreate(false) });
   };
 
   const handleEdit = async (data: Record<string, unknown>) => {
@@ -165,12 +197,62 @@ export default function ShiftRequests() {
         </div>
         <CreateButton permission="shift_requests.create" label="Create Request" onClick={() => setShowCreate(true)} />
       </div>
+
+      {isApproverOrAdmin && (
+        <div className="mb-4 border-b border-gray-200" role="tablist">
+          <nav className="-mb-px flex gap-4">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={viewTab === 'mine'}
+              onClick={() => { setViewTab('mine'); setPage(1); }}
+              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
+                viewTab === 'mine'
+                  ? 'border-primary-500 text-primary-600 font-semibold'
+                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+              }`}
+            >
+              My Requests
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={viewTab === 'approvals'}
+              onClick={() => { setViewTab('approvals'); setPage(1); }}
+              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
+                viewTab === 'approvals'
+                  ? 'border-primary-500 text-primary-600 font-semibold'
+                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+              }`}
+            >
+              Team Approvals
+            </button>
+          </nav>
+        </div>
+      )}
+
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
 
-      <CrudModal isOpen={showCreate} onClose={() => setShowCreate(false)} title="Create Shift Request" fields={createFields} onSubmit={handleCreate} isLoading={createMutation.isPending} />
-      <CrudModal isOpen={!!editRecord} onClose={() => setEditRecord(null)} title="Edit Shift Request" fields={createFields} initialValues={editRecord ?? undefined} onSubmit={handleEdit} isLoading={editLoading} />
+      <CrudModal
+        isOpen={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="Create Shift Request"
+        fields={createFields}
+        initialValues={currentEmployee?.id ? { employee: currentEmployee.id } : undefined}
+        onSubmit={handleCreate}
+        isLoading={createMutation.isPending}
+      />
+      <CrudModal
+        isOpen={!!editRecord}
+        onClose={() => setEditRecord(null)}
+        title="Edit Shift Request"
+        fields={createFields}
+        initialValues={editRecord ?? undefined}
+        onSubmit={handleEdit}
+        isLoading={editLoading}
+      />
 
       <ConfirmDialog
         isOpen={!!deleteId}

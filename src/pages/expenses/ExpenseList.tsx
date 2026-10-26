@@ -50,6 +50,7 @@ export function ExpenseList() {
     status: activeStatus || undefined,
     page,
     page_size: 10,
+    mine: true,
   });
 
   return (

@@ -59,6 +59,8 @@ export interface ExpenseFilters {
   status?: ExpenseClaimStatus | '';
   page?: number;
   page_size?: number;
+  mine?: boolean | string;
+  approvals?: boolean | string;
 }
 
 export interface PaginatedExpenseResponse {

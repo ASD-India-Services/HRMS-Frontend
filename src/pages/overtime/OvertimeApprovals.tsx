@@ -11,7 +11,7 @@
  */
 
 import { useMemo, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createCrudHooks } from '@/hooks/useCrud';
 import {
   overtimeSlipsCrudConfig,
@@ -25,6 +25,7 @@ import { CrudModal } from '@/components/CrudModal';
 import type { FieldConfig } from '@/components/CrudModal';
 import { Can } from '@/components/Can';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
+import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
 
@@ -113,6 +114,19 @@ export function OvertimeApprovals() {
 function OvertimeApprovalsContent() {
   const [showCreate, setShowCreate] = useState(false);
   const queryClient = useQueryClient();
+  const { hasPermission } = useHrmsPermissionsContext();
+  const canApprove = hasPermission('overtime.approve');
+  const isApproverOrAdmin = canApprove;
+  const [viewTab, setViewTab] = useState<'mine' | 'approvals'>(isApproverOrAdmin ? 'approvals' : 'mine');
+
+  const { data: currentEmployee } = useQuery({
+    queryKey: ['employee', 'me'],
+    queryFn: async () => {
+      const response = await api.get<{ id: number; full_name?: string }>('/api/v1/employees/me/');
+      return response.data;
+    },
+  });
+
   const createMutation = useMutation({
     mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/overtime-slips/', data),
     onSuccess: () => {
@@ -136,13 +150,22 @@ function OvertimeApprovalsContent() {
 
   const apiParams = useMemo(() => {
     const params: Record<string, string | number> = { page, page_size: pageSize };
+    if (isApproverOrAdmin) {
+      if (viewTab === 'mine') params.mine = 'true';
+      else if (viewTab === 'approvals') params.approvals = 'true';
+    } else {
+      params.mine = 'true';
+    }
     if (filterValues.status) params.status = filterValues.status;
     if (filterValues.search) params.search = filterValues.search;
     return params;
-  }, [filterValues, page, pageSize]);
+  }, [filterValues, page, pageSize, viewTab, isApproverOrAdmin]);
 
   const queryResult = overtimeCrud.useList(apiParams);
-  const pendingQueryResult = overtimeCrud.useList({ status: 'submitted', page_size: 1 });
+  const pendingQueryParams = isApproverOrAdmin && viewTab === 'approvals'
+    ? { status: 'submitted', approvals: 'true', page_size: 1 }
+    : { status: 'submitted', page_size: 1 };
+  const pendingQueryResult = overtimeCrud.useList(pendingQueryParams);
   const pendingCount = pendingQueryResult.data?.count ?? 0;
 
   return (
@@ -156,6 +179,39 @@ function OvertimeApprovalsContent() {
         </div>
         <CreateButton permission="overtime.create" label="Log Overtime" onClick={() => setShowCreate(true)} />
       </div>
+
+      {isApproverOrAdmin && (
+        <div className="mb-4 border-b border-gray-200" role="tablist">
+          <nav className="-mb-px flex gap-4">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={viewTab === 'mine'}
+              onClick={() => { setViewTab('mine'); setPage(1); }}
+              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
+                viewTab === 'mine'
+                  ? 'border-primary-500 text-primary-600 font-semibold'
+                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+              }`}
+            >
+              My Slips
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={viewTab === 'approvals'}
+              onClick={() => { setViewTab('approvals'); setPage(1); }}
+              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
+                viewTab === 'approvals'
+                  ? 'border-primary-500 text-primary-600 font-semibold'
+                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+              }`}
+            >
+              Team Approvals
+            </button>
+          </nav>
+        </div>
+      )}
 
       {queryResult.data && (
         <div className="mb-4 flex items-center gap-4">
@@ -265,7 +321,14 @@ function OvertimeApprovalsContent() {
         onClose={() => setShowCreate(false)}
         title="Log Overtime"
         fields={createFields}
-        onSubmit={(data) => createMutation.mutate(data)}
+        initialValues={currentEmployee?.id ? { employee: currentEmployee.id } : undefined}
+        onSubmit={(data) => {
+          const payload = { ...data };
+          if (!payload.employee && currentEmployee?.id) {
+            payload.employee = currentEmployee.id;
+          }
+          createMutation.mutate(payload);
+        }}
         isLoading={createMutation.isPending}
       />
     </div>

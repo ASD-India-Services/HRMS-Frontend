@@ -13,12 +13,14 @@
  */
 
 import { useUser } from '@platform/auth-sdk';
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/api';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import type { WorkflowConfig, WorkflowTransition } from '@/types/workflow';
 
 interface TransitionActionsProps {
   /** The current record with id and status */
-  record: { id: string; status: string };
+  record: { id: string; status: string; employee?: unknown; employee_id?: unknown };
   /** Workflow configuration containing transitions */
   config: WorkflowConfig;
   /** Callback when a transition button is clicked */
@@ -45,10 +47,32 @@ export function TransitionActions({
   const { role } = useUser();
   const { roleName, hasPermission } = useHrmsPermissionsContext();
 
+  const { data: currentEmployee } = useQuery({
+    queryKey: ['employee', 'me'],
+    queryFn: async () => {
+      const response = await api.get<{ id: number }>('/api/v1/employees/me/');
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const recEmpId = typeof record.employee === 'object' && record.employee !== null
+    ? (record.employee as { id?: number | string }).id
+    : (record.employee || record.employee_id);
+  const isOwnRecord = Boolean(currentEmployee?.id && recEmpId && String(recEmpId) === String(currentEmployee.id));
+
   // Filter transitions: `from` matches current status AND user has access
   // Priority: requiredPermission (dynamic) > allowedRoles (legacy)
   const availableTransitions = config.transitions.filter((t) => {
     if (t.from !== record.status) return false;
+
+    // Disallow approving or rejecting own request
+    const isApproveOrReject = ['approved', 'rejected'].includes(t.to) ||
+      t.action.toLowerCase().includes('approve') ||
+      t.action.toLowerCase().includes('reject');
+    if (isOwnRecord && isApproveOrReject) {
+      return false;
+    }
 
     // If requiredPermission is set, use permission-based check (works with any role)
     if (t.requiredPermission) {
