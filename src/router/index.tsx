@@ -460,7 +460,13 @@ export const router = createBrowserRouter([
       // ─── Grievances ──────────────────────────────────────────────
       {
         path: 'grievances',
-        element: gated('grievances_enabled', 'Grievances', 'grievances.view', <GrievanceList />),
+        element: (
+          <OnboardingGuard>
+            <RoleGatedRoute requiredAnyPermission={['grievances.view', 'grievances.create']}>
+              <GrievanceList />
+            </RoleGatedRoute>
+          </OnboardingGuard>
+        ),
       },
       {
         path: 'grievance-types',

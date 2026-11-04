@@ -296,7 +296,7 @@ export default function ShiftSchedules() {
           <h1 className="text-2xl font-bold text-gray-900">Shift Schedules</h1>
           <p className="mt-1 text-sm text-gray-600">Manage recurring shift schedules</p>
         </div>
-        <CreateButton permission="shift_schedules.create" label="+ Create Schedule" onClick={openCreate} />
+        <CreateButton permission="shift_schedules.create" label="Create Schedule" onClick={openCreate} />
       </div>
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
@@ -476,11 +476,10 @@ export default function ShiftSchedules() {
                       key={idx}
                       type="button"
                       onClick={() => toggleDay(idx)}
-                      className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
-                        formData.repeat_on.includes(idx)
+                      className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${formData.repeat_on.includes(idx)
                           ? 'border-blue-500 bg-blue-50 text-blue-700'
                           : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50'
-                      }`}
+                        }`}
                     >
                       {label}
                     </button>

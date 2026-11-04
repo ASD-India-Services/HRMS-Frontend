@@ -22,6 +22,7 @@ export interface JobOpening {
   posted_on: string;
   closes_on: string | null;
   description?: string;
+  company_website?: string;
   created_at: string;
 }
 

@@ -31,7 +31,7 @@ const createFields: FieldConfig[] = [
   { key: 'cost_center_name', label: 'Cost Center', type: 'text', required: true, placeholder: 'Cost center name' },
   { key: 'allocation_percentage', label: 'Allocation (%)', type: 'number', required: true, placeholder: 'e.g. 100' },
   { key: 'effective_from', label: 'Effective From', type: 'date', required: true },
-  { key: 'effective_to', label: 'Effective To', type: 'date' },
+  { key: 'effective_to', label: 'Effective To', type: 'date', required: true },
 ];
 
 export default function EmployeeCostCenters() {

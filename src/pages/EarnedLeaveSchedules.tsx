@@ -30,7 +30,7 @@ const createFields: FieldConfig[] = [
   { key: 'leave_type', label: 'Leave Type', type: 'select', required: true, optionsEndpoint: '/api/v1/leaves/types/' },
   { key: 'earning_frequency', label: 'Earning Cycle', type: 'select', required: true, options: [{ value: 'monthly', label: 'Monthly' }, { value: 'quarterly', label: 'Quarterly' }] },
   { key: 'fraction_of_daily_earning', label: 'Days Earned Per Period', type: 'number', required: true, placeholder: 'e.g. 1.25 days per month' },
-  { key: 'min_attendance_percentage', label: 'Min Attendance %', type: 'number', placeholder: 'Default: 80' },
+  { key: 'min_attendance_percentage', label: 'Min Attendance %', type: 'number', required: true, placeholder: 'Default: 80' },
 ];
 
 export default function EarnedLeaveSchedules() {

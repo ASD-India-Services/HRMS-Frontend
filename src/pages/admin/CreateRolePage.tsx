@@ -81,7 +81,7 @@ export default function CreateRolePage() {
   // Form state
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [dataScope, setDataScope] = useState<DataScope>('organisation');
+  const [dataScope, setDataScope] = useState<DataScope>('self');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [submitError, setSubmitError] = useState<string | null>(null);
 

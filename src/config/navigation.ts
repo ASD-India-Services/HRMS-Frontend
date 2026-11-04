@@ -262,7 +262,7 @@ export const navigationConfig: NavGroup[] = [
   {
     label: 'More',
     items: [
-      { label: 'Grievances', href: '/grievances', icon: ICONS.grievances, requiredPermission: 'grievances.view', featureFlag: 'grievances_enabled' },
+      { label: 'Grievances', href: '/grievances', icon: ICONS.grievances, requiredPermission: 'grievances.view', requiredAnyPermission: ['grievances.view', 'grievances.create'], featureFlag: null },
       { label: 'Grievance Types', href: '/grievance-types', icon: ICONS.grievanceTypes, requiredPermission: 'grievance_types.view' },
       { label: 'Travel', href: '/travel', icon: ICONS.travel, requiredPermission: 'travel.view', featureFlag: 'travel_enabled' },
       { label: 'Overtime', href: '/overtime', icon: ICONS.overtime, requiredPermission: 'overtime.view', featureFlag: null },

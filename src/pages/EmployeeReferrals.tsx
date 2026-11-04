@@ -15,11 +15,51 @@ const crud = createCrudHooks<Record<string, unknown>>({
 });
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
-  { key: 'referring_employee', header: 'Referring Employee', sortable: true },
+  {
+    key: 'referring_employee_name',
+    header: 'Referring Employee',
+    sortable: true,
+    render: (_val, row) =>
+      (row.referring_employee_name as string) ||
+      (row.referring_employee as string) ||
+      '—',
+  },
   { key: 'candidate_name', header: 'Candidate', sortable: true },
-  { key: 'job_opening', header: 'Job Opening', sortable: true },
-  { key: 'status', header: 'Status', sortable: true },
-  { key: 'reward_status', header: 'Reward Status', sortable: true },
+  {
+    key: 'job_opening_title',
+    header: 'Job Opening',
+    sortable: true,
+    render: (_val, row) =>
+      (row.job_opening_title as string) ||
+      (row.job_opening as string) ||
+      '—',
+  },
+  {
+    key: 'status',
+    header: 'Status',
+    sortable: true,
+    render: (val) => {
+      const status = String(val || '').toLowerCase();
+      const colors: Record<string, string> = {
+        pending: 'bg-yellow-100 text-yellow-800',
+        in_progress: 'bg-blue-100 text-blue-800',
+        accepted: 'bg-green-100 text-green-800',
+        rejected: 'bg-red-100 text-red-800',
+      };
+      const badgeClass = colors[status] || 'bg-gray-100 text-gray-800';
+      return (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${badgeClass}`}>
+          {String(val || '').replace('_', ' ')}
+        </span>
+      );
+    },
+  },
+  {
+    key: 'reward_amount',
+    header: 'Reward Amount',
+    sortable: true,
+    render: (val) => (val != null && val !== '' ? `$${val}` : '—'),
+  },
 ];
 
 const filters: FilterConfig[] = [
@@ -27,10 +67,24 @@ const filters: FilterConfig[] = [
 ];
 
 const createFields: FieldConfig[] = [
-  { key: 'referrer', label: 'Referrer', type: 'select', required: true, optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
+  {
+    key: 'referring_employee',
+    label: 'Referrer',
+    type: 'select',
+    required: true,
+    optionsEndpoint: '/api/v1/employees/',
+    optionsLabelKey: 'full_name',
+  },
   { key: 'candidate_name', label: 'Candidate Name', type: 'text', required: true, placeholder: 'Candidate full name' },
   { key: 'candidate_email', label: 'Candidate Email', type: 'text', required: true, placeholder: 'Candidate email address' },
-  { key: 'job_opening', label: 'Job Opening', type: 'select', required: true, optionsEndpoint: '/api/v1/recruitment/job-openings/', optionsLabelKey: 'title' },
+  {
+    key: 'job_opening',
+    label: 'Job Opening',
+    type: 'select',
+    required: true,
+    optionsEndpoint: '/api/v1/recruitment/job-openings/?status=open',
+    optionsLabelKey: 'title',
+  },
   { key: 'notes', label: 'Notes', type: 'textarea', placeholder: 'Additional notes' },
 ];
 

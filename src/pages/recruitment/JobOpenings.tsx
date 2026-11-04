@@ -4,7 +4,7 @@
  */
 
 import { useState, useMemo } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useJobOpenings } from '@/hooks/useRecruitment';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
@@ -54,6 +54,20 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
   const [status, setStatus] = useState<JobOpeningStatus | ''>('');
   const [page, setPage] = useState(1);
   const [showCreate, setShowCreate] = useState(false);
+  const [showWebsiteModal, setShowWebsiteModal] = useState(false);
+
+  const { data: hrSettings } = useQuery({
+    queryKey: ['hr-settings-public'],
+    queryFn: async () => {
+      try {
+        const res = await api.get<{ company_website?: string }>('/api/v1/hr-settings/');
+        return res.data;
+      } catch {
+        return null;
+      }
+    },
+    staleTime: 60 * 1000,
+  });
 
   const queryClient = useQueryClient();
   const createMutation = useMutation({
@@ -89,6 +103,23 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
 
   const totalPages = data ? Math.ceil(data.count / PAGE_SIZE) : 0;
 
+  const companyWebsite =
+    hrSettings?.company_website ||
+    data?.results?.find((item) => item.company_website)?.company_website ||
+    '';
+
+  const handleOpenCompanyWebsite = (url?: string) => {
+    const targetUrl = url || companyWebsite;
+    if (targetUrl) {
+      const formatted = targetUrl.startsWith('http://') || targetUrl.startsWith('https://')
+        ? targetUrl
+        : `https://${targetUrl}`;
+      window.open(formatted, '_blank', 'noopener,noreferrer');
+    } else {
+      setShowWebsiteModal(true);
+    }
+  };
+
   return (
     <div>
       {/* Header */}
@@ -99,7 +130,20 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
             {data ? `${data.count} opening${data.count !== 1 ? 's' : ''}` : 'Loading...'}
           </p>
         </div>
-        <CreateButton permission="job_openings.create" label="Create Job Opening" onClick={() => setShowCreate(true)} />
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => handleOpenCompanyWebsite()}
+            className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors"
+            title="Open Company Website / Careers Page"
+          >
+            <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            Company Website
+          </button>
+          <CreateButton permission="job_openings.create" label="Create Job Opening" onClick={() => setShowCreate(true)} />
+        </div>
       </div>
 
       {/* Search and Filter */}
@@ -160,6 +204,7 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
                 <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Status</th>
                 <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Posted</th>
                 <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Closes</th>
+                <th scope="col" className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Website</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -189,6 +234,19 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-500">
                       {opening.closes_on ? new Date(opening.closes_on).toLocaleDateString() : '—'}
+                    </td>
+                    <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenCompanyWebsite(opening.company_website)}
+                        className="inline-flex items-center gap-1 rounded bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 border border-gray-200 transition-colors"
+                        title="Open on Company Website"
+                      >
+                        <svg className="h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        <span>Website</span>
+                      </button>
                     </td>
                   </tr>
                 );
@@ -239,6 +297,42 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
         onSubmit={(data) => createMutation.mutate(data)}
         isLoading={createMutation.isPending}
       />
+
+      {/* Missing Website Configuration Modal */}
+      {showWebsiteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-semibold text-gray-900">Company Website Not Configured</h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Please add your company website link in HR Settings first so job openings can link to it.
+                </p>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setShowWebsiteModal(false)}
+                className="rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Close
+              </button>
+              <a
+                href="/hr-settings"
+                className="inline-flex items-center rounded-md bg-primary-600 px-3.5 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700"
+              >
+                Go to HR Settings
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -6,6 +6,7 @@ const ENDPOINT = '/api/v1/hr-settings/';
 
 interface HRSettingsData {
   company_name: string;
+  company_website?: string;
   fiscal_year_start: string;
   probation_period_days: number;
   notice_period_days: number;
@@ -33,6 +34,7 @@ interface EmailConfigData {
 export default function HRSettings() {
   const [form, setForm] = useState<HRSettingsData>({
     company_name: '',
+    company_website: '',
     fiscal_year_start: '',
     probation_period_days: 90,
     notice_period_days: 30,
@@ -70,6 +72,7 @@ export default function HRSettings() {
         const data = response.data;
         setForm({
           company_name: data.company_name || '',
+          company_website: data.company_website || '',
           fiscal_year_start: data.fiscal_year_start || '',
           probation_period_days: data.probation_period_days || 90,
           notice_period_days: data.notice_period_days || 30,
@@ -206,6 +209,19 @@ export default function HRSettings() {
           </div>
 
           <div>
+            <label htmlFor="company_website" className="mb-1 block text-sm font-medium text-gray-700">Company Website</label>
+            <input
+              id="company_website"
+              type="url"
+              value={form.company_website || ''}
+              onChange={(e) => handleChange('company_website', e.target.value)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              placeholder="https://www.yourcompany.com"
+            />
+
+          </div>
+
+          <div>
             <label htmlFor="fiscal_year_start" className="mb-1 block text-sm font-medium text-gray-700">Fiscal Year Start</label>
             <input
               id="fiscal_year_start"
@@ -264,11 +280,10 @@ export default function HRSettings() {
           </div>
           {emailConfig?.configured && (
             <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                emailConfig.is_verified
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${emailConfig.is_verified
                   ? 'bg-green-100 text-green-800'
                   : 'bg-yellow-100 text-yellow-800'
-              }`}
+                }`}
             >
               {emailConfig.is_verified ? '✓ Verified' : 'Not Verified'}
             </span>
