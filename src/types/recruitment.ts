@@ -26,7 +26,7 @@ export interface JobOpening {
   created_at: string;
 }
 
-export type ApplicantStatus = 'applied' | 'screening' | 'interview' | 'selected' | 'rejected';
+export type ApplicantStatus = 'applied' | 'screening' | 'interview' | 'selected' | 'onboarded' | 'rejected';
 
 export interface JobApplicant {
   id: string;
@@ -40,6 +40,8 @@ export interface JobApplicant {
   status: ApplicantStatus;
   resume_url?: string;
   rating: number | null;
+  referred_by_name?: string | null;
+  is_referral?: boolean;
   applied_on: string;
   created_at: string;
 }

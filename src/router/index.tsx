@@ -36,6 +36,9 @@ const ResetPassword = lazy(() => import('@/pages/auth/ResetPassword'));
 // Self-onboarding (inside ProtectedRoute but outside OnboardingGuard)
 const SelfOnboarding = lazy(() => import('@/pages/onboarding/SelfOnboarding'));
 
+// Public candidate application page
+const PublicJobApplyPage = lazy(() => import('@/pages/recruitment/PublicJobApplyPage'));
+
 // ─── Lazy-loaded page components ─────────────────────────────────────────────
 
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
@@ -246,6 +249,12 @@ export const router = createBrowserRouter([
   {
     path: '/auth/reset-password',
     element: <Suspense fallback={<PageLoader />}><ResetPassword /></Suspense>,
+  },
+
+  // Public candidate job application page (zero authentication required)
+  {
+    path: '/careers/apply/:jobId',
+    element: <Suspense fallback={<PageLoader />}><PublicJobApplyPage /></Suspense>,
   },
 
   // Self-Onboarding — protected but NO sidebar/header (outside AppShell)

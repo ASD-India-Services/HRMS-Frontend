@@ -8,19 +8,22 @@ import { useLocation } from 'react-router-dom';
 import { JobOpenings } from './recruitment/JobOpenings';
 import { ApplicantPipeline } from './recruitment/ApplicantPipeline';
 import { InterviewSchedule } from './recruitment/InterviewSchedule';
+import { LiveCareersPortal } from './recruitment/LiveCareersPortal';
 
-type Tab = 'openings' | 'pipeline' | 'interviews';
+type Tab = 'openings' | 'pipeline' | 'interviews' | 'careers';
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'openings', label: 'Job Openings' },
   { key: 'pipeline', label: 'Candidates' },
   { key: 'interviews', label: 'Interviews' },
+  { key: 'careers', label: 'Company Careers Portal' },
 ];
 
 // Map URL paths to tabs
 function getTabFromPath(pathname: string): Tab {
   if (pathname.includes('/candidates')) return 'pipeline';
   if (pathname.includes('/interviews')) return 'interviews';
+  if (pathname.includes('/careers')) return 'careers';
   return 'openings';
 }
 
@@ -88,6 +91,10 @@ export default function Recruitment() {
 
       {activeTab === 'interviews' && (
         <InterviewSchedule />
+      )}
+
+      {activeTab === 'careers' && (
+        <LiveCareersPortal />
       )}
     </div>
   );

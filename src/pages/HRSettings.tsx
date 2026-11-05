@@ -12,6 +12,7 @@ interface HRSettingsData {
   notice_period_days: number;
   employee_naming_series?: string;
   retirement_age?: number;
+  location_check_interval_minutes: number;
 }
 
 interface EmailConfigData {
@@ -38,6 +39,7 @@ export default function HRSettings() {
     fiscal_year_start: '',
     probation_period_days: 90,
     notice_period_days: 30,
+    location_check_interval_minutes: 30,
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -76,6 +78,7 @@ export default function HRSettings() {
           fiscal_year_start: data.fiscal_year_start || '',
           probation_period_days: data.probation_period_days || 90,
           notice_period_days: data.notice_period_days || 30,
+          location_check_interval_minutes: data.location_check_interval_minutes ?? 30,
         });
       } catch {
         // Settings not found yet — keep defaults
@@ -254,6 +257,26 @@ export default function HRSettings() {
               onChange={(e) => handleChange('notice_period_days', parseInt(e.target.value, 10) || 0)}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
+          </div>
+
+          <div>
+            <label htmlFor="location_check_interval_minutes" className="mb-1 block text-sm font-medium text-gray-700">
+              Mobile Location Check Interval
+            </label>
+            <select
+              id="location_check_interval_minutes"
+              value={form.location_check_interval_minutes}
+              onChange={(e) => handleChange('location_check_interval_minutes', parseInt(e.target.value, 10) || 30)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            >
+              <option value={15}>15 Minutes (High Precision)</option>
+              <option value={30}>30 Minutes (Recommended)</option>
+              <option value={45}>45 Minutes</option>
+              <option value={60}>60 Minutes (Battery Saver)</option>
+            </select>
+            <p className="mt-1 text-xs text-gray-500">
+              Interval at which the mobile app checks whether a checked-in employee is inside the office.
+            </p>
           </div>
         </div>
 

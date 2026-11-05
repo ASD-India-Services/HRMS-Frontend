@@ -60,6 +60,22 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     sortable: true,
     render: (val) => (val != null && val !== '' ? `$${val}` : '—'),
   },
+  {
+    key: 'pipeline_link',
+    header: 'Hiring Pipeline',
+    render: (_val, row) => (
+      <a
+        href="/recruitment/candidates"
+        className="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-800 hover:underline"
+        title="View in Recruitment Candidates Pipeline"
+      >
+        <span>View in Pipeline</span>
+        <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </a>
+    ),
+  },
 ];
 
 const filters: FilterConfig[] = [

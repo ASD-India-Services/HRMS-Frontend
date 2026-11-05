@@ -55,6 +55,7 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
   const [page, setPage] = useState(1);
   const [showCreate, setShowCreate] = useState(false);
   const [showWebsiteModal, setShowWebsiteModal] = useState(false);
+  const [copiedJobId, setCopiedJobId] = useState<string | null>(null);
 
   const { data: hrSettings } = useQuery({
     queryKey: ['hr-settings-public'],
@@ -117,6 +118,43 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
       window.open(formatted, '_blank', 'noopener,noreferrer');
     } else {
       setShowWebsiteModal(true);
+    }
+  };
+
+  const handleCopyApplyLink = (jobId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const applyUrl = `${window.location.origin}/careers/apply/${jobId}`;
+    navigator.clipboard.writeText(applyUrl);
+    setCopiedJobId(jobId);
+    setTimeout(() => setCopiedJobId(null), 2500);
+  };
+
+  const handlePostToCareers = (
+    opening: { id: string; title: string; department?: { name: string }; company_website?: string },
+    e: React.MouseEvent
+  ) => {
+    e.stopPropagation();
+    const targetUrl = opening.company_website || companyWebsite;
+    if (!targetUrl) {
+      setShowWebsiteModal(true);
+      return;
+    }
+    const formatted = targetUrl.startsWith('http://') || targetUrl.startsWith('https://')
+      ? targetUrl
+      : `https://${targetUrl}`;
+
+    try {
+      const postUrl = new URL(formatted);
+      postUrl.searchParams.set('action', 'post_job');
+      postUrl.searchParams.set('job_id', opening.id);
+      postUrl.searchParams.set('title', opening.title);
+      if (opening.department?.name) {
+        postUrl.searchParams.set('department', opening.department.name);
+      }
+      postUrl.searchParams.set('apply_url', `${window.location.origin}/careers/apply/${opening.id}`);
+      window.open(postUrl.toString(), '_blank', 'noopener,noreferrer');
+    } catch {
+      window.open(formatted, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -204,7 +242,7 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
                 <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Status</th>
                 <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Posted</th>
                 <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Closes</th>
-                <th scope="col" className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Website</th>
+                <th scope="col" className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Careers & Apply</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -236,17 +274,41 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
                       {opening.closes_on ? new Date(opening.closes_on).toLocaleDateString() : '—'}
                     </td>
                     <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        type="button"
-                        onClick={() => handleOpenCompanyWebsite(opening.company_website)}
-                        className="inline-flex items-center gap-1 rounded bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-primary-50 hover:text-primary-700 border border-gray-200 transition-colors"
-                        title="Open on Company Website"
-                      >
-                        <svg className="h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                        <span>Website</span>
-                      </button>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          type="button"
+                          onClick={(e) => handleCopyApplyLink(opening.id, e)}
+                          className="inline-flex items-center gap-1 rounded bg-white px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100 hover:text-primary-700 border border-gray-200 shadow-xs transition-colors"
+                          title="Copy Direct Candidate Application Link"
+                        >
+                          {copiedJobId === opening.id ? (
+                            <>
+                              <svg className="h-3.5 w-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span className="text-green-700 font-semibold">Copied!</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                              <span>Apply Link</span>
+                            </>
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => handlePostToCareers(opening, e)}
+                          className="inline-flex items-center gap-1 rounded bg-primary-50 px-2 py-1 text-xs font-medium text-primary-700 hover:bg-primary-100 border border-primary-200 shadow-xs transition-colors"
+                          title="Open Company Website with this Job Posting"
+                        >
+                          <svg className="h-3.5 w-3.5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                          <span>Post to Careers</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

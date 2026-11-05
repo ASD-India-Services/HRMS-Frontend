@@ -1,6 +1,6 @@
 /**
  * Applicant Pipeline page — kanban-style view of applicants grouped by stage.
- * Supports filtering by job opening and drag-like status transitions.
+ * Supports filtering by job opening, employee referral badges, and moving selected candidates to onboarding.
  * Requirements: 19.2, 24.2
  */
 
@@ -27,6 +27,7 @@ const PIPELINE_STAGES: { key: ApplicantStatus; label: string; color: string }[] 
   { key: 'screening', label: 'Screening', color: 'border-yellow-400 bg-yellow-50' },
   { key: 'interview', label: 'Interview', color: 'border-purple-400 bg-purple-50' },
   { key: 'selected', label: 'Selected', color: 'border-green-400 bg-green-50' },
+  { key: 'onboarded', label: 'Onboarded', color: 'border-emerald-500 bg-emerald-50' },
   { key: 'rejected', label: 'Rejected', color: 'border-red-400 bg-red-50' },
 ];
 
@@ -38,6 +39,9 @@ interface ApplicantPipelineProps {
 export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelineProps) {
   const [selectedJobOpening, setSelectedJobOpening] = useState(jobOpeningId || '');
   const [showCreate, setShowCreate] = useState(false);
+  const [onboardingApplicant, setOnboardingApplicant] = useState<JobApplicant | null>(null);
+  const [onboardSuccessMessage, setOnboardSuccessMessage] = useState<string | null>(null);
+  const [onboardErrorMessage, setOnboardErrorMessage] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
   const createMutation = useMutation({
@@ -45,6 +49,28 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['applicants'] });
       setShowCreate(false);
+    },
+  });
+
+  // Mutation to hire / move applicant to onboarding
+  const onboardMutation = useMutation({
+    mutationFn: async (applicantId: string) => {
+      const res = await api.post(`/api/v1/recruitment/applicants/${applicantId}/hire/`);
+      return res.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['applicants'] });
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
+      queryClient.invalidateQueries({ queryKey: ['employee-referrals'] });
+      setOnboardSuccessMessage(data?.message || 'Applicant successfully moved to onboarding!');
+      setOnboardingApplicant(null);
+      setOnboardErrorMessage(null);
+      setTimeout(() => setOnboardSuccessMessage(null), 6000);
+    },
+    onError: (err: any) => {
+      const resp = err.response?.data;
+      const msg = resp?.error?.message || resp?.error || resp?.detail || 'Failed to move applicant to onboarding.';
+      setOnboardErrorMessage(typeof msg === 'string' ? msg : JSON.stringify(msg));
     },
   });
 
@@ -65,6 +91,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
     screening: [],
     interview: [],
     selected: [],
+    onboarded: [],
     rejected: [],
   };
 
@@ -80,8 +107,32 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
     changeStatus.mutate({ id: applicantId, payload: { status: newStatus } });
   };
 
+  const handleConfirmOnboarding = () => {
+    if (!onboardingApplicant) return;
+    setOnboardErrorMessage(null);
+    onboardMutation.mutate(onboardingApplicant.id);
+  };
+
   return (
     <div>
+      {/* Success Notification */}
+      {onboardSuccessMessage && (
+        <div className="mb-4 flex items-center justify-between rounded-lg bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-800 shadow-xs animate-in fade-in">
+          <div className="flex items-center gap-2">
+            <svg className="h-5 w-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span className="font-semibold">{onboardSuccessMessage}</span>
+          </div>
+          <button
+            onClick={() => setOnboardSuccessMessage(null)}
+            className="text-emerald-600 hover:text-emerald-800"
+          >
+            &times;
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
@@ -148,7 +199,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
             return (
               <div
                 key={stage.key}
-                className={`min-w-[260px] flex-1 rounded-lg border-t-4 bg-white p-3 shadow-sm ${stage.color}`}
+                className={`min-w-[270px] flex-1 rounded-lg border-t-4 bg-white p-3 shadow-sm ${stage.color}`}
               >
                 {/* Column Header */}
                 <div className="mb-3 flex items-center justify-between">
@@ -169,7 +220,11 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                       applicant={applicant}
                       currentStage={stage.key}
                       onMove={handleMoveApplicant}
-                      isMoving={changeStatus.isPending}
+                      onInitiateOnboarding={(app) => {
+                        setOnboardErrorMessage(null);
+                        setOnboardingApplicant(app);
+                      }}
+                      isMoving={changeStatus.isPending || onboardMutation.isPending}
                     />
                   ))}
                 </div>
@@ -188,6 +243,92 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
         onSubmit={(data) => createMutation.mutate(data)}
         isLoading={createMutation.isPending}
       />
+
+      {/* Move to Onboarding Confirmation Modal */}
+      {onboardingApplicant && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-semibold text-gray-900">Move to Onboarding</h3>
+                <p className="mt-1 text-xs text-gray-500">
+                  You are about to initiate the employee onboarding cycle for this selected candidate.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-lg bg-gray-50 p-3.5 text-xs text-gray-700 space-y-1.5 border border-gray-200/80">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Candidate:</span>
+                <span className="font-semibold text-gray-900">{onboardingApplicant.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Email:</span>
+                <span className="font-mono text-gray-900">{onboardingApplicant.email}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Job Opening:</span>
+                <span className="font-medium text-gray-900">{onboardingApplicant.job_opening?.title || '—'}</span>
+              </div>
+              {onboardingApplicant.referred_by_name && (
+                <div className="flex justify-between text-amber-700">
+                  <span>Referral By:</span>
+                  <span className="font-semibold">{onboardingApplicant.referred_by_name}</span>
+                </div>
+              )}
+            </div>
+
+            <ul className="mt-3.5 space-y-1 text-[11px] text-gray-500 list-disc list-inside">
+              <li>Creates new employee profile in the employee directory</li>
+              <li>Sets employee onboarding status to <strong className="text-gray-700">Pending</strong></li>
+              <li>Sends an account setup invitation to the candidate's email</li>
+              <li>Transitions recruitment pipeline status to <strong className="text-emerald-700">Onboarded</strong></li>
+            </ul>
+
+            {onboardErrorMessage && (
+              <div className="mt-3 rounded-lg bg-red-50 p-2.5 text-xs text-red-700 border border-red-200">
+                {onboardErrorMessage}
+              </div>
+            )}
+
+            <div className="mt-6 flex justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => setOnboardingApplicant(null)}
+                disabled={onboardMutation.isPending}
+                className="rounded-lg border border-gray-300 bg-white px-3.5 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmOnboarding}
+                disabled={onboardMutation.isPending}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 disabled:opacity-50"
+              >
+                {onboardMutation.isPending ? (
+                  <>
+                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Confirm & Move to Onboarding</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -198,10 +339,11 @@ interface ApplicantCardProps {
   applicant: JobApplicant;
   currentStage: ApplicantStatus;
   onMove: (id: string, status: ApplicantStatus) => void;
+  onInitiateOnboarding: (applicant: JobApplicant) => void;
   isMoving: boolean;
 }
 
-function ApplicantCard({ applicant, currentStage, onMove, isMoving }: ApplicantCardProps) {
+function ApplicantCard({ applicant, currentStage, onMove, onInitiateOnboarding, isMoving }: ApplicantCardProps) {
   const [showActions, setShowActions] = useState(false);
 
   // Possible next stages based on current position
@@ -211,10 +353,20 @@ function ApplicantCard({ applicant, currentStage, onMove, isMoving }: ApplicantC
     <div className="rounded-md border border-gray-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-gray-900">{applicant.name}</p>
+          <p className="truncate text-sm font-semibold text-gray-900">{applicant.name}</p>
           <p className="truncate text-xs text-gray-500">{applicant.email}</p>
           {applicant.job_opening && (
-            <p className="mt-1 truncate text-xs text-gray-400">{applicant.job_opening.title}</p>
+            <p className="mt-0.5 truncate text-[11px] text-gray-400">{applicant.job_opening.title}</p>
+          )}
+
+          {/* Employee Referral Badge */}
+          {applicant.referred_by_name && (
+            <div className="mt-1.5 inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 border border-amber-200/80">
+              <svg className="h-3 w-3 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              <span>Referred by {applicant.referred_by_name}</span>
+            </div>
           )}
         </div>
         {applicant.rating !== null && (
@@ -227,14 +379,42 @@ function ApplicantCard({ applicant, currentStage, onMove, isMoving }: ApplicantC
         )}
       </div>
 
-      {/* Move Actions */}
-      <div className="mt-2">
+      {/* Selected Stage: Prominent Move to Onboarding Button */}
+      {currentStage === 'selected' && (
+        <div className="mt-2.5">
+          <button
+            type="button"
+            onClick={() => onInitiateOnboarding(applicant)}
+            disabled={isMoving}
+            className="w-full inline-flex items-center justify-center gap-1.5 rounded-md bg-emerald-600 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 transition-colors disabled:opacity-50"
+            title="Complete hiring and move to onboarding"
+          >
+            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span>Move to Onboarding</span>
+          </button>
+        </div>
+      )}
+
+      {/* Onboarded Stage Badge */}
+      {currentStage === 'onboarded' && (
+        <div className="mt-2.5 flex items-center justify-center gap-1 rounded bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 border border-emerald-200">
+          <svg className="h-3.5 w-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <span>Onboarding Active</span>
+        </div>
+      )}
+
+      {/* Move Actions Dropdown */}
+      <div className="mt-2 flex items-center justify-between pt-1 border-t border-gray-100">
         <button
           onClick={() => setShowActions(!showActions)}
-          className="text-xs text-primary-600 hover:text-primary-700"
+          className="text-xs text-primary-600 hover:text-primary-700 font-medium"
           disabled={isMoving}
         >
-          {showActions ? 'Cancel' : 'Move to...'}
+          {showActions ? 'Cancel' : 'Change stage...'}
         </button>
 
         {showActions && (
@@ -244,7 +424,7 @@ function ApplicantCard({ applicant, currentStage, onMove, isMoving }: ApplicantC
                 key={stage.key}
                 onClick={() => { onMove(applicant.id, stage.key); setShowActions(false); }}
                 disabled={isMoving}
-                className="rounded border border-gray-200 px-2 py-0.5 text-xs text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                className="rounded border border-gray-200 px-2 py-0.5 text-xs text-gray-600 hover:bg-gray-100 disabled:opacity-50 capitalize"
               >
                 {stage.label}
               </button>
