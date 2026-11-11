@@ -62,6 +62,12 @@ export const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   'leaves.approve': 'Show the Approve button and approve leave applications',
   'leaves.reject': 'Show the Reject button and reject leave applications',
 
+  'compensatory_leave.view': 'Access Compensatory Leave Requests to view own or team comp-off requests',
+  'compensatory_leave.create': 'Submit new compensatory leave requests for working on holidays or weekends',
+  'compensatory_leave.approve': 'Show the Approve button and approve compensatory leave requests',
+  'compensatory_leave.reject': 'Show the Reject button and reject compensatory leave requests',
+  'compensatory_leave.delete': 'Delete compensatory leave requests',
+
   'leave_policies.view': 'View leave policies',
   'leave_policies.create': 'Create leave policies',
   'leave_policies.edit': 'Edit leave policies',
@@ -105,6 +111,12 @@ export const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   'attendance_requests.reject': 'Show the Reject button and reject attendance correction requests',
 
   'attendance_upload.manage': 'Bulk upload attendance data from a CSV file',
+  'hour_account.view': 'Access Hour Account to view working hours, pending hours and overtime summaries',
+  'hour_account.create': 'Create hour account records for employees',
+  'hour_account.edit': 'Edit hour account records and working hours',
+  'hour_account.delete': 'Delete hour account records',
+  'work_records.view': 'Access Work Records to view employee monthly attendance matrix and daily hours',
+  'work_records.export': 'Export monthly work records to CSV format',
   'geofence_locations.view': 'View configured geo-fence locations',
   'geofence_locations.create': 'Create geo-fence locations',
   'geofence_locations.edit': 'Edit geo-fence locations',
@@ -327,10 +339,32 @@ export const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   'documents.create': 'Upload employee documents',
   'documents.edit': 'Edit employee documents',
   'documents.delete': 'Delete employee documents',
+  'document_requests.view': 'View employee document requests',
+  'document_requests.create': 'Submit and raise document requests',
+  'document_requests.edit': 'Edit document requests and urgency',
+  'document_requests.delete': 'Delete document requests',
+  'document_requests.approve': 'Approve and issue requested documents',
+  'document_requests.reject': 'Reject employee document requests',
   'appointment_letters.view': 'View appointment letter templates',
   'appointment_letters.create': 'Create appointment letter templates',
   'appointment_letters.edit': 'Edit appointment letter templates',
   'appointment_letters.delete': 'Delete appointment letter templates',
+
+  // ─── Help Desk ─────────────────────────────────────────────────────────────
+  'faq_categories.view': 'View FAQ categories and Help Desk knowledge base',
+  'faq_categories.create': 'Create new FAQ categories',
+  'faq_categories.edit': 'Edit existing FAQ categories',
+  'faq_categories.delete': 'Delete FAQ categories',
+  'faqs.view': 'View Frequently Asked Questions (FAQ)',
+  'faqs.create': 'Create new Frequently Asked Questions',
+  'faqs.edit': 'Edit existing Frequently Asked Questions',
+  'faqs.delete': 'Delete Frequently Asked Questions',
+
+  // ─── Policies ──────────────────────────────────────────────────────────────
+  'policies.view': 'View company policies and operating guidelines',
+  'policies.create': 'Create new company policies',
+  'policies.edit': 'Edit existing company policies',
+  'policies.delete': 'Delete company policies',
 
   // ─── Admin ─────────────────────────────────────────────────────────────────
   'permissions.view': 'View the list of all available permissions in the system',

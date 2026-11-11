@@ -38,6 +38,7 @@ const SelfOnboarding = lazy(() => import('@/pages/onboarding/SelfOnboarding'));
 
 // Public candidate application page
 const PublicJobApplyPage = lazy(() => import('@/pages/recruitment/PublicJobApplyPage'));
+const CareersEmbedWidget = lazy(() => import('@/pages/recruitment/CareersEmbedWidget'));
 
 // ─── Lazy-loaded page components ─────────────────────────────────────────────
 
@@ -51,6 +52,7 @@ const Branches = lazy(() => import('@/pages/Branches'));
 const EmployeeDetailPage = lazy(() => import('@/pages/employees/EmployeeDetailPage'));
 const EmployeeEditPage = lazy(() => import('@/pages/employees/EmployeeEditPage'));
 const EmployeeForm = lazy(() => import('@/pages/employees/EmployeeForm').then((m) => ({ default: m.EmployeeForm as React.ComponentType })));
+const OrgChart = lazy(() => import('@/pages/employees/OrgChart'));
 const Profile = lazy(() => import('@/pages/Profile'));
 const Holidays = lazy(() => import('@/pages/Holidays'));
 const TaxBenefits = lazy(() => import('@/pages/TaxBenefits'));
@@ -94,6 +96,7 @@ const EmployeeHealthInsurance = lazy(() => import('@/pages/EmployeeHealthInsuran
 const EmployeeCostCenters = lazy(() => import('@/pages/EmployeeCostCenters'));
 const DocumentTypes = lazy(() => import('@/pages/DocumentTypes'));
 const EmployeeDocuments = lazy(() => import('@/pages/EmployeeDocuments'));
+const DocumentRequests = lazy(() => import('@/pages/DocumentRequests'));
 const ExpenseTaxes = lazy(() => import('@/pages/ExpenseTaxes'));
 const ExpenseTypes = lazy(() => import('@/pages/ExpenseTypes'));
 const EmployeeIncentives = lazy(() => import('@/pages/EmployeeIncentives'));
@@ -101,19 +104,22 @@ const Transfers = lazy(() => import('@/pages/Transfers'));
 const Promotions = lazy(() => import('@/pages/Promotions'));
 const Gratuity = lazy(() => import('@/pages/Gratuity'));
 const AppointmentLetters = lazy(() => import('@/pages/AppointmentLetters'));
+const Policies = lazy(() => import('@/pages/Policies'));
 const HRSettings = lazy(() => import('@/pages/HRSettings'));
 const AuditLogs = lazy(() => import('@/pages/AuditLogs'));
 
 // Leaves — direct component imports (no sub-routing in Leaves.tsx)
 const MyLeaves = lazy(() => import('@/pages/leaves/MyLeaves'));
-const LeaveList = lazy(() => import('@/pages/leaves/LeaveList').then((m) => ({ default: m.LeaveList })));
 const LeaveApply = lazy(() => import('@/pages/leaves/LeaveApply').then((m) => ({ default: m.LeaveApply })));
 const LeaveApprovals = lazy(() => import('@/pages/leaves/LeaveApprovals').then((m) => ({ default: m.LeaveApprovals })));
+const CompensatoryLeave = lazy(() => import('@/pages/CompensatoryLeave'));
 
 // Attendance
 const Attendance = lazy(() => import('@/pages/Attendance'));
 const AttendanceRegister = lazy(() => import('@/pages/AttendanceRegister'));
 const MyAttendanceHistory = lazy(() => import('@/pages/attendance/MyAttendanceHistory'));
+const HourAccount = lazy(() => import('@/pages/HourAccount'));
+const WorkRecords = lazy(() => import('@/pages/WorkRecords'));
 
 // Shifts — direct component imports (no sub-routing in Shifts.tsx)
 const Shifts = lazy(() => import('@/pages/Shifts'));
@@ -129,6 +135,7 @@ const SalaryStructureAssignments = lazy(() => import('@/pages/SalaryStructureAss
 // Recruitment — direct component imports
 const Recruitment = lazy(() => import('@/pages/Recruitment'));
 const RecruitmentPipeline = lazy(() => import('@/pages/recruitment/RecruitmentPipeline').then((m) => ({ default: m.RecruitmentPipeline })));
+const RecruitmentStages = lazy(() => import('@/pages/recruitment/RecruitmentStages'));
 
 // Appraisals — direct component imports
 const AppraisalCycles = lazy(() => import('@/pages/appraisals/AppraisalCycles').then((m) => ({ default: m.AppraisalCycles })));
@@ -158,6 +165,10 @@ const OvertimeApprovals = lazy(() => import('@/pages/overtime/OvertimeApprovals'
 
 // Settlements
 const SettlementWorkflow = lazy(() => import('@/pages/settlements/SettlementWorkflow').then((m) => ({ default: m.SettlementWorkflow })));
+
+// Help Desk
+const FAQCategories = lazy(() => import('@/pages/helpdesk/FAQCategories'));
+const FAQs = lazy(() => import('@/pages/helpdesk/FAQs'));
 
 // Admin
 const RolesPage = lazy(() => import('@/pages/admin/RolesPage'));
@@ -198,6 +209,17 @@ function permGated(requiredPermission: string, element: React.ReactNode) {
   return (
     <OnboardingGuard>
       <RoleGatedRoute requiredPermission={requiredPermission}>
+        {element}
+      </RoleGatedRoute>
+    </OnboardingGuard>
+  );
+}
+
+/** Like permGated(), but grants access if the user has ANY of the given permissions. */
+function permGatedAny(requiredAnyPermission: string[], element: React.ReactNode) {
+  return (
+    <OnboardingGuard>
+      <RoleGatedRoute requiredAnyPermission={requiredAnyPermission}>
         {element}
       </RoleGatedRoute>
     </OnboardingGuard>
@@ -256,6 +278,15 @@ export const router = createBrowserRouter([
     path: '/careers/apply/:jobId',
     element: <Suspense fallback={<PageLoader />}><PublicJobApplyPage /></Suspense>,
   },
+  // Public careers embed widget & public careers portal (Method 2 integration)
+  {
+    path: '/careers/embed',
+    element: <Suspense fallback={<PageLoader />}><CareersEmbedWidget /></Suspense>,
+  },
+  {
+    path: '/careers',
+    element: <Suspense fallback={<PageLoader />}><CareersEmbedWidget /></Suspense>,
+  },
 
   // Self-Onboarding — protected but NO sidebar/header (outside AppShell)
   {
@@ -298,6 +329,10 @@ export const router = createBrowserRouter([
       {
         path: 'employees',
         element: gated('employees_enabled', 'Employees', 'employees.view', <Employees />),
+      },
+      {
+        path: 'org-chart',
+        element: gated('employees_enabled', 'Employees', 'employees.view', <OrgChart />),
       },
       {
         path: 'employees/new',
@@ -353,11 +388,35 @@ export const router = createBrowserRouter([
         path: 'leaves/approvals',
         element: gated('leaves_enabled', 'Leave Management', 'leave_approvals.view', <LeaveApprovals />),
       },
+      {
+        path: 'leaves/compensatory',
+        element: gated('leaves_enabled', 'Compensatory Leave', 'compensatory_leave.view', <CompensatoryLeave />),
+      },
+      {
+        path: 'compensatory-leave',
+        element: gated('leaves_enabled', 'Compensatory Leave', 'compensatory_leave.view', <CompensatoryLeave />),
+      },
 
       // ─── Attendance ──────────────────────────────────────────────
       {
         path: 'attendance',
         element: gated('attendance_enabled', 'Attendance', 'attendance.view', <Attendance />),
+      },
+      {
+        path: 'attendance/hour-account',
+        element: gated('attendance_enabled', 'Hour Account', 'hour_account.view', <HourAccount />),
+      },
+      {
+        path: 'attendance/attendance-overtime-view',
+        element: gated('attendance_enabled', 'Hour Account', 'hour_account.view', <HourAccount />),
+      },
+      {
+        path: 'attendance/work-records',
+        element: gated('attendance_enabled', 'Work Records', 'work_records.view', <WorkRecords />),
+      },
+      {
+        path: 'work-records',
+        element: gated('attendance_enabled', 'Work Records', 'work_records.view', <WorkRecords />),
       },
       {
         path: 'my-attendance',
@@ -420,6 +479,10 @@ export const router = createBrowserRouter([
       {
         path: 'recruitment/pipeline',
         element: gated('recruitment_enabled', 'Recruitment', 'recruitment.view', <RecruitmentPipeline />),
+      },
+      {
+        path: 'recruitment/stages',
+        element: gated('recruitment_enabled', 'Recruitment', 'recruitment.view', <RecruitmentStages />),
       },
 
       // ─── Appraisals (explicit sub-routes, no wildcard) ─────────
@@ -677,6 +740,10 @@ export const router = createBrowserRouter([
         path: 'employee-documents',
         element: permGated('documents.view', <EmployeeDocuments />),
       },
+      {
+        path: 'document-requests',
+        element: permGatedAny(['document_requests.view', 'documents.view'], <DocumentRequests />),
+      },
 
       // ─── Expense Taxes ─────────────────────────────────────────
       {
@@ -712,8 +779,30 @@ export const router = createBrowserRouter([
         element: permGated('appointment_letters.view', <AppointmentLetters />),
       },
       {
+        path: 'policies',
+        element: permGatedAny(['policies.view', 'documents.view'], <Policies />),
+      },
+      {
         path: 'hr-settings',
         element: permGated('hr_settings.view', <HRSettings />),
+      },
+
+      // ─── Help Desk ──────────────────────────────────────────────
+      {
+        path: 'helpdesk',
+        element: <Navigate to="/helpdesk/faq-categories" replace />,
+      },
+      {
+        path: 'helpdesk/faq-categories',
+        element: permGatedAny(['faq_categories.view', 'faqs.view'], <FAQCategories />),
+      },
+      {
+        path: 'helpdesk/faqs',
+        element: permGatedAny(['faqs.view', 'faq_categories.view'], <FAQs />),
+      },
+      {
+        path: 'helpdesk/faq-view/:categoryId',
+        element: permGatedAny(['faqs.view', 'faq_categories.view'], <FAQs />),
       },
 
       // ─── Admin: Roles & Permissions ────────────────────────────

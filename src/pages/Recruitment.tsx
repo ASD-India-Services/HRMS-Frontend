@@ -9,12 +9,14 @@ import { JobOpenings } from './recruitment/JobOpenings';
 import { ApplicantPipeline } from './recruitment/ApplicantPipeline';
 import { InterviewSchedule } from './recruitment/InterviewSchedule';
 import { LiveCareersPortal } from './recruitment/LiveCareersPortal';
+import { RecruitmentStages } from './recruitment/RecruitmentStages';
 
-type Tab = 'openings' | 'pipeline' | 'interviews' | 'careers';
+type Tab = 'openings' | 'pipeline' | 'stages' | 'interviews' | 'careers';
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'openings', label: 'Job Openings' },
   { key: 'pipeline', label: 'Candidates' },
+  { key: 'stages', label: 'Stages' },
   { key: 'interviews', label: 'Interviews' },
   { key: 'careers', label: 'Company Careers Portal' },
 ];
@@ -22,6 +24,7 @@ const TABS: { key: Tab; label: string }[] = [
 // Map URL paths to tabs
 function getTabFromPath(pathname: string): Tab {
   if (pathname.includes('/candidates')) return 'pipeline';
+  if (pathname.includes('/stages')) return 'stages';
   if (pathname.includes('/interviews')) return 'interviews';
   if (pathname.includes('/careers')) return 'careers';
   return 'openings';
@@ -87,6 +90,10 @@ export default function Recruitment() {
           jobOpeningId={selectedOpeningId}
           onBack={handleBackFromPipeline}
         />
+      )}
+
+      {activeTab === 'stages' && (
+        <RecruitmentStages />
       )}
 
       {activeTab === 'interviews' && (

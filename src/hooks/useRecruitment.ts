@@ -112,7 +112,74 @@ export function useChangeApplicantStatus() {
     mutationFn: changeApplicantStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['applicants'] });
+      queryClient.invalidateQueries({ queryKey: ['recruitment-stages'] });
       queryClient.invalidateQueries({ queryKey: ['job-openings'] });
+    },
+  });
+}
+
+// ─── Recruitment Stages ──────────────────────────────────────────────────────
+
+async function fetchRecruitmentStages(): Promise<import('@/types/recruitment').RecruitmentStage[]> {
+  const response = await api.get<PaginatedResponse<import('@/types/recruitment').RecruitmentStage> | import('@/types/recruitment').RecruitmentStage[]>('/api/v1/recruitment/stages/');
+  const data = response.data;
+  if (Array.isArray(data)) return data;
+  if ('results' in data && Array.isArray(data.results)) return data.results;
+  return [];
+}
+
+export function useRecruitmentStages() {
+  return useQuery({
+    queryKey: ['recruitment-stages'],
+    queryFn: fetchRecruitmentStages,
+    refetchOnMount: 'always',
+    staleTime: 0,
+  });
+}
+
+export function useCreateRecruitmentStage() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Partial<import('@/types/recruitment').RecruitmentStage>) =>
+      api.post('/api/v1/recruitment/stages/', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recruitment-stages'] });
+      queryClient.invalidateQueries({ queryKey: ['applicants'] });
+    },
+  });
+}
+
+export function useUpdateRecruitmentStage() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<import('@/types/recruitment').RecruitmentStage> }) =>
+      api.patch(`/api/v1/recruitment/stages/${id}/`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recruitment-stages'] });
+      queryClient.invalidateQueries({ queryKey: ['applicants'] });
+    },
+  });
+}
+
+export function useDeleteRecruitmentStage() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/api/v1/recruitment/stages/${id}/`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recruitment-stages'] });
+      queryClient.invalidateQueries({ queryKey: ['applicants'] });
+    },
+  });
+}
+
+export function useReorderRecruitmentStages() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (stages: { id: string; order: number }[]) =>
+      api.post('/api/v1/recruitment/stages/reorder/', { stages }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recruitment-stages'] });
+      queryClient.invalidateQueries({ queryKey: ['applicants'] });
     },
   });
 }

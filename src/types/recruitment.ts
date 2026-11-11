@@ -26,7 +26,20 @@ export interface JobOpening {
   created_at: string;
 }
 
-export type ApplicantStatus = 'applied' | 'screening' | 'interview' | 'selected' | 'onboarded' | 'rejected';
+export type DefaultApplicantStatus = 'applied' | 'screening' | 'interview' | 'selected' | 'onboarded' | 'rejected';
+export type ApplicantStatus = DefaultApplicantStatus | (string & {});
+
+export interface RecruitmentStage {
+  id: string;
+  name: string;
+  slug: string;
+  color: string;
+  order: number;
+  is_system: boolean;
+  applicant_count: number;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface JobApplicant {
   id: string;
@@ -37,6 +50,9 @@ export interface JobApplicant {
     id: string;
     title: string;
   };
+  stage?: string | null;
+  stage_name?: string | null;
+  stage_color?: string | null;
   status: ApplicantStatus;
   resume_url?: string;
   rating: number | null;
