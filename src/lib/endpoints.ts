@@ -18,6 +18,14 @@ export const EMPLOYEES = {
   PROPERTY_HISTORY: (id: string) => `/api/v1/employees/${id}/property-history/`,
 } as const;
 
+export const BONUS_POINTS = {
+  LIST: '/api/v1/employee-bonus-points/',
+  CREATE: '/api/v1/employee-bonus-points/',
+  DETAIL: (id: string) => `/api/v1/employee-bonus-points/${id}/`,
+  UPDATE: (id: string) => `/api/v1/employee-bonus-points/${id}/`,
+  DELETE: (id: string) => `/api/v1/employee-bonus-points/${id}/`,
+} as const;
+
 export const DEPARTMENTS = {
   LIST: '/api/v1/departments/',
   CREATE: '/api/v1/departments/',
@@ -87,6 +95,8 @@ export const LEAVES = {
   COMPENSATORY_APPROVE: (id: string) => `/api/v1/leaves/compensatory/${id}/approve/`,
   COMPENSATORY_REJECT: (id: string) => `/api/v1/leaves/compensatory/${id}/reject/`,
   COMPENSATORY_ELIGIBLE_ATTENDANCES: '/api/v1/leaves/compensatory-leave/eligible-attendances/',
+  COMPANY_LEAVES: '/api/v1/leaves/company-leaves/',
+  COMPANY_LEAVE_DETAIL: (id: string) => `/api/v1/leaves/company-leaves/${id}/`,
 } as const;
 
 export const COMPENSATORY_LEAVE = {
@@ -675,6 +685,8 @@ export const HELPDESK = {
   CATEGORY_DETAIL: (id: string) => `/api/v1/helpdesk/faq-categories/${id}/`,
   FAQS: '/api/v1/helpdesk/faqs/',
   FAQ_DETAIL: (id: string) => `/api/v1/helpdesk/faqs/${id}/`,
+  TAGS: '/api/v1/helpdesk/tags/',
+  TAG_DETAIL: (id: string) => `/api/v1/helpdesk/tags/${id}/`,
 } as const;
 
 // ─── Policies ────────────────────────────────────────────────────────────────
@@ -686,4 +698,18 @@ export const POLICIES = {
   UPDATE: (id: string) => `/api/v1/policies/${id}/`,
   DELETE: (id: string) => `/api/v1/policies/${id}/`,
 } as const;
+
+// ─── Meetings ────────────────────────────────────────────────────────────────
+
+export const MEETINGS = {
+  LIST: '/api/v1/meetings/',
+  CREATE: '/api/v1/meetings/',
+  DETAIL: (id: string) => `/api/v1/meetings/${id}/`,
+  UPDATE: (id: string) => `/api/v1/meetings/${id}/`,
+  DELETE: (id: string) => `/api/v1/meetings/${id}/`,
+  CANCEL: (id: string) => `/api/v1/meetings/${id}/cancel/`,
+  COMPLETE: (id: string) => `/api/v1/meetings/${id}/complete/`,
+  QUESTION_TEMPLATES: '/api/v1/question-templates/',
+} as const;
+
 

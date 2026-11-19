@@ -273,15 +273,40 @@ export default function WorkRecords() {
 
   // Days in month calculation
   const daysInMonth = data?.days_in_month || new Date(selectedYear, selectedMonth, 0).getDate();
+
+  // Set of week-off days for this month (from backend company leaves or fallback)
+  const weekOffDaysSet = useMemo(() => {
+    if (data?.week_off_days && data.week_off_days.length > 0) {
+      return new Set(data.week_off_days);
+    }
+    if (data?.results && data.results.length > 0) {
+      const s = new Set<number>();
+      for (const emp of data.results) {
+        for (const [dayStr, rec] of Object.entries(emp.records || {})) {
+          if (rec.is_week_off || rec.is_weekend) {
+            s.add(Number(dayStr));
+          }
+        }
+        if (s.size > 0) break;
+      }
+      if (s.size > 0) return s;
+    }
+    const fallback = new Set<number>();
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(selectedYear, selectedMonth - 1, d);
+      if (date.getDay() === 0) fallback.add(d);
+    }
+    return fallback;
+  }, [data, daysInMonth, selectedYear, selectedMonth]);
+
   const dayColumns = useMemo(() => {
     const cols: { day: number; isWeekend: boolean }[] = [];
     for (let d = 1; d <= daysInMonth; d++) {
-      const date = new Date(selectedYear, selectedMonth - 1, d);
-      const isWeekend = date.getDay() === 0 || date.getDay() === 6; // Sunday=0, Saturday=6
+      const isWeekend = weekOffDaysSet.has(d);
       cols.push({ day: d, isWeekend });
     }
     return cols;
-  }, [daysInMonth, selectedYear, selectedMonth]);
+  }, [daysInMonth, weekOffDaysSet]);
 
   // Formatted date string for top right: "Nov. 10, 2026"
   const formattedToday = useMemo(() => {
@@ -1048,6 +1073,10 @@ export default function WorkRecords() {
                     ? 'text-gray-300'
                     : hoveredCell.record.badge === 'A'
                     ? 'text-indigo-300'
+                    : hoveredCell.record.status === 'week_off' || hoveredCell.record.is_week_off
+                    ? 'text-sky-300'
+                    : hoveredCell.record.status === 'holiday' || hoveredCell.record.is_holiday
+                    ? 'text-emerald-300'
                     : 'text-orange-400'
                 }`}
               >
@@ -1061,6 +1090,10 @@ export default function WorkRecords() {
                   ? `Leave${hoveredCell.record.leave_type ? ` (${hoveredCell.record.leave_type})` : ''}`
                   : hoveredCell.record.badge === 'A'
                   ? 'Absent'
+                  : hoveredCell.record.status === 'week_off' || hoveredCell.record.is_week_off
+                  ? 'Week Off'
+                  : hoveredCell.record.status === 'holiday' || hoveredCell.record.is_holiday
+                  ? 'Holiday'
                   : 'No Status'}
               </span>
             </div>

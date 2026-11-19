@@ -76,3 +76,21 @@ export interface PaginatedLeaveResponse {
   previous: string | null;
   results: LeaveApplication[];
 }
+
+export interface LeaveDayBreakdown {
+  date: string;
+  day_name: string;
+  is_working_day: boolean;
+  is_company_leave: boolean;
+  is_holiday: boolean;
+  reason: string | null;
+}
+
+export interface LeaveCalculationResult {
+  calendar_days: number;
+  working_days: number;
+  company_leave_days: number;
+  holiday_days: number;
+  total_days: number;
+  breakdown: LeaveDayBreakdown[];
+}

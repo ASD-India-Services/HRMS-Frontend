@@ -10,6 +10,7 @@ import { CreateButton, EditButton, DeleteButton } from '@/components/ActionButto
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
+import { formatCurrency } from '@/utils/formatters';
 
 const RULES_ENDPOINT = '/api/v1/gratuity/rules/';
 const rulesCrud = createCrudHooks<Record<string, unknown>>({
@@ -25,10 +26,6 @@ const rulesColumns: ColumnDef<Record<string, unknown>>[] = [
 ];
 
 const filters: FilterConfig[] = [];
-
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
-}
 
 // ---------------------------------------------------------------------------
 // Slab Row type

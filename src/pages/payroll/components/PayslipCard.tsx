@@ -4,6 +4,7 @@
  */
 
 import type { SalarySlipSummary } from '@/types/payroll';
+import { formatCurrency } from '@/utils/formatters';
 
 interface PayslipCardProps {
   slip: SalarySlipSummary;
@@ -17,14 +18,6 @@ const statusStyles: Record<string, string> = {
   paid: 'bg-green-100 text-green-800',
   cancelled: 'bg-red-100 text-red-800',
 };
-
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
 
 export function PayslipCard({ slip, isSelected, onSelect }: PayslipCardProps) {
   return (

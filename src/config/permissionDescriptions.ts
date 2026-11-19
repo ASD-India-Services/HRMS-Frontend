@@ -366,6 +366,18 @@ export const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   'policies.edit': 'Edit existing company policies',
   'policies.delete': 'Delete company policies',
 
+  // ─── Meetings ───────────────────────────────────────────────────────────────
+  'meetings.view': 'Access the Meetings page and view scheduled meetings',
+  'meetings.create': 'Create new meetings and schedule attendees',
+  'meetings.edit': 'Update meeting details, date and attendees',
+  'meetings.delete': 'Delete or cancel meetings',
+
+  // ─── Bonus Points ───────────────────────────────────────────────────────────
+  'bonus_points.view': 'Access Employee Bonus Points to view awarded bonus points',
+  'bonus_points.create': 'Award new bonus points to employees with reasons',
+  'bonus_points.edit': 'Edit awarded employee bonus points and details',
+  'bonus_points.delete': 'Delete employee bonus point records',
+
   // ─── Admin ─────────────────────────────────────────────────────────────────
   'permissions.view': 'View the list of all available permissions in the system',
   'roles.manage': 'Create, edit and delete roles and assign permissions to them',

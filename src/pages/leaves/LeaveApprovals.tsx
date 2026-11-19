@@ -21,6 +21,7 @@ import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
 import { useApproveLeave, useRejectLeave } from '@/hooks/useLeaves';
 import type { LeaveApplication } from '@/types/leave';
 import type { ColumnDef } from '@/types/datatable';
+import { formatDate } from '@/utils/formatters';
 
 // Create CRUD hooks from the leave applications config
 const leaveAppsCrud = createCrudHooks<LeaveApplication>({
@@ -60,18 +61,6 @@ const approvalFilters = [
     ],
   },
 ];
-
-/**
- * Format a date string for display
- */
-function formatDate(dateStr: string): string {
-  if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
 
 /**
  * Main LeaveApprovals component wrapped in RBAC check.

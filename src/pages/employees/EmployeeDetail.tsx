@@ -16,6 +16,7 @@ import { EditButton, DeleteButton, ActionButton } from '@/components/ActionButto
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { CrudModal } from '@/components/CrudModal';
 import type { FieldConfig } from '@/components/CrudModal';
+import { formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
 
 const statusColors: Record<string, string> = {
@@ -34,15 +35,6 @@ const statusLabels: Record<string, string> = {
 
 function getInitials(firstName?: string | null, lastName?: string | null): string {
   return `${(firstName || '?').charAt(0)}${(lastName || '?').charAt(0)}`.toUpperCase();
-}
-
-function formatDate(dateStr?: string): string {
-  if (!dateStr) return '--';
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
 }
 
 export function EmployeeDetail() {
@@ -252,6 +244,7 @@ export function EmployeeDetail() {
               value={employee.employment_type?.replace('_', ' ')}
               capitalize
             />
+            <DetailRow label="Work Type" value={(employee as any).work_type} />
             <DetailRow label="Date of Joining" value={formatDate(employee.date_of_joining)} />
             <DetailRow label="Probation End" value={formatDate(employee.probation_end_date)} />
             <DetailRow label="Confirmation Date" value={formatDate(employee.confirmation_date)} />

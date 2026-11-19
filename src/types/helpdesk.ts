@@ -45,3 +45,21 @@ export interface UpdateFAQPayload {
   is_published?: boolean;
 }
 
+export interface HelpdeskTag {
+  id: string;
+  title: string;
+  color: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CreateHelpdeskTagPayload {
+  title: string;
+  color: string;
+}
+
+export interface UpdateHelpdeskTagPayload {
+  title?: string;
+  color?: string;
+}
+

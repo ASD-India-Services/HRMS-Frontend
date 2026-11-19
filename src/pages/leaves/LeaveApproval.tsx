@@ -8,14 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useLeaveApplications, useApproveLeave, useRejectLeave } from '@/hooks/useLeaves';
 import type { LeaveApplication } from '@/types/leave';
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
+import { formatDate } from '@/utils/formatters';
 
 interface ApprovalModalProps {
   application: LeaveApplication;

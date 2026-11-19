@@ -16,7 +16,7 @@ interface OrgEmployeeNode {
   profile_picture: string | null;
   status: string;
   department: { id: string; name: string } | null;
-  designation: { id: string; name: string } | null;
+  designation: { id: string; name?: string; title?: string } | null;
   reporting_manager_id: string | null;
   direct_reports_count: number;
   children: OrgEmployeeNode[];
@@ -73,6 +73,12 @@ function getInitials(name: string): string {
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
   return name.slice(0, 2).toUpperCase();
+}
+
+function getDesignation(emp?: { designation?: { name?: string; title?: string } | string | null } | null): string {
+  if (!emp || !emp.designation) return 'No Designation';
+  if (typeof emp.designation === 'string') return emp.designation;
+  return emp.designation.name || emp.designation.title || 'No Designation';
 }
 
 // ─── Main Component ─────────────────────────────────────────────────────────
@@ -152,7 +158,7 @@ export default function OrgChart() {
       (emp) =>
         emp.name.toLowerCase().includes(query) ||
         emp.employee_id.toLowerCase().includes(query) ||
-        (emp.designation?.name && emp.designation.name.toLowerCase().includes(query)) ||
+        getDesignation(emp).toLowerCase().includes(query) ||
         (emp.department?.name && emp.department.name.toLowerCase().includes(query))
     );
   }, [allEmployees, pickerSearch]);
@@ -216,7 +222,7 @@ export default function OrgChart() {
     const matches = nameMatches.length > 0
       ? nameMatches
       : allEmployees.filter(
-          (emp) => emp.designation?.name && emp.designation.name.toLowerCase().includes(query)
+          (emp) => getDesignation(emp).toLowerCase().includes(query)
         );
 
     if (matches.length === 0) return [];
@@ -389,7 +395,7 @@ export default function OrgChart() {
       search.trim() &&
       (node.name.toLowerCase().includes(search.toLowerCase()) ||
         node.employee_id.toLowerCase().includes(search.toLowerCase()) ||
-        (node.designation?.name && node.designation.name.toLowerCase().includes(search.toLowerCase())));
+        getDesignation(node).toLowerCase().includes(search.toLowerCase()));
 
     const isDeptMatched = selectedDept === 'all' || node.department?.name === selectedDept;
 
@@ -409,17 +415,17 @@ export default function OrgChart() {
                   : 'border-slate-300 opacity-40 hover:opacity-100'
           }`}
       >
-        {/* Top Banner: Employee Name (Red for leaders/managers, Blue for staff) */}
+        {/* Top Banner: Employee Name */}
         <div className={`px-2.5 py-1.5 text-center ${isLeader ? 'bg-[#d9534f]' : 'bg-[#007ba7]'}`}>
           <h4 className="text-xs sm:text-sm font-bold text-white truncate leading-snug tracking-tight">
             {node.name}
           </h4>
         </div>
 
-        {/* Bottom Section: Role / Designation */}
+        {/* Bottom Section: Designation */}
         <div className="bg-white px-2.5 py-1.5 text-center border-t border-slate-100">
-          <p className="text-[11px] sm:text-xs text-slate-800 font-medium truncate leading-snug">
-            {node.designation?.name || 'Not set'}
+          <p className="text-[11px] sm:text-xs text-slate-800 font-medium truncate leading-snug" title={getDesignation(node)}>
+            {getDesignation(node)}
           </p>
         </div>
       </div>
@@ -588,8 +594,11 @@ export default function OrgChart() {
           </h4>
         </div>
         <div className="bg-white px-2.5 py-1.5 text-center border-t border-slate-100 flex flex-col items-center">
-          <p className="text-[11px] sm:text-xs text-slate-800 font-medium truncate leading-snug w-full">
-            {dept.head ? `${dept.head.name} (Head)` : 'Department'}
+          <p className="text-[11px] sm:text-xs text-slate-800 font-medium truncate leading-snug w-full" title={dept.head ? `${dept.head.name} (${dept.head.designation || 'Head'})` : dept.name}>
+            {dept.head ? dept.head.name : dept.name}
+          </p>
+          <p className="text-[10px] text-slate-500 font-normal truncate leading-snug w-full">
+            {dept.head?.designation || (dept.head ? 'Department Head' : 'Department')}
           </p>
           <button
             type="button"
@@ -783,7 +792,7 @@ export default function OrgChart() {
                   <optgroup label="Select Employee (View Hierarchy Under Them)">
                     {allEmployees.map((emp) => (
                       <option key={emp.id} value={emp.id}>
-                        {emp.name} ({emp.designation?.name || 'Staff'}{emp.direct_reports_count > 0 ? ` • ${emp.direct_reports_count} reports` : ''})
+                        {emp.name} ({getDesignation(emp)}{emp.direct_reports_count > 0 ? ` • ${emp.direct_reports_count} reports` : ''})
                       </option>
                     ))}
                   </optgroup>
@@ -797,7 +806,7 @@ export default function OrgChart() {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search employee..."
+                placeholder="Search name, designation..."
                 className="w-full rounded-xl border border-gray-300 bg-white py-1.5 pl-8 pr-3 text-xs text-gray-900 placeholder-gray-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 shadow-2xs"
               />
               <svg
@@ -1116,7 +1125,7 @@ export default function OrgChart() {
                 <div>
                   <h3 className="text-lg font-bold text-slate-900">{selectedEmployee.name}</h3>
                   <p className="text-xs font-semibold text-primary-600 mt-0.5">
-                    {selectedEmployee.designation?.name || 'No Designation'}
+                    {getDesignation(selectedEmployee)}
                   </p>
                   <div className="flex items-center gap-2 mt-1.5">
                     <span className="font-mono text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
@@ -1146,8 +1155,13 @@ export default function OrgChart() {
                 </button>
               )}
 
-              {/* Contact Info */}
+              {/* Contact & Designation Info */}
               <div className="rounded-xl bg-slate-50 p-4 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500">Designation:</span>
+                  <strong className="text-slate-800">{getDesignation(selectedEmployee)}</strong>
+                </div>
+
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-500">Department:</span>
                   <strong className="text-slate-800">{selectedEmployee.department?.name || '—'}</strong>
@@ -1201,7 +1215,7 @@ export default function OrgChart() {
                           <div className="min-w-0">
                             <p className="text-xs font-bold text-slate-900 truncate">{sub.name}</p>
                             <p className="text-[11px] text-slate-500 truncate">
-                              {sub.designation?.name || 'Team Member'}
+                              {getDesignation(sub)}
                             </p>
                           </div>
                         </div>
@@ -1273,7 +1287,7 @@ export default function OrgChart() {
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-slate-900 truncate">{emp.name}</p>
                       <p className="text-[11px] text-slate-500 truncate">
-                        {emp.designation?.name || 'No Designation'} • {emp.department?.name || 'No Department'}
+                        {getDesignation(emp)} • {emp.department?.name || 'No Department'}
                       </p>
                     </div>
                   </div>
@@ -1342,7 +1356,7 @@ export default function OrgChart() {
                   <div className="flex items-center justify-between mt-1.5">
                     <div>
                       <p className="text-xs font-bold text-slate-900">{selectedDepartment.head.name}</p>
-                      <p className="text-[11px] text-slate-600">{selectedDepartment.head.designation || 'Head'}</p>
+                      <p className="text-[11px] text-slate-600">{selectedDepartment.head.designation || 'Department Head'}</p>
                     </div>
                     <button
                       type="button"
@@ -1389,7 +1403,7 @@ export default function OrgChart() {
                         )}
                         <div className="min-w-0">
                           <p className="text-xs font-bold text-slate-900 truncate">{emp.name}</p>
-                          <p className="text-[11px] text-slate-500 truncate">{emp.designation?.name || 'Staff'}</p>
+                          <p className="text-[11px] text-slate-500 truncate">{getDesignation(emp)}</p>
                           <span className="font-mono text-[10px] text-slate-400">{emp.employee_id}</span>
                         </div>
                       </div>
@@ -1477,7 +1491,7 @@ export default function OrgChart() {
                   autoFocus
                   value={pickerSearch}
                   onChange={(e) => setPickerSearch(e.target.value)}
-                  placeholder="Search by employee name, role, department, or ID..."
+                  placeholder="Search by employee name, designation, department, or ID..."
                   className="w-full rounded-xl border border-slate-300 py-2 pl-9 pr-4 text-xs text-slate-900 placeholder-slate-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 shadow-2xs"
                 />
                 <svg className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1541,7 +1555,7 @@ export default function OrgChart() {
                         <div className="min-w-0">
                           <p className="text-xs font-bold text-slate-900 truncate">{emp.name}</p>
                           <p className="text-[11px] text-slate-500 truncate">
-                            {emp.designation?.name || 'Staff'} • {emp.department?.name || 'No Department'}
+                            {getDesignation(emp)} • {emp.department?.name || 'No Department'}
                           </p>
                           <span className="font-mono text-[10px] text-slate-400">{emp.employee_id}</span>
                         </div>

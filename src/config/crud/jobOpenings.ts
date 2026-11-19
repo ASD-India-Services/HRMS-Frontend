@@ -25,8 +25,35 @@ export const jobOpeningsCrudConfig = {
   },
   columns: [
     { key: 'title', header: 'Title', sortable: true },
-    { key: 'department.name', header: 'Department', sortable: true },
-    { key: 'designation.title', header: 'Designation', sortable: true },
+    {
+      key: 'department.name',
+      header: 'Department',
+      sortable: true,
+      render: (_value: unknown, row?: Record<string, unknown>) => {
+        if (!row) return '—';
+        const d = row.department;
+        if (d && typeof d === 'object' && 'name' in d) return String((d as { name: unknown }).name || '');
+        if (typeof row.department_name === 'string' && row.department_name) return row.department_name;
+        if (typeof d === 'string' && d) return d;
+        return '—';
+      },
+    },
+    {
+      key: 'designation.title',
+      header: 'Designation',
+      sortable: true,
+      render: (_value: unknown, row?: Record<string, unknown>) => {
+        if (!row) return '—';
+        const des = row.designation;
+        if (des && typeof des === 'object') {
+          if ('title' in des && des.title) return String(des.title);
+          if ('name' in des && des.name) return String(des.name);
+        }
+        if (typeof row.designation_name === 'string' && row.designation_name) return row.designation_name;
+        if (typeof des === 'string' && des) return des;
+        return '—';
+      },
+    },
     { key: 'vacancies', header: 'Vacancies', sortable: true },
     { key: 'status', header: 'Status', sortable: true },
     { key: 'posted_on', header: 'Posted On', sortable: true },

@@ -15,6 +15,8 @@
 
 import { useMemo, useState } from 'react';
 import { createCrudHooks } from '@/hooks/useCrud';
+import { useHRSettings } from '@/hooks/useHRSettings';
+import { formatCurrency } from '@/utils/formatters';
 import {
   payrollEntriesCrudConfig,
   payrollEntryFormFields,
@@ -56,19 +58,6 @@ const payrollRunFilters: FilterConfig[] = [
     ],
   },
 ];
-
-/**
- * Format a number as currency (INR)
- */
-function formatCurrency(value: number | null | undefined): string {
-  if (value == null) return '—';
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(value);
-}
 
 /**
  * Columns for the payroll runs DataTable, including formatted currency
@@ -154,6 +143,21 @@ export function PayrollRuns() {
 function PayrollRunsContent() {
   const columns = usePayrollRunColumns();
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const { data: hrSettings } = useHRSettings();
+
+  // Active Auto-payslip generation rules from settings
+  const activeAutoRules = useMemo(() => {
+    let rules = hrSettings?.auto_payslip_rules;
+    if (!rules || !Array.isArray(rules) || rules.length === 0) {
+      try {
+        const saved = localStorage.getItem('hrms_auto_payslip_rules');
+        if (saved) rules = JSON.parse(saved);
+      } catch {
+        // fallback
+      }
+    }
+    return (rules || []).filter((r: any) => r.auto_generate);
+  }, [hrSettings]);
 
   // URL-synced filters
   const {
@@ -263,6 +267,35 @@ function PayrollRunsContent() {
           </p>
         </div>
       </div>
+
+      {/* Active Auto-Payslip Generation Rules from Settings */}
+      {activeAutoRules.length > 0 && (
+        <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50/80 p-3.5 shadow-2xs">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-900">
+                Active Auto-Payslip Schedule (Linked to Settings)
+              </span>
+            </div>
+            <span className="text-[11px] font-medium text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded">
+              Rule Active
+            </span>
+          </div>
+          <div className="mt-2.5 flex flex-wrap gap-2">
+            {activeAutoRules.map((rule: any) => (
+              <span
+                key={rule.id}
+                className="inline-flex items-center gap-1.5 rounded-md border border-emerald-300 bg-white px-2.5 py-1 text-xs font-medium text-emerald-900 shadow-2xs"
+              >
+                <span>🏢 {rule.company}</span>
+                <span className="text-gray-300">|</span>
+                <span>📅 Auto-generates on {rule.generate_day}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Bulk Export */}
       <BulkActions

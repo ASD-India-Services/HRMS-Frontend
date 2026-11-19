@@ -13,6 +13,7 @@ import { useAuth, useUser } from '@platform/auth-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { ProductSwitcher } from '@/components/ProductSwitcher';
 import { useNotifications } from '@/hooks/useNotifications';
+import { SettingsIcon } from '@/pages/settings/SettingsIcons';
 import api from '@/lib/api';
 
 interface HeaderProps {
@@ -151,6 +152,17 @@ export function Header({ onMenuToggle }: HeaderProps) {
             </div>
           )}
         </div>
+
+        {/* Settings button */}
+        <button
+          type="button"
+          onClick={() => navigate('/settings/general-settings')}
+          className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+          title="Settings"
+          aria-label="Settings"
+        >
+          <SettingsIcon className="w-5 h-5" />
+        </button>
 
         {/* Product Switcher */}
         <ProductSwitcher />

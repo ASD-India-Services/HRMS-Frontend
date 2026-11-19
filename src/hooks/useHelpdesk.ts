@@ -8,6 +8,9 @@ import type {
   UpdateFAQCategoryPayload,
   CreateFAQPayload,
   UpdateFAQPayload,
+  HelpdeskTag,
+  CreateHelpdeskTagPayload,
+  UpdateHelpdeskTagPayload,
 } from '@/types/helpdesk';
 
 interface PaginatedResponse<T> {
@@ -146,4 +149,63 @@ export function useDeleteFAQ() {
     },
   });
 }
+
+// ─── Helpdesk Tags ───────────────────────────────────────────────────────────
+
+async function fetchHelpdeskTags(search?: string): Promise<HelpdeskTag[]> {
+  const params: Record<string, string> = {};
+  if (search) params.search = search;
+  const res = await api.get<PaginatedResponse<HelpdeskTag> | HelpdeskTag[]>(HELPDESK.TAGS, { params });
+  if (Array.isArray(res.data)) {
+    return res.data;
+  }
+  return res.data.results || [];
+}
+
+export function useHelpdeskTags(search?: string) {
+  return useQuery({
+    queryKey: ['helpdesk', 'tags', search],
+    queryFn: () => fetchHelpdeskTags(search),
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useCreateHelpdeskTag() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: CreateHelpdeskTagPayload) => {
+      const res = await api.post<HelpdeskTag>(HELPDESK.TAGS, payload);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['helpdesk', 'tags'] });
+    },
+  });
+}
+
+export function useUpdateHelpdeskTag() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, payload }: { id: string; payload: UpdateHelpdeskTagPayload }) => {
+      const res = await api.patch<HelpdeskTag>(HELPDESK.TAG_DETAIL(id), payload);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['helpdesk', 'tags'] });
+    },
+  });
+}
+
+export function useDeleteHelpdeskTag() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(HELPDESK.TAG_DETAIL(id));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['helpdesk', 'tags'] });
+    },
+  });
+}
+
 

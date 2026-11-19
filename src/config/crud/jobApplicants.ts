@@ -27,7 +27,25 @@ export const jobApplicantsCrudConfig = {
     { key: 'name', header: 'Name', sortable: true },
     { key: 'email', header: 'Email', sortable: true },
     { key: 'phone', header: 'Phone', sortable: false },
-    { key: 'job_opening.title', header: 'Job Opening', sortable: true },
+    {
+      key: 'job_opening.title',
+      header: 'Job Opening',
+      sortable: true,
+      render: (_value: unknown, row?: Record<string, unknown>) => {
+        if (!row) return '—';
+        const opening = row.job_opening;
+        let title = '';
+        if (opening && typeof opening === 'object' && 'title' in opening) {
+          title = String((opening as { title: unknown }).title || '');
+        } else if (typeof opening === 'string' && opening.trim()) {
+          title = opening;
+        }
+        if (!title && typeof row.job_opening_title === 'string' && row.job_opening_title.trim()) {
+          title = row.job_opening_title;
+        }
+        return title || '—';
+      },
+    },
     { key: 'status', header: 'Status', sortable: true },
   ] as ColumnDef<Record<string, unknown>>[],
   filters: [

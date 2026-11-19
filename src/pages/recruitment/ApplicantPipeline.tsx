@@ -51,6 +51,34 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
   const [cancelSuccessMessage, setCancelSuccessMessage] = useState<string | null>(null);
   const [cancelErrorMessage, setCancelErrorMessage] = useState<string | null>(null);
 
+  // Reject candidate modal state linked to Settings Candidate Reject Reasons
+  const [rejectingApplicant, setRejectingApplicant] = useState<JobApplicant | null>(null);
+  const [selectedRejectReason, setSelectedRejectReason] = useState<string>('');
+  const [rejectNotes, setRejectNotes] = useState<string>('');
+
+  // Dynamically load configured reject reasons from Recruitment Settings
+  const configuredRejectReasons = useMemo(() => {
+    try {
+      const saved = localStorage.getItem('hrms_candidate_reject_reasons');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.filter((r: any) => r.isActive !== false);
+        }
+      }
+    } catch {
+      // fallback
+    }
+    return [
+      { id: '1', title: 'Skill Set & Experience Mismatch', description: 'Technical skills do not align' },
+      { id: '2', title: 'Salary Expectation Exceeds Budget', description: 'CTC exceeds approved budget' },
+      { id: '3', title: 'Notice Period Too Long', description: 'Notice period exceeds requirement' },
+      { id: '4', title: 'Did Not Clear Technical Assessment', description: 'Scored below cutoff' },
+      { id: '5', title: 'Candidate Withdrew / Accepted Counter Offer', description: 'Declined or accepted other offer' },
+      { id: '6', title: 'Location / Shift Incompatibility', description: 'Unwilling or unable to relocate' },
+    ];
+  }, []);
+
   const queryClient = useQueryClient();
   const createMutation = useMutation({
     mutationFn: (data: Record<string, unknown>) => api.post('/api/v1/recruitment/applicants/', data),
@@ -174,7 +202,41 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
         return;
       }
     }
+    if (newStatus === 'rejected') {
+      // Prompt user for rejection reason linked to Recruitment Settings
+      const target = applicantsData?.results.find((a) => a.id === applicantId);
+      if (target) {
+        setRejectingApplicant(target);
+        setSelectedRejectReason(configuredRejectReasons[0]?.title || 'Skill Set & Experience Mismatch');
+        setRejectNotes('');
+        return;
+      }
+    }
     changeStatus.mutate({ id: applicantId, payload: { status: newStatus } });
+  };
+
+  const handleConfirmReject = () => {
+    if (!rejectingApplicant) return;
+    const combinedNotes = rejectNotes?.trim()
+      ? `[${selectedRejectReason}] ${rejectNotes.trim()}`
+      : selectedRejectReason;
+
+    changeStatus.mutate(
+      {
+        id: rejectingApplicant.id,
+        payload: {
+          status: 'rejected',
+          notes: combinedNotes,
+        },
+      },
+      {
+        onSuccess: () => {
+          setRejectingApplicant(null);
+          setSelectedRejectReason('');
+          setRejectNotes('');
+        },
+      }
+    );
   };
 
   const handleConfirmOnboarding = () => {
@@ -517,6 +579,20 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
               <label htmlFor="cancel-reason" className="block text-xs font-medium text-gray-700 mb-1">
                 Reason for cancellation <span className="text-gray-400 font-normal">(optional)</span>
               </label>
+              {configuredRejectReasons.length > 0 && (
+                <select
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="mb-2 w-full rounded-lg border border-gray-300 p-2 text-xs text-gray-800 shadow-2xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="">-- Select from configured reject reasons --</option>
+                  {configuredRejectReasons.map((r: any) => (
+                    <option key={r.id} value={r.title}>
+                      {r.title}
+                    </option>
+                  ))}
+                </select>
+              )}
               <textarea
                 id="cancel-reason"
                 rows={2}
@@ -564,6 +640,111 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                     </svg>
                     <span>Confirm Revoke Offer</span>
                   </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reject Candidate Modal Linked to Settings Rejection Reasons */}
+      {rejectingApplicant && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-semibold text-gray-900">Reject Candidate</h3>
+                <p className="mt-1 text-xs text-gray-500">
+                  Select a rejection reason configured in Recruitment Settings.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-lg bg-gray-50 p-3 text-xs space-y-1.5 border border-gray-200">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Candidate:</span>
+                <span className="font-semibold text-gray-900">{rejectingApplicant.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Email:</span>
+                <span className="font-medium text-gray-700">{rejectingApplicant.email}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Job Opening:</span>
+                <span className="font-medium text-gray-900">
+                  {rejectingApplicant.job_opening?.title || (rejectingApplicant as any).job_opening_title || '—'}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-4 space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-gray-800 mb-1">
+                  Rejection Reason <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={selectedRejectReason}
+                  onChange={(e) => setSelectedRejectReason(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 p-2 text-xs text-gray-900 shadow-2xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  {configuredRejectReasons.map((r: any) => (
+                    <option key={r.id} value={r.title}>
+                      {r.title}
+                    </option>
+                  ))}
+                </select>
+                {selectedRejectReason && (
+                  <p className="mt-1 text-[11px] text-gray-500 italic">
+                    {configuredRejectReasons.find((r: any) => r.title === selectedRejectReason)?.description}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Additional Notes <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <textarea
+                  rows={2}
+                  value={rejectNotes}
+                  onChange={(e) => setRejectNotes(e.target.value)}
+                  placeholder="Additional context or interview feedback..."
+                  className="w-full rounded-lg border border-gray-300 p-2 text-xs text-gray-800 shadow-2xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setRejectingApplicant(null);
+                  setSelectedRejectReason('');
+                  setRejectNotes('');
+                }}
+                disabled={changeStatus.isPending}
+                className="rounded-lg border border-gray-300 bg-white px-3.5 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmReject}
+                disabled={changeStatus.isPending}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 disabled:opacity-50"
+              >
+                {changeStatus.isPending ? (
+                  <>
+                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <span>Confirm Rejection</span>
                 )}
               </button>
             </div>

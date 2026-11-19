@@ -6,13 +6,15 @@ export interface WorkRecordDay {
   day: number;
   date: string;
   badge: 'P' | 'HP' | 'OL' | 'L' | 'A' | '';
-  status: 'present' | 'half_day' | 'on_leave_with_attendance' | 'leave' | 'absent' | 'empty';
+  status: 'present' | 'half_day' | 'on_leave_with_attendance' | 'leave' | 'absent' | 'empty' | 'week_off' | 'holiday';
   leave_type?: string;
   working_hours: string; // "HH:MM"
   check_in: string; // "HH:MM" or ""
   check_out: string; // "HH:MM" or ""
   shift_name: string;
   is_weekend: boolean;
+  is_week_off?: boolean;
+  is_holiday?: boolean;
   is_future: boolean;
 }
 
@@ -43,6 +45,7 @@ export interface WorkRecordsResponse {
   year: number;
   month: string;
   month_num: number;
+  week_off_days?: number[];
   results: EmployeeWorkRecord[];
 }
 

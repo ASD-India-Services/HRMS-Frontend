@@ -150,3 +150,92 @@ export function useDeleteCompensatoryLeaveRequest() {
   });
 }
 
+export interface UpdateCompensatoryLeavePayload {
+  id: string;
+  employee?: string;
+  attendance_date?: string;
+  description?: string;
+  days?: number | string;
+}
+
+export function useUpdateCompensatoryLeaveRequest() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: UpdateCompensatoryLeavePayload) => {
+      const { id, ...data } = payload;
+      const res = await api.patch(COMPENSATORY_LEAVE.UPDATE(id), {
+        employee: data.employee,
+        work_date: data.attendance_date,
+        reason: data.description,
+        days: data.days,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['compensatory-leave-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['leaves'] });
+    },
+  });
+}
+
+export interface CompensatoryLeaveComment {
+  id: string;
+  request: string;
+  author: string | null;
+  author_name: string;
+  author_avatar: string | null;
+  comment: string;
+  created_at: string;
+  created_at_display: string;
+}
+
+export function useCompensatoryLeaveComments(requestId: string | null) {
+  return useQuery({
+    queryKey: ['compensatory-leave-comments', requestId],
+    queryFn: async () => {
+      if (!requestId) return [];
+      const res = await api.get<CompensatoryLeaveComment[]>(
+        `/api/v1/leaves/compensatory-leave/${requestId}/comments/`
+      );
+      return Array.isArray(res.data) ? res.data : [];
+    },
+    enabled: !!requestId,
+  });
+}
+
+export function useAddCompensatoryLeaveComment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ requestId, comment }: { requestId: string; comment: string }) => {
+      const res = await api.post(
+        `/api/v1/leaves/compensatory-leave/${requestId}/comments/`,
+        { comment }
+      );
+      return res.data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['compensatory-leave-comments', variables.requestId],
+      });
+      queryClient.invalidateQueries({ queryKey: ['compensatory-leave-requests'] });
+    },
+  });
+}
+
+export function useDeleteCompensatoryLeaveComment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ requestId, commentId }: { requestId: string; commentId: string }) => {
+      await api.delete(
+        `/api/v1/leaves/compensatory-leave/${requestId}/comments/${commentId}/`
+      );
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['compensatory-leave-comments', variables.requestId],
+      });
+      queryClient.invalidateQueries({ queryKey: ['compensatory-leave-requests'] });
+    },
+  });
+}
+

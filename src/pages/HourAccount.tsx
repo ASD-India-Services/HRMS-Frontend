@@ -12,6 +12,7 @@ import {
   useSyncHourAccounts,
 } from '@/hooks/useHourAccounts';
 import { useEmployees } from '@/hooks/useEmployees';
+import { useCompanyLeaves, type CompanyLeave } from '@/hooks/useCompanyLeaves';
 import type { HourAccount, HourAccountFilterParams } from '@/types/hourAccount';
 
 const MONTH_NAMES = [
@@ -71,11 +72,131 @@ function parseHoursToMinutes(timeStr?: string): number | null {
   return null;
 }
 
+function formatMinutesToHours(minutes: number): string {
+  const isNeg = minutes < 0;
+  const abs = Math.abs(minutes);
+  const h = Math.floor(abs / 60);
+  const m = abs % 60;
+  const sign = isNeg ? '-' : '';
+  return `${sign}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+export interface WeekDefinition {
+  weekKey: string;
+  weekNumber: number;
+  label: string;
+  dateRange: string;
+  startDay: number;
+  endDay: number;
+  workingDays: number;
+}
+
+/**
+ * Checks whether a calendar day is a company holiday / non-working day.
+ * Respects Company Leave rules from the Company Holidays/Leaves configuration page:
+ * - Recurring: based_on_week (all, second_week, fourth_week) & based_on_week_day (sunday, saturday)
+ * Default Company Policy:
+ * - All Sundays are holidays
+ * - 2nd and 4th Saturday of each month are holidays
+ * - 1st, 3rd, and 5th Saturdays are WORKING DAYS (along with Monday through Friday)
+ */
+export function isCompanyHolidayDay(
+  day: number,
+  monthIdx: number,
+  year: number,
+  companyLeaves?: CompanyLeave[]
+): boolean {
+  const date = new Date(year, monthIdx, day);
+  const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const weekOccurrence = Math.floor((day - 1) / 7) + 1; // 1, 2, 3, 4, 5
+
+  const weekKeys = ['first_week', 'second_week', 'third_week', 'fourth_week', 'fifth_week'];
+  const weekStr = weekKeys[weekOccurrence - 1] || 'fifth_week';
+
+  const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const dayStr = dayKeys[dayOfWeek];
+
+  if (companyLeaves && companyLeaves.length > 0) {
+    const isLeave = companyLeaves.some((cl) => {
+      if (!cl.is_active) return false;
+      const matchDay = cl.based_on_week_day?.toLowerCase() === dayStr;
+      const matchWeek =
+        cl.based_on_week?.toLowerCase() === 'all' ||
+        cl.based_on_week?.toLowerCase() === weekStr;
+      return matchDay && matchWeek;
+    });
+    return isLeave;
+  }
+
+  // Fallback to default company holiday policy (All Sundays + 2nd & 4th Saturday off)
+  if (dayOfWeek === 0) return true; // All Sundays
+  if (dayOfWeek === 6 && (weekOccurrence === 2 || weekOccurrence === 4)) return true; // 2nd & 4th Saturday
+
+  return false;
+}
+
+export function getWeeksForMonth(
+  monthName: string,
+  year: number,
+  companyLeaves?: CompanyLeave[]
+): WeekDefinition[] {
+  const monthIdx = MONTH_NAMES.findIndex(
+    (m) => m.toLowerCase() === monthName.toLowerCase()
+  );
+  const validMonthIdx = monthIdx >= 0 ? monthIdx : 10; // default November
+  const totalDays = new Date(year, validMonthIdx + 1, 0).getDate();
+  const shortMonth = MONTH_NAMES[validMonthIdx].slice(0, 3);
+
+  const weeks: WeekDefinition[] = [];
+  let currentStart = 1;
+  let weekNum = 1;
+
+  while (currentStart <= totalDays) {
+    const currentEnd = Math.min(currentStart + 6, totalDays);
+
+    let workingDays = 0;
+    for (let d = currentStart; d <= currentEnd; d++) {
+      if (!isCompanyHolidayDay(d, validMonthIdx, year, companyLeaves)) {
+        workingDays++;
+      }
+    }
+    if (workingDays === 0) workingDays = 1;
+
+    const startStr = String(currentStart).padStart(2, '0');
+    const endStr = String(currentEnd).padStart(2, '0');
+
+    weeks.push({
+      weekKey: `Week ${weekNum}`,
+      weekNumber: weekNum,
+      label: `Week ${weekNum}`,
+      dateRange: `${shortMonth} ${startStr} – ${shortMonth} ${endStr}`,
+      startDay: currentStart,
+      endDay: currentEnd,
+      workingDays,
+    });
+
+    currentStart = currentEnd + 1;
+    weekNum++;
+  }
+
+  return weeks;
+}
+
 export default function HourAccountPage() {
   const { hasPermission } = useHrmsPermissionsContext();
   const canCreate = hasPermission('hour_account.create');
   const canEdit = hasPermission('hour_account.edit');
   const canDelete = hasPermission('hour_account.delete');
+
+  // Company Leaves from Company Holidays page
+  const { data: rawCompanyLeaves } = useCompanyLeaves();
+  const companyLeavesList: CompanyLeave[] = useMemo(() => {
+    if (Array.isArray(rawCompanyLeaves)) return rawCompanyLeaves;
+    if (rawCompanyLeaves && Array.isArray((rawCompanyLeaves as any).results)) {
+      return (rawCompanyLeaves as any).results;
+    }
+    return [];
+  }, [rawCompanyLeaves]);
 
   // Search & Filter state
   const [search, setSearch] = useState('');
@@ -139,6 +260,17 @@ export default function HourAccountPage() {
     October: true,
     November: true,
   });
+
+  // View mode: 'monthly' (default) vs 'weekly'
+  const [viewMode, setViewMode] = useState<'monthly' | 'weekly'>('monthly');
+  const [expandedWeeks, setExpandedWeeks] = useState<Record<string, boolean>>({});
+
+  const toggleWeek = (weekKey: string) => {
+    setExpandedWeeks((prev) => ({
+      ...prev,
+      [weekKey]: !(prev[weekKey] ?? true),
+    }));
+  };
 
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
@@ -255,9 +387,6 @@ export default function HourAccountPage() {
     branchesList.forEach((b) => {
       if (b.name) set.add(b.name);
     });
-    if (set.size === 0) {
-      set.add('G7 Synergon PVT. LTD. CRO.');
-    }
     return Array.from(set);
   }, [hrSettingsData, branchesList]);
 
@@ -589,7 +718,6 @@ export default function HourAccountPage() {
         'March',
         'February',
         'January',
-        'December',
       ];
       monthOrder.forEach((m) => {
         groups[m] = [];
@@ -625,6 +753,144 @@ export default function HourAccountPage() {
 
     return groups;
   }, [filteredHourAccounts, groupByField]);
+
+  // Weekly grouped data per month (displays all months below exactly as in monthly view)
+  const weeklyMonthsData = useMemo(() => {
+    const yr = parseInt(selectedYear, 10) || 2026;
+
+    // Standard ordering for all 12 months (identical to monthly view)
+    const monthOrder = [
+      'November',
+      'October',
+      'September',
+      'August',
+      'July',
+      'June',
+      'May',
+      'April',
+      'March',
+      'February',
+      'January',
+    ];
+
+    // If month filter is explicitly set, only show that month; otherwise show all months exactly as in monthly view
+    const targetMonths = filterMonth ? [filterMonth] : monthOrder;
+
+    const result: Record<
+      string,
+      {
+        monthName: string;
+        items: HourAccount[];
+        totalWorkedMin: number;
+        totalPendingMin: number;
+        totalOtMin: number;
+        weeks: Record<
+          string,
+          {
+            definition: WeekDefinition;
+            items: (HourAccount & {
+              weekWorked: string;
+              weekPending: string;
+              weekOvertime: string;
+              weekDateRange: string;
+              weekId: string;
+            })[];
+            totalWorkedMin: number;
+            totalPendingMin: number;
+            totalOtMin: number;
+          }
+        >;
+      }
+    > = {};
+
+    targetMonths.forEach((monthName) => {
+      const monthAccounts = filteredHourAccounts.filter(
+        (item) => item.month?.toLowerCase() === monthName.toLowerCase()
+      );
+
+      const weeks = getWeeksForMonth(monthName, yr, companyLeavesList);
+      const totalWorkingDaysInMonth = weeks.reduce((sum, w) => sum + w.workingDays, 0) || 24;
+
+      let monthWorkedMin = 0;
+      let monthPendingMin = 0;
+      let monthOtMin = 0;
+
+      const weeksMap: Record<
+        string,
+        {
+          definition: WeekDefinition;
+          items: (HourAccount & {
+            weekWorked: string;
+            weekPending: string;
+            weekOvertime: string;
+            weekDateRange: string;
+            weekId: string;
+          })[];
+          totalWorkedMin: number;
+          totalPendingMin: number;
+          totalOtMin: number;
+        }
+      > = {};
+
+      weeks.forEach((week) => {
+        const fraction = week.workingDays / totalWorkingDaysInMonth;
+        const weekItems = monthAccounts.map((item) => {
+          const workedMin = parseHoursToMinutes(item.worked_hours) || 0;
+          const pendingMin = parseHoursToMinutes(item.pending_hours) || 0;
+          const otMin = parseHoursToMinutes(item.overtime) || 0;
+
+          const wWorked = Math.round(workedMin * fraction);
+          const wPending = Math.round(pendingMin * fraction);
+          const wOt = Math.round(otMin * fraction);
+
+          return {
+            ...item,
+            weekWorked: formatMinutesToHours(wWorked),
+            weekPending: formatMinutesToHours(wPending),
+            weekOvertime: formatMinutesToHours(wOt),
+            weekDateRange: week.dateRange,
+            weekId: `${item.id}-${monthName}-${week.weekKey}`,
+          };
+        });
+
+        const sumWorked = weekItems.reduce(
+          (acc, r) => acc + (parseHoursToMinutes(r.weekWorked) || 0),
+          0
+        );
+        const sumPending = weekItems.reduce(
+          (acc, r) => acc + (parseHoursToMinutes(r.weekPending) || 0),
+          0
+        );
+        const sumOt = weekItems.reduce(
+          (acc, r) => acc + (parseHoursToMinutes(r.weekOvertime) || 0),
+          0
+        );
+
+        monthWorkedMin += sumWorked;
+        monthPendingMin += sumPending;
+        monthOtMin += sumOt;
+
+        weeksMap[week.label] = {
+          definition: week,
+          items: weekItems,
+          totalWorkedMin: sumWorked,
+          totalPendingMin: sumPending,
+          totalOtMin: sumOt,
+        };
+      });
+
+      result[monthName] = {
+        monthName,
+        items: monthAccounts,
+        totalWorkedMin: monthWorkedMin,
+        totalPendingMin: monthPendingMin,
+        totalOtMin: monthOtMin,
+        weeks: weeksMap,
+      };
+    });
+
+    return result;
+  }, [filteredHourAccounts, selectedYear, filterMonth, companyLeavesList]);
 
   const toggleGroup = (key: string) => {
     setExpandedGroups((prev) => ({
@@ -850,8 +1116,34 @@ export default function HourAccountPage() {
     <div className="min-h-screen bg-white p-6">
       {/* ─── Top Bar ───────────────────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-gray-100">
-        <div>
+        <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-bold text-gray-900">Hour Account</h1>
+
+          {/* Monthly / Weekly View Mode Switcher */}
+          <div className="inline-flex items-center rounded-lg border border-gray-200 bg-gray-100 p-0.5 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setViewMode('monthly')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                viewMode === 'monthly'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/60'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('weekly')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                viewMode === 'weekly'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/60'
+              }`}
+            >
+              Weekly
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -888,7 +1180,7 @@ export default function HourAccountPage() {
                 setShowGroupByPopover(false);
                 setShowActionsMenu(false);
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 shadow-2xs transition-colors"
             >
               <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -1387,7 +1679,7 @@ export default function HourAccountPage() {
                 setShowFilterPopover(false);
                 setShowActionsMenu(false);
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 shadow-2xs transition-colors"
             >
               <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -1427,7 +1719,7 @@ export default function HourAccountPage() {
                 setShowFilterPopover(false);
                 setShowGroupByPopover(false);
               }}
-              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
+              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 shadow-2xs transition-colors"
             >
               <span>Actions</span>
               <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1481,37 +1773,37 @@ export default function HourAccountPage() {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 py-3 border-b border-gray-100">
         {/* Left: Selection Action Buttons */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Select All Records Button (Green outline) */}
+          {/* Select All Records Button (White) */}
           <button
             type="button"
             onClick={handleSelectAllRecords}
-            className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-[#4CAF50] text-[#4CAF50] hover:bg-green-50 transition-colors"
+            className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs"
           >
             Select All Records
           </button>
 
           {selectedIds.size > 0 && (
             <>
-              {/* Unselect All Records Button (Grey outline) */}
+              {/* Unselect All Records Button (White) */}
               <button
                 type="button"
                 onClick={() => setSelectedIds(new Set())}
-                className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-gray-600 text-gray-700 hover:bg-gray-100 transition-colors"
+                className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs"
               >
                 Unselect All Records
               </button>
 
-              {/* Export Records Button (Cyan outline) */}
+              {/* Export Records Button (White) */}
               <button
                 type="button"
                 onClick={handleExportCSV}
-                className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-[#00BCD4] text-[#00BCD4] hover:bg-cyan-50 transition-colors"
+                className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs"
               >
                 Export Records
               </button>
 
-              {/* N - Selected Badge (Red outline) */}
-              <span className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-[#E53935] text-[#E53935] bg-transparent">
+              {/* N - Selected Badge (Blue / White) */}
+              <span className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-blue-200 text-blue-700 bg-blue-50">
                 {selectedIds.size} - Selected
               </span>
             </>
@@ -1520,17 +1812,17 @@ export default function HourAccountPage() {
 
         {/* Right: Active Filter Tags */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-[#FF8A65] text-white">
+          <span className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-white border border-gray-300 text-gray-700 shadow-2xs">
             Filters:
           </span>
 
           {groupByField && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Field : {GROUP_BY_OPTIONS.find((o) => o.value === groupByField)?.label || groupByField}
               <button
                 type="button"
                 onClick={() => setGroupByField('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1538,12 +1830,12 @@ export default function HourAccountPage() {
           )}
 
           {selectedYear && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Year : {selectedYear}
               <button
                 type="button"
                 onClick={() => setSelectedYear('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1551,12 +1843,12 @@ export default function HourAccountPage() {
           )}
 
           {filterMonth && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Month : {filterMonth}
               <button
                 type="button"
                 onClick={() => setFilterMonth('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1564,12 +1856,12 @@ export default function HourAccountPage() {
           )}
 
           {filterEmployee && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Employee : {employeesList.find((e) => e.id === filterEmployee)?.first_name || filterEmployee}
               <button
                 type="button"
                 onClick={() => setFilterEmployee('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1577,12 +1869,12 @@ export default function HourAccountPage() {
           )}
 
           {filterCompany && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Company : {filterCompany}
               <button
                 type="button"
                 onClick={() => setFilterCompany('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1590,12 +1882,12 @@ export default function HourAccountPage() {
           )}
 
           {filterDepartment && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Dept : {filterDepartment}
               <button
                 type="button"
                 onClick={() => setFilterDepartment('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1603,12 +1895,12 @@ export default function HourAccountPage() {
           )}
 
           {filterJobPosition && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Job : {filterJobPosition}
               <button
                 type="button"
                 onClick={() => setFilterJobPosition('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1616,12 +1908,12 @@ export default function HourAccountPage() {
           )}
 
           {filterShift && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Shift : {filterShift}
               <button
                 type="button"
                 onClick={() => setFilterShift('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1629,12 +1921,12 @@ export default function HourAccountPage() {
           )}
 
           {filterWorkType && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Work Type : {filterWorkType}
               <button
                 type="button"
                 onClick={() => setFilterWorkType('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1642,12 +1934,12 @@ export default function HourAccountPage() {
           )}
 
           {filterReportingManager && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Manager : {filterReportingManager}
               <button
                 type="button"
                 onClick={() => setFilterReportingManager('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1655,12 +1947,12 @@ export default function HourAccountPage() {
           )}
 
           {filterWorkLocation && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Location : {filterWorkLocation}
               <button
                 type="button"
                 onClick={() => setFilterWorkLocation('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1668,12 +1960,12 @@ export default function HourAccountPage() {
           )}
 
           {filterAttendanceDate && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Date : {filterAttendanceDate}
               <button
                 type="button"
                 onClick={() => setFilterAttendanceDate('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1681,12 +1973,12 @@ export default function HourAccountPage() {
           )}
 
           {filterBatch && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Batch : {filterBatch}
               <button
                 type="button"
                 onClick={() => setFilterBatch('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1694,12 +1986,12 @@ export default function HourAccountPage() {
           )}
 
           {filterInTime && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               In : {filterInTime}
               <button
                 type="button"
                 onClick={() => setFilterInTime('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1707,12 +1999,12 @@ export default function HourAccountPage() {
           )}
 
           {filterOutTime && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Out : {filterOutTime}
               <button
                 type="button"
                 onClick={() => setFilterOutTime('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1720,12 +2012,12 @@ export default function HourAccountPage() {
           )}
 
           {filterValidated && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Validated : {filterValidated === 'true' ? 'Yes' : 'No'}
               <button
                 type="button"
                 onClick={() => setFilterValidated('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1733,12 +2025,12 @@ export default function HourAccountPage() {
           )}
 
           {filterOtApproved && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               OT Approved : {filterOtApproved === 'true' ? 'Yes' : 'No'}
               <button
                 type="button"
                 onClick={() => setFilterOtApproved('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1746,12 +2038,12 @@ export default function HourAccountPage() {
           )}
 
           {filterMinHour && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Min Hour : {filterMinHour}
               <button
                 type="button"
                 onClick={() => setFilterMinHour('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1759,12 +2051,12 @@ export default function HourAccountPage() {
           )}
 
           {filterAttendanceFrom && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               From : {filterAttendanceFrom}
               <button
                 type="button"
                 onClick={() => setFilterAttendanceFrom('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1772,12 +2064,12 @@ export default function HourAccountPage() {
           )}
 
           {filterAttendanceTill && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Till : {filterAttendanceTill}
               <button
                 type="button"
                 onClick={() => setFilterAttendanceTill('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1785,12 +2077,12 @@ export default function HourAccountPage() {
           )}
 
           {filterAtWorkGte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               At Work &gt;= {filterAtWorkGte}
               <button
                 type="button"
                 onClick={() => setFilterAtWorkGte('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1798,12 +2090,12 @@ export default function HourAccountPage() {
           )}
 
           {filterAtWorkLte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               At Work &lt;= {filterAtWorkLte}
               <button
                 type="button"
                 onClick={() => setFilterAtWorkLte('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1811,12 +2103,12 @@ export default function HourAccountPage() {
           )}
 
           {filterPendingGte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Pending &gt;= {filterPendingGte}
               <button
                 type="button"
                 onClick={() => setFilterPendingGte('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1824,12 +2116,12 @@ export default function HourAccountPage() {
           )}
 
           {filterPendingLte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               Pending &lt;= {filterPendingLte}
               <button
                 type="button"
                 onClick={() => setFilterPendingLte('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1837,12 +2129,12 @@ export default function HourAccountPage() {
           )}
 
           {filterOtGte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               OT &gt;= {filterOtGte}
               <button
                 type="button"
                 onClick={() => setFilterOtGte('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1850,12 +2142,12 @@ export default function HourAccountPage() {
           )}
 
           {filterOtLte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-[#FF8A65]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
               OT &lt;= {filterOtLte}
               <button
                 type="button"
                 onClick={() => setFilterOtLte('')}
-                className="w-4 h-4 rounded-full bg-[#E53935] text-white flex items-center justify-center text-[10px] font-bold hover:bg-red-700 transition-colors"
+                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1896,7 +2188,7 @@ export default function HourAccountPage() {
             <button
               type="button"
               onClick={handleClearAllFilters}
-              className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#FF8A65] text-white hover:bg-orange-600 text-xs font-bold transition-colors shadow-sm"
+              className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white border border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs font-bold transition-colors shadow-2xs"
               title="Clear all filters"
             >
               ✕
@@ -1932,6 +2224,189 @@ export default function HourAccountPage() {
             </button>
           )}
         </div>
+      ) : viewMode === 'weekly' ? (
+        <div className="border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-200">
+          {Object.entries(weeklyMonthsData).map(([monthName, monthData]) => {
+            const isMonthExpanded = !!expandedGroups[monthName];
+            const monthItems = monthData.items;
+
+            return (
+              <div key={monthName} className="bg-white">
+                {/* Accordion Month Header (shows months below, matching monthly view style) */}
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(monthName)}
+                  className="w-full flex items-center gap-3 px-4 py-3.5 bg-white hover:bg-gray-50/80 transition-colors text-left font-medium text-gray-800 border-l-4 border-transparent hover:border-blue-500"
+                >
+                  <span className="text-gray-500 text-lg font-mono leading-none">
+                    {isMonthExpanded ? '—' : '+'}
+                  </span>
+                  <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200 min-w-[20px]">
+                    {monthItems.length}
+                  </span>
+                  <span className="text-sm font-semibold text-gray-800">{monthName}</span>
+                </button>
+
+                {/* Weeks under this Month */}
+                {isMonthExpanded && (
+                  <div className="border-t border-gray-200 divide-y divide-gray-200 bg-gray-50/20 pl-2 sm:pl-4">
+                    {monthItems.length === 0 ? (
+                      <div className="py-8 text-center text-gray-400 text-sm">
+                        No records for this group.
+                      </div>
+                    ) : (
+                      Object.entries(monthData.weeks).map(([weekLabel, weekData]) => {
+                        const weekKey = `${monthName}-${weekLabel}`;
+                        const isWeekExpanded = expandedWeeks[weekKey] ?? true;
+                        const items = weekData.items;
+                        const weekAllSelected = items.length > 0 && items.every((item) => selectedIds.has(item.id));
+
+                        return (
+                          <div key={weekKey} className="bg-white">
+                            {/* Accordion Week Header */}
+                            <button
+                              type="button"
+                              onClick={() => toggleWeek(weekKey)}
+                              className="w-full flex items-center gap-3 px-4 py-3 bg-white hover:bg-gray-50 transition-colors text-left font-medium text-gray-800 border-l-4 border-transparent hover:border-blue-400"
+                            >
+                              <span className="text-gray-400 text-base font-mono leading-none">
+                                {isWeekExpanded ? '—' : '+'}
+                              </span>
+                              <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200 min-w-[20px]">
+                                {items.length}
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-semibold text-gray-800">{monthName} — {weekLabel}</span>
+                                <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                                  {weekData.definition.dateRange}
+                                </span>
+                              </div>
+                            </button>
+
+                            {/* Expanded Week Table */}
+                            {isWeekExpanded && (
+                              <div className="border-t border-gray-100 overflow-x-auto">
+                                <table className="w-full text-left text-sm">
+                                  <thead className="bg-gray-50 text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                                    <tr>
+                                      <th className="w-10 px-4 py-3">
+                                        <input
+                                          type="checkbox"
+                                          checked={weekAllSelected}
+                                          onChange={() => toggleSelectGroup(items)}
+                                          className="w-4 h-4 rounded border-gray-300 accent-blue-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                        />
+                                      </th>
+                                      <th className="px-4 py-3">Employee</th>
+                                      <th className="px-4 py-3">Week</th>
+                                      <th className="px-4 py-3">Date Range</th>
+                                      <th className="px-4 py-3">Worked Hours</th>
+                                      <th className="px-4 py-3">Pending Hours</th>
+                                      <th className="px-4 py-3">Overtime</th>
+                                      <th className="px-4 py-3 text-right">Actions</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-gray-100">
+                                    {items.map((row) => {
+                                      const isSelected = selectedIds.has(row.id);
+                                      return (
+                                        <tr
+                                          key={row.weekId}
+                                          className={`transition-colors ${
+                                            isSelected ? 'bg-blue-50/50' : 'hover:bg-gray-50/60'
+                                          }`}
+                                        >
+                                          <td className="w-10 px-4 py-3">
+                                            <input
+                                              type="checkbox"
+                                              checked={isSelected}
+                                              onChange={() => toggleSelectRecord(row.id)}
+                                              className="w-4 h-4 rounded border-gray-300 accent-blue-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                            />
+                                          </td>
+                                          <td className="px-4 py-3">
+                                            <div className="flex items-center gap-3">
+                                              {row.employee_avatar ? (
+                                                <img
+                                                  src={row.employee_avatar}
+                                                  alt={row.employee_name}
+                                                  className="w-8 h-8 rounded-full object-cover"
+                                                />
+                                              ) : (
+                                                <div className="w-8 h-8 rounded-full bg-slate-700 text-white flex items-center justify-center text-xs font-semibold">
+                                                  {row.employee_name
+                                                    ? row.employee_name.slice(0, 2).toUpperCase()
+                                                    : 'EM'}
+                                                </div>
+                                              )}
+                                              <div>
+                                                <div className="font-medium text-gray-900">
+                                                  {row.employee_name || 'Unnamed Employee'}
+                                                </div>
+                                                {row.department_name && (
+                                                  <div className="text-xs text-gray-500">
+                                                    {row.department_name}
+                                                  </div>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td className="px-4 py-3 font-semibold text-gray-800">{weekLabel}</td>
+                                          <td className="px-4 py-3 text-gray-600 text-xs font-mono">{row.weekDateRange}</td>
+                                          <td className="px-4 py-3 font-mono font-medium text-gray-800">
+                                            {row.weekWorked}
+                                          </td>
+                                          <td className="px-4 py-3 font-mono text-gray-600">
+                                            {row.weekPending}
+                                          </td>
+                                          <td className="px-4 py-3 font-mono text-gray-600">
+                                            {row.weekOvertime}
+                                          </td>
+                                          <td className="px-4 py-3 text-right">
+                                            <div className="inline-flex items-center gap-1.5">
+                                              {canEdit && (
+                                                <button
+                                                  type="button"
+                                                  onClick={() => handleOpenEdit(row)}
+                                                  className="p-1.5 text-gray-500 hover:text-blue-600 border border-gray-200 rounded hover:bg-gray-100 transition-colors"
+                                                  title="Edit"
+                                                >
+                                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                  </svg>
+                                                </button>
+                                              )}
+                                              {canDelete && (
+                                                <button
+                                                  type="button"
+                                                  onClick={() => handleConfirmSingleDelete(row)}
+                                                  className="p-1.5 text-rose-500 hover:text-rose-700 border border-gray-200 rounded hover:bg-rose-50 transition-colors"
+                                                  title="Delete"
+                                                >
+                                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                  </svg>
+                                                </button>
+                                              )}
+                                            </div>
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       ) : (
         <div className="border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-200">
           {Object.entries(groupedData).map(([groupKey, items]) => {
@@ -1949,7 +2424,7 @@ export default function HourAccountPage() {
                   <span className="text-gray-500 text-lg font-mono leading-none">
                     {isExpanded ? '—' : '+'}
                   </span>
-                  <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-[#E53935] text-white min-w-[20px]">
+                  <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200 min-w-[20px]">
                     {items.length}
                   </span>
                   <span className="text-sm font-semibold text-gray-800">{groupKey}</span>
@@ -1971,7 +2446,7 @@ export default function HourAccountPage() {
                                 type="checkbox"
                                 checked={groupAllSelected}
                                 onChange={() => toggleSelectGroup(items)}
-                                className="w-4 h-4 rounded border-gray-300 accent-[#E53935] text-[#E53935] focus:ring-[#E53935] cursor-pointer"
+                                className="w-4 h-4 rounded border-gray-300 accent-blue-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
                               />
                             </th>
                             <th className="px-4 py-3">Employee</th>
@@ -1990,7 +2465,7 @@ export default function HourAccountPage() {
                               <tr
                                 key={row.id}
                                 className={`transition-colors ${
-                                  isSelected ? 'bg-[#FFF0EB]' : 'hover:bg-gray-50/60'
+                                  isSelected ? 'bg-blue-50/50' : 'hover:bg-gray-50/60'
                                 }`}
                               >
                                 <td className="w-10 px-4 py-3">
@@ -1998,7 +2473,7 @@ export default function HourAccountPage() {
                                     type="checkbox"
                                     checked={isSelected}
                                     onChange={() => toggleSelectRecord(row.id)}
-                                    className="w-4 h-4 rounded border-gray-300 accent-[#E53935] text-[#E53935] focus:ring-[#E53935] cursor-pointer"
+                                    className="w-4 h-4 rounded border-gray-300 accent-blue-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
                                   />
                                 </td>
                                 <td className="px-4 py-3">
