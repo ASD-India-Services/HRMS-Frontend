@@ -85,7 +85,7 @@ function useTrainingColumns(): ColumnDef<TrainingEvent>[] {
         header: 'Start Date',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm text-gray-700">{formatDate(value as string)}</span>
+          <span className="text-sm text-ink-primary">{formatDate(value as string)}</span>
         ),
       },
       { key: 'trainer', header: 'Trainer', sortable: true },
@@ -94,7 +94,7 @@ function useTrainingColumns(): ColumnDef<TrainingEvent>[] {
         header: 'Max Participants',
         sortable: true,
         render: (value: unknown) => (
-          <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-800">
+          <span className="inline-flex items-center rounded-full bg-surface-neutral px-2 py-0.5 text-xs font-semibold text-ink-primary">
             {String(value ?? '—')}
           </span>
         ),
@@ -164,8 +164,8 @@ function TrainingEventsContent({ onSelectEvent }: { onSelectEvent?: (id: string)
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Training Events</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-ink-primary">Training Events</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
             Manage training events, track statuses, and control lifecycle.
           </p>
         </div>

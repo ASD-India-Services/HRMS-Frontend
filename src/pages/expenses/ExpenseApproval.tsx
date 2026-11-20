@@ -7,6 +7,9 @@ import { useState } from 'react';
 import { useExpenseClaims, useApproveExpenseClaim } from '@/hooks/useExpenses';
 import type { ExpenseClaim } from '@/types/expense';
 import { formatDate, formatCurrency } from '@/utils/formatters';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Textarea } from '@/components/ui/Textarea';
 
 interface ApprovalModalProps {
   claim: ExpenseClaim;
@@ -21,12 +24,12 @@ function ApprovalModal({ claim, action, onClose, onConfirm, isPending }: Approva
   const employeeName = `${claim.employee.first_name} ${claim.employee.last_name}`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h3 id="modal-title" className="text-lg font-semibold text-gray-900 capitalize">
+    <Modal open onClose={() => {}} labelledBy="modal-title" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+      <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+        <h3 id="modal-title" className="text-lg font-semibold text-ink-primary capitalize">
           {action} Expense Claim
         </h3>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-ink-secondary">
           {action === 'approve' ? 'Approve' : 'Reject'} the expense claim from{' '}
           <span className="font-medium">{employeeName}</span> for{' '}
           <span className="font-medium">{claim.expense_type.name}</span> — {formatCurrency(claim.amount)}
@@ -35,16 +38,16 @@ function ApprovalModal({ claim, action, onClose, onConfirm, isPending }: Approva
 
         {/* Show description */}
         {claim.description && (
-          <div className="mt-3 rounded-md bg-gray-50 p-3">
-            <p className="text-xs font-medium text-gray-500">Description</p>
-            <p className="mt-1 text-sm text-gray-700">{claim.description}</p>
+          <div className="mt-3 rounded-md bg-surface-neutral p-3">
+            <p className="text-xs font-medium text-ink-secondary">Description</p>
+            <p className="mt-1 text-sm text-ink-primary">{claim.description}</p>
           </div>
         )}
 
         {/* Show receipts if any */}
         {claim.receipts && claim.receipts.length > 0 && (
           <div className="mt-3">
-            <p className="text-xs font-medium text-gray-500">Receipts ({claim.receipts.length})</p>
+            <p className="text-xs font-medium text-ink-secondary">Receipts ({claim.receipts.length})</p>
             <ul className="mt-1 space-y-1">
               {claim.receipts.map((receipt) => (
                 <li key={receipt.id}>
@@ -52,7 +55,7 @@ function ApprovalModal({ claim, action, onClose, onConfirm, isPending }: Approva
                     href={receipt.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-primary-600 hover:text-primary-700 underline"
+                    className="text-sm text-primary-main hover:text-primary-dark underline"
                   >
                     {receipt.file_name}
                   </a>
@@ -63,28 +66,27 @@ function ApprovalModal({ claim, action, onClose, onConfirm, isPending }: Approva
         )}
 
         <div className="mt-4">
-          <label htmlFor="comments" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="comments" className="block text-sm font-medium text-ink-primary">
             Comments
           </label>
-          <textarea
+          <Textarea
             id="comments"
             value={comments}
             onChange={(e) => setComments(e.target.value)}
             rows={3}
             placeholder={`Add a comment for ${action === 'approve' ? 'approval' : 'rejection'}...`}
-            className="mt-1 block w-full resize-y rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="mt-1 resize-y"
           />
         </div>
 
         <div className="mt-5 flex justify-end gap-3">
-          <button
+          <Button variant="outlined" color="inherit"
             type="button"
             onClick={onClose}
             disabled={isPending}
-            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50"
           >
             Cancel
-          </button>
+          </Button>
           <button
             type="button"
             onClick={() => onConfirm(comments)}
@@ -99,7 +101,7 @@ function ApprovalModal({ claim, action, onClose, onConfirm, isPending }: Approva
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -132,15 +134,15 @@ export function ExpenseApproval() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Expense Approvals</h1>
-        <p className="mt-1 text-sm text-gray-600">Review and approve pending expense claims from your team</p>
+        <h1 className="text-2xl font-bold text-ink-primary">Expense Approvals</h1>
+        <p className="mt-1 text-sm text-ink-secondary">Review and approve pending expense claims from your team</p>
       </div>
 
       {/* Content */}
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 animate-pulse rounded-lg bg-gray-100" />
+            <div key={i} className="h-24 animate-pulse rounded-lg bg-surface-neutral" />
           ))}
         </div>
       ) : isError ? (
@@ -155,20 +157,20 @@ export function ExpenseApproval() {
               return (
                 <div
                   key={claim.id}
-                  className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+                  className="rounded-lg border border-divider bg-surface-paper p-4 shadow-sm"
                 >
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     {/* Employee & Expense Details */}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-semibold text-gray-900">{employeeName}</h3>
+                        <h3 className="text-sm font-semibold text-ink-primary">{employeeName}</h3>
                         {claim.employee.department && (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-ink-secondary">
                             ({claim.employee.department.name})
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 text-sm text-gray-600">
+                      <p className="mt-1 text-sm text-ink-secondary">
                         <span className="font-medium">{claim.expense_type.name}</span>
                         {' · '}
                         <span className="font-medium">{formatCurrency(claim.amount)}</span>
@@ -176,12 +178,12 @@ export function ExpenseApproval() {
                         {formatDate(claim.expense_date)}
                       </p>
                       {claim.description && (
-                        <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+                        <p className="mt-1 text-sm text-ink-secondary line-clamp-2">
                           {claim.description}
                         </p>
                       )}
                       {claim.receipts && claim.receipts.length > 0 && (
-                        <p className="mt-1 text-xs text-gray-400">
+                        <p className="mt-1 text-xs text-ink-disabled">
                           {claim.receipts.length} receipt{claim.receipts.length !== 1 ? 's' : ''} attached
                         </p>
                       )}
@@ -195,12 +197,11 @@ export function ExpenseApproval() {
                       >
                         Approve
                       </button>
-                      <button
+                      <Button type="submit" color="error"
                         onClick={() => openModal(claim, 'reject')}
-                        className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                       >
                         Reject
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -210,30 +211,28 @@ export function ExpenseApproval() {
 
           {/* Pagination */}
           <div className="mt-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-ink-secondary">
               {data.count} pending claim{data.count !== 1 ? 's' : ''}
             </p>
             <div className="flex gap-2">
-              <button
+              <Button type="submit" variant="outlined" color="inherit"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!data.previous}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Previous
-              </button>
-              <button
+              </Button>
+              <Button type="submit" variant="outlined" color="inherit"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data.next}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next
-              </button>
+              </Button>
             </div>
           </div>
         </>
       ) : (
-        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-          <p className="text-sm text-gray-500">No pending expense claims to review.</p>
+        <div className="rounded-lg border border-divider bg-surface-paper p-8 text-center">
+          <p className="text-sm text-ink-secondary">No pending expense claims to review.</p>
         </div>
       )}
 

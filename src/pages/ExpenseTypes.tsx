@@ -60,8 +60,8 @@ export default function ExpenseTypes() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Expense Types</h1>
-          <p className="mt-1 text-sm text-gray-600">Define categories of expenses employees can claim</p>
+          <h1 className="text-2xl font-bold text-ink-primary">Expense Types</h1>
+          <p className="mt-1 text-sm text-ink-secondary">Define categories of expenses employees can claim</p>
         </div>
         <CreateButton permission="expense_types.create" label="Create Expense Type" onClick={() => setShowCreate(true)} />
       </div>

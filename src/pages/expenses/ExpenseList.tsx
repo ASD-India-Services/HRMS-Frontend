@@ -10,6 +10,7 @@ import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
 import type { ExpenseClaimStatus } from '@/types/expense';
 import { formatDate, formatCurrency } from '@/utils/formatters';
+import { Button } from '@/components/ui/Button';
 
 const STATUS_TABS: { label: string; value: ExpenseClaimStatus | '' }[] = [
   { label: 'All', value: '' },
@@ -23,7 +24,7 @@ const statusStyles: Record<ExpenseClaimStatus, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
   approved: 'bg-green-100 text-green-800',
   rejected: 'bg-red-100 text-red-800',
-  paid: 'bg-blue-100 text-blue-800',
+  paid: 'bg-primary-lighter text-primary-dark',
 };
 
 export function ExpenseList() {
@@ -43,19 +44,19 @@ export function ExpenseList() {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Expense Claims</h1>
-          <p className="mt-1 text-sm text-gray-600">View and manage your expense reimbursement claims</p>
+          <h1 className="text-2xl font-bold text-ink-primary">Expense Claims</h1>
+          <p className="mt-1 text-sm text-ink-secondary">View and manage your expense reimbursement claims</p>
         </div>
         <Link
           to="/expenses/new"
-          className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          className="rounded-md bg-primary-main px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2"
         >
           New Expense Claim
         </Link>
       </div>
 
       {/* Status Tabs */}
-      <div className="mb-4 border-b border-gray-200" role="tablist" aria-label="Filter by status">
+      <div className="mb-4 border-b border-divider" role="tablist" aria-label="Filter by status">
         <nav className="-mb-px flex gap-4">
           {STATUS_TABS.map((tab) => (
             <button
@@ -65,8 +66,8 @@ export function ExpenseList() {
               onClick={() => { setActiveStatus(tab.value); setPage(1); }}
               className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
                 activeStatus === tab.value
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  ? 'border-primary-main text-primary-main'
+                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
               }`}
             >
               {tab.label}
@@ -83,31 +84,31 @@ export function ExpenseList() {
       ) : data && data.results.length > 0 ? (
         <>
           {/* Table */}
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="overflow-hidden rounded-lg border border-divider bg-surface-paper shadow-sm">
+            <table className="min-w-full divide-y divide-divider">
+              <thead className="bg-surface-neutral">
                 <tr>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Expense Type</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Amount</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Date</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Description</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Status</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Submitted On</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Expense Type</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Amount</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Date</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Description</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Status</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Submitted On</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-divider">
                 {data.results.map((claim) => (
-                  <tr key={claim.id} className="hover:bg-gray-50">
-                    <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900">
+                  <tr key={claim.id} className="hover:bg-surface-neutral">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-ink-primary">
                       {claim.expense_type_name || claim.expense_type?.name || '—'}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-ink-primary">
                       {formatCurrency(claim.total_amount || claim.amount || 0)}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary">
                       {formatDate(claim.expense_date)}
                     </td>
-                    <td className="max-w-xs truncate px-4 py-3 text-sm text-gray-600" title={claim.description || claim.title || ''}>
+                    <td className="max-w-xs truncate px-4 py-3 text-sm text-ink-secondary" title={claim.description || claim.title || ''}>
                       {claim.title || claim.description || '—'}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3">
@@ -115,7 +116,7 @@ export function ExpenseList() {
                         {claim.status}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary">
                       {formatDate(claim.created_at)}
                     </td>
                   </tr>
@@ -126,24 +127,22 @@ export function ExpenseList() {
 
           {/* Pagination */}
           <div className="mt-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-ink-secondary">
               Showing {data.results.length} of {data.count} claims
             </p>
             <div className="flex gap-2">
-              <button
+              <Button type="submit" variant="outlined" color="inherit"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!data.previous}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Previous
-              </button>
-              <button
+              </Button>
+              <Button type="submit" variant="outlined" color="inherit"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data.next}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next
-              </button>
+              </Button>
             </div>
           </div>
         </>

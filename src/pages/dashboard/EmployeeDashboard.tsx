@@ -40,7 +40,7 @@ export function EmployeeDashboard() {
         <Can permissions={['leaves.view']}>
           <Link
             to="/my-leaves/apply"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary-main px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-dark transition-colors"
           >
             ✈️ Apply for Leave
           </Link>
@@ -48,7 +48,7 @@ export function EmployeeDashboard() {
         <Can permissions={['attendance.view']}>
           <Link
             to="/my-attendance"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg border border-divider bg-surface-paper px-4 py-2 text-sm font-medium text-ink-primary shadow-sm hover:bg-surface-neutral transition-colors"
           >
             ⏰ My Attendance Logs
           </Link>
@@ -56,7 +56,7 @@ export function EmployeeDashboard() {
         <Can permissions={['expenses.view']}>
           <Link
             to="/expenses/new"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg border border-divider bg-surface-paper px-4 py-2 text-sm font-medium text-ink-primary shadow-sm hover:bg-surface-neutral transition-colors"
           >
             🧾 Submit Expense
           </Link>
@@ -64,7 +64,7 @@ export function EmployeeDashboard() {
         <Can permissions={['payroll.view']}>
           <Link
             to="/payroll"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg border border-divider bg-surface-paper px-4 py-2 text-sm font-medium text-ink-primary shadow-sm hover:bg-surface-neutral transition-colors"
           >
             📄 View Payslips
           </Link>
@@ -75,16 +75,16 @@ export function EmployeeDashboard() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Attendance Widget */}
         <Can permissions={['attendance.view']}>
-          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
+          <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-sm">
+            <div className="flex items-center justify-between border-b border-divider pb-3 mb-4">
               <div className="flex items-center gap-2">
                 <span className="text-xl">⏱️</span>
-                <h2 className="text-base font-semibold text-gray-900">Today's Attendance</h2>
+                <h2 className="text-base font-semibold text-ink-primary">Today's Attendance</h2>
               </div>
               <span
                 className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                   isCheckedOut
-                    ? 'bg-gray-100 text-gray-800'
+                    ? 'bg-surface-neutral text-ink-primary'
                     : isCheckedIn
                     ? 'bg-green-100 text-green-800'
                     : 'bg-amber-100 text-amber-800'
@@ -95,17 +95,17 @@ export function EmployeeDashboard() {
             </div>
 
             {attendanceLoading ? (
-              <div className="h-24 animate-pulse rounded bg-gray-100" />
+              <div className="h-24 animate-pulse rounded bg-surface-neutral" />
             ) : (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 rounded-lg bg-gray-50 p-3 text-center">
+                <div className="grid grid-cols-2 gap-4 rounded-lg bg-surface-neutral p-3 text-center">
                   <div>
-                    <p className="text-xs text-gray-500">Check In</p>
-                    <p className="mt-1 text-sm font-bold text-gray-900">{fmtTime(attendanceToday?.check_in ?? null)}</p>
+                    <p className="text-xs text-ink-secondary">Check In</p>
+                    <p className="mt-1 text-sm font-bold text-ink-primary">{fmtTime(attendanceToday?.check_in ?? null)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Check Out</p>
-                    <p className="mt-1 text-sm font-bold text-gray-900">{fmtTime(attendanceToday?.check_out ?? null)}</p>
+                    <p className="text-xs text-ink-secondary">Check Out</p>
+                    <p className="mt-1 text-sm font-bold text-ink-primary">{fmtTime(attendanceToday?.check_out ?? null)}</p>
                   </div>
                 </div>
 
@@ -117,29 +117,29 @@ export function EmployeeDashboard() {
 
         {/* Leave Balances Widget */}
         <Can permissions={['leaves.view']}>
-          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm lg:col-span-2">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
+          <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-sm lg:col-span-2">
+            <div className="flex items-center justify-between border-b border-divider pb-3 mb-4">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🌴</span>
-                <h2 className="text-base font-semibold text-gray-900">My Leave Balances</h2>
+                <h2 className="text-base font-semibold text-ink-primary">My Leave Balances</h2>
               </div>
-              <Link to="/my-leaves" className="text-xs font-medium text-primary-600 hover:text-primary-800">
+              <Link to="/my-leaves" className="text-xs font-medium text-primary-main hover:text-primary-dark">
                 View All →
               </Link>
             </div>
 
             {balancesLoading ? (
-              <div className="h-24 animate-pulse rounded bg-gray-100" />
+              <div className="h-24 animate-pulse rounded bg-surface-neutral" />
             ) : balances.length === 0 ? (
-              <p className="text-sm text-gray-500 py-4 text-center">No leave balance records available.</p>
+              <p className="text-sm text-ink-secondary py-4 text-center">No leave balance records available.</p>
             ) : (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {balances.slice(0, 6).map((b, i) => (
-                  <div key={b.id ?? i} className="rounded-lg border border-gray-100 bg-gray-50/50 p-3">
-                    <p className="text-xs font-medium text-gray-500 truncate">{b.leave_type_name}</p>
-                    <p className="mt-1 text-xl font-bold text-gray-900">
+                  <div key={b.id ?? i} className="rounded-lg border border-divider bg-surface-neutral/50 p-3">
+                    <p className="text-xs font-medium text-ink-secondary truncate">{b.leave_type_name}</p>
+                    <p className="mt-1 text-xl font-bold text-ink-primary">
                       {b.available_balance ?? b.remaining_days ?? 0}
-                      <span className="text-xs font-normal text-gray-400 ml-1">days</span>
+                      <span className="text-xs font-normal text-ink-disabled ml-1">days</span>
                     </p>
                   </div>
                 ))}
@@ -153,28 +153,28 @@ export function EmployeeDashboard() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Recent Leave Applications */}
         <Can permissions={['leaves.view']}>
-          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
-              <h3 className="text-sm font-semibold text-gray-900">Recent Leave Requests</h3>
-              <Link to="/my-leaves" className="text-xs font-medium text-primary-600 hover:text-primary-800">
+          <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-sm">
+            <div className="flex items-center justify-between border-b border-divider pb-3 mb-4">
+              <h3 className="text-sm font-semibold text-ink-primary">Recent Leave Requests</h3>
+              <Link to="/my-leaves" className="text-xs font-medium text-primary-main hover:text-primary-dark">
                 View History →
               </Link>
             </div>
 
             {appsLoading ? (
               <div className="space-y-2">
-                <div className="h-8 animate-pulse rounded bg-gray-100" />
-                <div className="h-8 animate-pulse rounded bg-gray-100" />
+                <div className="h-8 animate-pulse rounded bg-surface-neutral" />
+                <div className="h-8 animate-pulse rounded bg-surface-neutral" />
               </div>
             ) : !applicationsData?.results?.length ? (
-              <p className="text-xs text-gray-500 py-4 text-center">No recent leave requests found.</p>
+              <p className="text-xs text-ink-secondary py-4 text-center">No recent leave requests found.</p>
             ) : (
               <div className="space-y-3">
                 {applicationsData.results.slice(0, 4).map((app) => (
-                  <div key={app.id} className="flex items-center justify-between rounded-lg bg-gray-50 p-2.5 text-xs">
+                  <div key={app.id} className="flex items-center justify-between rounded-lg bg-surface-neutral p-2.5 text-xs">
                     <div>
-                      <p className="font-semibold text-gray-800">{app.leave_type.name}</p>
-                      <p className="text-gray-500">
+                      <p className="font-semibold text-ink-primary">{app.leave_type.name}</p>
+                      <p className="text-ink-secondary">
                         {app.from_date} → {app.to_date} ({app.total_days} {app.total_days === 1 ? 'day' : 'days'})
                       </p>
                     </div>
@@ -198,28 +198,28 @@ export function EmployeeDashboard() {
 
         {/* Recent Expenses */}
         <Can permissions={['expenses.view']}>
-          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
-              <h3 className="text-sm font-semibold text-gray-900">Recent Expense Claims</h3>
-              <Link to="/expenses" className="text-xs font-medium text-primary-600 hover:text-primary-800">
+          <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-sm">
+            <div className="flex items-center justify-between border-b border-divider pb-3 mb-4">
+              <h3 className="text-sm font-semibold text-ink-primary">Recent Expense Claims</h3>
+              <Link to="/expenses" className="text-xs font-medium text-primary-main hover:text-primary-dark">
                 View All →
               </Link>
             </div>
 
             {expensesLoading ? (
               <div className="space-y-2">
-                <div className="h-8 animate-pulse rounded bg-gray-100" />
-                <div className="h-8 animate-pulse rounded bg-gray-100" />
+                <div className="h-8 animate-pulse rounded bg-surface-neutral" />
+                <div className="h-8 animate-pulse rounded bg-surface-neutral" />
               </div>
             ) : !expensesData?.results?.length ? (
-              <p className="text-xs text-gray-500 py-4 text-center">No recent expense claims submitted.</p>
+              <p className="text-xs text-ink-secondary py-4 text-center">No recent expense claims submitted.</p>
             ) : (
               <div className="space-y-3">
                 {expensesData.results.slice(0, 4).map((exp) => (
-                  <div key={exp.id} className="flex items-center justify-between rounded-lg bg-gray-50 p-2.5 text-xs">
+                  <div key={exp.id} className="flex items-center justify-between rounded-lg bg-surface-neutral p-2.5 text-xs">
                     <div>
-                      <p className="font-semibold text-gray-800">{exp.expense_type.name}</p>
-                      <p className="text-gray-500">₹{exp.amount} · {exp.expense_date}</p>
+                      <p className="font-semibold text-ink-primary">{exp.expense_type.name}</p>
+                      <p className="text-ink-secondary">₹{exp.amount} · {exp.expense_date}</p>
                     </div>
                     <span
                       className={`rounded-full px-2 py-0.5 font-medium capitalize ${
@@ -228,7 +228,7 @@ export function EmployeeDashboard() {
                           : exp.status === 'rejected'
                           ? 'bg-red-100 text-red-800'
                           : exp.status === 'paid'
-                          ? 'bg-blue-100 text-blue-800'
+                          ? 'bg-primary-lighter text-primary-dark'
                           : 'bg-amber-100 text-amber-800'
                       }`}
                     >

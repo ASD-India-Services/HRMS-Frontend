@@ -27,7 +27,7 @@ export function ManagerDashboard({ dateRange }: ManagerDashboardProps) {
         <Can permissions={['leaves.approve']}>
           <Link
             to="/leaves/approvals"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary-main px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-dark transition-colors"
           >
             ⏳ Review Leave Approvals
           </Link>
@@ -35,7 +35,7 @@ export function ManagerDashboard({ dateRange }: ManagerDashboardProps) {
         <Can permissions={['attendance_register.view']}>
           <Link
             to="/attendance-register"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg border border-divider bg-surface-paper px-4 py-2 text-sm font-medium text-ink-primary shadow-sm hover:bg-surface-neutral transition-colors"
           >
             📋 Attendance Register
           </Link>
@@ -43,7 +43,7 @@ export function ManagerDashboard({ dateRange }: ManagerDashboardProps) {
         <Can permissions={['expenses.approve']}>
           <Link
             to="/expenses/approvals"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg border border-divider bg-surface-paper px-4 py-2 text-sm font-medium text-ink-primary shadow-sm hover:bg-surface-neutral transition-colors"
           >
             🧾 Expense Approvals
           </Link>

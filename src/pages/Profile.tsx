@@ -12,6 +12,8 @@ import { useUpdateEmployee } from '@/hooks/useEmployee';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import api from '@/lib/api';
 import type { EmployeeDetail, EmployeeProfileUpdate } from '@/types/employee';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 function useCurrentEmployee() {
   return useQuery({
@@ -74,14 +76,14 @@ export default function Profile() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">My Profile</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-semibold text-ink-primary">My Profile</h1>
+        <p className="mt-1 text-sm text-ink-secondary">
           View and manage your personal information.
         </p>
       </div>
 
       {/* Profile Header with Avatar */}
-      <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
           {/* Avatar */}
           <div className="relative group">
@@ -89,10 +91,10 @@ export default function Profile() {
               <img
                 src={employee.photo}
                 alt={name ?? 'Profile'}
-                className="h-24 w-24 rounded-full object-cover ring-4 ring-gray-100"
+                className="h-24 w-24 rounded-full object-cover ring-4 ring-grey-100"
               />
             ) : (
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary-400 to-primary-600 ring-4 ring-primary-50">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary-light to-primary-main ring-4 ring-primary-lighter">
                 <span className="text-2xl font-bold text-white">
                   {name ? name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : '??'}
                 </span>
@@ -109,16 +111,16 @@ export default function Profile() {
 
           {/* Name and role info */}
           <div className="text-center sm:text-left flex-1">
-            <h2 className="text-xl font-bold text-gray-900">{name ?? 'User'}</h2>
-            <p className="text-sm text-gray-500 capitalize">{role ?? 'employee'}</p>
-            <p className="mt-1 text-sm text-gray-500">{email ?? '--'}</p>
+            <h2 className="text-xl font-bold text-ink-primary">{name ?? 'User'}</h2>
+            <p className="text-sm text-ink-secondary capitalize">{role ?? 'employee'}</p>
+            <p className="mt-1 text-sm text-ink-secondary">{email ?? '--'}</p>
             {employee && (
               <div className="mt-2 flex flex-wrap gap-2">
                 <span className="inline-flex items-center rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-700">
                   {employee.status === 'active' ? 'Active' : employee.status}
                 </span>
                 {employee.designation && (
-                  <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+                  <span className="inline-flex items-center rounded-full bg-primary-lighter px-2.5 py-0.5 text-xs font-medium text-primary-dark">
                     {employee.designation.title}
                   </span>
                 )}
@@ -134,8 +136,8 @@ export default function Profile() {
       </section>
 
       {/* Account Details */}
-      <section className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Account Details</h2>
+      <section className="mt-6 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-ink-primary">Account Details</h2>
         <dl className="space-y-3">
           <InfoRow label="Full Name" value={name ?? '--'} />
           <InfoRow label="Email" value={email ?? '--'} />
@@ -154,24 +156,23 @@ export default function Profile() {
       {/* Employee Profile Section */}
       {isLoading && (
         <div className="mt-6 flex items-center justify-center py-8">
-          <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-500 border-t-transparent" />
-          <span className="ml-2 text-sm text-gray-600">Loading profile...</span>
+          <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-main border-t-transparent" />
+          <span className="ml-2 text-sm text-ink-secondary">Loading profile...</span>
         </div>
       )}
 
       {employee && !isEditing && (
         <>
           {/* Personal Details (read-only) */}
-          <section className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <section className="mt-6 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Contact Information</h2>
+              <h2 className="text-lg font-semibold text-ink-primary">Contact Information</h2>
               {isAdmin && (
-                <button
+                <Button type="submit"
                   onClick={startEditing}
-                  className="rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                 >
                   Edit
-                </button>
+                </Button>
               )}
             </div>
             <dl className="mt-4 space-y-3">
@@ -184,23 +185,22 @@ export default function Profile() {
               <InfoRow label="PIN Code" value={employee.pincode} />
             </dl>
             {isReadOnlyEmployee && (
-              <p className="mt-3 text-xs text-gray-400">
+              <p className="mt-3 text-xs text-ink-disabled">
                 Contact information is read-only. Please contact HR for changes.
               </p>
             )}
           </section>
 
           {/* Emergency Contact (editable by employee) */}
-          <section className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <section className="mt-6 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Emergency Contact</h2>
+              <h2 className="text-lg font-semibold text-ink-primary">Emergency Contact</h2>
               {!isEditing && (
-                <button
+                <Button type="submit"
                   onClick={startEditing}
-                  className="rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                 >
                   Edit
-                </button>
+                </Button>
               )}
             </div>
             <dl className="mt-4 space-y-3">
@@ -211,23 +211,23 @@ export default function Profile() {
           </section>
 
           {/* Reporting Hierarchy */}
-          <section className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">Reporting Hierarchy</h2>
+          <section className="mt-6 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-ink-primary">Reporting Hierarchy</h2>
             {employee.reporting_manager ? (
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-600">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-neutral text-sm font-semibold text-ink-secondary">
                   {employee.reporting_manager.first_name.charAt(0)}
                   {employee.reporting_manager.last_name.charAt(0)}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-ink-primary">
                     {employee.reporting_manager.first_name} {employee.reporting_manager.last_name}
                   </p>
-                  <p className="text-xs text-gray-500">Reporting Manager</p>
+                  <p className="text-xs text-ink-secondary">Reporting Manager</p>
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-gray-500">No reporting manager assigned.</p>
+              <p className="text-sm text-ink-secondary">No reporting manager assigned.</p>
             )}
           </section>
         </>
@@ -238,8 +238,8 @@ export default function Profile() {
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           {/* Contact Info — only shown for admins */}
           {isAdmin && (
-            <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900">Edit Contact Information</h2>
+            <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+              <h2 className="mb-4 text-lg font-semibold text-ink-primary">Edit Contact Information</h2>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <FormField
                   label="Phone"
@@ -284,8 +284,8 @@ export default function Profile() {
           )}
 
           {/* Emergency Contact — editable by everyone */}
-          <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">Emergency Contact</h2>
+          <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-ink-primary">Emergency Contact</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField
                 label="Contact Name"
@@ -308,20 +308,18 @@ export default function Profile() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <button
+            <Button
               type="submit"
               disabled={updateMutation.isPending}
-              className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50"
             >
               {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
-            </button>
-            <button
+            </Button>
+            <Button variant="outlined" color="inherit"
               type="button"
               onClick={cancelEditing}
-              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             >
               Cancel
-            </button>
+            </Button>
           </div>
 
           {updateMutation.isError && (
@@ -336,8 +334,8 @@ export default function Profile() {
 
       {/* Fallback when no employee record is linked */}
       {!isLoading && !employee && (
-        <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <p className="text-sm text-gray-500">
+        <div className="mt-6 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+          <p className="text-sm text-ink-secondary">
             Your employee profile is not linked yet. Contact your HR administrator.
           </p>
         </div>
@@ -358,8 +356,8 @@ function InfoRow({
 }) {
   return (
     <div className="flex justify-between gap-4">
-      <dt className="text-sm text-gray-500">{label}</dt>
-      <dd className={`text-sm font-medium text-gray-900 text-right ${capitalize ? 'capitalize' : ''}`}>
+      <dt className="text-sm text-ink-secondary">{label}</dt>
+      <dd className={`text-sm font-medium text-ink-primary text-right ${capitalize ? 'capitalize' : ''}`}>
         {value || '--'}
       </dd>
     </div>
@@ -383,15 +381,15 @@ function FormField({
   const id = label.toLowerCase().replace(/\s+/g, '-');
   return (
     <div className={className}>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+      <label htmlFor={id} className="block text-sm font-medium text-ink-primary">
         {label}
       </label>
-      <input
+      <Input
         id={id}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+        className="mt-1"
       />
     </div>
   );

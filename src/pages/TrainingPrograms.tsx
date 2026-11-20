@@ -82,7 +82,7 @@ export default function TrainingPrograms() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Training Programs</h1><p className="mt-1 text-sm text-gray-600">Manage training programs</p></div>
+        <div><h1 className="text-2xl font-bold text-ink-primary">Training Programs</h1><p className="mt-1 text-sm text-ink-secondary">Manage training programs</p></div>
         <CreateButton permission="training_programs.create" label="Create Program" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

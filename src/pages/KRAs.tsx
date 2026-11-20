@@ -73,7 +73,7 @@ export default function KRAs() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">KRAs</h1><p className="mt-1 text-sm text-gray-600">Manage Key Result Areas</p></div>
+        <div><h1 className="text-2xl font-bold text-ink-primary">KRAs</h1><p className="mt-1 text-sm text-ink-secondary">Manage Key Result Areas</p></div>
         <CreateButton permission="kras.create" label="Create KRA" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

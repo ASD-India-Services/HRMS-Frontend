@@ -128,8 +128,8 @@ export function ExpenseApprovals() {
       <div className="mx-auto max-w-7xl px-4 py-8">
         {/* Page header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Expense Approvals</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-ink-primary">Expense Approvals</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
             Review and approve or reject pending expense claims
           </p>
         </div>
@@ -191,16 +191,16 @@ function ExpandedClaimDetail({ claimId, claims, onCollapse }: ExpandedClaimDetai
     <div className="mt-4 rounded-lg border border-indigo-200 bg-indigo-50/30 p-5 shadow-sm">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-gray-900">
+          <h3 className="text-sm font-semibold text-ink-primary">
             {claim.title}
           </h3>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-ink-secondary">
             <span className="font-medium">{claim.employee_name}</span>
             {claim.department && (
-              <span className="text-gray-500"> · {claim.department}</span>
+              <span className="text-ink-secondary"> · {claim.department}</span>
             )}
           </p>
-          <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-gray-700">
+          <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-ink-primary">
             <span>
               <span className="font-medium">Type:</span> {claim.expense_type_name || claim.expense_type}
             </span>
@@ -212,12 +212,12 @@ function ExpandedClaimDetail({ claimId, claims, onCollapse }: ExpandedClaimDetai
             </span>
           </div>
           {claim.description && (
-            <p className="mt-2 text-sm text-gray-500">{claim.description}</p>
+            <p className="mt-2 text-sm text-ink-secondary">{claim.description}</p>
           )}
         </div>
         <button
           onClick={onCollapse}
-          className="rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition-colors"
+          className="rounded-md p-1 text-ink-disabled hover:bg-grey-200 hover:text-ink-secondary transition-colors"
           aria-label="Close detail panel"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" aria-hidden="true">

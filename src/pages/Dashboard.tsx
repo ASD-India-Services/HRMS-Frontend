@@ -62,26 +62,26 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Org Setup Banner — shown to first-time org admins only */}
       {showSetupBanner && (
-        <div className="relative rounded-lg border border-blue-200 bg-blue-50 p-4">
+        <div className="relative rounded-lg border border-primary-light bg-primary-lighter p-4">
           <div className="flex items-start gap-3">
-            <svg className="h-5 w-5 shrink-0 text-blue-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-5 w-5 shrink-0 text-primary-main mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div className="flex-1">
-              <h3 className="text-sm font-semibold text-blue-800">Complete Your Organization Setup</h3>
-              <p className="mt-1 text-sm text-blue-700">
+              <h3 className="text-sm font-semibold text-primary-dark">Complete Your Organization Setup</h3>
+              <p className="mt-1 text-sm text-primary-dark">
                 Set up your company details, SMTP configuration, and HR policies to get the most out of your HRMS.
               </p>
               <a
                 href="/hr-settings"
-                className="mt-2 inline-flex items-center text-sm font-medium text-blue-700 hover:text-blue-900"
+                className="mt-2 inline-flex items-center text-sm font-medium text-primary-dark hover:text-primary-darker"
               >
                 Go to HR Settings →
               </a>
             </div>
             <button
               onClick={dismissBanner}
-              className="shrink-0 rounded p-1 text-blue-400 hover:bg-blue-100 hover:text-blue-600"
+              className="shrink-0 rounded p-1 text-primary-light hover:bg-primary-lighter hover:text-primary-main"
               aria-label="Dismiss banner"
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -95,8 +95,8 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-semibold text-ink-primary">Dashboard</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
             Welcome back{name ? `, ${name}` : ''}. {subtitle}
           </p>
         </div>
@@ -110,7 +110,7 @@ export default function Dashboard() {
       {permLoading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-xl bg-gray-100" />
+            <div key={i} className="h-28 animate-pulse rounded-xl bg-surface-neutral" />
           ))}
         </div>
       ) : isAdmin ? (
