@@ -17,6 +17,10 @@ import { CreateButton, EditButton, DeleteButton } from '@/components/ActionButto
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -67,11 +71,11 @@ function ComponentRowEditor({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-medium text-gray-700">{label}</h4>
+        <h4 className="text-sm font-medium text-ink-primary">{label}</h4>
         <button
           type="button"
           onClick={addRow}
-          className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2.5 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100"
+          className="inline-flex items-center gap-1 rounded-md bg-primary-lighter px-2.5 py-1.5 text-xs font-medium text-primary-dark hover:bg-primary-lighter"
         >
           <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -81,47 +85,47 @@ function ComponentRowEditor({
       </div>
 
       {rows.length === 0 && (
-        <p className="text-xs text-gray-400 italic">No {label.toLowerCase()} added yet.</p>
+        <p className="text-xs text-ink-disabled italic">No {label.toLowerCase()} added yet.</p>
       )}
 
       {rows.map((row, index) => (
-        <div key={index} className="flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 p-2">
-          <select
+        <div key={index} className="flex items-center gap-2 rounded-md border border-divider bg-surface-neutral p-2">
+          <Select
             value={row.component}
             onChange={(e) => updateRow(index, 'component', e.target.value)}
-            className="flex-1 rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="flex-1"
           >
             <option value="">Select component</option>
             {componentOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
-          </select>
+          </Select>
 
-          <input
+          <Input
             type="number"
             value={row.amount || ''}
             onChange={(e) => updateRow(index, 'amount', parseFloat(e.target.value) || 0)}
             placeholder="Amount"
-            className="w-28 rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="w-28"
           />
 
-          <label className="flex items-center gap-1 text-xs text-gray-600 whitespace-nowrap">
+          <label className="flex items-center gap-1 text-xs text-ink-secondary whitespace-nowrap">
             <input
               type="checkbox"
               checked={row.is_percentage}
               onChange={(e) => updateRow(index, 'is_percentage', e.target.checked)}
-              className="rounded border-gray-300"
+              className="rounded border-divider"
             />
             %
           </label>
 
           {row.is_percentage && (
-            <input
+            <Input
               type="text"
               value={row.percentage_of || ''}
               onChange={(e) => updateRow(index, 'percentage_of', e.target.value)}
               placeholder="% of (e.g., Basic)"
-              className="w-32 rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="w-32"
             />
           )}
 
@@ -185,35 +189,30 @@ function SalaryStructureFormModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-
-      {/* Modal */}
-      <div className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">{title}</h2>
+    <Modal open onClose={onClose} labelledBy="SalaryStructures-modal-title-1" size="lg" closeOnEscape={false}>
+      <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+        <h2 id="SalaryStructures-modal-title-1" className="mb-4 text-lg font-semibold text-ink-primary">{title}</h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Structure Name *</label>
-            <input
+            <label className="block text-sm font-medium text-ink-primary mb-1">Structure Name *</label>
+            <Input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
               placeholder="e.g., Junior Structure, Senior Structure"
               required
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
           {/* Active */}
-          <label className="flex items-center gap-2 text-sm text-gray-700">
+          <label className="flex items-center gap-2 text-sm text-ink-primary">
             <input
               type="checkbox"
               checked={formData.is_active}
               onChange={(e) => setFormData((prev) => ({ ...prev, is_active: e.target.checked }))}
-              className="rounded border-gray-300"
+              className="rounded border-divider"
             />
             Active
           </label>
@@ -239,21 +238,20 @@ function SalaryStructureFormModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="rounded-md border border-divider px-4 py-2 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
             >
               Cancel
             </button>
-            <button
+            <Button
               type="submit"
               disabled={isLoading || !formData.name.trim()}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
             >
               {isLoading ? 'Saving...' : 'Save'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -324,9 +322,9 @@ export default function SalaryStructures() {
       sortable: false,
       render: (value: unknown) => {
         const arr = value as ComponentRow[] | null;
-        if (!arr || arr.length === 0) return <span className="text-gray-400">—</span>;
+        if (!arr || arr.length === 0) return <span className="text-ink-disabled">—</span>;
         return (
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-ink-primary">
             {arr.map((e) => e.component).join(', ')}
           </span>
         );
@@ -338,9 +336,9 @@ export default function SalaryStructures() {
       sortable: false,
       render: (value: unknown) => {
         const arr = value as ComponentRow[] | null;
-        if (!arr || arr.length === 0) return <span className="text-gray-400">—</span>;
+        if (!arr || arr.length === 0) return <span className="text-ink-disabled">—</span>;
         return (
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-ink-primary">
             {arr.map((d) => d.component).join(', ')}
           </span>
         );
@@ -397,8 +395,8 @@ export default function SalaryStructures() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Salary Structures</h1>
-          <p className="mt-1 text-sm text-gray-600">Manage salary structures with earnings and deductions</p>
+          <h1 className="text-2xl font-bold text-ink-primary">Salary Structures</h1>
+          <p className="mt-1 text-sm text-ink-secondary">Manage salary structures with earnings and deductions</p>
         </div>
         <CreateButton permission="salary_structures.create" label="Create Structure" onClick={() => setShowCreate(true)} />
       </div>

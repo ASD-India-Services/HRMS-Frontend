@@ -90,12 +90,12 @@ export default function TaxBenefits() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Tax & Benefits</h1>
-        <p className="mt-1 text-sm text-gray-600">Tax declarations, proof submissions, and employee benefits</p>
+        <h1 className="text-2xl font-bold text-ink-primary">Tax & Benefits</h1>
+        <p className="mt-1 text-sm text-ink-secondary">Tax declarations, proof submissions, and employee benefits</p>
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 border-b border-gray-200">
+      <div className="mb-6 border-b border-divider">
         <nav className="-mb-px flex space-x-8">
           {TABS.map((tab) => (
             <button
@@ -103,8 +103,8 @@ export default function TaxBenefits() {
               onClick={() => setActiveTab(tab)}
               className={`whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium ${
                 activeTab === tab
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  ? 'border-primary-main text-primary-main'
+                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
               }`}
             >
               {tab}

@@ -150,24 +150,24 @@ export default function PayrollDashboard() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Payroll Dashboard</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-ink-primary">Payroll Dashboard</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
             Payroll cycles, net disbursement trends, salary slip generation, and compensation analytics.
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Link
             to="/payroll"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md border border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral shadow-sm transition-colors"
           >
-            <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             Salary Slips
           </Link>
           <Link
             to="/payroll/runs"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -180,9 +180,9 @@ export default function PayrollDashboard() {
       {/* Top Metric Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Payroll Cost */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Disbursed Net Pay
             </span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
@@ -192,7 +192,7 @@ export default function PayrollDashboard() {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="text-2xl font-bold text-ink-primary">
               {isLoading ? '...' : formatCurrency(totalNetPay || 0)}
             </span>
           </div>
@@ -202,30 +202,30 @@ export default function PayrollDashboard() {
         </div>
 
         {/* Processed Payslips */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Processed Payslips
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-lighter text-primary-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">{isLoading ? '...' : totalSlipsCount}</span>
-            <span className="ml-2 text-xs text-blue-600 font-medium">slips generated</span>
+            <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : totalSlipsCount}</span>
+            <span className="ml-2 text-xs text-primary-main font-medium">slips generated</span>
           </div>
-          <div className="mt-2 text-xs text-blue-600 font-medium">
+          <div className="mt-2 text-xs text-primary-main font-medium">
             <Link to="/payroll" className="hover:underline">View all salary slips →</Link>
           </div>
         </div>
 
         {/* Payroll Runs */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Payroll Cycles
             </span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
@@ -235,8 +235,8 @@ export default function PayrollDashboard() {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">{isLoading ? '...' : totalRunsCount}</span>
-            <span className="ml-2 text-xs text-gray-500">total runs</span>
+            <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : totalRunsCount}</span>
+            <span className="ml-2 text-xs text-ink-secondary">total runs</span>
           </div>
           <div className="mt-2 text-xs text-indigo-600 font-medium">
             <Link to="/payroll/runs" className="hover:underline">Manage payroll runs →</Link>
@@ -244,9 +244,9 @@ export default function PayrollDashboard() {
         </div>
 
         {/* Salary Structures */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Salary Structures
             </span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
@@ -256,7 +256,7 @@ export default function PayrollDashboard() {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">{isLoading ? '...' : activeStructuresCount}</span>
+            <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : activeStructuresCount}</span>
             <span className="ml-2 text-xs text-purple-600 font-medium">Active Plans</span>
           </div>
           <div className="mt-2 text-xs text-purple-600 font-medium">
@@ -268,13 +268,13 @@ export default function PayrollDashboard() {
       {/* Visual Charts Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* 6-Month Payroll Expense Trend */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">6-Month Payroll Expense Trend</h2>
-              <p className="text-xs text-gray-500">Monthly net compensation disbursement trajectory</p>
+              <h2 className="text-base font-semibold text-ink-primary">6-Month Payroll Expense Trend</h2>
+              <p className="text-xs text-ink-secondary">Monthly net compensation disbursement trajectory</p>
             </div>
-            <span className="text-xs font-medium text-gray-500">INR (₹)</span>
+            <span className="text-xs font-medium text-ink-secondary">INR (₹)</span>
           </div>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -302,13 +302,13 @@ export default function PayrollDashboard() {
         </div>
 
         {/* Salary Cost Breakdown */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">Compensation Cost Breakdown</h2>
-              <p className="text-xs text-gray-500">Net pay vs statutory deductions and benefits</p>
+              <h2 className="text-base font-semibold text-ink-primary">Compensation Cost Breakdown</h2>
+              <p className="text-xs text-ink-secondary">Net pay vs statutory deductions and benefits</p>
             </div>
-            <span className="text-xs font-medium text-gray-500">Overview</span>
+            <span className="text-xs font-medium text-ink-secondary">Overview</span>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-around h-64">
             <div className="w-full sm:w-1/2 h-full">
@@ -340,9 +340,9 @@ export default function PayrollDashboard() {
                 <div key={item.name} className="flex items-center justify-between">
                   <span className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className="text-gray-700 truncate max-w-[130px]">{item.name}</span>
+                    <span className="text-ink-primary truncate max-w-[130px]">{item.name}</span>
                   </span>
-                  <span className="font-semibold text-gray-900">{formatCurrency(item.value)}</span>
+                  <span className="font-semibold text-ink-primary">{formatCurrency(item.value)}</span>
                 </div>
               ))}
             </div>
@@ -351,22 +351,22 @@ export default function PayrollDashboard() {
       </div>
 
       {/* Recent Payroll Runs Table */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+      <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">Recent Payroll Runs</h2>
-            <p className="text-xs text-gray-500">Latest executed and pending payroll processing batches</p>
+            <h2 className="text-base font-semibold text-ink-primary">Recent Payroll Runs</h2>
+            <p className="text-xs text-ink-secondary">Latest executed and pending payroll processing batches</p>
           </div>
-          <Link to="/payroll/runs" className="text-xs font-semibold text-blue-600 hover:underline">
+          <Link to="/payroll/runs" className="text-xs font-semibold text-primary-main hover:underline">
             View all runs →
           </Link>
         </div>
         {recentRuns.length === 0 ? (
-          <p className="py-8 text-center text-sm text-gray-400">No payroll runs found.</p>
+          <p className="py-8 text-center text-sm text-ink-disabled">No payroll runs found.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <thead className="border-b border-divider bg-surface-neutral text-xs font-semibold text-ink-secondary uppercase tracking-wider">
                 <tr>
                   <th className="px-4 py-3">Cycle Title / Period</th>
                   <th className="px-4 py-3">Employees</th>
@@ -375,16 +375,16 @@ export default function PayrollDashboard() {
                   <th className="px-4 py-3 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-divider">
                 {recentRuns.map((run) => (
-                  <tr key={run.id} className="hover:bg-gray-50/60 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900">
+                  <tr key={run.id} className="hover:bg-surface-neutral/60 transition-colors">
+                    <td className="px-4 py-3 font-medium text-ink-primary">
                       {run.title || run.name || `Payroll Run #${run.id.slice(0, 6)}`}
                     </td>
-                    <td className="px-4 py-3 text-gray-600 text-xs">
+                    <td className="px-4 py-3 text-ink-secondary text-xs">
                       {run.number_of_employees || '—'} staff
                     </td>
-                    <td className="px-4 py-3 text-gray-600 font-mono text-xs">
+                    <td className="px-4 py-3 text-ink-secondary font-mono text-xs">
                       {run.posting_date || run.start_date || '—'}
                     </td>
                     <td className="px-4 py-3">
@@ -395,7 +395,7 @@ export default function PayrollDashboard() {
                     <td className="px-4 py-3 text-right">
                       <Link
                         to="/payroll/runs"
-                        className="text-xs font-semibold text-blue-600 hover:underline"
+                        className="text-xs font-semibold text-primary-main hover:underline"
                       >
                         Details
                       </Link>

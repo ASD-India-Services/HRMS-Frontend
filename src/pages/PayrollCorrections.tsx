@@ -27,12 +27,12 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     render: (value: unknown) => {
       const status = value as string;
       const colors: Record<string, string> = {
-        draft: 'bg-gray-100 text-gray-700',
+        draft: 'bg-surface-neutral text-ink-primary',
         submitted: 'bg-yellow-100 text-yellow-800',
         applied: 'bg-green-100 text-green-800',
       };
       return (
-        <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${colors[status] || 'bg-gray-100 text-gray-700'}`}>
+        <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${colors[status] || 'bg-surface-neutral text-ink-primary'}`}>
           {status.charAt(0).toUpperCase() + status.slice(1)}
         </span>
       );
@@ -106,7 +106,7 @@ export default function PayrollCorrections() {
             </>
           )}
           {row.status === 'applied' && (
-            <span className="text-xs text-gray-400 italic">Completed</span>
+            <span className="text-xs text-ink-disabled italic">Completed</span>
           )}
         </div>
       ),
@@ -135,8 +135,8 @@ export default function PayrollCorrections() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Payroll Corrections</h1>
-          <p className="mt-1 text-sm text-gray-600">Manage salary correction entries</p>
+          <h1 className="text-2xl font-bold text-ink-primary">Payroll Corrections</h1>
+          <p className="mt-1 text-sm text-ink-secondary">Manage salary correction entries</p>
         </div>
         <CreateButton permission="payroll_corrections.create" label="Create Correction" onClick={() => setShowCreate(true)} />
       </div>

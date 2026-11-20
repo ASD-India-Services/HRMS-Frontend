@@ -10,6 +10,9 @@ import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 
 const POLICY_ENDPOINT = '/api/v1/leaves/lop-policy/';
 const RATES_ENDPOINT = '/api/v1/leaves/lop-rates/';
@@ -226,8 +229,8 @@ export default function LossOfPay() {
     return (
       <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 rounded bg-gray-200" />
-          <div className="h-64 rounded bg-gray-100" />
+          <div className="h-8 w-48 rounded bg-grey-200" />
+          <div className="h-64 rounded bg-surface-neutral" />
         </div>
       </div>
     );
@@ -236,8 +239,8 @@ export default function LossOfPay() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Loss of Pay</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-ink-primary">Loss of Pay</h1>
+        <p className="mt-1 text-sm text-ink-secondary">
           Configure LOP policy and set different deduction rates for specific employees, departments, or grades.
         </p>
       </div>
@@ -250,28 +253,28 @@ export default function LossOfPay() {
       )}
 
       {/* ─── Single Card with all settings ───────────────────── */}
-      <form onSubmit={handleSavePolicy} className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <form onSubmit={handleSavePolicy} className="rounded-lg border border-divider bg-surface-paper p-6 shadow-sm">
         <div className="mb-6">
           <label className="flex items-center gap-3">
             <input
               type="checkbox"
               checked={isActive}
               onChange={(e) => setIsActive(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              className="h-4 w-4 rounded border-divider text-primary-main focus:ring-primary-main"
             />
-            <span className="text-sm font-medium text-gray-900">Enable Loss of Pay</span>
+            <span className="text-sm font-medium text-ink-primary">Enable Loss of Pay</span>
           </label>
-          <p className="ml-7 mt-1 text-xs text-gray-500">
+          <p className="ml-7 mt-1 text-xs text-ink-secondary">
             When enabled, employees can apply for LOP leave. Configure deduction rates below.
           </p>
         </div>
         {/* ─── Default Policy Settings ─────────────────────────── */}
 <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">
+    <label className="block text-sm font-medium text-ink-primary mb-1">
       Default Deduction Per Day (₹) <span className="text-red-500">*</span>
     </label>
-    <input
+    <Input
       type="number"
       value={deductionPerDay}
       onChange={(e) => setDeductionPerDay(e.target.value)}
@@ -279,27 +282,25 @@ export default function LossOfPay() {
       step="0.01"
       placeholder="e.g. 500"
       required
-      className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
     />
-    <p className="mt-1 text-xs text-gray-500">
+    <p className="mt-1 text-xs text-ink-secondary">
       Amount deducted per day of LOP. Used when no specific rate applies.
     </p>
   </div>
 
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      Max Days Per Year <span className="text-gray-400">(Optional)</span>
+    <label className="block text-sm font-medium text-ink-primary mb-1">
+      Max Days Per Year <span className="text-ink-disabled">(Optional)</span>
     </label>
-    <input
+    <Input
       type="number"
       value={maxDays}
       onChange={(e) => setMaxDays(e.target.value)}
       min="0"
       step="0.5"
       placeholder="Leave blank for unlimited"
-      className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
     />
-    <p className="mt-1 text-xs text-gray-500">
+    <p className="mt-1 text-xs text-ink-secondary">
       Maximum LOP days allowed per year. Leave blank for unlimited.
     </p>
   </div>
@@ -310,98 +311,91 @@ export default function LossOfPay() {
           <div>
             <div className="mb-4 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">Deduction Rates</h3>
-                <p className="text-xs text-gray-500">Most specific wins: Employee &gt; Grade &gt; Department &gt; All Employees.</p>
+                <h3 className="text-sm font-semibold text-ink-primary">Deduction Rates</h3>
+                <p className="text-xs text-ink-secondary">Most specific wins: Employee &gt; Grade &gt; Department &gt; All Employees.</p>
               </div>
               {canCreate && (
-                <button type="button" onClick={() => setShowRateForm(true)}
-                  className="inline-flex items-center gap-1 rounded-md bg-primary-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-700">
+                <Button size="small" type="button" onClick={() => setShowRateForm(true)}>
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                   </svg>
                   Add Rate
-                </button>
+                </Button>
               )}
             </div>
 
             {/* Add Rate Form */}
             {showRateForm && (
-              <div className="mb-5 rounded-md border border-gray-200 bg-gray-50 p-4">
+              <div className="mb-5 rounded-md border border-divider bg-surface-neutral p-4">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Applies To</label>
-                    <select value={rateAppliesTo} onChange={(e) => { setRateAppliesTo(e.target.value); setRateTarget(''); }}
-                      className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">Applies To</label>
+                    <Select value={rateAppliesTo} onChange={(e) => { setRateAppliesTo(e.target.value); setRateTarget(''); }}>
                       <option value="all">All Employees</option>
                       <option value="department">Department</option>
                       <option value="grade">Grade</option>
                       <option value="employee">Employee</option>
-                    </select>
+                    </Select>
                   </div>
 
                   {rateAppliesTo !== 'all' && (
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                      <label className="block text-xs font-medium text-ink-primary mb-1">
                         {rateAppliesTo === 'employee' ? 'Select Employee' : rateAppliesTo === 'department' ? 'Select Department' : 'Select Grade'}
                       </label>
-                      <select value={rateTarget} onChange={(e) => setRateTarget(e.target.value)}
-                        className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500">
+                      <Select value={rateTarget} onChange={(e) => setRateTarget(e.target.value)}>
                         <option value="">-- Select --</option>
                         {targetOptions.map((opt) => (
                           <option key={opt.id} value={opt.id}>{opt.name}</option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
                   )}
 
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Deduction/Day (₹) <span className="text-red-500">*</span></label>
-                    <input type="number" value={rateDeduction} onChange={(e) => setRateDeduction(e.target.value)}
-                      min="1" step="0.01" placeholder="e.g. 500"
-                      className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500" />
+                    <label className="block text-xs font-medium text-ink-primary mb-1">Deduction/Day (₹) <span className="text-red-500">*</span></label>
+                    <Input type="number" value={rateDeduction} onChange={(e) => setRateDeduction(e.target.value)}
+                      min="1" step="0.01" placeholder="e.g. 500" />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Max Days/Year <span className="text-gray-400">(Optional)</span></label>
-                    <input type="number" value={rateMaxDays} onChange={(e) => setRateMaxDays(e.target.value)}
-                      min="0" step="0.5" placeholder="Unlimited"
-                      className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500" />
+                    <label className="block text-xs font-medium text-ink-primary mb-1">Max Days/Year <span className="text-ink-disabled">(Optional)</span></label>
+                    <Input type="number" value={rateMaxDays} onChange={(e) => setRateMaxDays(e.target.value)}
+                      min="0" step="0.5" placeholder="Unlimited" />
                   </div>
                 </div>
 
                 <div className="mt-4 flex gap-2 justify-end">
-                  <button type="button" onClick={() => setShowRateForm(false)}
-                    className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50">
+                  <Button variant="outlined" color="inherit" size="small" type="button" onClick={() => setShowRateForm(false)}>
                     Cancel
-                  </button>
-                  <button type="button" onClick={handleAddRate} disabled={rateSaving}
-                    className="rounded-md bg-primary-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-primary-700 disabled:opacity-50">
+                  </Button>
+                  <Button size="small" type="button" onClick={handleAddRate} disabled={rateSaving}>
                     {rateSaving ? 'Adding...' : 'Add Rate'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
 
             {/* Rates Table */}
             {policy.rates && policy.rates.length > 0 ? (
-              <div className="overflow-hidden rounded-md border border-gray-200">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+              <div className="overflow-hidden rounded-md border border-divider">
+                <table className="min-w-full divide-y divide-divider">
+                  <thead className="bg-surface-neutral">
                     <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Scope</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Target</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Deduction/Day</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Max Days</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium uppercase text-gray-500">Actions</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium uppercase text-ink-secondary">Scope</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium uppercase text-ink-secondary">Target</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium uppercase text-ink-secondary">Deduction/Day</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium uppercase text-ink-secondary">Max Days</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium uppercase text-ink-secondary">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 bg-white">
+                  <tbody className="divide-y divide-divider bg-surface-paper">
                     {policy.rates.map((rate) => (
-                      <tr key={rate.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-2 text-sm text-gray-700 capitalize">{rate.applies_to}</td>
-                        <td className="px-4 py-2 text-sm text-gray-900 font-medium">{rate.target_name}</td>
-                        <td className="px-4 py-2 text-sm text-gray-700">₹{rate.deduction_per_day}</td>
-                        <td className="px-4 py-2 text-sm text-gray-500">{rate.max_days_per_year ?? 'Unlimited'}</td>
+                      <tr key={rate.id} className="hover:bg-surface-neutral">
+                        <td className="px-4 py-2 text-sm text-ink-primary capitalize">{rate.applies_to}</td>
+                        <td className="px-4 py-2 text-sm text-ink-primary font-medium">{rate.target_name}</td>
+                        <td className="px-4 py-2 text-sm text-ink-primary">₹{rate.deduction_per_day}</td>
+                        <td className="px-4 py-2 text-sm text-ink-secondary">{rate.max_days_per_year ?? 'Unlimited'}</td>
                         <td className="px-4 py-2">
                           {canDelete ? (
                             <button type="button" onClick={() => setDeleteRateId(rate.id)}
@@ -409,7 +403,7 @@ export default function LossOfPay() {
                               Remove
                             </button>
                           ) : (
-                            <span className="text-xs text-gray-400">—</span>
+                            <span className="text-xs text-ink-disabled">—</span>
                           )}
                         </td>
                       </tr>
@@ -418,7 +412,7 @@ export default function LossOfPay() {
                 </table>
               </div>
             ) : (
-              <p className="text-sm text-gray-500 text-center py-4 border border-dashed border-gray-200 rounded-md">
+              <p className="text-sm text-ink-secondary text-center py-4 border border-dashed border-divider rounded-md">
                 No deduction rates configured yet. Add a rate to enable LOP for employees.
               </p>
             )}
@@ -427,11 +421,10 @@ export default function LossOfPay() {
 
         {/* Save button — needs create (new policy) or edit (existing policy) */}
         {(policy ? canEdit : canCreate) && (
-          <div className="mt-6 flex justify-end border-t border-gray-200 pt-5">
-            <button type="submit" disabled={saving}
-              className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:opacity-50">
+          <div className="mt-6 flex justify-end border-t border-divider pt-5">
+            <Button type="submit" disabled={saving}>
               {saving ? 'Saving...' : policy ? 'Update Policy' : 'Create Policy'}
-            </button>
+            </Button>
           </div>
         )}
       </form>
