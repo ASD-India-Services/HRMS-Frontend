@@ -176,10 +176,10 @@ export function WorkflowEngine<T>({
 
       {/* Terminal state info message */}
       {config.terminalMessage && config.terminalMessage[record.status] && (
-        <div className="rounded-md bg-blue-50 border border-blue-200 p-2.5" role="note">
+        <div className="rounded-md bg-primary-lighter border border-primary-light p-2.5" role="note">
           <div className="flex items-start gap-2">
             <svg
-              className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-500"
+              className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary-main"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
@@ -191,7 +191,7 @@ export function WorkflowEngine<T>({
                 clipRule="evenodd"
               />
             </svg>
-            <p className="text-xs text-blue-700">
+            <p className="text-xs text-primary-dark">
               {config.terminalMessage[record.status]}
             </p>
           </div>

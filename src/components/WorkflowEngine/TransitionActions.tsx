@@ -31,11 +31,11 @@ interface TransitionActionsProps {
 
 const VARIANT_CLASSES: Record<string, string> = {
   primary:
-    'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
+    'bg-primary-main text-white hover:bg-primary-dark focus:ring-primary-main',
   destructive:
     'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
   secondary:
-    'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-primary-500',
+    'bg-surface-paper text-ink-primary border border-divider hover:bg-surface-neutral focus:ring-primary-main',
 };
 
 export function TransitionActions({

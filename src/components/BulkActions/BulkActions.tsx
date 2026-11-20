@@ -8,6 +8,7 @@ import { useState, useCallback, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
+import { Button } from '@/components/ui/Button';
 
 interface ImportResult {
   created: number;
@@ -129,11 +130,10 @@ export function BulkActions({
       <div className="flex flex-wrap items-center gap-2">
         {/* Export Button */}
         {canExport && (
-          <button
+          <Button variant="outlined" color="inherit"
             type="button"
             onClick={handleExport}
             disabled={exporting}
-            className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50"
             aria-label="Export CSV"
           >
             <svg
@@ -151,7 +151,7 @@ export function BulkActions({
               />
             </svg>
             {exporting ? 'Exporting...' : 'Export CSV'}
-          </button>
+          </Button>
         )}
 
         {/* Import Button */}
@@ -164,8 +164,8 @@ export function BulkActions({
             }}
             className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium shadow-sm ${
               showImportPanel
-                ? 'border-primary-300 bg-primary-50 text-primary-700'
-                : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                ? 'border-primary-light bg-primary-lighter text-primary-dark'
+                : 'border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral'
             }`}
             aria-expanded={showImportPanel}
             aria-label="Import CSV"
@@ -193,7 +193,7 @@ export function BulkActions({
           <button
             type="button"
             onClick={handleDownloadTemplate}
-            className="text-sm font-medium text-primary-600 hover:text-primary-500 underline"
+            className="text-sm font-medium text-primary-main hover:text-primary-main underline"
           >
             Download Template
           </button>
@@ -207,24 +207,23 @@ export function BulkActions({
 
       {/* Import Panel (collapsible) */}
       {showImportPanel && showImport && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div className="rounded-lg border border-divider bg-surface-neutral p-4">
           <div className="flex flex-wrap items-center gap-3">
             <input
               ref={fileInputRef}
               type="file"
               accept=".csv"
               onChange={handleFileChange}
-              className="block text-sm text-gray-500 file:mr-3 file:rounded file:border-0 file:bg-primary-50 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100"
+              className="block text-sm text-ink-secondary file:mr-3 file:rounded file:border-0 file:bg-primary-lighter file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-primary-dark hover:file:bg-primary-lighter"
               aria-label="Select CSV file to import"
             />
-            <button
+            <Button
               type="button"
               onClick={handleUpload}
               disabled={!file || importMutation.isPending}
-              className="rounded-md bg-primary-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 disabled:opacity-50"
             >
               {importMutation.isPending ? 'Uploading...' : 'Upload'}
-            </button>
+            </Button>
           </div>
 
           {/* Import Error */}
@@ -241,7 +240,7 @@ export function BulkActions({
                 <span className="inline-flex items-center rounded-md bg-green-50 px-2.5 py-1 text-xs font-medium text-green-800">
                   Created: {importResult.created}
                 </span>
-                <span className="inline-flex items-center rounded-md bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-800">
+                <span className="inline-flex items-center rounded-md bg-primary-lighter px-2.5 py-1 text-xs font-medium text-primary-dark">
                   Updated: {importResult.updated}
                 </span>
                 {importResult.errors.length > 0 && (
