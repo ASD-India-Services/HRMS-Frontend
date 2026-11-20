@@ -84,7 +84,7 @@ export default function ExitInterviews() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Exit Interviews</h1><p className="mt-1 text-sm text-gray-600">Manage exit interview records</p></div>
+        <div><h1 className="text-2xl font-bold text-ink-primary">Exit Interviews</h1><p className="mt-1 text-sm text-ink-secondary">Manage exit interview records</p></div>
         <CreateButton permission="exit_interviews.create" label="Create Interview" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

@@ -18,12 +18,14 @@ import { CrudModal } from '@/components/CrudModal';
 import type { FieldConfig } from '@/components/CrudModal';
 import { formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
+import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
 
 const statusColors: Record<string, string> = {
   active: 'bg-green-100 text-green-800',
   on_notice: 'bg-yellow-100 text-yellow-800',
   terminated: 'bg-red-100 text-red-800',
-  retired: 'bg-gray-100 text-gray-800',
+  retired: 'bg-surface-neutral text-ink-primary',
 };
 
 const statusLabels: Record<string, string> = {
@@ -90,8 +92,8 @@ export function EmployeeDetail() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
-        <span className="ml-3 text-gray-600">Loading employee details...</span>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-main border-t-transparent" />
+        <span className="ml-3 text-ink-secondary">Loading employee details...</span>
       </div>
     );
   }
@@ -107,7 +109,7 @@ export function EmployeeDetail() {
         </div>
         <Link
           to="/employees"
-          className="mt-4 inline-flex items-center text-sm text-primary-600 hover:text-primary-700"
+          className="mt-4 inline-flex items-center text-sm text-primary-main hover:text-primary-dark"
         >
           ← Back to Employee Directory
         </Link>
@@ -118,22 +120,22 @@ export function EmployeeDetail() {
   if (!employee) return null;
 
   const fullName = `${employee.first_name} ${employee.last_name}`;
-  const statusColor = statusColors[employee.status] ?? 'bg-gray-100 text-gray-800';
+  const statusColor = statusColors[employee.status] ?? 'bg-surface-neutral text-ink-primary';
   const statusLabel = statusLabels[employee.status] ?? employee.status;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
-      <nav className="mb-6 text-sm text-gray-500" aria-label="Breadcrumb">
-        <Link to="/employees" className="hover:text-primary-600">
+      <nav className="mb-6 text-sm text-ink-secondary" aria-label="Breadcrumb">
+        <Link to="/employees" className="hover:text-primary-main">
           Employees
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-gray-900">{fullName}</span>
+        <span className="text-ink-primary">{fullName}</span>
       </nav>
 
       {/* Header Card */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
         <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
           {employee.photo ? (
             <img
@@ -142,23 +144,23 @@ export function EmployeeDetail() {
               className="h-20 w-20 rounded-full object-cover"
             />
           ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary-100 text-xl font-semibold text-primary-700">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary-lighter text-xl font-semibold text-primary-dark">
               {getInitials(employee.first_name, employee.last_name)}
             </div>
           )}
           <div className="flex-1">
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">{fullName}</h1>
+              <h1 className="text-2xl font-bold text-ink-primary">{fullName}</h1>
               <span
                 className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColor}`}
               >
                 {statusLabel}
               </span>
             </div>
-            <p className="mt-1 text-sm text-gray-600">
+            <p className="mt-1 text-sm text-ink-secondary">
               {employee.designation?.title || 'No Designation'} · {employee.department?.name || 'No Department'}
             </p>
-            <p className="mt-0.5 text-xs text-gray-400">
+            <p className="mt-0.5 text-xs text-ink-disabled">
               Employee ID: {employee.employee_id}
             </p>
           </div>
@@ -181,10 +183,10 @@ export function EmployeeDetail() {
             />
             <Link
               to={`/org-chart?employee=${employee.id}`}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-xs hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-surface-paper px-3 py-1.5 text-xs font-semibold text-ink-primary shadow-xs hover:bg-surface-neutral transition-colors"
               title="View this employee's reporting hierarchy in the Org Chart"
             >
-              <svg className="h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-3.5 w-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v1.5a1.5 1.5 0 0 0 1.5 1.5h1.5A1.5 1.5 0 0 0 10.5 6.75v-1.5A1.5 1.5 0 0 0 9 3.75h-1.5ZM12 8.25v3.75m0 0H6.75A2.25 2.25 0 0 0 4.5 14.25v1.5a1.5 1.5 0 0 0 1.5 1.5h1.5a1.5 1.5 0 0 0 1.5-1.5v-1.5A2.25 2.25 0 0 0 6.75 12H12m0 0h5.25A2.25 2.25 0 0 1 19.5 14.25v1.5a1.5 1.5 0 0 1-1.5 1.5h-1.5a1.5 1.5 0 0 1-1.5-1.5v-1.5a2.25 2.25 0 0 1-2.25-2.25" />
               </svg>
               <span>Org Chart</span>
@@ -217,8 +219,8 @@ export function EmployeeDetail() {
       {/* Detail Sections */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Personal Information */}
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Personal Information</h2>
+        <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-ink-primary">Personal Information</h2>
           <dl className="space-y-3">
             <DetailRow label="Email" value={employee.email} />
             <DetailRow label="Phone" value={employee.phone} />
@@ -232,8 +234,8 @@ export function EmployeeDetail() {
         </section>
 
         {/* Employment Details */}
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Employment Details</h2>
+        <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-ink-primary">Employment Details</h2>
           <dl className="space-y-3">
             <DetailRow label="Department" value={employee.department?.name} />
             <DetailRow label="Designation" value={employee.designation?.title} />
@@ -263,8 +265,8 @@ export function EmployeeDetail() {
         </section>
 
         {/* Address */}
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Address</h2>
+        <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-ink-primary">Address</h2>
           <dl className="space-y-3">
             <DetailRow label="Address" value={employee.address} />
             <DetailRow label="City" value={employee.city} />
@@ -275,8 +277,8 @@ export function EmployeeDetail() {
         </section>
 
         {/* Emergency Contact */}
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Emergency Contact</h2>
+        <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-ink-primary">Emergency Contact</h2>
           <dl className="space-y-3">
             <DetailRow label="Name" value={employee.emergency_contact_name} />
             <DetailRow label="Phone" value={employee.emergency_contact_phone} />
@@ -285,30 +287,30 @@ export function EmployeeDetail() {
         </section>
 
         {/* Reporting Hierarchy */}
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm lg:col-span-2">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Reporting Hierarchy</h2>
+        <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm lg:col-span-2">
+          <h2 className="mb-4 text-lg font-semibold text-ink-primary">Reporting Hierarchy</h2>
           {employee.reporting_manager ? (
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-neutral text-sm font-semibold text-ink-secondary">
                 {getInitials(
                   employee.reporting_manager.first_name,
                   employee.reporting_manager.last_name
                 )}
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-ink-primary">
                   <Link
                     to={`/employees/${employee.reporting_manager.id}`}
-                    className="hover:text-primary-600 hover:underline"
+                    className="hover:text-primary-main hover:underline"
                   >
                     {employee.reporting_manager.first_name} {employee.reporting_manager.last_name}
                   </Link>
                 </p>
-                <p className="text-xs text-gray-500">Reporting Manager</p>
+                <p className="text-xs text-ink-secondary">Reporting Manager</p>
               </div>
             </div>
           ) : (
-            <p className="text-sm text-gray-500">No reporting manager assigned.</p>
+            <p className="text-sm text-ink-secondary">No reporting manager assigned.</p>
           )}
         </section>
 
@@ -344,26 +346,22 @@ export function EmployeeDetail() {
 
       {/* Provision Account Modal */}
       {showProvisionModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="provision-dialog-title"
+        <Modal
+          open
+          onClose={() => {
+            if (!provisionMutation.isPending) {
+              setShowProvisionModal(false);
+              setProvisionResult(null);
+            }
+          }}
+          labelledBy="provision-dialog-title"
+          size="sm"
+          closeOnEscape={false}
         >
-          <div
-            className="fixed inset-0 bg-black/50 transition-opacity"
-            onClick={() => {
-              if (!provisionMutation.isPending) {
-                setShowProvisionModal(false);
-                setProvisionResult(null);
-              }
-            }}
-            aria-hidden="true"
-          />
-          <div className="relative z-10 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+          <div className="min-h-0 flex-1 overflow-y-auto p-6">
             <h2
               id="provision-dialog-title"
-              className="text-lg font-semibold text-gray-900"
+              className="text-lg font-semibold text-ink-primary"
             >
               Create Login Account
             </h2>
@@ -378,8 +376,8 @@ export function EmployeeDetail() {
                 </div>
                 <dl className="mt-4 space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <dt className="text-gray-500">Email</dt>
-                    <dd className="font-medium text-gray-900">{provisionResult.email}</dd>
+                    <dt className="text-ink-secondary">Email</dt>
+                    <dd className="font-medium text-ink-primary">{provisionResult.email}</dd>
                   </div>
                   {provisionResult.email_sent && (
                     <p className="mt-2 text-xs text-green-600">
@@ -387,33 +385,32 @@ export function EmployeeDetail() {
                     </p>
                   )}
                   {provisionResult.already_existed && (
-                    <p className="mt-2 text-xs text-gray-500">
+                    <p className="mt-2 text-xs text-ink-secondary">
                       Account already existed — no new credentials were created.
                     </p>
                   )}
                 </dl>
                 <div className="mt-6 flex justify-end">
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       setShowProvisionModal(false);
                       setProvisionResult(null);
                     }}
-                    className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                   >
                     Done
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
               /* Confirmation view */
               <div className="mt-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-ink-secondary">
                   This will create a login account for{' '}
                   <span className="font-medium">{fullName}</span> and send a password
                   setup link to <span className="font-medium">{employee.email}</span>.
                 </p>
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-ink-secondary">
                   The employee will receive an email with a link to set up their own password.
                   The link expires in 72 hours.
                 </p>
@@ -428,19 +425,17 @@ export function EmployeeDetail() {
                 )}
 
                 <div className="mt-6 flex justify-end gap-3">
-                  <button
+                  <Button variant="outlined" color="inherit"
                     type="button"
                     onClick={() => setShowProvisionModal(false)}
                     disabled={provisionMutation.isPending}
-                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     onClick={() => provisionMutation.mutate()}
                     disabled={provisionMutation.isPending}
-                    className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {provisionMutation.isPending && (
                       <svg
@@ -465,12 +460,12 @@ export function EmployeeDetail() {
                       </svg>
                     )}
                     Send Setup Link
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );
@@ -488,9 +483,9 @@ function DetailRow({
 }) {
   return (
     <div className="flex justify-between gap-4">
-      <dt className="text-sm text-gray-500">{label}</dt>
+      <dt className="text-sm text-ink-secondary">{label}</dt>
       <dd
-        className={`text-sm font-medium text-gray-900 text-right ${capitalize ? 'capitalize' : ''}`}
+        className={`text-sm font-medium text-ink-primary text-right ${capitalize ? 'capitalize' : ''}`}
       >
         {value || '--'}
       </dd>

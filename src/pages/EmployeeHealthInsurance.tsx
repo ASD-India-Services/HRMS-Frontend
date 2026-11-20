@@ -85,7 +85,7 @@ export default function EmployeeHealthInsurance() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Health Insurance</h1><p className="mt-1 text-sm text-gray-600">Manage employee health insurance records</p></div>
+        <div><h1 className="text-2xl font-bold text-ink-primary">Health Insurance</h1><p className="mt-1 text-sm text-ink-secondary">Manage employee health insurance records</p></div>
         <CreateButton permission="health_insurance.create" label="Create Record" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

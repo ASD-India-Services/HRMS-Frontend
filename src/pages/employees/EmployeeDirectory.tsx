@@ -14,6 +14,8 @@ import { CreateButton } from '@/components/ActionButton';
 import { BulkActions } from '@/components/BulkActions';
 import type { EmploymentStatus, EmploymentType } from '@/types/employee';
 import api from '@/lib/api';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 const PAGE_SIZE = 12;
 
@@ -88,8 +90,8 @@ export function EmployeeDirectory() {
       {/* Header — title left, actions right (same row) */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Employee Directory</h1>
-          <p className="mt-0.5 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-ink-primary">Employee Directory</h1>
+          <p className="mt-0.5 text-sm text-ink-secondary">
             Browse and search employees across your organization
           </p>
         </div>
@@ -116,7 +118,7 @@ export function EmployeeDirectory() {
         {/* Search Bar */}
         <div className="relative">
           <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-disabled"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -129,12 +131,12 @@ export function EmployeeDirectory() {
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
           </svg>
-          <input
+          <Input
             type="text"
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search by name, department, or designation..."
-            className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="pl-10 pr-4"
             aria-label="Search employees"
           />
         </div>
@@ -153,9 +155,9 @@ export function EmployeeDirectory() {
 
       {/* Results count */}
       {data && (
-        <p className="mb-4 text-sm text-gray-500">
+        <p className="mb-4 text-sm text-ink-secondary">
           {data.count} employee{data.count !== 1 ? 's' : ''} found
-          {isFetching && <span className="ml-2 text-primary-600">Updating...</span>}
+          {isFetching && <span className="ml-2 text-primary-main">Updating...</span>}
         </p>
       )}
 
@@ -186,24 +188,22 @@ export function EmployeeDirectory() {
       {/* Pagination */}
       {totalPages > 1 && (
         <nav className="mt-8 flex items-center justify-between" aria-label="Pagination">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-ink-secondary">
             Page {page} of {totalPages}
           </p>
           <div className="flex gap-2">
-            <button
+            <Button type="submit" variant="outlined" color="inherit"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Previous
-            </button>
-            <button
+            </Button>
+            <Button type="submit" variant="outlined" color="inherit"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
-            </button>
+            </Button>
           </div>
         </nav>
       )}

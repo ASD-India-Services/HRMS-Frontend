@@ -117,11 +117,11 @@ export default function Transfers() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Employee Transfers</h1><p className="mt-1 text-sm text-gray-600">Manage employee department and location transfers</p></div>
+        <div><h1 className="text-2xl font-bold text-ink-primary">Employee Transfers</h1><p className="mt-1 text-sm text-ink-secondary">Manage employee department and location transfers</p></div>
         <CreateButton permission="transfers.create" label="Create Transfer" onClick={() => setShowCreate(true)} />
       </div>
       {processMessage && (
-        <div className="mb-4 rounded-md bg-blue-50 p-3 text-sm text-blue-700">
+        <div className="mb-4 rounded-md bg-primary-lighter p-3 text-sm text-primary-dark">
           {processMessage}
         </div>
       )}

@@ -42,11 +42,11 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
       const status = String(val || '').toLowerCase();
       const colors: Record<string, string> = {
         pending: 'bg-yellow-100 text-yellow-800',
-        in_progress: 'bg-blue-100 text-blue-800',
+        in_progress: 'bg-primary-lighter text-primary-dark',
         accepted: 'bg-green-100 text-green-800',
         rejected: 'bg-red-100 text-red-800',
       };
-      const badgeClass = colors[status] || 'bg-gray-100 text-gray-800';
+      const badgeClass = colors[status] || 'bg-surface-neutral text-ink-primary';
       return (
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${badgeClass}`}>
           {String(val || '').replace('_', ' ')}
@@ -66,7 +66,7 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     render: (_val, row) => (
       <a
         href="/recruitment/candidates"
-        className="inline-flex items-center gap-1 text-xs font-semibold text-primary-600 hover:text-primary-800 hover:underline"
+        className="inline-flex items-center gap-1 text-xs font-semibold text-primary-main hover:text-primary-dark hover:underline"
         title="View in Recruitment Candidates Pipeline"
       >
         <span>View in Pipeline</span>
@@ -153,7 +153,7 @@ export default function EmployeeReferrals() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Employee Referrals</h1><p className="mt-1 text-sm text-gray-600">Track employee referral submissions</p></div>
+        <div><h1 className="text-2xl font-bold text-ink-primary">Employee Referrals</h1><p className="mt-1 text-sm text-ink-secondary">Track employee referral submissions</p></div>
         <CreateButton permission="referrals.create" label="Create Referral" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

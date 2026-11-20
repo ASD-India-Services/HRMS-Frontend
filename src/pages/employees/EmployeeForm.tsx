@@ -85,11 +85,11 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 rounded bg-gray-200" />
-          <div className="h-4 w-64 rounded bg-gray-200" />
+          <div className="h-8 w-48 rounded bg-grey-200" />
+          <div className="h-4 w-64 rounded bg-grey-200" />
           <div className="mt-6 space-y-3">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-10 rounded bg-gray-200" />
+              <div key={i} className="h-10 rounded bg-grey-200" />
             ))}
           </div>
         </div>
@@ -129,10 +129,10 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
     <div className="mx-auto max-w-4xl px-4 py-8">
       {/* Page header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-ink-primary">
           {isEditMode ? 'Edit Employee' : 'Add Employee'}
         </h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <p className="mt-1 text-sm text-ink-secondary">
           {isEditMode
             ? 'Update employee information across all sections.'
             : 'Fill in the details below to add a new employee to the organization.'}
@@ -162,7 +162,7 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
       )}
 
       {/* Form */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-lg border border-divider bg-surface-paper p-6 shadow-sm">
         <FormBuilder
           fields={employeeCrudConfig.formFields}
           steps={employeeCrudConfig.formSteps}

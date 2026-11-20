@@ -22,6 +22,7 @@ import { FormBuilder } from '@/components/FormBuilder';
 import type { WorkflowConfig } from '@/types/workflow';
 import type { FieldSchema } from '@/types/form';
 import type { Employee } from '@/types/employee';
+import { Button } from '@/components/ui/Button';
 
 // Workflow config for employee lifecycle timeline display
 const employeeLifecycleConfig: WorkflowConfig = {
@@ -243,15 +244,15 @@ export function EmployeeLifecycle() {
     return (
       <div className="mx-auto max-w-4xl px-4 py-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 rounded bg-gray-200" />
-          <div className="h-4 w-64 rounded bg-gray-200" />
+          <div className="h-8 w-48 rounded bg-grey-200" />
+          <div className="h-4 w-64 rounded bg-grey-200" />
           <div className="mt-6 space-y-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex gap-3">
-                <div className="h-3 w-3 rounded-full bg-gray-200" />
+                <div className="h-3 w-3 rounded-full bg-grey-200" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 w-32 rounded bg-gray-200" />
-                  <div className="h-3 w-48 rounded bg-gray-200" />
+                  <div className="h-4 w-32 rounded bg-grey-200" />
+                  <div className="h-3 w-48 rounded bg-grey-200" />
                 </div>
               </div>
             ))}
@@ -273,10 +274,10 @@ export function EmployeeLifecycle() {
     <div className="mx-auto max-w-4xl px-4 py-8">
       {/* Page header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-ink-primary">
           Employee Lifecycle — {employeeName}
         </h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <p className="mt-1 text-sm text-ink-secondary">
           View the complete lifecycle timeline and manage status transitions.
         </p>
         {/* Current status badge */}
@@ -289,7 +290,7 @@ export function EmployeeLifecycle() {
                   ? 'bg-yellow-100 text-yellow-800'
                   : employeeStatus === 'terminated'
                     ? 'bg-red-100 text-red-800'
-                    : 'bg-gray-100 text-gray-800'
+                    : 'bg-surface-neutral text-ink-primary'
             }`}
           >
             {employeeStatus.replace('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
@@ -335,28 +336,26 @@ export function EmployeeLifecycle() {
                 </svg>
                 Promote
               </button>
-              <button
+              <Button
                 type="button"
                 onClick={() => setActiveAction('transfer')}
                 disabled={isActionPending}
-                className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
                 </svg>
                 Transfer
-              </button>
-              <button
+              </Button>
+              <Button color="error"
                 type="button"
                 onClick={() => setActiveAction('separate')}
                 disabled={isActionPending}
-                className="inline-flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
                 </svg>
                 Initiate Separation
-              </button>
+              </Button>
             </>
           )}
           {isOnNotice && (
@@ -369,8 +368,8 @@ export function EmployeeLifecycle() {
 
       {/* Action form dialog (inline expansion) */}
       {activeAction && (
-        <div className="mb-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">{getActiveTitle()}</h2>
+        <div className="mb-8 rounded-lg border border-divider bg-surface-paper p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-ink-primary">{getActiveTitle()}</h2>
           <FormBuilder
             fields={getActiveFields()}
             onSubmit={handleActionSubmit}
@@ -392,8 +391,8 @@ export function EmployeeLifecycle() {
       )}
 
       {/* Lifecycle Timeline */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Lifecycle Timeline</h2>
+      <div className="rounded-lg border border-divider bg-surface-paper p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-ink-primary">Lifecycle Timeline</h2>
         <WorkflowTimeline
           recordId={employeeId}
           endpoint={EMPLOYEES.PROPERTY_HISTORY}

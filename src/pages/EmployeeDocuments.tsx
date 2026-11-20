@@ -98,8 +98,8 @@ export default function EmployeeDocuments() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Employee Documents</h2>
-          <p className="mt-0.5 text-xs text-gray-500">Track and manage employee-submitted credentials, IDs, and certificates</p>
+          <h2 className="text-lg font-bold text-ink-primary">Employee Documents</h2>
+          <p className="mt-0.5 text-xs text-ink-secondary">Track and manage employee-submitted credentials, IDs, and certificates</p>
         </div>
         <CreateButton permission="documents.create" label="Add Document" onClick={() => setShowCreate(true)} />
       </div>

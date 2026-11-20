@@ -14,6 +14,8 @@ import { useState, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { Can } from '@/components/Can/Can';
+import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -60,7 +62,7 @@ const STATUS_COLORS: Record<EmployeeStatus, string> = {
   probation: 'bg-amber-100 text-amber-800',
   suspended: 'bg-orange-100 text-orange-800',
   terminated: 'bg-red-100 text-red-800',
-  resigned: 'bg-gray-100 text-gray-800',
+  resigned: 'bg-surface-neutral text-ink-primary',
   on_notice: 'bg-purple-100 text-purple-800',
 };
 
@@ -175,13 +177,13 @@ export function EmployeeStatusChange({
 
   return (
     <Can permissions={['employees.edit']}>
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="rounded-lg border border-divider bg-surface-paper p-4 shadow-sm">
         {/* Header with current status badge */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <label
               htmlFor="status-change-select"
-              className="text-sm font-medium text-gray-700"
+              className="text-sm font-medium text-ink-primary"
             >
               Status:
             </label>
@@ -196,14 +198,14 @@ export function EmployeeStatusChange({
         {/* Dropdown or terminal state message */}
         <div className="mt-3">
           {isTerminalState ? (
-            <p className="text-sm text-gray-500 italic">No transitions available</p>
+            <p className="text-sm text-ink-secondary italic">No transitions available</p>
           ) : (
-            <select
+            <Select
               id="status-change-select"
               value={selectedStatus}
               onChange={handleStatusSelect}
               disabled={statusMutation.isPending}
-              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-50"
+              className="disabled:cursor-not-allowed disabled:opacity-50"
               aria-label="Change employee status"
             >
               <option value="">Select new status...</option>
@@ -212,7 +214,7 @@ export function EmployeeStatusChange({
                   {STATUS_LABELS[status]}
                 </option>
               ))}
-            </select>
+            </Select>
           )}
         </div>
 
@@ -240,8 +242,8 @@ export function EmployeeStatusChange({
 
         {/* Status change form */}
         {showForm && selectedStatus && (
-          <form onSubmit={handleSubmit} className="mt-4 space-y-4 border-t border-gray-100 pt-4">
-            <p className="text-sm text-gray-600">
+          <form onSubmit={handleSubmit} className="mt-4 space-y-4 border-t border-divider pt-4">
+            <p className="text-sm text-ink-secondary">
               Changing status to{' '}
               <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[selectedStatus]}`}>
                 {STATUS_LABELS[selectedStatus]}
@@ -252,7 +254,7 @@ export function EmployeeStatusChange({
             <div>
               <label
                 htmlFor="status-reason"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-ink-primary"
               >
                 Reason <span className="text-red-500">*</span>
               </label>
@@ -275,7 +277,7 @@ export function EmployeeStatusChange({
                 className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 ${
                   validationErrors.reason
                     ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-primary-500 focus:ring-primary-500'
+                    : 'border-divider focus:border-primary-main focus:ring-primary-main'
                 }`}
                 aria-invalid={!!validationErrors.reason}
                 aria-describedby={validationErrors.reason ? 'reason-error' : undefined}
@@ -291,7 +293,7 @@ export function EmployeeStatusChange({
             <div>
               <label
                 htmlFor="status-effective-date"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-ink-primary"
               >
                 Effective Date <span className="text-red-500">*</span>
               </label>
@@ -313,7 +315,7 @@ export function EmployeeStatusChange({
                 className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 ${
                   validationErrors.effectiveDate
                     ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-primary-500 focus:ring-primary-500'
+                    : 'border-divider focus:border-primary-main focus:ring-primary-main'
                 }`}
                 aria-invalid={!!validationErrors.effectiveDate}
                 aria-describedby={
@@ -336,10 +338,9 @@ export function EmployeeStatusChange({
 
             {/* Action buttons */}
             <div className="flex items-center gap-3">
-              <button
+              <Button
                 type="submit"
                 disabled={statusMutation.isPending}
-                className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
               >
                 {statusMutation.isPending ? (
                   <>
@@ -369,15 +370,14 @@ export function EmployeeStatusChange({
                 ) : (
                   'Confirm'
                 )}
-              </button>
-              <button
+              </Button>
+              <Button variant="outlined" color="inherit"
                 type="button"
                 onClick={handleCancel}
                 disabled={statusMutation.isPending}
-                className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           </form>
         )}
