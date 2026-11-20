@@ -18,7 +18,7 @@
 
 import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { usePermissions } from '@platform/auth-sdk';
+import { usePermissions, useUser } from '@platform/auth-sdk';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { getFilteredNavigation, type NavGroup } from '@/config/navigation';
 
@@ -61,11 +61,20 @@ function NavIcon({ path, isActive }: { path: string; isActive: boolean }) {
 
 export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: SidebarProps) {
   const { hasFeature } = usePermissions();
+  const { role: authRole } = useUser();
   const { hasPermission, roleName } = useHrmsPermissionsContext();
   const location = useLocation();
 
-  // org_admin sees everything; other roles are checked against their actual permissions
-  const effectiveHasPermission = roleName === 'org_admin'
+  // org_admin / admin / administrator sees everything; other roles are checked against their actual permissions
+  const normalizedRole = (roleName || authRole || '').toLowerCase().trim();
+  const isAdmin =
+    normalizedRole === 'org_admin' ||
+    normalizedRole === 'admin' ||
+    normalizedRole === 'administrator' ||
+    normalizedRole === 'org admin' ||
+    normalizedRole === 'superadmin';
+
+  const effectiveHasPermission = isAdmin
     ? () => true
     : hasPermission;
 

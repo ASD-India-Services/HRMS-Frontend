@@ -778,8 +778,69 @@ function ApplicantCard({
 }: ApplicantCardProps) {
   const [showActions, setShowActions] = useState(false);
 
-  // Possible next stages based on configured stages
-  const nextStages = availableStages.filter((s) => s.key !== currentStage);
+  // Helper to determine if a stage represents rejection
+  const isRejectStage = (s: { key: string; label: string }) => {
+    const k = (s.key || '').toLowerCase();
+    const l = (s.label || '').toLowerCase();
+    return k === 'rejected' || k.includes('reject') || l.includes('reject');
+  };
+
+  // Sequential progression stages in pipeline order (excluding rejection stages)
+  const progressionStages = useMemo(() => {
+    return availableStages.filter((s) => !isRejectStage(s));
+  }, [availableStages]);
+
+  // Find reject stage from configured stages, or fallback to default 'rejected'
+  const rejectStage = useMemo(() => {
+    return (
+      availableStages.find((s) => isRejectStage(s)) || {
+        key: 'rejected' as ApplicantStatus,
+        label: 'Rejected',
+      }
+    );
+  }, [availableStages]);
+
+  // Current stage's index in the sequential progression pipeline
+  const currentIndex = useMemo(() => {
+    const cur = (currentStage || '').toLowerCase();
+    let idx = progressionStages.findIndex(
+      (s) => s.key.toLowerCase() === cur || s.label.toLowerCase() === cur
+    );
+    if (idx === -1 && applicant.stage) {
+      idx = progressionStages.findIndex((s) => (s as any).id === applicant.stage);
+    }
+    return idx;
+  }, [progressionStages, currentStage, applicant.stage]);
+
+  // Target stages: Strictly the immediate next stage and the reject stage only
+  const actionStages = useMemo(() => {
+    const currentIsReject = isRejectStage({ key: currentStage, label: String(currentStage) });
+
+    // If candidate is already in rejected status, allow reopening back to the initial stage (e.g. Applied)
+    if (currentIsReject) {
+      return progressionStages.length > 0 ? [progressionStages[0]] : [];
+    }
+
+    const targets: { key: ApplicantStatus; label: string; isReject?: boolean; isNext?: boolean }[] = [];
+
+    // 1. Next Stage: strictly the single immediate sequential stage ahead
+    if (currentIndex !== -1 && currentIndex + 1 < progressionStages.length) {
+      targets.push({
+        ...progressionStages[currentIndex + 1],
+        isNext: true,
+      });
+    }
+
+    // 2. Reject Stage: allow rejecting from any active progression stage
+    if (rejectStage && rejectStage.key.toLowerCase() !== (currentStage || '').toLowerCase()) {
+      targets.push({
+        ...rejectStage,
+        isReject: true,
+      });
+    }
+
+    return targets;
+  }, [currentStage, progressionStages, currentIndex, rejectStage]);
 
   return (
     <div className="rounded-md border border-gray-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md">
@@ -868,31 +929,54 @@ function ApplicantCard({
           </div>
         </div>
       ) : (
-        /* Move Actions Dropdown (Only for stages other than onboarded) */
-        <div className="mt-2 flex items-center justify-between pt-1 border-t border-gray-100">
+        /* Move Actions: Strictly only Next Stage and Reject Stage */
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-1.5 pt-1 border-t border-gray-100">
           <button
+            type="button"
             onClick={() => setShowActions(!showActions)}
-            className="text-xs text-primary-600 hover:text-primary-700 font-medium"
+            className="text-xs text-primary-600 hover:text-primary-700 font-medium cursor-pointer"
             disabled={isMoving}
           >
             {showActions ? 'Cancel' : 'Change stage...'}
           </button>
 
           {showActions && (
-            <div className="mt-1.5 flex flex-wrap gap-1">
-              {nextStages.map((stage) => (
-                <button
-                  key={stage.key}
-                  onClick={() => {
-                    onMove(applicant.id, stage.key);
-                    setShowActions(false);
-                  }}
-                  disabled={isMoving}
-                  className="rounded border border-gray-200 px-2 py-0.5 text-xs text-gray-600 hover:bg-gray-100 disabled:opacity-50 capitalize"
-                >
-                  {stage.label}
-                </button>
-              ))}
+            <div className="flex flex-wrap items-center gap-1.5">
+              {actionStages.length === 0 ? (
+                <span className="text-[11px] text-gray-400 italic">No further stages</span>
+              ) : (
+                actionStages.map((stage) => {
+                  const isRejectBtn = stage.isReject || isRejectStage(stage);
+                  return (
+                    <button
+                      key={stage.key}
+                      type="button"
+                      onClick={() => {
+                        onMove(applicant.id, stage.key);
+                        setShowActions(false);
+                      }}
+                      disabled={isMoving}
+                      className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer ${
+                        isRejectBtn
+                          ? 'border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:border-rose-300'
+                          : 'border border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:border-indigo-300 shadow-2xs'
+                      }`}
+                      title={isRejectBtn ? `Reject ${applicant.name}` : `Advance to ${stage.label}`}
+                    >
+                      {!isRejectBtn ? (
+                        <svg className="h-3 w-3 text-indigo-600" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                        </svg>
+                      ) : (
+                        <svg className="h-3 w-3 text-rose-500" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                      )}
+                      <span>{stage.label}</span>
+                    </button>
+                  );
+                })
+              )}
             </div>
           )}
         </div>

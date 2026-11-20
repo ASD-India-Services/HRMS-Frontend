@@ -156,7 +156,7 @@ export function GeneralSettingsTab() {
       if (settings.badge_prefix !== undefined) {
         setBadgePrefix(settings.badge_prefix || 'PEP');
       }
-      const defaultCompany = settings.company_name || 'G7 SYNERGON PVT. LTD. CRO.';
+      const defaultCompany = settings.company_name || 'digiHRMS';
       setBadgeCompany(settings.badge_company || defaultCompany);
       if (settings.encashment_bonus_unit !== undefined) {
         setBonusUnit(Number(settings.encashment_bonus_unit) || 1);
@@ -370,7 +370,7 @@ export function GeneralSettingsTab() {
     );
   }
 
-  const companyDisplayName = settings?.company_name || 'G7 SYNERGON PVT. LTD. CRO.';
+  const companyDisplayName = settings?.company_name || 'digiHRMS';
 
   return (
     <div className="space-y-10 divide-y divide-gray-100">
@@ -702,7 +702,7 @@ export function GeneralSettingsTab() {
               className="mt-2.5 w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               <option value={companyDisplayName}>{companyDisplayName}</option>
-              <option value="G7 SYNERGON PVT. LTD. CRO.">G7 SYNERGON PVT. LTD. CRO.</option>
+              <option value="digiHRMS">digiHRMS</option>
               <option value="DigiHRMS Corporate">DigiHRMS Corporate</option>
             </select>
           </div>
@@ -997,7 +997,7 @@ export function GeneralSettingsTab() {
               className="mt-2.5 w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               <option value={companyDisplayName}>{companyDisplayName}</option>
-              <option value="G7 SYNERGON PVT. LTD. CRO.">G7 SYNERGON PVT. LTD. CRO.</option>
+              <option value="digiHRMS">digiHRMS</option>
               <option value="DigiHRMS Corporate">DigiHRMS Corporate</option>
             </select>
           </div>

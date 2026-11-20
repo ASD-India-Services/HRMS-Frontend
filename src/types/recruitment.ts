@@ -45,6 +45,9 @@ export interface RecruitmentStage {
   job_opening?: string | null;
   job_opening_title?: string | null;
   applicant_count: number;
+  email_enabled?: boolean;
+  email_subject?: string;
+  email_body?: string;
   created_at: string;
   updated_at: string;
 }

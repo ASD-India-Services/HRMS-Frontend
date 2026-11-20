@@ -28,6 +28,7 @@ import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
+import { formatDate } from '@/utils/formatters';
 
 const createFields: FieldConfig[] = [
   { key: 'employee', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name', required: true },
@@ -45,14 +46,6 @@ const travelCrud = createCrudHooks<TravelRequest>({
   endpoints: travelRequestsCrudConfig.endpoints,
 });
 
-function formatDate(dateStr: string): string {
-  if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
 
 function useTravelColumns(): ColumnDef<TravelRequest>[] {
   return useMemo(

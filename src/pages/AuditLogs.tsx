@@ -11,6 +11,7 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { DataTable, Pagination, FilterBar, useFilterSync } from '@/components/DataTable';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import api from '@/lib/api';
+import { formatDateTime } from '@/utils/formatters';
 
 interface AuditLogEntry {
   id: string;
@@ -72,10 +73,7 @@ const columns: ColumnDef<AuditLogEntry>[] = [
     key: 'timestamp',
     header: 'Timestamp',
     sortable: true,
-    render: (value: unknown) => {
-      const date = new Date(value as string);
-      return date.toLocaleString();
-    },
+    render: (value: unknown) => formatDateTime(value as string),
   },
   { key: 'user_email', header: 'User', sortable: true },
   {

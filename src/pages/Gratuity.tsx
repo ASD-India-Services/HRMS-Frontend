@@ -10,7 +10,7 @@ import { CreateButton, EditButton, DeleteButton } from '@/components/ActionButto
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
-import { formatCurrency } from '@/utils/formatters';
+import { formatCurrency, formatDate } from '@/utils/formatters';
 
 const RULES_ENDPOINT = '/api/v1/gratuity/rules/';
 const rulesCrud = createCrudHooks<Record<string, unknown>>({
@@ -337,7 +337,7 @@ export default function Gratuity() {
             <h3 className="text-base font-semibold text-green-900 mb-3">Result</h3>
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4 text-sm">
               <div><p className="text-xs text-gray-500">Employee</p><p className="font-medium">{calcResult.employee_name}</p></div>
-              <div><p className="text-xs text-gray-500">Joined</p><p className="font-medium">{calcResult.date_of_joining}</p></div>
+              <div><p className="text-xs text-gray-500">Joined</p><p className="font-medium">{calcResult.date_of_joining ? formatDate(calcResult.date_of_joining) : '—'}</p></div>
               <div><p className="text-xs text-gray-500">Years of Service</p><p className="font-medium">{calcResult.years_of_service} yrs</p></div>
               <div><p className="text-xs text-gray-500">Base Salary</p><p className="font-medium">{formatCurrency(parseFloat(calcResult.base_salary))}</p></div>
               <div><p className="text-xs text-gray-500">Components</p><p className="font-medium">{calcResult.salary_components_used.join(', ')}</p></div>

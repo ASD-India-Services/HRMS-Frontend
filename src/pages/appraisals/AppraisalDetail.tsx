@@ -6,6 +6,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useAppraisalDetail } from '@/hooks/useAppraisals';
 import type { AppraisalStatus } from '@/types/appraisal';
+import { formatDate } from '@/utils/formatters';
 
 const statusStyles: Record<AppraisalStatus, string> = {
   draft: 'bg-gray-100 text-gray-800',
@@ -21,13 +22,6 @@ const statusLabels: Record<AppraisalStatus, string> = {
   completed: 'Completed',
 };
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
 
 export function AppraisalDetail() {
   const { id } = useParams<{ id: string }>();

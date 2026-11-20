@@ -52,12 +52,20 @@ export function DateTimeFormatTab() {
   const updateMutation = useUpdateHRSettings();
 
   // Selected dropdown values
-  const [selectedDateFormat, setSelectedDateFormat] = useState<string>('DD-MM-YYYY');
-  const [selectedTimeFormat, setSelectedTimeFormat] = useState<string>('24h');
+  const [selectedDateFormat, setSelectedDateFormat] = useState<string>(() => {
+    return localStorage.getItem('hrms_date_format') || 'DD/MM/YYYY';
+  });
+  const [selectedTimeFormat, setSelectedTimeFormat] = useState<string>(() => {
+    return localStorage.getItem('hrms_time_format') || '12h';
+  });
 
   // Currently saved display values
-  const [currentDateFormat, setCurrentDateFormat] = useState<string>('DD-MM-YYYY');
-  const [currentTimeFormat, setCurrentTimeFormat] = useState<string>('24h');
+  const [currentDateFormat, setCurrentDateFormat] = useState<string>(() => {
+    return localStorage.getItem('hrms_date_format') || 'DD/MM/YYYY';
+  });
+  const [currentTimeFormat, setCurrentTimeFormat] = useState<string>(() => {
+    return localStorage.getItem('hrms_time_format') || '12h';
+  });
 
   // Status indicators
   const [savingDate, setSavingDate] = useState(false);
@@ -69,11 +77,11 @@ export function DateTimeFormatTab() {
   // Sync state with server
   useEffect(() => {
     if (settings) {
-      const serverDate = settings.date_format || 'DD-MM-YYYY';
+      const serverDate = settings.date_format || localStorage.getItem('hrms_date_format') || 'DD/MM/YYYY';
       setSelectedDateFormat(serverDate);
       setCurrentDateFormat(serverDate);
 
-      const serverTime = settings.time_format || '24h';
+      const serverTime = settings.time_format || localStorage.getItem('hrms_time_format') || '12h';
       setSelectedTimeFormat(serverTime);
       setCurrentTimeFormat(serverTime);
     }
@@ -84,12 +92,30 @@ export function DateTimeFormatTab() {
     setSavingDate(true);
     setSavedDate(false);
     try {
+      // 1. Instantly write to localStorage so all components/formatters reflect change immediately
+      localStorage.setItem('hrms_date_format', selectedDateFormat);
+      try {
+        const raw = localStorage.getItem('hrms_cached_settings');
+        const parsed = raw ? JSON.parse(raw) : {};
+        parsed.date_format = selectedDateFormat;
+        localStorage.setItem('hrms_cached_settings', JSON.stringify(parsed));
+      } catch {
+        // ignore JSON parse error
+      }
+
+      // 2. Dispatch events
+      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new CustomEvent('hrms-format-changed', { detail: { date_format: selectedDateFormat } }));
+
+      // 3. Persist to server
       await updateMutation.mutateAsync({
         date_format: selectedDateFormat,
       });
       setCurrentDateFormat(selectedDateFormat);
       setSavedDate(true);
       setTimeout(() => setSavedDate(false), 3000);
+    } catch (err) {
+      console.error('Failed to save date format:', err);
     } finally {
       setSavingDate(false);
     }
@@ -100,12 +126,30 @@ export function DateTimeFormatTab() {
     setSavingTime(true);
     setSavedTime(false);
     try {
+      // 1. Instantly write to localStorage
+      localStorage.setItem('hrms_time_format', selectedTimeFormat);
+      try {
+        const raw = localStorage.getItem('hrms_cached_settings');
+        const parsed = raw ? JSON.parse(raw) : {};
+        parsed.time_format = selectedTimeFormat;
+        localStorage.setItem('hrms_cached_settings', JSON.stringify(parsed));
+      } catch {
+        // ignore JSON parse error
+      }
+
+      // 2. Dispatch events
+      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new CustomEvent('hrms-format-changed', { detail: { time_format: selectedTimeFormat } }));
+
+      // 3. Persist to server
       await updateMutation.mutateAsync({
         time_format: selectedTimeFormat,
       });
       setCurrentTimeFormat(selectedTimeFormat);
       setSavedTime(true);
       setTimeout(() => setSavedTime(false), 3000);
+    } catch (err) {
+      console.error('Failed to save time format:', err);
     } finally {
       setSavingTime(false);
     }

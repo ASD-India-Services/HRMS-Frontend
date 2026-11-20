@@ -198,6 +198,8 @@ export function useUpdateHRSettings() {
         if (typeof updated.restrict_past_leave === 'boolean') {
           localStorage.setItem('hrms_restrict_past_leave', JSON.stringify(updated.restrict_past_leave));
         }
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('hrms-format-changed', { detail: updated }));
       } catch {
         // ignore storage errors
       }

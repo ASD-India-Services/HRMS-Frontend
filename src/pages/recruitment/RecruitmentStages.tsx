@@ -164,6 +164,79 @@ export function RecruitmentStages() {
     return [...activeStagesRaw].sort((a, b) => a.order - b.order);
   }, [activeStagesRaw]);
 
+  // Email format modal state
+  const [emailModalStage, setEmailModalStage] = useState<RecruitmentStage | null>(null);
+  const [emailEnabled, setEmailEnabled] = useState(false);
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailBody, setEmailBody] = useState('');
+  const [emailActiveTab, setEmailActiveTab] = useState<'editor' | 'preview'>('editor');
+  const [isSavingEmail, setIsSavingEmail] = useState(false);
+  const [emailModalError, setEmailModalError] = useState<string | null>(null);
+
+  const getDefaultEmailBodyForStage = (stageName: string): string => {
+    const nameLower = (stageName || '').toLowerCase();
+    if (nameLower.includes('interview')) {
+      return `Dear {{candidate_name}},\n\nThank you for applying for the {{job_title}} position at {{company_name}}.\n\nWe are pleased to invite you for an interview. Our talent acquisition team will be in touch with schedule and platform details shortly.\n\nBest regards,\n{{company_name}} Recruitment Team`;
+    }
+    if (nameLower.includes('reject')) {
+      return `Dear {{candidate_name}},\n\nThank you for taking the time to apply for the {{job_title}} role at {{company_name}}.\n\nAfter careful consideration, we have decided to move forward with other candidates whose profiles more closely align with our current requirements.\n\nWe appreciate your interest in our company and wish you success in your future endeavors.\n\nWarm regards,\n{{company_name}} Talent Acquisition`;
+    }
+    if (nameLower.includes('select') || nameLower.includes('offer')) {
+      return `Dear {{candidate_name}},\n\nCongratulations! We are delighted to inform you that you have been selected for the {{job_title}} role at {{company_name}}.\n\nOur team is currently preparing your formal offer letter and onboarding packet.\n\nBest regards,\n{{company_name}} HR Team`;
+    }
+    if (nameLower.includes('screen')) {
+      return `Dear {{candidate_name}},\n\nThank you for applying for {{job_title}} at {{company_name}}.\n\nYour application has successfully passed our initial review and has moved to the screening stage. We will review your qualifications and contact you with next steps.\n\nBest regards,\n{{company_name}} Recruitment Team`;
+    }
+    return `Dear {{candidate_name}},\n\nWe are writing to update you that your application for {{job_title}} has been moved to the {{stage_name}} stage.\n\nWe will be in touch with further updates soon.\n\nBest regards,\n{{company_name}} Team`;
+  };
+
+  const openEmailModal = (stage: RecruitmentStage) => {
+    setEmailModalStage(stage);
+    setEmailEnabled(stage.email_enabled ?? true);
+    setEmailSubject(stage.email_subject || `Update regarding your application for {{job_title}}`);
+    setEmailBody(stage.email_body || getDefaultEmailBodyForStage(stage.name));
+    setEmailActiveTab('editor');
+    setEmailModalError(null);
+  };
+
+  const handleSaveEmailTemplate = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!emailModalStage) return;
+
+    if (emailEnabled && !emailSubject.trim()) {
+      setEmailModalError('Please enter an email subject line.');
+      return;
+    }
+    if (emailEnabled && !emailBody.trim()) {
+      setEmailModalError('Please enter the email body message.');
+      return;
+    }
+
+    setIsSavingEmail(true);
+    setEmailModalError(null);
+    try {
+      await updateMutation.mutateAsync({
+        id: emailModalStage.id,
+        data: {
+          email_enabled: emailEnabled,
+          email_subject: emailSubject.trim(),
+          email_body: emailBody.trim(),
+        },
+      });
+      setSuccessBanner(
+        emailEnabled
+          ? `Automated candidate email enabled for "${emailModalStage.name}".`
+          : `Automated email disabled for "${emailModalStage.name}".`
+      );
+      setEmailModalStage(null);
+      setTimeout(() => setSuccessBanner(null), 4000);
+    } catch (err: any) {
+      setEmailModalError(err?.response?.data?.error || 'Failed to save email settings.');
+    } finally {
+      setIsSavingEmail(false);
+    }
+  };
+
   const openCreateModal = () => {
     setEditingStage(null);
     setFormName('');
@@ -743,9 +816,10 @@ export function RecruitmentStages() {
           <div className="border-b border-gray-200 bg-gray-50/75 px-6 py-3.5">
             <div className="grid grid-cols-12 text-xs font-semibold uppercase tracking-wider text-gray-500">
               <div className="col-span-1">Order</div>
-              <div className="col-span-4">Stage Name</div>
+              <div className="col-span-3">Stage Name</div>
               <div className="col-span-2">Color Theme</div>
-              <div className="col-span-2">Type</div>
+              <div className="col-span-1">Type</div>
+              <div className="col-span-2 text-center">Auto Email</div>
               <div className="col-span-1 text-center">Candidates</div>
               <div className="col-span-2 text-right">Actions</div>
             </div>
@@ -789,10 +863,10 @@ export function RecruitmentStages() {
                   </div>
 
                   {/* Stage Name & Slug */}
-                  <div className="col-span-4 flex items-center gap-3">
+                  <div className="col-span-3 flex items-center gap-3">
                     <span className={`h-3 w-3 shrink-0 rounded-full ${preset.dot}`} />
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-900">{stage.name}</h3>
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-semibold text-gray-900 truncate">{stage.name}</h3>
                       <p className="font-mono text-xs text-gray-400">code: {stage.slug}</p>
                     </div>
                   </div>
@@ -806,21 +880,46 @@ export function RecruitmentStages() {
                   </div>
 
                   {/* System vs Custom Tag */}
-                  <div className="col-span-2">
+                  <div className="col-span-1">
                     {stage.is_system ? (
-                      <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">
-                        <svg className="h-3 w-3 text-slate-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                        </svg>
-                        System Default
+                      <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700" title="System Default Stage">
+                        System
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
-                        <svg className="h-3 w-3 text-indigo-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63" />
-                        </svg>
-                        Custom Stage
+                      <span className="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700" title="Custom Stage">
+                        Custom
                       </span>
+                    )}
+                  </div>
+
+                  {/* Auto Email Column */}
+                  <div className="col-span-2 flex items-center justify-center">
+                    {stage.email_enabled ? (
+                      <button
+                        type="button"
+                        onClick={() => openEmailModal(stage)}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100 transition shadow-2xs group"
+                        title="Automated email notification is enabled. Click to edit format."
+                      >
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>Enabled</span>
+                        <svg className="h-3.5 w-3.5 text-emerald-600 opacity-70 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                        </svg>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => openEmailModal(stage)}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-gray-50 border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-500 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition shadow-2xs"
+                        title="Click to enable and configure candidate email format"
+                      >
+                        <svg className="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                        </svg>
+                        <span>Disabled</span>
+                        <span className="text-[10px] text-blue-600 font-semibold underline ml-0.5">Enable</span>
+                      </button>
                     )}
                   </div>
 
@@ -856,6 +955,227 @@ export function RecruitmentStages() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Configure Stage Email Format Modal */}
+      {emailModalStage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-fadeIn">
+          <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl transition-all">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Configure Stage Email Notification</h2>
+                  <p className="text-xs text-gray-500">
+                    Automated notification sent to candidates when moved to{' '}
+                    <span className="font-semibold text-gray-800">{emailModalStage.name}</span>
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setEmailModalStage(null)}
+                className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Error banner if any */}
+            {emailModalError && (
+              <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
+                {emailModalError}
+              </div>
+            )}
+
+            <div className="mt-5 space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+              {/* Enable / Disable Toggle Switch */}
+              <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50/70 p-3.5">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    Enable Auto Email for this Stage
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Automatically deliver this email to candidate when moved into &ldquo;{emailModalStage.name}&rdquo;.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setEmailEnabled(!emailEnabled)}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 ${
+                    emailEnabled ? 'bg-indigo-600' : 'bg-gray-300'
+                  }`}
+                  role="switch"
+                  aria-checked={emailEnabled}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                      emailEnabled ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Supported Dynamic Placeholders */}
+              <div>
+                <p className="text-xs font-semibold text-gray-700 mb-1.5">
+                  Available Merge Placeholders (click to insert):
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { token: '{{candidate_name}}', desc: 'Full Name' },
+                    { token: '{{candidate_first_name}}', desc: 'First Name' },
+                    { token: '{{job_title}}', desc: 'Job Opening Title' },
+                    { token: '{{stage_name}}', desc: 'Stage Name' },
+                    { token: '{{company_name}}', desc: 'Company / Organization' },
+                  ].map((item) => (
+                    <button
+                      key={item.token}
+                      type="button"
+                      onClick={() => {
+                        setEmailBody((prev) => `${prev} ${item.token}`);
+                      }}
+                      className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2 py-1 font-mono text-[11px] text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300 transition"
+                      title={`Insert ${item.desc}`}
+                    >
+                      <span>{item.token}</span>
+                      <span className="text-[10px] text-gray-400">({item.desc})</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tabs: Editor vs Live Preview */}
+              <div className="flex border-b border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => setEmailActiveTab('editor')}
+                  className={`pb-2 px-3 text-xs font-semibold transition border-b-2 ${
+                    emailActiveTab === 'editor'
+                      ? 'border-indigo-600 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Template Editor
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEmailActiveTab('preview')}
+                  className={`pb-2 px-3 text-xs font-semibold transition border-b-2 ${
+                    emailActiveTab === 'preview'
+                      ? 'border-indigo-600 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Live Preview
+                </button>
+              </div>
+
+              {emailActiveTab === 'editor' ? (
+                <div className="space-y-4">
+                  {/* Email Subject */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      Email Subject <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={emailSubject}
+                      onChange={(e) => setEmailSubject(e.target.value)}
+                      placeholder="e.g. Update regarding your application for {{job_title}}"
+                      className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-sm text-gray-900 shadow-2xs focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    />
+                  </div>
+
+                  {/* Email Body */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-semibold text-gray-700">
+                        Email Body Message <span className="text-rose-500">*</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setEmailBody(getDefaultEmailBodyForStage(emailModalStage.name))}
+                        className="text-[11px] font-medium text-indigo-600 hover:text-indigo-800 hover:underline"
+                      >
+                        Reset to default template
+                      </button>
+                    </div>
+                    <textarea
+                      rows={8}
+                      value={emailBody}
+                      onChange={(e) => setEmailBody(e.target.value)}
+                      placeholder="Write your email template message here..."
+                      className="w-full rounded-xl border border-gray-300 p-3 text-xs font-mono leading-relaxed text-gray-800 shadow-2xs focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    />
+                  </div>
+
+                  <p className="text-[11px] text-gray-500">
+                    💡 Emails are sent automatically via the organization's SMTP configuration configured in <span className="font-medium text-gray-700">Settings &gt; Email / SMTP</span>.
+                  </p>
+                </div>
+              ) : (
+                /* Live Preview Mode */
+                <div className="rounded-xl border border-gray-200 bg-gray-50/60 p-4 space-y-3">
+                  <div className="text-xs space-y-1 border-b border-gray-200 pb-2.5">
+                    <p><span className="font-semibold text-gray-600">To:</span> Jane Candidate &lt;jane.candidate@example.com&gt;</p>
+                    <p><span className="font-semibold text-gray-600">Subject:</span>{' '}
+                      <span className="font-semibold text-gray-900">
+                        {emailSubject
+                          .replace(/\{\{candidate_name\}\}/g, 'Jane Candidate')
+                          .replace(/\{\{candidate_first_name\}\}/g, 'Jane')
+                          .replace(/\{\{job_title\}\}/g, selectedOpening ? selectedOpening.title : 'Senior Full-Stack Engineer')
+                          .replace(/\{\{stage_name\}\}/g, emailModalStage.name)
+                          .replace(/\{\{company_name\}\}/g, 'Your Company') || '(No Subject)'}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="whitespace-pre-wrap font-sans text-xs text-gray-800 leading-relaxed bg-white p-3.5 rounded-lg border border-gray-200 shadow-2xs min-h-[160px]">
+                    {emailBody
+                      .replace(/\{\{candidate_name\}\}/g, 'Jane Candidate')
+                      .replace(/\{\{candidate_first_name\}\}/g, 'Jane')
+                      .replace(/\{\{job_title\}\}/g, selectedOpening ? selectedOpening.title : 'Senior Full-Stack Engineer')
+                      .replace(/\{\{stage_name\}\}/g, emailModalStage.name)
+                      .replace(/\{\{company_name\}\}/g, 'Your Company') || '(No message content)'}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions */}
+            <div className="mt-6 flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
+              <button
+                type="button"
+                onClick={() => setEmailModalStage(null)}
+                className="rounded-xl border border-gray-300 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isSavingEmail}
+                onClick={() => handleSaveEmailTemplate()}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-indigo-700 disabled:opacity-50 transition"
+              >
+                {isSavingEmail ? (
+                  <>
+                    <svg className="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    </svg>
+                    Saving...
+                  </>
+                ) : (
+                  <>Save Email Template</>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

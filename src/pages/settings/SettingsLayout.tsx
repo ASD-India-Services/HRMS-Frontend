@@ -50,6 +50,7 @@ const SETTINGS_GROUPS: NavGroup[] = [
     items: [
       { id: 'candidate-self-tracking', label: 'Candidate Self Tracking', path: '/settings/candidate-self-tracking' },
       { id: 'candidate-reject-reasons', label: 'Candidate Reject Reason', path: '/settings/candidate-reject-reasons' },
+      { id: 'careers-widget', label: 'Careers Website Embed', path: '/settings/careers-widget' },
     ],
   },
   {

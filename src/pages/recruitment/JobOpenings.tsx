@@ -15,6 +15,7 @@ import type { FieldConfig } from '@/components/CrudModal';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { JobOpening, JobOpeningStatus } from '@/types/recruitment';
+import { formatDate } from '@/utils/formatters';
 
 const JOB_OPENING_FIELDS: FieldConfig[] = [
   { key: 'title', label: 'Title', type: 'text', required: true },
@@ -274,10 +275,10 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-500">
-                      {new Date(opening.posted_on).toLocaleDateString()}
+                      {formatDate(opening.posted_on)}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-500">
-                      {opening.closes_on ? new Date(opening.closes_on).toLocaleDateString() : '—'}
+                      {opening.closes_on ? formatDate(opening.closes_on) : '—'}
                     </td>
                     <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end">

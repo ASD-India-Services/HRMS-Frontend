@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { EMAIL_CONFIG } from '@/lib/endpoints';
+import { formatDateTime } from '@/utils/formatters';
 
 const ENDPOINT = '/api/v1/hr-settings/';
 
@@ -48,8 +49,25 @@ export default function HRSettings() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [copiedEmbed, setCopiedEmbed] = useState(false);
+  const [embedMode, setEmbedMode] = useState<'widget' | 'iframe'>('widget');
 
-  const embedCodeSnippet = `<iframe id="hrms-careers-frame" src="${typeof window !== 'undefined' ? window.location.origin : ''}/careers/embed" width="100%" height="750" style="border:none;width:100%;min-height:700px;overflow:hidden;border-radius:12px;" scrolling="no" title="Careers Portal"></iframe>`;
+  const originUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3001';
+  const apiBaseUrl = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:8002';
+  const tenantSlug = 'org_digihrms';
+
+  const widgetSnippet = `<!-- Option 2: Drop-in JavaScript Widget for your existing blank careers page section -->
+<div id="hrms-careers-widget" data-tenant="${tenantSlug}" data-api="${apiBaseUrl}" data-primary-color="#2563eb"></div>
+<script src="${originUrl}/widget/careers.js" async></script>`;
+
+  const iframeSnippet = `<!-- Option 1: Responsive iFrame with auto-height adjustment -->
+<div id="hrms-careers-wrapper" style="width:100%;min-height:500px;">
+  <iframe id="hrms-careers-frame" src="${originUrl}/careers/embed?hide_header=true&tenant=${tenantSlug}" width="100%" style="border:none;width:100%;min-height:500px;background:transparent;" scrolling="no" title="Careers"></iframe>
+</div>
+<script>
+  window.addEventListener('message',function(e){if(e.data&&e.data.type==='HRMS_CAREERS_RESIZE'){var f=document.getElementById('hrms-careers-frame');if(f)f.style.height=(e.data.height+20)+'px';}});
+</script>`;
+
+  const embedCodeSnippet = embedMode === 'widget' ? widgetSnippet : iframeSnippet;
 
   const handleCopyEmbed = () => {
     navigator.clipboard.writeText(embedCodeSnippet);
@@ -229,11 +247,46 @@ export default function HRSettings() {
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-1">
-              <label htmlFor="embed_code" className="block text-sm font-medium text-gray-700">
-                Careers Embed Code
-              </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center gap-1.5">
+                <label htmlFor="embed_code" className="block text-sm font-semibold text-gray-800">
+                  Careers Website Embed
+                </label>
+                <div className="inline-flex rounded-md bg-gray-100 p-0.5 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setEmbedMode('widget')}
+                    className={`rounded px-2 py-0.5 font-medium transition-colors ${
+                      embedMode === 'widget'
+                        ? 'bg-white text-blue-700 shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    JS Widget
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEmbedMode('iframe')}
+                    className={`rounded px-2 py-0.5 font-medium transition-colors ${
+                      embedMode === 'iframe'
+                        ? 'bg-white text-blue-700 shadow-xs'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    iFrame
+                  </button>
+                </div>
+              </div>
               <div className="flex items-center gap-2">
+                <a
+                  href="/test-widget.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-medium text-primary-600 hover:text-primary-700"
+                  title="Test Drop-In Demo in simulated company page"
+                >
+                  Demo ↗
+                </a>
                 <a
                   href="/careers/embed"
                   target="_blank"
@@ -253,18 +306,20 @@ export default function HRSettings() {
               </div>
             </div>
             <div className="relative">
-              <input
+              <textarea
                 id="embed_code"
-                type="text"
+                rows={3}
                 readOnly
                 value={embedCodeSnippet}
-                onClick={(e) => (e.target as HTMLInputElement).select()}
-                className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-xs font-mono text-gray-600 shadow-sm cursor-pointer focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+                className="w-full rounded-md border border-gray-300 bg-gray-50 p-2 text-xs font-mono text-gray-700 shadow-sm cursor-pointer focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 select-all"
                 title="Click to select all and copy embed code"
               />
             </div>
             <p className="mt-1 text-xs text-gray-500">
-              Embed this iframe into your company website to display live open positions.
+              {embedMode === 'widget'
+                ? 'Option 2 (Recommended): Paste this 15 KB snippet into your website blank careers section to inject native job cards.'
+                : 'Option 1: Paste this responsive iframe into your existing website.'}
             </p>
           </div>
 
@@ -528,7 +583,7 @@ export default function HRSettings() {
 
         {emailConfig?.last_tested_at && (
           <p className="mt-3 text-xs text-gray-500">
-            Last tested: {new Date(emailConfig.last_tested_at).toLocaleString()}
+            Last tested: {formatDateTime(emailConfig.last_tested_at)}
           </p>
         )}
       </div>

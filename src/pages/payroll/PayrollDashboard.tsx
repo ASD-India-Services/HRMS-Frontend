@@ -15,6 +15,7 @@ import {
 } from 'recharts';
 import api from '@/lib/api';
 import { PAYROLL } from '@/lib/endpoints';
+import { formatDate } from '@/utils/formatters';
 
 interface SalarySlip {
   id: string;
@@ -154,26 +155,6 @@ export default function PayrollDashboard() {
           <p className="mt-1 text-sm text-gray-600">
             Payroll cycles, net disbursement trends, salary slip generation, and compensation analytics.
           </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link
-            to="/payroll"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 shadow-sm transition-colors"
-          >
-            <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Salary Slips
-          </Link>
-          <Link
-            to="/payroll/runs"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Payroll Runs
-          </Link>
         </div>
       </div>
 
@@ -385,7 +366,7 @@ export default function PayrollDashboard() {
                       {run.number_of_employees || '—'} staff
                     </td>
                     <td className="px-4 py-3 text-gray-600 font-mono text-xs">
-                      {run.posting_date || run.start_date || '—'}
+                      {formatDate(run.posting_date || run.start_date)}
                     </td>
                     <td className="px-4 py-3">
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-700 capitalize">

@@ -6,6 +6,7 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { formatDate, formatTime } from '@/utils/formatters';
 
 export default function MyAttendanceHistory() {
   const [monthOffset, setMonthOffset] = useState(0);
@@ -139,7 +140,7 @@ export default function MyAttendanceHistory() {
                 return (
                   <tr key={r.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-900 font-medium">
-                      {new Date(r.attendance_date).toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' })}
+                      {formatDate(r.attendance_date)}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-700">{formatTime(r.check_in)}</td>
                     <td className="px-4 py-3 text-sm text-gray-700">
@@ -187,12 +188,6 @@ export default function MyAttendanceHistory() {
   );
 }
 
-function formatTime(t: string | null): string {
-  if (!t) return '—';
-  const [h, m] = t.split(':').map(Number);
-  const period = h >= 12 ? 'PM' : 'AM';
-  return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${period}`;
-}
 
 function formatHours(h: string | number | null, checkIn?: string | null, checkOut?: string | null): string {
   // If working_hours has a value, use it

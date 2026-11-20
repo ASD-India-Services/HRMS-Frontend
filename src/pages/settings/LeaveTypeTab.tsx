@@ -15,27 +15,27 @@ const DEFAULT_LEAVE_TYPES: LeaveTypeItem[] = [
   {
     id: '1',
     name: 'Casual Leave',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
   {
     id: '2',
     name: 'Sick Leave',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
   {
     id: '3',
     name: 'Earned Leave',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
   {
     id: '4',
     name: 'Compensatory Off',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
   {
     id: '5',
     name: 'Maternity / Paternity Leave',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
 ];
 
@@ -101,7 +101,7 @@ export function LeaveTypeTab() {
 
     // 3. Fallback to organization company name if none loaded yet
     if (list.length === 0) {
-      list.push('G7 Synergon PVT. LTD. CRO');
+      list.push(settings?.company_name || 'digiHRMS');
     }
 
     return list;
@@ -131,7 +131,7 @@ export function LeaveTypeTab() {
             merged.push({
               id: s.id || Date.now().toString(),
               name: s.name,
-              company: s.company || availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO',
+              company: s.company || availableCompanies[0] || 'digiHRMS',
             });
             existingNames.add(s.name.toLowerCase());
           }
@@ -148,7 +148,7 @@ export function LeaveTypeTab() {
 
   // Form states matching Work Type / Horilla design
   const [formLeaveType, setFormLeaveType] = useState('');
-  const [formCompany, setFormCompany] = useState(() => availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+  const [formCompany, setFormCompany] = useState(() => availableCompanies[0] || 'digiHRMS');
 
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<LeaveTypeItem | null>(null);
@@ -177,14 +177,18 @@ export function LeaveTypeTab() {
   const handleOpenAdd = () => {
     setEditingItem(null);
     setFormLeaveType('');
-    setFormCompany(availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+    setFormCompany(availableCompanies[0] || 'digiHRMS');
     setModalOpen(true);
   };
 
   const handleOpenEdit = (item: LeaveTypeItem) => {
     setEditingItem(item);
     setFormLeaveType(item.name);
-    setFormCompany(item.company || availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+    setFormCompany(
+      !item.company || item.company.includes('Synergon') || item.company.includes('G7')
+        ? availableCompanies[0] || 'digiHRMS'
+        : item.company
+    );
     setModalOpen(true);
   };
 
@@ -192,7 +196,7 @@ export function LeaveTypeTab() {
     e.preventDefault();
     if (!formLeaveType.trim()) return;
 
-    const companyToSave = formCompany || availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO';
+    const companyToSave = formCompany || availableCompanies[0] || 'digiHRMS';
 
     // Try backend persistence if possible
     try {

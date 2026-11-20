@@ -12,6 +12,7 @@ import {
 } from '@/types/documents';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { formatDate } from '@/utils/formatters';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 
 interface EmployeeOption {
@@ -569,11 +570,7 @@ export default function DocumentRequests() {
 
                     {/* Date */}
                     <td className="px-4 py-3.5 whitespace-nowrap text-gray-500">
-                      {new Date(req.created_at).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
+                      {formatDate(req.created_at)}
                     </td>
 
                       {/* Issued Document */}
@@ -1117,7 +1114,7 @@ export default function DocumentRequests() {
                 <div>
                   <span className="text-gray-400">Status:</span>
                   <p className="mt-0.5 font-semibold capitalize text-gray-900">{viewingRequest.status_display || viewingRequest.status}</p>
-                  <p className="text-[11px] text-gray-500">Created: {new Date(viewingRequest.created_at).toLocaleDateString()}</p>
+                  <p className="text-[11px] text-gray-500">Created: {formatDate(viewingRequest.created_at)}</p>
                 </div>
               </div>
 

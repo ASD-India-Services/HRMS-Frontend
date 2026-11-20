@@ -7,6 +7,7 @@
 import { useState } from 'react';
 import { useOnboardingTasks, useUpdateOnboardingTask } from '@/hooks/useOnboarding';
 import type { OnboardingTask, OnboardingTaskStatus } from '@/types/onboarding';
+import { formatDate } from '@/utils/formatters';
 
 const STATUS_STYLES: Record<OnboardingTaskStatus, { label: string; className: string; icon: string }> = {
   pending: { label: 'Pending', className: 'bg-gray-100 text-gray-700', icon: '○' },
@@ -167,7 +168,7 @@ export function OnboardingChecklist({ employeeId }: OnboardingChecklistProps) {
                   {/* Due date */}
                   {task.due_date && (
                     <span className="shrink-0 text-xs text-gray-400">
-                      Due {new Date(task.due_date).toLocaleDateString()}
+                      Due {formatDate(task.due_date)}
                     </span>
                   )}
 

@@ -18,6 +18,7 @@ import { jobApplicantsCrudConfig } from '@/config/crud/jobApplicants';
 import { recruitmentWorkflow } from '@/config/workflows/recruitment';
 import { StatusBadge } from '@/components/WorkflowEngine/StatusBadge';
 import { useRecruitmentStages } from '@/hooks/useRecruitment';
+import { formatDate } from '@/utils/formatters';
 
 export interface ApplicantRow {
   id: string;
@@ -290,15 +291,7 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
   const formattedAppliedDate = useMemo(() => {
     const rawDate = applicant.applied_date || applicant.created_at;
     if (!rawDate) return '—';
-    try {
-      return new Date(rawDate).toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      });
-    } catch {
-      return String(rawDate);
-    }
+    return formatDate(rawDate);
   }, [applicant.applied_date, applicant.created_at]);
 
   return (

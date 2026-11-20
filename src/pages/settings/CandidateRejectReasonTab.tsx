@@ -16,42 +16,42 @@ const DEFAULT_REJECT_REASONS: RejectReason[] = [
   {
     id: '1',
     title: 'Skill Set & Experience Mismatch',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'DigiHRMS',
     description: 'Candidate technical skills or years of relevant experience do not align with job opening requirements.',
     isActive: true,
   },
   {
     id: '2',
     title: 'Salary Expectation Exceeds Budget',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'DigiHRMS',
     description: 'Candidate current CTC or expected CTC exceeds the approved budget band for this position.',
     isActive: true,
   },
   {
     id: '3',
     title: 'Notice Period Too Long',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'DigiHRMS',
     description: 'Candidate notice period exceeds required immediate joiner timeframe (e.g. > 60 days).',
     isActive: true,
   },
   {
     id: '4',
     title: 'Did Not Clear Technical Assessment',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'DigiHRMS',
     description: 'Candidate scored below the passing cutoff on coding or domain technical interview round.',
     isActive: true,
   },
   {
     id: '5',
     title: 'Candidate Withdrew / Accepted Counter Offer',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'DigiHRMS',
     description: 'Candidate declined further rounds or accepted an alternative external offer.',
     isActive: true,
   },
   {
     id: '6',
     title: 'Location / Shift Incompatibility',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'DigiHRMS',
     description: 'Candidate unwilling or unable to relocate or work required operational shifts.',
     isActive: true,
   },
@@ -76,7 +76,7 @@ export function CandidateRejectReasonTab() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Dynamically resolve only companies created inside this specific organization
+  // Dynamically resolve company and branch names directly from backend APIs
   const availableCompanies = useMemo(() => {
     const list: string[] = [];
     const add = (val?: string) => {
@@ -86,21 +86,28 @@ export function CandidateRejectReasonTab() {
       }
     };
 
-    add(settings?.company_name);
-    add(settings?.badge_company);
-    add(settings?.currency_company);
+    // 1. Company Name from HR Settings (e.g. DigiHRMS)
+    if (settings?.company_name) {
+      add(settings.company_name);
+    }
+    if (settings?.badge_company) {
+      add(settings.badge_company);
+    }
 
+    // 2. Organization branches (e.g. G7synogen, Vysor Technologies)
     const branchList = Array.isArray(branchesData)
       ? branchesData
       : Array.isArray((branchesData as any)?.results)
       ? (branchesData as any).results
       : [];
     branchList.forEach((b: any) => {
-      add(b?.name);
+      if (b?.name) {
+        add(b.name);
+      }
     });
 
     if (list.length === 0) {
-      list.push('G7 Synergon PVT. LTD. CRO');
+      list.push(settings?.company_name || 'DigiHRMS');
     }
 
     return list;
@@ -112,10 +119,15 @@ export function CandidateRejectReasonTab() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Ensure company field exists on older stored items
           return parsed.map((item: any) => ({
             ...item,
-            company: item.company || 'G7 Synergon PVT. LTD. CRO',
+            company:
+              !item.company ||
+              item.company.includes('Synergon') ||
+              item.company === 'G7 Synergon PVT. LTD. CRO' ||
+              item.company === 'G7synogen'
+                ? 'DigiHRMS'
+                : item.company,
           }));
         }
       }
@@ -125,13 +137,37 @@ export function CandidateRejectReasonTab() {
     return DEFAULT_REJECT_REASONS;
   });
 
+  // Automatically sync any legacy stored company names with actual dynamic company name
+  useEffect(() => {
+    const currentCompany = settings?.company_name || 'DigiHRMS';
+    const needsUpdate = reasons.some(
+      (r) =>
+        !r.company ||
+        r.company.includes('Synergon') ||
+        r.company === 'G7 Synergon PVT. LTD. CRO' ||
+        r.company === 'G7synogen'
+    );
+    if (needsUpdate) {
+      const updated = reasons.map((r) =>
+        !r.company ||
+        r.company.includes('Synergon') ||
+        r.company === 'G7 Synergon PVT. LTD. CRO' ||
+        r.company === 'G7synogen'
+          ? { ...r, company: currentCompany }
+          : r
+      );
+      setReasons(updated);
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+    }
+  }, [settings?.company_name]);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingReason, setEditingReason] = useState<RejectReason | null>(null);
 
   // Form states matching Horilla / DigiHRMS modal standard
   const [formTitle, setFormTitle] = useState('');
-  const [formCompany, setFormCompany] = useState(() => availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+  const [formCompany, setFormCompany] = useState(() => availableCompanies[0] || 'DigiHRMS');
   const [formDescription, setFormDescription] = useState('');
   const [formIsActive, setFormIsActive] = useState(true);
 
@@ -162,7 +198,7 @@ export function CandidateRejectReasonTab() {
   const handleOpenAdd = () => {
     setEditingReason(null);
     setFormTitle('');
-    setFormCompany(availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+    setFormCompany(availableCompanies[0] || 'DigiHRMS');
     setFormDescription('');
     setFormIsActive(true);
     setModalOpen(true);
@@ -171,7 +207,11 @@ export function CandidateRejectReasonTab() {
   const handleOpenEdit = (reason: RejectReason) => {
     setEditingReason(reason);
     setFormTitle(reason.title);
-    setFormCompany(reason.company || availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+    setFormCompany(
+      reason.company === 'G7 Synergon PVT. LTD. CRO'
+        ? 'G7synogen'
+        : reason.company || availableCompanies[0] || 'DigiHRMS'
+    );
     setFormDescription(reason.description);
     setFormIsActive(reason.isActive);
     setModalOpen(true);
@@ -193,7 +233,7 @@ export function CandidateRejectReasonTab() {
     e.preventDefault();
     if (!formTitle.trim()) return;
 
-    const companyToSave = formCompany || availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO';
+    const companyToSave = formCompany || availableCompanies[0] || 'DigiHRMS';
 
     if (editingReason) {
       const updated = reasons.map((r) =>
@@ -279,23 +319,23 @@ export function CandidateRejectReasonTab() {
       </div>
 
       {/* Table of Reasons with Company column */}
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs">
-        <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
-          <thead className="bg-gray-50/70 text-xs font-semibold text-gray-900">
+      <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-xs">
+        <table className="w-full min-w-[700px] divide-y divide-gray-200 text-left text-sm table-fixed">
+          <thead className="bg-gray-50/80 text-xs font-semibold text-gray-700 uppercase tracking-wider">
             <tr>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="w-[30%] px-5 py-3.5 font-bold text-gray-900">
                 Reject Reason
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
-                Company
+              <th scope="col" className="w-[20%] px-4 py-3.5 font-bold text-gray-900">
+                Company / Branch
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="w-[32%] px-4 py-3.5 font-bold text-gray-900">
                 Description
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="w-[10%] px-4 py-3.5 font-bold text-gray-900 text-center">
                 Status
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900 text-right">
+              <th scope="col" className="w-[10%] px-5 py-3.5 font-bold text-gray-900 text-right">
                 Actions
               </th>
             </tr>
@@ -310,12 +350,18 @@ export function CandidateRejectReasonTab() {
             ) : (
               filteredReasons.map((reason) => (
                 <tr key={reason.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-gray-900">{reason.title}</td>
-                  <td className="px-6 py-4 text-gray-600">{reason.company}</td>
-                  <td className="px-6 py-4 text-gray-500 max-w-sm truncate" title={reason.description}>
-                    {reason.description || '—'}
+                  <td className="px-5 py-3.5 font-medium text-gray-900 break-words">
+                    {reason.title}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-3.5 text-gray-600 font-medium break-words">
+                    <span className="inline-block rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-800">
+                      {reason.company}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3.5 text-gray-500 text-xs leading-relaxed" title={reason.description}>
+                    <p className="line-clamp-2">{reason.description || '—'}</p>
+                  </td>
+                  <td className="px-4 py-3.5 text-center">
                     <button
                       type="button"
                       onClick={() => handleToggleActive(reason.id)}
@@ -329,8 +375,8 @@ export function CandidateRejectReasonTab() {
                       {reason.isActive ? 'Active' : 'Inactive'}
                     </button>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50/50 p-0.5">
+                  <td className="px-5 py-3.5 text-right whitespace-nowrap">
+                    <div className="inline-flex items-center rounded-lg border border-gray-200 bg-gray-50/80 p-0.5 shadow-2xs">
                       <button
                         type="button"
                         onClick={() => handleOpenEdit(reason)}
@@ -343,7 +389,7 @@ export function CandidateRejectReasonTab() {
                       <button
                         type="button"
                         onClick={() => setDeleteTarget(reason)}
-                        className="rounded p-1.5 text-gray-400 hover:bg-white hover:text-blue-600 hover:shadow-xs transition-colors"
+                        className="rounded p-1.5 text-gray-400 hover:bg-white hover:text-rose-600 hover:shadow-xs transition-colors"
                         title="Delete reason"
                       >
                         <TrashIcon className="h-4 w-4" />
@@ -396,7 +442,7 @@ export function CandidateRejectReasonTab() {
                 {/* Field 2: Company */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-900 mb-1.5">
-                    Company:
+                    Company / Branch:
                   </label>
                   <div className="relative">
                     <select

@@ -15,22 +15,22 @@ const DEFAULT_WORK_TYPES: WorkTypeItem[] = [
   {
     id: '1',
     name: 'Full-time On-site',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
   {
     id: '2',
     name: 'Remote / Work From Home',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
   {
     id: '3',
     name: 'Hybrid',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
   {
     id: '4',
     name: 'Field & Client Site',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
 ];
 
@@ -81,7 +81,7 @@ export function WorkTypeTab() {
 
     // 3. Fallback to organization company name if none loaded yet
     if (list.length === 0) {
-      list.push('G7 Synergon PVT. LTD. CRO');
+      list.push(settings?.company_name || 'digiHRMS');
     }
 
     return list;
@@ -92,7 +92,15 @@ export function WorkTypeTab() {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((item: any) => ({
+            ...item,
+            company:
+              !item.company || item.company.includes('Synergon') || item.company.includes('G7')
+                ? 'digiHRMS'
+                : item.company,
+          }));
+        }
       }
     } catch {
       // fallback
@@ -106,7 +114,7 @@ export function WorkTypeTab() {
 
   // Form states matching screenshot
   const [formWorkType, setFormWorkType] = useState('');
-  const [formCompany, setFormCompany] = useState(() => availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+  const [formCompany, setFormCompany] = useState(() => availableCompanies[0] || 'digiHRMS');
 
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<WorkTypeItem | null>(null);
@@ -135,14 +143,18 @@ export function WorkTypeTab() {
   const handleOpenAdd = () => {
     setEditingItem(null);
     setFormWorkType('');
-    setFormCompany(availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+    setFormCompany(availableCompanies[0] || 'digiHRMS');
     setModalOpen(true);
   };
 
   const handleOpenEdit = (item: WorkTypeItem) => {
     setEditingItem(item);
     setFormWorkType(item.name);
-    setFormCompany(item.company || availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+    setFormCompany(
+      !item.company || item.company.includes('Synergon') || item.company.includes('G7')
+        ? availableCompanies[0] || 'digiHRMS'
+        : item.company
+    );
     setModalOpen(true);
   };
 
@@ -150,7 +162,7 @@ export function WorkTypeTab() {
     e.preventDefault();
     if (!formWorkType.trim()) return;
 
-    const companyToSave = formCompany || availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO';
+    const companyToSave = formCompany || availableCompanies[0] || 'digiHRMS';
 
     if (editingItem) {
       const updated = workTypes.map((w) =>

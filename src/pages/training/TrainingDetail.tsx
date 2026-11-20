@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { useTrainingEvent, useEnrollInEvent, useCompleteEnrollment } from '@/hooks/useTraining';
 import type { TrainingEventStatus, EnrollmentStatus } from '@/types/training';
+import { formatDate } from '@/utils/formatters';
 
 const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   draft: { label: 'Draft', className: 'bg-gray-100 text-gray-800' },
@@ -39,11 +40,6 @@ function getEnrollmentBadge(status?: string) {
   };
 }
 
-function formatDate(dateStr?: string | null): string {
-  if (!dateStr) return '—';
-  const d = new Date(dateStr);
-  return isNaN(d.getTime()) ? '—' : d.toLocaleDateString();
-}
 
 interface TrainingDetailProps {
   eventId: string;

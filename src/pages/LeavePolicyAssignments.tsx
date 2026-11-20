@@ -7,6 +7,7 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { formatDate } from '@/utils/formatters';
 
 const ENDPOINT = '/api/v1/leaves/policy-assignments/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -18,7 +19,8 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
   { key: 'leave_policy_name', header: 'Leave Policy', sortable: true, render: (v: unknown) => v ? String(v) : '–' },
   { key: 'assignment_type', header: 'Assignment Type', sortable: true, render: (v: unknown) => v ? String(v) : '–' },
   { key: 'target_name', header: 'Assigned To', sortable: false, render: (v: unknown) => v ? String(v) : '–' },
-  { key: 'effective_from', header: 'Effective From', sortable: true, render: (v: unknown) => v ? String(v) : '–' },
+  { key: 'effective_from', header: 'Effective From', sortable: true, render: (v: unknown) => v ? formatDate(v as string) : '–' },
+  { key: 'effective_to', header: 'Effective To', sortable: true, render: (v: unknown) => v ? formatDate(v as string) : '–' },
   { key: 'is_active', header: 'Active', sortable: true, render: (v: unknown) => (v ? 'Yes' : 'No') },
 ];
 
@@ -37,6 +39,7 @@ const createFields: FieldConfig[] = [
   { key: 'department', label: 'Department', type: 'select', optionsEndpoint: '/api/v1/departments/' },
   { key: 'grade', label: 'Grade', type: 'select', optionsEndpoint: '/api/v1/employee-grades/' },
   { key: 'effective_from', label: 'Effective From', type: 'date', required: true },
+  { key: 'effective_to', label: 'Effective To', type: 'date' },
 ];
 
 export default function LeavePolicyAssignments() {

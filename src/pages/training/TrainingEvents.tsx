@@ -18,6 +18,7 @@ import {
 } from '@/config/crud/trainingEvents';
 import { trainingWorkflow } from '@/config/workflows/training';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
+import { formatDate } from '@/utils/formatters';
 import { WorkflowEngine } from '@/components/WorkflowEngine';
 import { CreateButton } from '@/components/ActionButton';
 import { CrudModal } from '@/components/CrudModal';
@@ -29,27 +30,31 @@ import type { ColumnDef } from '@/types/datatable';
 
 const createFields: FieldConfig[] = [
   { key: 'name', label: 'Event Name', type: 'text', required: true },
-  { key: 'event_type', label: 'Event Type', type: 'select', required: true, options: [
-    { value: 'workshop', label: 'Workshop' },
-    { value: 'seminar', label: 'Seminar' },
-    { value: 'webinar', label: 'Webinar' },
-    { value: 'certification', label: 'Certification' },
-    { value: 'on_the_job', label: 'On the Job' },
-    { value: 'self_paced', label: 'Self-Paced' },
-    { value: 'conference', label: 'Conference' },
-  ]},
+  {
+    key: 'event_type', label: 'Event Type', type: 'select', required: true, options: [
+      { value: 'workshop', label: 'Workshop' },
+      { value: 'seminar', label: 'Seminar' },
+      { value: 'webinar', label: 'Webinar' },
+      { value: 'certification', label: 'Certification' },
+      { value: 'on_the_job', label: 'On the Job' },
+      { value: 'self_paced', label: 'Self-Paced' },
+      { value: 'conference', label: 'Conference' },
+    ]
+  },
   { key: 'trainer', label: 'Trainer Name', type: 'text', placeholder: 'Trainer name' },
   { key: 'start_date', label: 'Start Date', type: 'date', required: true },
   { key: 'end_date', label: 'End Date', type: 'date', required: true },
   { key: 'location', label: 'Location', type: 'text', placeholder: 'Location or online link' },
   { key: 'max_participants', label: 'Max Participants', type: 'number', placeholder: '30', required: true },
-  { key: 'status', label: 'Status', type: 'select', required: true, options: [
-    { value: 'draft', label: 'Draft' },
-    { value: 'scheduled', label: 'Scheduled' },
-    { value: 'in_progress', label: 'In Progress' },
-    { value: 'completed', label: 'Completed' },
-    { value: 'cancelled', label: 'Cancelled' },
-  ]},
+  {
+    key: 'status', label: 'Status', type: 'select', required: true, options: [
+      { value: 'draft', label: 'Draft' },
+      { value: 'scheduled', label: 'Scheduled' },
+      { value: 'in_progress', label: 'In Progress' },
+      { value: 'completed', label: 'Completed' },
+      { value: 'cancelled', label: 'Cancelled' },
+    ]
+  },
 ];
 
 const trainingCrud = createCrudHooks<TrainingEvent>({
@@ -57,14 +62,6 @@ const trainingCrud = createCrudHooks<TrainingEvent>({
   endpoints: trainingEventsCrudConfig.endpoints,
 });
 
-function formatDate(dateStr: string): string {
-  if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
 
 function useTrainingColumns(): ColumnDef<TrainingEvent>[] {
   return useMemo(

@@ -19,6 +19,12 @@ import { ColumnVisibilityMenu } from './ColumnVisibilityMenu';
 import { BulkActionToolbar } from './BulkActionToolbar';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
+import {
+  formatDate,
+  formatDateTime,
+  isIsoDateString,
+  isIsoDateTimeString,
+} from '@/utils/formatters';
 
 export type SortDirection = 'asc' | 'desc' | null;
 
@@ -38,6 +44,39 @@ function getNestedValue<T>(row: T, key: string): unknown {
     value = (value as Record<string, unknown>)[k];
   }
   return value;
+}
+
+/**
+ * Automatically format cell values when no custom col.render is provided,
+ * detecting ISO date / datetime strings according to HR Settings.
+ */
+function formatAutoCellValue(value: unknown, key: string): React.ReactNode {
+  if (value === null || value === undefined || value === '') {
+    return '—';
+  }
+  if (typeof value === 'boolean') {
+    return value ? 'Yes' : 'No';
+  }
+  const keyLower = key.toLowerCase();
+  if (isIsoDateString(value)) {
+    return formatDate(value as string);
+  }
+  if (isIsoDateTimeString(value)) {
+    if (keyLower.endsWith('_at') || keyLower.includes('time') || keyLower.includes('datetime')) {
+      return formatDateTime(value as string);
+    }
+    return formatDate(value as string);
+  }
+  if (
+    keyLower === 'date' ||
+    keyLower.endsWith('_date') ||
+    keyLower.startsWith('date_')
+  ) {
+    if (typeof value === 'string' && value.length >= 8 && !isNaN(Date.parse(value))) {
+      return formatDate(value);
+    }
+  }
+  return String(value);
 }
 
 export function DataTable<T extends Record<string, unknown>>({
@@ -405,7 +444,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   {selectable && rowId && renderCheckboxCell(rowId)}
                   {visibleColumns.map((col) => {
                     const value = getNestedValue(row, String(col.key));
-                    const rendered = col.render ? col.render(value, row) : String(value ?? '');
+                    const rendered = col.render ? col.render(value, row) : formatAutoCellValue(value, String(col.key));
                     return (
                       <td
                         key={String(col.key)}

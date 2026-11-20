@@ -23,6 +23,7 @@ import { Can } from '@/components/Can';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
+import { formatDate } from '@/utils/formatters';
 import type { CrudEndpoints } from '@/hooks/useCrud';
 
 const createFields: FieldConfig[] = [
@@ -100,13 +101,7 @@ function useSettlementColumns(): ColumnDef<Settlement>[] {
         sortable: true,
         render: (value: unknown) => (
           <span className="text-sm text-gray-700">
-            {value
-              ? new Date(value as string).toLocaleDateString('en-IN', {
-                  day: '2-digit',
-                  month: 'short',
-                  year: 'numeric',
-                })
-              : '—'}
+            {value ? formatDate(value as string) : '—'}
           </span>
         ),
       },

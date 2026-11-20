@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLeaveTypes, useLeaveBalances, useApplyLeave, useCalculateLeaveDays } from '@/hooks/useLeaves';
 import { useHRSettings } from '@/hooks/useHRSettings';
 import { LeaveBalanceCard } from './components/LeaveBalanceCard';
-import { formatCurrency } from '@/utils/formatters';
+import { formatCurrency, formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
 
 interface LopPolicy {
@@ -312,7 +312,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
                             }`}
                             title={item.reason || 'Working day'}
                           >
-                            <span className="font-semibold">{item.date.slice(5)} ({item.day_name.slice(0, 3)}):</span>
+                            <span className="font-semibold">{formatDate(item.date)} ({item.day_name.slice(0, 3)}):</span>
                             <span>{item.is_working_day ? 'Leave (Deducted)' : item.reason || 'Week Off (Excluded)'}</span>
                           </div>
                         ))}

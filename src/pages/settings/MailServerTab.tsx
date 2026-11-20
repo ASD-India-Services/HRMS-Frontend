@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { CheckIcon, LoaderIcon, AlertCircleIcon, MailIcon, SendIcon, ShieldCheckIcon, ShieldAlertIcon } from './SettingsIcons';
 import api from '@/lib/api';
 import { EMAIL_CONFIG } from '@/lib/endpoints';
+import { formatDateTime } from '@/utils/formatters';
 
 interface EmailConfigData {
   configured: boolean;
@@ -343,7 +344,7 @@ export function MailServerTab() {
 
         {emailConfig?.last_tested_at && (
           <p className="text-xs text-gray-400">
-            Last successful delivery test: {new Date(emailConfig.last_tested_at).toLocaleString()}
+            Last successful delivery test: {formatDateTime(emailConfig.last_tested_at)}
           </p>
         )}
       </div>

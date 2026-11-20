@@ -43,6 +43,7 @@ export default function CareersEmbedWidget() {
   const isIframe = typeof window !== 'undefined' && window.self !== window.top;
   const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const hideHeader = urlParams?.get('hide_header') === 'true';
+  const tenantParam = urlParams?.get('tenant') || '';
 
   // Notify parent window of height changes for iframe auto-resizing
   useEffect(() => {
@@ -68,9 +69,13 @@ export default function CareersEmbedWidget() {
 
   // Fetch live public jobs without auth
   const { data, isLoading, isError, refetch } = useQuery<PublicJobsResponse>({
-    queryKey: ['public-careers-embed-jobs'],
+    queryKey: ['public-careers-embed-jobs', tenantParam],
     queryFn: async () => {
-      const res = await api.get('/api/v1/recruitment/public/jobs/');
+      const url = tenantParam
+        ? `/api/v1/recruitment/public/jobs/?tenant=${encodeURIComponent(tenantParam)}`
+        : '/api/v1/recruitment/public/jobs/';
+      const headers = tenantParam ? { 'X-Tenant-Id': tenantParam } : {};
+      const res = await api.get(url, { headers });
       return res.data;
     },
     staleTime: 60 * 1000,
@@ -107,10 +112,14 @@ export default function CareersEmbedWidget() {
   const applyMutation = useMutation({
     mutationFn: async (payload: typeof form) => {
       if (!selectedJob) throw new Error('No job selected');
-      const res = await api.post('/api/v1/recruitment/public/apply/', {
+      const url = tenantParam
+        ? `/api/v1/recruitment/public/apply/?tenant=${encodeURIComponent(tenantParam)}`
+        : '/api/v1/recruitment/public/apply/';
+      const headers = tenantParam ? { 'X-Tenant-Id': tenantParam } : {};
+      const res = await api.post(url, {
         job_opening: selectedJob.id,
         ...payload,
-      });
+      }, { headers });
       return res.data;
     },
     onSuccess: () => {
@@ -309,10 +318,12 @@ export default function CareersEmbedWidget() {
           </div>
         )}
 
-        {/* Footer info */}
-        <footer className="mt-12 text-center text-xs text-slate-400 border-t border-slate-200 pt-6">
-          <p>© {new Date().getFullYear()} {companyName}. All rights reserved.</p>
-        </footer>
+        {/* Footer info (hidden when embedded in parent website) */}
+        {!isIframe && !hideHeader && (
+          <footer className="mt-12 text-center text-xs text-slate-400 border-t border-slate-200 pt-6">
+            <p>© {new Date().getFullYear()} {companyName}. All rights reserved.</p>
+          </footer>
+        )}
       </div>
 
       {/* Job Details & Apply Modal */}

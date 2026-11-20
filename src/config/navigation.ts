@@ -256,6 +256,7 @@ export const navigationConfig: NavGroup[] = [
   {
     label: 'Performance',
     items: [
+      { label: 'Dashboard', href: '/performance/dashboard', icon: ICONS.dashboard, requiredPermission: 'appraisals.view', requiredAnyPermission: ['appraisals.view', 'goals.view', 'kras.view', 'performance_feedback.view'], featureFlag: 'appraisals_enabled' },
       { label: 'Appraisals', href: '/appraisals', icon: ICONS.appraisals, requiredPermission: 'appraisals.view', featureFlag: 'appraisals_enabled' },
       { label: 'KRAs', href: '/kras', icon: ICONS.kras, requiredPermission: 'kras.view', featureFlag: 'appraisals_enabled' },
       { label: 'Templates', href: '/appraisal-templates', icon: ICONS.jobTemplates, requiredPermission: 'appraisal_templates.view', featureFlag: 'appraisals_enabled' },
@@ -309,29 +310,28 @@ export const navigationConfig: NavGroup[] = [
     label: 'Help Desk',
     items: [
       {
-        label: 'Helpdesk Tags',
-        href: '/settings/helpdesk-tags',
-        icon: ICONS.helpdesk,
-        requiredPermission: null,
-        requiredAnyPermission: null,
+        label: 'FAQs',
+        href: '/helpdesk/faq-categories',
+        icon: ICONS.faqs,
+        requiredPermission: 'faq_categories.view',
+        requiredAnyPermission: ['faq_categories.view', 'faqs.view'],
         featureFlag: null,
       },
     ],
   },
   {
-    label: 'Permissions',
-    items: [
-      { label: 'Dashboard', href: '/permissions/dashboard', icon: ICONS.dashboard, requiredPermission: 'roles.manage', featureFlag: null },
-      { label: 'Roles & Permissions', href: '/admin/roles', icon: ICONS.settings, requiredPermission: 'roles.manage', featureFlag: null },
-    ],
-  },
-  {
     label: 'Admin',
     items: [
-      { label: 'Dashboard', href: '/admin/permissions/dashboard', icon: ICONS.dashboard, requiredPermission: 'roles.manage', featureFlag: null },
       { label: 'Roles & Permissions', href: '/admin/roles', icon: ICONS.settings, requiredPermission: 'roles.manage', featureFlag: null },
-      { label: 'Settings', href: '/settings/general-settings', icon: ICONS.settings, requiredPermission: 'hr_settings.view', featureFlag: null },
-      { label: 'Audit Logs', href: '/audit-logs', icon: ICONS.auditLogs, requiredPermission: 'audit_logs.view', featureFlag: null },
+      {
+        label: 'HR Settings',
+        href: '/hr-settings',
+        icon: ICONS.hrSettings,
+        requiredPermission: 'roles.manage',
+        requiredAnyPermission: ['roles.manage', 'hr_settings.view', 'hr_settings.manage'],
+        featureFlag: null,
+      },
+      { label: 'Audit Logs', href: '/audit-logs', icon: ICONS.auditLogs, requiredPermission: 'roles.manage', requiredAnyPermission: ['roles.manage', 'audit_logs.view'], featureFlag: null },
     ],
   },
 ];

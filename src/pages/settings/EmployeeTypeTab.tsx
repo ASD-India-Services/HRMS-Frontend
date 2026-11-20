@@ -12,11 +12,11 @@ export interface EmployeeTypeItem {
 }
 
 const DEFAULT_EMPLOYEE_TYPES: EmployeeTypeItem[] = [
-  { id: '1', name: 'Permanent / Full-Time', company: 'G7 Synergon PVT. LTD. CRO' },
-  { id: '2', name: 'Contract / Consultant', company: 'G7 Synergon PVT. LTD. CRO' },
-  { id: '3', name: 'Probationary', company: 'G7 Synergon PVT. LTD. CRO' },
-  { id: '4', name: 'Internship', company: 'G7 Synergon PVT. LTD. CRO' },
-  { id: '5', name: 'Part-Time', company: 'G7 Synergon PVT. LTD. CRO' },
+  { id: '1', name: 'Permanent / Full-Time', company: 'digiHRMS' },
+  { id: '2', name: 'Contract / Consultant', company: 'digiHRMS' },
+  { id: '3', name: 'Probationary', company: 'digiHRMS' },
+  { id: '4', name: 'Internship', company: 'digiHRMS' },
+  { id: '5', name: 'Part-Time', company: 'digiHRMS' },
 ];
 
 const LOCAL_STORAGE_KEY = 'hrms_employee_types_settings';
@@ -60,7 +60,7 @@ export function EmployeeTypeTab() {
     });
 
     if (list.length === 0) {
-      list.push('G7 Synergon PVT. LTD. CRO');
+      list.push(settings?.company_name || 'digiHRMS');
     }
 
     return list;
@@ -71,7 +71,15 @@ export function EmployeeTypeTab() {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((item: any) => ({
+            ...item,
+            company:
+              !item.company || item.company.includes('Synergon') || item.company.includes('G7')
+                ? 'digiHRMS'
+                : item.company,
+          }));
+        }
       }
     } catch {
       // fallback
@@ -84,7 +92,7 @@ export function EmployeeTypeTab() {
   const [editingItem, setEditingItem] = useState<EmployeeTypeItem | null>(null);
 
   const [formEmployeeType, setFormEmployeeType] = useState('');
-  const [formCompany, setFormCompany] = useState(() => availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+  const [formCompany, setFormCompany] = useState(() => availableCompanies[0] || 'digiHRMS');
   const [deleteTarget, setDeleteTarget] = useState<EmployeeTypeItem | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -108,14 +116,18 @@ export function EmployeeTypeTab() {
   const handleOpenAdd = () => {
     setEditingItem(null);
     setFormEmployeeType('');
-    setFormCompany(availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+    setFormCompany(availableCompanies[0] || 'digiHRMS');
     setModalOpen(true);
   };
 
   const handleOpenEdit = (item: EmployeeTypeItem) => {
     setEditingItem(item);
     setFormEmployeeType(item.name);
-    setFormCompany(item.company || availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+    setFormCompany(
+      !item.company || item.company.includes('Synergon') || item.company.includes('G7')
+        ? availableCompanies[0] || 'digiHRMS'
+        : item.company
+    );
     setModalOpen(true);
   };
 
@@ -123,7 +135,7 @@ export function EmployeeTypeTab() {
     e.preventDefault();
     if (!formEmployeeType.trim()) return;
 
-    const companyToSave = formCompany || availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO';
+    const companyToSave = formCompany || availableCompanies[0] || 'digiHRMS';
 
     if (editingItem) {
       const updated = employeeTypes.map((w) =>

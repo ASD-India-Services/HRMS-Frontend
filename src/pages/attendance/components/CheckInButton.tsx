@@ -4,6 +4,7 @@ import type { Coordinates, GeolocationError } from '@/utils/geolocation'
 import { useCheckIn, useCheckOut, getDeviceId } from '@/hooks/useAttendance'
 import type { AttendanceRecord } from '@/hooks/useAttendance'
 import api from '@/lib/api'
+import { formatDate } from '@/utils/formatters'
 
 interface CheckInButtonProps {
   /** Current attendance record for today */
@@ -232,12 +233,7 @@ export function CheckInButton({ record }: CheckInButtonProps) {
 
       {/* Current date display */}
       <p className="mt-4 text-sm text-gray-500">
-        {new Date().toLocaleDateString(undefined, {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })}
+        {formatDate(new Date())}
       </p>
 
       {/* Coordinates display */}
