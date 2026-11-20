@@ -9,6 +9,9 @@ import api from '@/lib/api';
 import { useLeaveApplications, useApproveLeave, useRejectLeave } from '@/hooks/useLeaves';
 import type { LeaveApplication } from '@/types/leave';
 import { formatDate } from '@/utils/formatters';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Textarea } from '@/components/ui/Textarea';
 
 interface ApprovalModalProps {
   application: LeaveApplication;
@@ -23,40 +26,39 @@ function ApprovalModal({ application, action, onClose, onConfirm, isPending }: A
   const employeeName = `${application.employee.first_name} ${application.employee.last_name}`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h3 id="modal-title" className="text-lg font-semibold text-gray-900 capitalize">
+    <Modal open onClose={onClose} labelledBy="modal-title" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+      <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+        <h3 id="modal-title" className="text-lg font-semibold text-ink-primary capitalize">
           {action} Leave Application
         </h3>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-ink-secondary">
           {action === 'approve' ? 'Approve' : 'Reject'} the leave request from{' '}
           <span className="font-medium">{employeeName}</span> for{' '}
           <span className="font-medium">{application.leave_type.name}</span> ({formatDate(application.from_date)} – {formatDate(application.to_date)}).
         </p>
 
         <div className="mt-4">
-          <label htmlFor="comments" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="comments" className="block text-sm font-medium text-ink-primary">
             Comments
           </label>
-          <textarea
+          <Textarea
             id="comments"
             value={comments}
             onChange={(e) => setComments(e.target.value)}
             rows={3}
             placeholder={`Add a comment for ${action === 'approve' ? 'approval' : 'rejection'}...`}
-            className="mt-1 block w-full resize-y rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="mt-1 resize-y"
           />
         </div>
 
         <div className="mt-5 flex justify-end gap-3">
-          <button
+          <Button variant="outlined" color="inherit"
             type="button"
             onClick={onClose}
             disabled={isPending}
-            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50"
           >
             Cancel
-          </button>
+          </Button>
           <button
             type="button"
             onClick={() => onConfirm(comments)}
@@ -71,7 +73,7 @@ function ApprovalModal({ application, action, onClose, onConfirm, isPending }: A
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -114,15 +116,15 @@ export function LeaveApproval() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Leave Approvals</h1>
-        <p className="mt-1 text-sm text-gray-600">Review and approve pending leave applications from your team</p>
+        <h1 className="text-2xl font-bold text-ink-primary">Leave Approvals</h1>
+        <p className="mt-1 text-sm text-ink-secondary">Review and approve pending leave applications from your team</p>
       </div>
 
       {/* Content */}
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 animate-pulse rounded-lg bg-gray-100" />
+            <div key={i} className="h-24 animate-pulse rounded-lg bg-surface-neutral" />
           ))}
         </div>
       ) : isError ? (
@@ -143,20 +145,20 @@ export function LeaveApproval() {
               return (
                 <div
                   key={application.id}
-                  className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+                  className="rounded-lg border border-divider bg-surface-paper p-4 shadow-sm"
                 >
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     {/* Employee & Leave Details */}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-semibold text-gray-900">{employeeName}</h3>
+                        <h3 className="text-sm font-semibold text-ink-primary">{employeeName}</h3>
                         {application.employee.department && (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-ink-secondary">
                             ({application.employee.department.name})
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 text-sm text-gray-600">
+                      <p className="mt-1 text-sm text-ink-secondary">
                         <span className="font-medium">{application.leave_type.name}</span>
                         {' · '}
                         {formatDate(application.from_date)} – {formatDate(application.to_date)}
@@ -164,7 +166,7 @@ export function LeaveApproval() {
                         <span className="font-medium">{application.total_days} day{application.total_days !== 1 ? 's' : ''}</span>
                       </p>
                       {application.reason && (
-                        <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+                        <p className="mt-1 text-sm text-ink-secondary line-clamp-2">
                           {application.reason}
                         </p>
                       )}
@@ -184,12 +186,11 @@ export function LeaveApproval() {
                           >
                             Approve
                           </button>
-                          <button
+                          <Button type="submit" color="error"
                             onClick={() => openModal(application, 'reject')}
-                            className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                           >
                             Reject
-                          </button>
+                          </Button>
                         </>
                       )}
                     </div>
@@ -201,30 +202,28 @@ export function LeaveApproval() {
 
           {/* Pagination */}
           <div className="mt-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-ink-secondary">
               {data.count} pending application{data.count !== 1 ? 's' : ''}
             </p>
             <div className="flex gap-2">
-              <button
+              <Button type="submit" variant="outlined" color="inherit"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!data.previous}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Previous
-              </button>
-              <button
+              </Button>
+              <Button type="submit" variant="outlined" color="inherit"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data.next}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next
-              </button>
+              </Button>
             </div>
           </div>
         </>
       ) : (
-        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-          <p className="text-sm text-gray-500">No pending leave applications to review.</p>
+        <div className="rounded-lg border border-divider bg-surface-paper p-8 text-center">
+          <p className="text-sm text-ink-secondary">No pending leave applications to review.</p>
         </div>
       )}
 
