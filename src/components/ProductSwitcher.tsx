@@ -35,14 +35,14 @@ export function ProductSwitcher() {
     {
       name: 'CRM',
       description: 'Leads & Sales',
-      color: 'bg-blue-500',
+      color: 'bg-info-main',
       url: CRM_URL,
       active: false,
     },
     {
       name: 'HRMS',
       description: 'HR & Payroll',
-      color: 'bg-purple-500',
+      color: 'bg-secondary-main',
       url: null, // current app
       active: true,
     },
@@ -53,7 +53,7 @@ export function ProductSwitcher() {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+        className="p-2 text-ink-secondary hover:text-ink-secondary rounded-lg hover:bg-grey-500/10 transition-colors"
         title="Switch Product"
         aria-label="Product Switcher"
         aria-expanded={isOpen}
@@ -66,11 +66,11 @@ export function ProductSwitcher() {
 
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 w-60 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 p-3 z-50"
+          className="absolute right-0 mt-2 w-60 rounded-card bg-surface-paper shadow-dropdown ring-1 ring-divider p-3 z-50"
           role="menu"
           aria-label="Product Switcher Menu"
         >
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2 px-2">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-disabled mb-2 px-2">
             Switch Product
           </h3>
           <div className="space-y-1">
@@ -86,26 +86,26 @@ export function ProductSwitcher() {
                 }}
                 className={`flex items-center gap-3 p-2.5 rounded-lg transition-colors ${
                   product.active
-                    ? 'bg-gray-100 ring-1 ring-primary-500/20'
-                    : 'hover:bg-gray-50'
+                    ? 'bg-grey-500/10 ring-1 ring-primary-main/20'
+                    : 'hover:bg-surface-neutral'
                 }`}
                 role="menuitem"
               >
                 <div
                   className={`w-9 h-9 ${product.color} rounded-lg flex items-center justify-center flex-shrink-0`}
                 >
-                  <span className="text-xs font-bold text-white">{product.name[0]}</span>
+                  <span className="text-xs font-bold text-primary-contrast">{product.name[0]}</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-900">{product.name}</span>
+                    <span className="text-sm font-medium text-ink-primary">{product.name}</span>
                     {product.active && (
-                      <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded-full bg-primary-100 text-primary-700">
+                      <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded-full bg-primary-lighter text-primary-dark">
                         Current
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500">{product.description}</p>
+                  <p className="text-xs text-ink-secondary">{product.description}</p>
                 </div>
               </a>
             ))}

@@ -15,7 +15,7 @@ import { MetricCardSkeleton } from './MetricCardSkeleton';
 function TrendIndicator({ direction, percentage }: { direction: 'up' | 'down' | 'flat'; percentage: number }) {
   if (direction === 'up') {
     return (
-      <span className="inline-flex items-center gap-0.5 text-sm font-medium text-green-600">
+      <span className="inline-flex items-center gap-0.5 text-sm font-medium text-success-dark">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-4 w-4"
@@ -36,7 +36,7 @@ function TrendIndicator({ direction, percentage }: { direction: 'up' | 'down' | 
 
   if (direction === 'down') {
     return (
-      <span className="inline-flex items-center gap-0.5 text-sm font-medium text-red-600">
+      <span className="inline-flex items-center gap-0.5 text-sm font-medium text-error-main">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-4 w-4"
@@ -57,7 +57,7 @@ function TrendIndicator({ direction, percentage }: { direction: 'up' | 'down' | 
 
   // flat
   return (
-    <span className="inline-flex items-center gap-0.5 text-sm font-medium text-gray-500">
+    <span className="inline-flex items-center gap-0.5 text-sm font-medium text-ink-secondary">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-4 w-4"
@@ -84,12 +84,12 @@ export function MetricCard({ title, value, icon, href, isLoading, trend }: Metri
   return (
     <Link
       to={href}
-      className="block rounded-lg border border-gray-200 bg-white p-5 transition-shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+      className="block rounded-lg border border-divider bg-surface-paper p-5 transition-shadow hover:shadow-z8 focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2"
       aria-label={`${title}: ${value ?? 'N/A'}`}
     >
       <div className="flex items-start justify-between">
         {/* Icon */}
-        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-xl" aria-hidden="true">
+        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-lighter text-xl" aria-hidden="true">
           {icon}
         </span>
 
@@ -98,12 +98,12 @@ export function MetricCard({ title, value, icon, href, isLoading, trend }: Metri
       </div>
 
       {/* Value */}
-      <p className="mt-4 text-2xl font-bold text-gray-900">
+      <p className="mt-4 text-2xl font-bold text-ink-primary">
         {value ?? '—'}
       </p>
 
       {/* Title */}
-      <p className="mt-1 text-sm text-gray-500">
+      <p className="mt-1 text-sm text-ink-secondary">
         {title}
       </p>
     </Link>

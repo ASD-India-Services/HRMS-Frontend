@@ -80,10 +80,10 @@ export function FormField({
   const errorId = `${fieldId}-error`;
   const helpId = `${fieldId}-help`;
 
-  const baseInputClasses = `w-full px-3 py-2 border rounded-md text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed ${
+  const baseInputClasses = `w-full px-3 py-2 border rounded text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary-main focus:border-primary-main disabled:bg-grey-500/10 disabled:cursor-not-allowed ${
     showError
-      ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-      : 'border-gray-300'
+      ? 'border-error-main focus:ring-error-main focus:border-error-main'
+      : 'border-grey-500/30'
   }`;
 
   const describedBy = [
@@ -95,21 +95,21 @@ export function FormField({
 
   return (
     <div className="flex flex-col gap-1" data-field={field.name}>
-      <label htmlFor={fieldId} className="text-sm font-medium text-gray-700">
+      <label htmlFor={fieldId} className="text-sm font-medium text-ink-secondary">
         {field.label}
-        {field.required && <span className="text-red-500 ml-0.5">*</span>}
+        {field.required && <span className="text-error-main ml-0.5">*</span>}
       </label>
 
       {renderInput()}
 
       {field.helpText && !showError && (
-        <p id={helpId} className="text-xs text-gray-500">
+        <p id={helpId} className="text-xs text-ink-secondary">
           {field.helpText}
         </p>
       )}
 
       {showError && (
-        <p id={errorId} className="text-xs text-red-600" role="alert">
+        <p id={errorId} className="text-xs text-error-main" role="alert">
           {error}
         </p>
       )}
@@ -185,7 +185,7 @@ export function FormField({
             aria-describedby={describedBy || undefined}
             aria-invalid={showError ? true : undefined}
           >
-            <div className="flex flex-wrap gap-2 p-2 border border-gray-300 rounded-md min-h-[40px]">
+            <div className="flex flex-wrap gap-2 p-2 border border-grey-500/30 rounded min-h-[40px]">
               {field.options?.map((opt) => {
                 const selected = Array.isArray(value) && value.includes(opt.value);
                 return (
@@ -196,7 +196,7 @@ export function FormField({
                     <input
                       type="checkbox"
                       checked={selected}
-                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      className="h-4 w-4 rounded border-grey-500/30 text-primary-main focus:ring-primary-main"
                       onChange={() => {
                         const current = Array.isArray(value) ? [...value] : [];
                         const nextValue = selected
@@ -205,12 +205,12 @@ export function FormField({
                         onChange(field.name, nextValue);
                       }}
                     />
-                    <span className="text-gray-700">{opt.label}</span>
+                    <span className="text-ink-secondary">{opt.label}</span>
                   </label>
                 );
               })}
               {(!field.options || field.options.length === 0) && (
-                <span className="text-sm text-gray-400">No options available</span>
+                <span className="text-sm text-ink-disabled">No options available</span>
               )}
             </div>
           </fieldset>
@@ -238,7 +238,7 @@ export function FormField({
             id={fieldId}
             name={field.name}
             type="file"
-            className={`${baseInputClasses} file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100`}
+            className={`${baseInputClasses} file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-primary-main/10 file:text-primary-dark hover:file:bg-primary-main/10`}
             onChange={(e) => {
               const files = e.target.files;
               onChange(field.name, files && files.length > 0 ? files[0] : null);
@@ -257,8 +257,8 @@ export function FormField({
             role="switch"
             aria-checked={Boolean(value)}
             aria-describedby={describedBy || undefined}
-            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-              value ? 'bg-indigo-600' : 'bg-gray-200'
+            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+              value ? 'bg-primary-main' : 'bg-surface-neutral'
             }`}
             onClick={() => {
               onChange(field.name, !value);
@@ -266,7 +266,7 @@ export function FormField({
             }}
           >
             <span
-              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow ring-0 transition duration-200 ease-in-out ${
                 value ? 'translate-x-5' : 'translate-x-0'
               }`}
             />

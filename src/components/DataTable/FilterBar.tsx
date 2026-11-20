@@ -73,7 +73,7 @@ export function FilterBar({ filters, values, onChange, onClearAll }: FilterBarPr
       {hasActiveFilters && onClearAll && (
         <button
           onClick={onClearAll}
-          className="text-sm text-gray-500 hover:text-gray-700 underline transition-colors"
+          className="text-sm text-ink-secondary hover:text-ink-secondary underline transition-colors"
         >
           Clear all
         </button>
@@ -109,7 +109,7 @@ function FilterInput({ config, value, onChange }: FilterInputProps) {
             value={value}
             onChange={(e) => onChange(e.target.value)}
             aria-label={config.label}
-            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="rounded border border-grey-500/30 bg-surface-paper px-3 py-1.5 text-sm text-ink-secondary shadow-card focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
           >
             <option value="">{config.label}</option>
             {config.options?.map((opt) => (
@@ -128,7 +128,7 @@ function FilterInput({ config, value, onChange }: FilterInputProps) {
             value={value}
             onChange={(e) => onChange(e.target.value)}
             aria-label={config.label}
-            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="rounded border border-grey-500/30 bg-surface-paper px-3 py-1.5 text-sm text-ink-secondary shadow-card focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
           >
             <option value="">{config.label}</option>
             {config.options?.map((opt) => (
@@ -151,9 +151,9 @@ function FilterInput({ config, value, onChange }: FilterInputProps) {
               onChange(`${e.target.value},${end}`);
             }}
             aria-label={`${config.label} start date`}
-            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="rounded border border-grey-500/30 bg-surface-paper px-3 py-1.5 text-sm text-ink-secondary shadow-card focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
           />
-          <span className="text-sm text-gray-500">to</span>
+          <span className="text-sm text-ink-secondary">to</span>
           <input
             type="date"
             value={value.split(',')[1] ?? ''}
@@ -162,7 +162,7 @@ function FilterInput({ config, value, onChange }: FilterInputProps) {
               onChange(`${start},${e.target.value}`);
             }}
             aria-label={`${config.label} end date`}
-            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="rounded border border-grey-500/30 bg-surface-paper px-3 py-1.5 text-sm text-ink-secondary shadow-card focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
           />
         </div>
       );
@@ -197,7 +197,7 @@ function SearchInput({ label, value, onChange, debounceMs }: SearchInputProps) {
   return (
     <div className="relative">
       <svg
-        className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+        className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-disabled"
         fill="none"
         viewBox="0 0 24 24"
         strokeWidth={2}
@@ -216,7 +216,7 @@ function SearchInput({ label, value, onChange, debounceMs }: SearchInputProps) {
         onChange={handleChange}
         placeholder={label}
         aria-label={label}
-        className="rounded-md border border-gray-300 bg-white pl-9 pr-3 py-1.5 text-sm text-gray-700 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 w-56"
+        className="rounded border border-grey-500/30 bg-surface-paper pl-9 pr-3 py-1.5 text-sm text-ink-secondary shadow-card placeholder:text-ink-disabled focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main w-56"
       />
     </div>
   );

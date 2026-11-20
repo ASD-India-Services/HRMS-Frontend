@@ -13,7 +13,8 @@
  * Requirements: 2.6
  */
 
-import { useEffect, useCallback } from 'react';
+import { Button } from '@/components/ui/Button';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
 
 export interface ConfirmDialogProps {
   /** Whether the dialog is visible */
@@ -47,97 +48,33 @@ export function ConfirmDialog({
   variant = 'default',
   isLoading = false,
 }: ConfirmDialogProps) {
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !isLoading) {
-        onClose();
-      }
-    },
-    [onClose, isLoading]
-  );
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
-    }
-  }, [isOpen, handleKeyDown]);
-
-  if (!isOpen) return null;
-
-  const confirmButtonClasses =
-    variant === 'destructive'
-      ? 'inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
-      : 'inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50';
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="confirm-dialog-title"
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      labelledBy="confirm-dialog-title"
+      size="sm"
+      closeOnEscape={!isLoading}
+      closeOnOverlayClick={!isLoading}
     >
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/50 transition-opacity"
-        onClick={isLoading ? undefined : onClose}
-        aria-hidden="true"
-      />
-
-      {/* Dialog panel */}
-      <div className="relative z-10 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h2
-          id="confirm-dialog-title"
-          className="text-lg font-semibold text-gray-900"
-        >
+      <ModalHeader>
+        <h2 id="confirm-dialog-title" className="text-lg font-bold text-ink-primary">
           {title}
         </h2>
+      </ModalHeader>
 
-        <p className="mt-2 text-sm text-gray-600">{message}</p>
+      <ModalBody>
+        <p className="text-sm text-ink-secondary">{message}</p>
+      </ModalBody>
 
-        {/* Actions */}
-        <div className="mt-6 flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isLoading}
-            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50"
-          >
-            {cancelLabel}
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isLoading}
-            className={confirmButtonClasses}
-          >
-            {isLoading && (
-              <svg
-                className="mr-2 h-4 w-4 animate-spin"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                />
-              </svg>
-            )}
-            {confirmLabel}
-          </button>
-        </div>
-      </div>
-    </div>
+      <ModalFooter>
+        <Button variant="outlined" color="inherit" onClick={onClose} disabled={isLoading}>
+          {cancelLabel}
+        </Button>
+        <Button color={variant === 'destructive' ? 'error' : 'primary'} onClick={onConfirm} loading={isLoading}>
+          {confirmLabel}
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 }

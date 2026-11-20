@@ -90,12 +90,12 @@ export function ColumnVisibilityMenu<T>({
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-ink-secondary bg-surface-paper border border-grey-500/30 rounded hover:bg-surface-neutral transition-colors"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
         <svg
-          className="h-4 w-4 text-gray-500"
+          className="h-4 w-4 text-ink-secondary"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -118,9 +118,9 @@ export function ColumnVisibilityMenu<T>({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-1 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-50 py-1">
-          <div className="px-3 py-2 border-b border-gray-100">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+        <div className="absolute right-0 mt-1 w-56 bg-surface-paper border border-divider rounded shadow-dropdown z-50 py-1">
+          <div className="px-3 py-2 border-b border-divider">
+            <p className="text-sm font-semibold text-ink-secondary">
               Toggle Columns
             </p>
           </div>
@@ -131,13 +131,13 @@ export function ColumnVisibilityMenu<T>({
               return (
                 <label
                   key={colKey}
-                  className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 cursor-pointer text-sm text-gray-700"
+                  className="flex items-center gap-2 px-3 py-1.5 hover:bg-surface-neutral cursor-pointer text-sm text-ink-secondary"
                 >
                   <input
                     type="checkbox"
                     checked={!isHidden}
                     onChange={() => handleToggle(colKey, isHidden)}
-                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    className="h-4 w-4 rounded border-grey-500/30 text-primary-main focus:ring-primary-main"
                   />
                   {col.header}
                 </label>

@@ -10,6 +10,12 @@
 import { useState, useEffect, useCallback, useMemo, type FormEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/Checkbox';
+import { Input } from '@/components/ui/Input';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
+import { Select } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -128,122 +134,92 @@ export function CrudModal({
     onSubmit(formData);
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="crud-modal-title">
-      {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/50 transition-opacity" onClick={onClose} aria-hidden="true" />
+    <Modal open={isOpen} onClose={onClose} labelledBy="crud-modal-title" size="md">
+      <ModalHeader>
+        <h2 id="crud-modal-title" className="text-lg font-bold text-ink-primary">{title}</h2>
+        <button
+          type="button"
+          className="rounded p-1 text-ink-disabled hover:bg-grey-500/10 hover:text-ink-secondary"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </ModalHeader>
 
-      {/* Modal panel */}
-      <div className="relative z-10 w-full max-w-lg rounded-xl bg-white shadow-xl">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-          <h2 id="crud-modal-title" className="text-lg font-semibold text-gray-900">{title}</h2>
-          <button
-            type="button"
-            className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-            onClick={onClose}
-            aria-label="Close"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit}>
-          <div className="max-h-[60vh] overflow-y-auto px-6 py-4 space-y-4">
-            {fields.map((field) => (
-              <div key={field.key}>
-                {field.type === 'checkbox' ? (
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                    <input
-                      type="checkbox"
-                      checked={!!formData[field.key]}
-                      onChange={(e) => handleChange(field.key, e.target.checked)}
-                      disabled={isLoading}
-                      className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                    />
+      <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+        <ModalBody className="max-h-[60vh] space-y-4">
+          {fields.map((field) => (
+            <div key={field.key}>
+              {field.type === 'checkbox' ? (
+                <label className="flex items-center gap-2 text-sm font-semibold text-ink-secondary">
+                  <Checkbox
+                    checked={!!formData[field.key]}
+                    onChange={(e) => handleChange(field.key, e.target.checked)}
+                    disabled={isLoading}
+                  />
+                  {field.label}
+                </label>
+              ) : (
+                <>
+                  <label htmlFor={`crud-field-${field.key}`} className="mb-1 block text-sm font-semibold text-ink-secondary">
                     {field.label}
+                    {field.required && <span className="ml-0.5 text-error-main">*</span>}
                   </label>
-                ) : (
-                  <>
-                    <label htmlFor={`crud-field-${field.key}`} className="block text-sm font-medium text-gray-700 mb-1">
-                      {field.label}
-                      {field.required && <span className="text-red-500 ml-0.5">*</span>}
-                    </label>
-                    {field.type === 'textarea' ? (
-                      <textarea
-                        id={`crud-field-${field.key}`}
-                        value={(formData[field.key] as string) ?? ''}
-                        onChange={(e) => handleChange(field.key, e.target.value)}
-                        placeholder={field.placeholder}
-                        disabled={isLoading}
-                        rows={3}
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
-                      />
-                    ) : field.type === 'select' ? (
-                      <AsyncSelectField
-                        field={field}
-                        value={(formData[field.key] as string) ?? ''}
-                        onChange={(val) => handleChange(field.key, val)}
-                        disabled={isLoading}
-                      />
-                    ) : field.type === 'time' ? (
-                      <TimePickerField
-                        value={(formData[field.key] as string) ?? ''}
-                        onChange={(val) => handleChange(field.key, val)}
-                        disabled={isLoading}
-                      />
-                    ) : (
-                      <input
-                        id={`crud-field-${field.key}`}
-                        type={field.type}
-                        value={(formData[field.key] as string) ?? ''}
-                        onChange={(e) => handleChange(field.key, field.type === 'number' ? (e.target.value === '' ? '' : Number(e.target.value)) : e.target.value)}
-                        placeholder={field.placeholder}
-                        disabled={isLoading}
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
-                      />
-                    )}
-                  </>
-                )}
-                {displayErrors[field.key] && (
-                  <p className="mt-1 text-xs text-red-600">{displayErrors[field.key]}</p>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Footer */}
-          <div className="flex items-center justify-end gap-3 border-t border-gray-200 px-6 py-4">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isLoading}
-              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="inline-flex items-center gap-1.5 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50"
-            >
-              {isLoading && (
-                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
+                  {field.type === 'textarea' ? (
+                    <Textarea
+                      id={`crud-field-${field.key}`}
+                      value={(formData[field.key] as string) ?? ''}
+                      onChange={(e) => handleChange(field.key, e.target.value)}
+                      placeholder={field.placeholder}
+                      disabled={isLoading}
+                      rows={3}
+                    />
+                  ) : field.type === 'select' ? (
+                    <AsyncSelectField
+                      field={field}
+                      value={(formData[field.key] as string) ?? ''}
+                      onChange={(val) => handleChange(field.key, val)}
+                      disabled={isLoading}
+                    />
+                  ) : field.type === 'time' ? (
+                    <TimePickerField
+                      value={(formData[field.key] as string) ?? ''}
+                      onChange={(val) => handleChange(field.key, val)}
+                      disabled={isLoading}
+                    />
+                  ) : (
+                    <Input
+                      id={`crud-field-${field.key}`}
+                      type={field.type}
+                      value={(formData[field.key] as string) ?? ''}
+                      onChange={(e) => handleChange(field.key, field.type === 'number' ? (e.target.value === '' ? '' : Number(e.target.value)) : e.target.value)}
+                      placeholder={field.placeholder}
+                      disabled={isLoading}
+                    />
+                  )}
+                </>
               )}
-              Save
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+              {displayErrors[field.key] && (
+                <p className="mt-1 text-xs text-error-main">{displayErrors[field.key]}</p>
+              )}
+            </div>
+          ))}
+        </ModalBody>
+
+        <ModalFooter>
+          <Button variant="outlined" color="inherit" onClick={onClose} disabled={isLoading}>
+            Cancel
+          </Button>
+          <Button type="submit" loading={isLoading}>
+            Save
+          </Button>
+        </ModalFooter>
+      </form>
+    </Modal>
   );
 }
 
@@ -284,36 +260,36 @@ function TimePickerField({
 
   return (
     <div className="flex items-center gap-2">
-      <select
+      <Select
         value={hour}
         onChange={(e) => updateTime(parseInt(e.target.value), minute, period)}
         disabled={disabled}
-        className="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-2 px-3"
+        className="w-auto"
       >
         {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
           <option key={h} value={h}>{h}</option>
         ))}
-      </select>
-      <span className="text-gray-500 font-medium">:</span>
-      <select
+      </Select>
+      <span className="font-semibold text-ink-secondary">:</span>
+      <Select
         value={minute}
         onChange={(e) => updateTime(hour, parseInt(e.target.value), period)}
         disabled={disabled}
-        className="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-2 px-3"
+        className="w-auto"
       >
         {Array.from({ length: 12 }, (_, i) => i * 5).map((m) => (
           <option key={m} value={m}>{String(m).padStart(2, '0')}</option>
         ))}
-      </select>
-      <select
+      </Select>
+      <Select
         value={period}
         onChange={(e) => updateTime(hour, minute, e.target.value as 'AM' | 'PM')}
         disabled={disabled}
-        className="rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm py-2 px-3 font-medium"
+        className="w-auto font-semibold"
       >
         <option value="AM">AM</option>
         <option value="PM">PM</option>
-      </select>
+      </Select>
     </div>
   );
 }
@@ -365,17 +341,16 @@ function AsyncSelectField({
   const options = field.options ?? fetchedOptions ?? [];
 
   return (
-    <select
+    <Select
       id={`crud-field-${field.key}`}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
     >
       <option value="">Select {field.label}</option>
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>{opt.label}</option>
       ))}
-    </select>
+    </Select>
   );
 }

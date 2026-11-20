@@ -74,9 +74,9 @@ export function Pagination({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-gray-200 bg-white">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-divider bg-surface-paper">
       {/* Results summary */}
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-ink-secondary">
         {totalCount === 0 ? (
           <span>No results</span>
         ) : (
@@ -92,14 +92,14 @@ export function Pagination({
       <div className="flex items-center gap-4">
         {/* Page size selector */}
         <div className="flex items-center gap-2">
-          <label htmlFor="page-size-select" className="text-sm text-gray-600">
+          <label htmlFor="page-size-select" className="text-sm text-ink-secondary">
             Rows per page:
           </label>
           <select
             id="page-size-select"
             value={pageSize}
             onChange={handlePageSizeChange}
-            className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="rounded border border-grey-500/30 bg-surface-paper px-2 py-1 text-sm text-ink-secondary shadow-card focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
           >
             {pageSizeOptions.map((size) => (
               <option key={size} value={size}>
@@ -116,10 +116,10 @@ export function Pagination({
             onClick={() => onPageChange(page - 1)}
             disabled={isFirstPage}
             aria-label="Previous page"
-            className={`inline-flex items-center rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
+            className={`inline-flex items-center rounded px-2 py-1.5 text-sm font-medium transition-colors ${
               isFirstPage
-                ? 'cursor-not-allowed text-gray-300'
-                : 'text-gray-700 hover:bg-gray-100'
+                ? 'cursor-not-allowed text-ink-disabled'
+                : 'text-ink-secondary hover:bg-grey-500/10'
             }`}
           >
             <svg
@@ -140,7 +140,7 @@ export function Pagination({
             pageNum === 'ellipsis' ? (
               <span
                 key={`ellipsis-${idx}`}
-                className="px-2 py-1.5 text-sm text-gray-500"
+                className="px-2 py-1.5 text-sm text-ink-secondary"
                 aria-hidden="true"
               >
                 …
@@ -151,10 +151,10 @@ export function Pagination({
                 onClick={() => onPageChange(pageNum)}
                 aria-label={`Page ${pageNum}`}
                 aria-current={pageNum === page ? 'page' : undefined}
-                className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors min-w-[2rem] ${
+                className={`inline-flex items-center justify-center rounded px-3 py-1.5 text-sm font-medium transition-colors min-w-[2rem] ${
                   pageNum === page
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-primary-main text-primary-contrast shadow-card'
+                    : 'text-ink-secondary hover:bg-grey-500/10'
                 }`}
               >
                 {pageNum}
@@ -167,10 +167,10 @@ export function Pagination({
             onClick={() => onPageChange(page + 1)}
             disabled={isLastPage}
             aria-label="Next page"
-            className={`inline-flex items-center rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
+            className={`inline-flex items-center rounded px-2 py-1.5 text-sm font-medium transition-colors ${
               isLastPage
-                ? 'cursor-not-allowed text-gray-300'
-                : 'text-gray-700 hover:bg-gray-100'
+                ? 'cursor-not-allowed text-ink-disabled'
+                : 'text-ink-secondary hover:bg-grey-500/10'
             }`}
           >
             <span className="sr-only sm:not-sr-only sm:mr-1">Next</span>

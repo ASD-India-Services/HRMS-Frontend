@@ -33,10 +33,16 @@ import type { ChartWidgetProps, ChartDataPoint, ChartResponse } from '@/types/da
 import { ChartSkeleton } from './ChartSkeleton';
 import { ChartError } from './ChartError';
 
-const CHART_COLORS = [
-  '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
-  '#06b6d4', '#ec4899', '#f97316', '#14b8a6', '#6366f1',
+const CHART_TOKENS = [
+  'primary-main', 'info-main', 'warning-main', 'error-main', 'secondary-main',
+  'success-main', 'primary-dark', 'info-dark', 'warning-dark', 'secondary-dark',
 ];
+
+/** Chart colours resolved from the design-token CSS variables (RGB channels in index.css). */
+function getChartColors(): string[] {
+  const style = getComputedStyle(document.documentElement);
+  return CHART_TOKENS.map((t) => `rgb(${style.getPropertyValue(`--${t}`).trim()})`);
+}
 
 // --- Error Boundary ---
 
@@ -92,8 +98,8 @@ function renderLineChart(data: ChartDataPoint[], height: number) {
         <Area
           type="monotone"
           dataKey="value"
-          stroke={CHART_COLORS[0]}
-          fill={CHART_COLORS[0]}
+          stroke={getChartColors()[0]}
+          fill={getChartColors()[0]}
           fillOpacity={0.2}
         />
       </AreaChart>
@@ -109,7 +115,7 @@ function renderBarChart(data: ChartDataPoint[], height: number) {
         <XAxis dataKey="label" tick={{ fontSize: 12 }} />
         <YAxis tick={{ fontSize: 12 }} />
         <Tooltip />
-        <Bar dataKey="value" fill={CHART_COLORS[0]} radius={[4, 4, 0, 0]} />
+        <Bar dataKey="value" fill={getChartColors()[0]} radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
@@ -130,7 +136,7 @@ function renderPieChart(data: ChartDataPoint[], height: number, innerRadius = 0)
           paddingAngle={2}
         >
           {data.map((_entry, index) => (
-            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+            <Cell key={`cell-${index}`} fill={getChartColors()[index % getChartColors().length]} />
           ))}
         </Pie>
         <Tooltip />
@@ -150,7 +156,7 @@ function renderFunnelChart(data: ChartDataPoint[], height: number) {
         <Tooltip />
         <Bar dataKey="value" radius={[0, 4, 4, 0]}>
           {data.map((_entry, index) => (
-            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+            <Cell key={`cell-${index}`} fill={getChartColors()[index % getChartColors().length]} />
           ))}
         </Bar>
       </BarChart>
@@ -223,8 +229,8 @@ export function ChartWidget(props: ChartWidgetProps) {
   const { title } = props;
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">{title}</h3>
+    <div className="rounded-lg border border-divider bg-surface-paper p-4 shadow-card">
+      <h3 className="mb-3 text-sm font-semibold text-ink-secondary">{title}</h3>
       <ChartErrorBoundary>
         <ChartWidgetInner {...props} />
       </ChartErrorBoundary>

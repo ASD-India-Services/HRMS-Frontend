@@ -29,7 +29,7 @@ export function ErrorState({
     >
       {/* Exclamation triangle icon */}
       <svg
-        className="h-12 w-12 text-red-400"
+        className="h-12 w-12 text-error-light"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -44,14 +44,14 @@ export function ErrorState({
         />
       </svg>
 
-      <h3 className="mt-4 text-lg font-semibold text-gray-900">{title}</h3>
-      <p className="mt-2 text-sm text-gray-500 max-w-sm">{message}</p>
+      <h3 className="mt-4 text-lg font-semibold text-ink-primary">{title}</h3>
+      <p className="mt-2 text-sm text-ink-secondary max-w-sm">{message}</p>
 
       {onRetry && (
         <button
           type="button"
           onClick={onRetry}
-          className="mt-6 inline-flex items-center gap-1.5 rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+          className="mt-6 inline-flex items-center gap-1.5 rounded bg-surface-paper border border-grey-500/30 px-4 py-2 text-sm font-medium text-ink-secondary hover:bg-surface-neutral focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-main transition-colors"
         >
           <svg
             className="h-4 w-4"

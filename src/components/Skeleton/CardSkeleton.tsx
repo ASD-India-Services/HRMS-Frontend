@@ -22,17 +22,17 @@ export function CardSkeleton({ count = 3 }: CardSkeletonProps) {
       {Array.from({ length: count }).map((_, idx) => (
         <div
           key={idx}
-          className="border border-gray-200 rounded-lg p-5 bg-white"
+          className="border border-divider rounded-lg p-5 bg-surface-paper"
         >
           {/* Title skeleton */}
-          <div className="h-6 w-2/3 bg-gray-200 rounded animate-pulse" />
+          <div className="h-6 w-2/3 bg-surface-neutral rounded animate-pulse" />
           {/* Subtitle skeleton */}
-          <div className="mt-3 h-4 w-1/2 bg-gray-200 rounded animate-pulse" />
+          <div className="mt-3 h-4 w-1/2 bg-surface-neutral rounded animate-pulse" />
           {/* Content lines */}
           <div className="mt-4 space-y-2">
-            <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
-            <div className="h-4 w-5/6 bg-gray-200 rounded animate-pulse" />
-            <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 w-full bg-surface-neutral rounded animate-pulse" />
+            <div className="h-4 w-5/6 bg-surface-neutral rounded animate-pulse" />
+            <div className="h-4 w-3/4 bg-surface-neutral rounded animate-pulse" />
           </div>
         </div>
       ))}

@@ -12,7 +12,7 @@ interface ChartSkeletonProps {
 export function ChartSkeleton({ height = 300 }: ChartSkeletonProps) {
   return (
     <div
-      className="animate-pulse rounded-lg bg-gray-200"
+      className="animate-pulse rounded-lg bg-surface-neutral"
       style={{ height: `${height}px` }}
       role="status"
       aria-label="Loading chart"

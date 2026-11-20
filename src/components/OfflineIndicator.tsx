@@ -39,7 +39,7 @@ export function OfflineIndicator() {
     <div
       role="alert"
       aria-live="assertive"
-      className="fixed top-0 inset-x-0 z-50 flex items-center justify-center gap-2 bg-amber-600 px-4 py-2 text-sm font-medium text-white shadow-md"
+      className="fixed top-0 inset-x-0 z-50 flex items-center justify-center gap-2 bg-warning-main px-4 py-2 text-sm font-medium text-warning-contrast shadow-z8"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

@@ -149,10 +149,10 @@ export function EmptyState({
       aria-label={displayTitle}
     >
       {/* Illustration — generic empty box/folder icon */}
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-grey-500/10">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-8 w-8 text-gray-400"
+          className="h-8 w-8 text-ink-disabled"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -167,12 +167,12 @@ export function EmptyState({
       </div>
 
       {/* Title */}
-      <h3 className="text-sm font-medium text-gray-900">
+      <h3 className="text-sm font-medium text-ink-primary">
         {displayTitle}
       </h3>
 
       {/* Description */}
-      <p className="mt-1 max-w-sm text-sm text-gray-500">
+      <p className="mt-1 max-w-sm text-sm text-ink-secondary">
         {displayDescription}
       </p>
 
@@ -181,7 +181,7 @@ export function EmptyState({
         <button
           type="button"
           onClick={onCtaClick}
-          className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          className="mt-4 inline-flex items-center gap-1.5 rounded bg-primary-main px-4 py-2 text-sm font-medium text-primary-contrast transition-colors hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -23,16 +23,16 @@ export function FormSkeleton({ fields }: FormSkeletonProps) {
       {Array.from({ length: fields }).map((_, idx) => (
         <div key={idx} className="space-y-2">
           {/* Label skeleton */}
-          <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+          <div className="h-4 w-24 bg-surface-neutral rounded animate-pulse" />
           {/* Input skeleton */}
-          <div className="h-10 w-full bg-gray-200 rounded animate-pulse" />
+          <div className="h-10 w-full bg-surface-neutral rounded animate-pulse" />
         </div>
       ))}
 
       {/* Action buttons skeleton */}
       <div className="flex items-center gap-3 pt-4">
-        <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
-        <div className="h-10 w-24 bg-gray-200 rounded animate-pulse" />
+        <div className="h-10 w-32 bg-surface-neutral rounded animate-pulse" />
+        <div className="h-10 w-24 bg-surface-neutral rounded animate-pulse" />
       </div>
 
       <span className="sr-only">Loading...</span>
