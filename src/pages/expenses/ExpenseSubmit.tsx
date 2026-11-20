@@ -195,7 +195,7 @@ export function ExpenseSubmit() {
                   <div className="mt-3">
                     <label
                       htmlFor="file-upload"
-                      className="cursor-pointer rounded-md font-medium text-primary-main hover:text-primary-main focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-main focus-within:ring-offset-2"
+                      className="cursor-pointer rounded-md font-medium text-primary-main hover:text-primary-dark focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-main focus-within:ring-offset-2"
                     >
                       <span>Upload files</span>
                       <input

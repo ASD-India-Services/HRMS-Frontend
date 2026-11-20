@@ -84,24 +84,24 @@ export default function PermissionDashboard() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Roles & Permissions Dashboard</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-ink-primary">Roles & Permissions Dashboard</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
             Access governance, role assignment distribution, module permission coverage, and security overview.
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Link
             to="/admin/roles/create"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md border border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral shadow-sm transition-colors"
           >
-            <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             Create Role
           </Link>
           <Link
             to="/admin/roles"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
@@ -114,30 +114,30 @@ export default function PermissionDashboard() {
       {/* Top Metric Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Roles */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Active Roles
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-lighter text-primary-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">{isLoading ? '...' : totalRoles}</span>
-            <span className="ml-2 text-xs text-gray-500">({systemRoles} system, {customRoles} custom)</span>
+            <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : totalRoles}</span>
+            <span className="ml-2 text-xs text-ink-secondary">({systemRoles} system, {customRoles} custom)</span>
           </div>
-          <div className="mt-2 text-xs text-blue-600 font-medium">
+          <div className="mt-2 text-xs text-primary-main font-medium">
             <Link to="/admin/roles" className="hover:underline">View roles directory →</Link>
           </div>
         </div>
 
         {/* Assigned Users */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Assigned Users
             </span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
@@ -147,18 +147,18 @@ export default function PermissionDashboard() {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">{isLoading ? '...' : totalAssignedUsers}</span>
+            <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : totalAssignedUsers}</span>
             <span className="ml-2 text-xs text-indigo-600 font-medium">Authorised accounts</span>
           </div>
-          <div className="mt-2 text-xs text-gray-500">
+          <div className="mt-2 text-xs text-ink-secondary">
             <span>Members bound to security roles</span>
           </div>
         </div>
 
         {/* Permission Modules */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Security Modules
             </span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
@@ -168,20 +168,20 @@ export default function PermissionDashboard() {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="text-2xl font-bold text-ink-primary">
               {isLoading ? '...' : Object.keys(modulePermCounts).length || 12}
             </span>
             <span className="ml-2 text-xs text-purple-600 font-semibold">Protected Modules</span>
           </div>
-          <div className="mt-2 text-xs text-gray-500">
+          <div className="mt-2 text-xs text-ink-secondary">
             <span>Granular RBAC boundaries</span>
           </div>
         </div>
 
         {/* Audit Status */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Audit Trail
             </span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
@@ -203,13 +203,13 @@ export default function PermissionDashboard() {
       {/* Visual Charts Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Users per Role Chart */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">User Allocation per Role</h2>
-              <p className="text-xs text-gray-500">Distribution of user accounts assigned across roles</p>
+              <h2 className="text-base font-semibold text-ink-primary">User Allocation per Role</h2>
+              <p className="text-xs text-ink-secondary">Distribution of user accounts assigned across roles</p>
             </div>
-            <Link to="/admin/roles" className="text-xs font-medium text-blue-600 hover:underline">
+            <Link to="/admin/roles" className="text-xs font-medium text-primary-main hover:underline">
               Roles list →
             </Link>
           </div>
@@ -230,16 +230,16 @@ export default function PermissionDashboard() {
         </div>
 
         {/* Permissions by Module Chart */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">Permissions by Module</h2>
-              <p className="text-xs text-gray-500">Coverage across HRMS core functionality</p>
+              <h2 className="text-base font-semibold text-ink-primary">Permissions by Module</h2>
+              <p className="text-xs text-ink-secondary">Coverage across HRMS core functionality</p>
             </div>
-            <span className="text-xs font-medium text-gray-500">RBAC Sections</span>
+            <span className="text-xs font-medium text-ink-secondary">RBAC Sections</span>
           </div>
           {moduleChartData.length === 0 ? (
-            <div className="flex h-64 items-center justify-center text-sm text-gray-400">
+            <div className="flex h-64 items-center justify-center text-sm text-ink-disabled">
               No module permissions found
             </div>
           ) : (
@@ -276,9 +276,9 @@ export default function PermissionDashboard() {
                         className="w-2.5 h-2.5 rounded-full"
                         style={{ backgroundColor: MODULE_COLORS[idx % MODULE_COLORS.length] }}
                       />
-                      <span className="text-gray-700 truncate max-w-[130px]">{item.name}</span>
+                      <span className="text-ink-primary truncate max-w-[130px]">{item.name}</span>
                     </span>
-                    <span className="font-semibold text-gray-900">{item.value} perms</span>
+                    <span className="font-semibold text-ink-primary">{item.value} perms</span>
                   </div>
                 ))}
               </div>
@@ -288,22 +288,22 @@ export default function PermissionDashboard() {
       </div>
 
       {/* Roles Directory Table */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+      <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">Security Roles Overview</h2>
-            <p className="text-xs text-gray-500">Active system and custom authorization roles</p>
+            <h2 className="text-base font-semibold text-ink-primary">Security Roles Overview</h2>
+            <p className="text-xs text-ink-secondary">Active system and custom authorization roles</p>
           </div>
-          <Link to="/admin/roles" className="text-xs font-semibold text-blue-600 hover:underline">
+          <Link to="/admin/roles" className="text-xs font-semibold text-primary-main hover:underline">
             Manage all roles →
           </Link>
         </div>
         {roles.length === 0 ? (
-          <p className="py-8 text-center text-sm text-gray-400">No roles configured.</p>
+          <p className="py-8 text-center text-sm text-ink-disabled">No roles configured.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <thead className="border-b border-divider bg-surface-neutral text-xs font-semibold text-ink-secondary uppercase tracking-wider">
                 <tr>
                   <th className="px-4 py-3">Role Name</th>
                   <th className="px-4 py-3">Type</th>
@@ -313,34 +313,34 @@ export default function PermissionDashboard() {
                   <th className="px-4 py-3 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-divider">
                 {roles.slice(0, 6).map((role) => (
-                  <tr key={role.id} className="hover:bg-gray-50/60 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900">{role.name}</td>
+                  <tr key={role.id} className="hover:bg-surface-neutral/60 transition-colors">
+                    <td className="px-4 py-3 font-medium text-ink-primary">{role.name}</td>
                     <td className="px-4 py-3">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
                           role.is_system
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                            ? 'bg-primary-lighter text-primary-dark border border-primary-light'
                             : 'bg-purple-50 text-purple-700 border border-purple-200'
                         }`}
                       >
                         {role.is_system ? 'System' : 'Custom'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-600 capitalize">
+                    <td className="px-4 py-3 text-xs text-ink-secondary capitalize">
                       {role.data_scope || 'Organisation'}
                     </td>
-                    <td className="px-4 py-3 text-xs font-semibold text-gray-700">
+                    <td className="px-4 py-3 text-xs font-semibold text-ink-primary">
                       {role.permissions ? role.permissions.length : 0} permissions
                     </td>
-                    <td className="px-4 py-3 text-xs font-medium text-gray-900">
+                    <td className="px-4 py-3 text-xs font-medium text-ink-primary">
                       {role.member_count || 0} users
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Link
                         to={`/admin/roles/${role.id}`}
-                        className="text-xs font-semibold text-blue-600 hover:underline"
+                        className="text-xs font-semibold text-primary-main hover:underline"
                       >
                         Edit
                       </Link>

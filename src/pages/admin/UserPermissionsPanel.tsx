@@ -15,6 +15,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { Can } from '@/components/Can/Can';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
+import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -181,20 +183,20 @@ export function UserPermissionsPanel({
 
   if (rolesLoading || permissionsLoading || assignmentLoading) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 w-32 rounded bg-gray-200" />
-          <div className="h-10 w-full rounded bg-gray-200" />
-          <div className="h-4 w-48 rounded bg-gray-200" />
+          <div className="h-6 w-32 rounded bg-grey-200" />
+          <div className="h-10 w-full rounded bg-grey-200" />
+          <div className="h-4 w-48 rounded bg-grey-200" />
           <div className="flex flex-wrap gap-2">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-7 w-24 rounded-full bg-gray-200" />
+              <div key={i} className="h-7 w-24 rounded-full bg-grey-200" />
             ))}
           </div>
-          <div className="h-4 w-48 rounded bg-gray-200" />
+          <div className="h-4 w-48 rounded bg-grey-200" />
           <div className="flex flex-wrap gap-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-7 w-24 rounded-full bg-gray-200" />
+              <div key={i} className="h-7 w-24 rounded-full bg-grey-200" />
             ))}
           </div>
         </div>
@@ -205,9 +207,9 @@ export function UserPermissionsPanel({
   // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
       {/* Header */}
-      <h2 className="mb-4 text-lg font-semibold text-gray-900">Permissions</h2>
+      <h2 className="mb-4 text-lg font-semibold text-ink-primary">Permissions</h2>
 
       {/* Success Toast */}
       {successMessage && (
@@ -236,17 +238,17 @@ export function UserPermissionsPanel({
       <div className="mb-6">
         <label
           htmlFor="user-role-select"
-          className="mb-1 block text-sm font-medium text-gray-700"
+          className="mb-1 block text-sm font-medium text-ink-primary"
         >
           Assigned Role
         </label>
         <Can permissions={['roles.manage']}>
-          <select
+          <Select
             id="user-role-select"
             value={selectedRoleId}
             onChange={handleRoleChange}
             disabled={roleAssignMutation.isPending}
-            className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="disabled:cursor-not-allowed"
           >
             <option value="">— No role assigned —</option>
             {roles.map((role) => (
@@ -255,10 +257,10 @@ export function UserPermissionsPanel({
                 {role.is_system ? ' (System)' : ''}
               </option>
             ))}
-          </select>
+          </Select>
         </Can>
         {!canManage && (
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-ink-secondary">
             {roleAssignment?.role_name ?? 'No role assigned'}
           </p>
         )}
@@ -266,10 +268,10 @@ export function UserPermissionsPanel({
 
       {/* Inherited Permissions Section */}
       <div className="mb-6">
-        <h3 className="mb-2 text-sm font-medium text-gray-700">
+        <h3 className="mb-2 text-sm font-medium text-ink-primary">
           Inherited from Role
           {selectedRole && (
-            <span className="ml-2 text-xs text-gray-400">
+            <span className="ml-2 text-xs text-ink-disabled">
               ({inheritedPermissions.length} permissions)
             </span>
           )}
@@ -279,17 +281,17 @@ export function UserPermissionsPanel({
             {inheritedPermissions.map((perm) => (
               <span
                 key={perm}
-                className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600"
+                className="inline-flex items-center rounded-full bg-surface-neutral px-2.5 py-1 text-xs font-medium text-ink-secondary"
               >
                 {perm}
-                <span className="ml-1.5 inline-flex items-center rounded-full bg-gray-200 px-1.5 py-0.5 text-[10px] font-medium text-gray-500">
+                <span className="ml-1.5 inline-flex items-center rounded-full bg-grey-200 px-1.5 py-0.5 text-[10px] font-medium text-ink-secondary">
                   inherited
                 </span>
               </span>
             ))}
           </div>
         ) : (
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-ink-disabled">
             {selectedRoleId
               ? 'This role has no permissions assigned.'
               : 'No role selected.'}
@@ -300,10 +302,10 @@ export function UserPermissionsPanel({
       {/* Override Permissions Section */}
       <div className="mb-6">
         <div className="mb-2 flex items-center justify-between">
-          <h3 className="text-sm font-medium text-gray-700">
+          <h3 className="text-sm font-medium text-ink-primary">
             Permission Overrides
             {overrides.length > 0 && (
-              <span className="ml-2 text-xs text-gray-400">
+              <span className="ml-2 text-xs text-ink-disabled">
                 ({overrides.length})
               </span>
             )}
@@ -312,7 +314,7 @@ export function UserPermissionsPanel({
             <button
               type="button"
               onClick={() => setShowAddOverride(!showAddOverride)}
-              className="inline-flex items-center rounded-md bg-primary-50 px-2.5 py-1.5 text-xs font-medium text-primary-700 hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1"
+              className="inline-flex items-center rounded-md bg-primary-lighter px-2.5 py-1.5 text-xs font-medium text-primary-dark hover:bg-primary-lighter focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-1"
             >
               <svg
                 className="mr-1 h-3.5 w-3.5"
@@ -337,17 +339,17 @@ export function UserPermissionsPanel({
             {overrides.map((perm) => (
               <span
                 key={perm}
-                className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700"
+                className="inline-flex items-center rounded-full bg-primary-lighter px-2.5 py-1 text-xs font-medium text-primary-dark"
               >
                 {perm}
-                <span className="ml-1.5 inline-flex items-center rounded-full bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-600">
+                <span className="ml-1.5 inline-flex items-center rounded-full bg-primary-lighter px-1.5 py-0.5 text-[10px] font-medium text-primary-main">
                   override
                 </span>
                 <Can permissions={['roles.manage']}>
                   <button
                     type="button"
                     onClick={() => handleRemoveOverride(perm)}
-                    className="ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-600 focus:outline-none"
+                    className="ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full text-primary-light hover:bg-primary-lighter hover:text-primary-main focus:outline-none"
                     aria-label={`Remove override ${perm}`}
                   >
                     <svg
@@ -369,27 +371,26 @@ export function UserPermissionsPanel({
             ))}
           </div>
         ) : (
-          <p className="text-sm text-gray-400">No permission overrides configured.</p>
+          <p className="text-sm text-ink-disabled">No permission overrides configured.</p>
         )}
       </div>
 
       {/* Add Override Dropdown */}
       {showAddOverride && canManage && (
-        <div className="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div className="mb-6 rounded-lg border border-divider bg-surface-neutral p-4">
           <label
             htmlFor="add-override-select"
-            className="mb-2 block text-sm font-medium text-gray-700"
+            className="mb-2 block text-sm font-medium text-ink-primary"
           >
             Select permission to add as override
           </label>
           {availableForOverride.length > 0 ? (
-            <select
+            <Select
               id="add-override-select"
               onChange={(e) => {
                 if (e.target.value) handleAddOverride(e.target.value);
               }}
               defaultValue=""
-              className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             >
               <option value="" disabled>
                 — Select a permission —
@@ -411,16 +412,16 @@ export function UserPermissionsPanel({
                   </optgroup>
                 );
               })}
-            </select>
+            </Select>
           ) : (
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-ink-secondary">
               All available permissions are already assigned (inherited or override).
             </p>
           )}
           <button
             type="button"
             onClick={() => setShowAddOverride(false)}
-            className="mt-2 text-xs text-gray-500 hover:text-gray-700"
+            className="mt-2 text-xs text-ink-secondary hover:text-ink-primary"
           >
             Cancel
           </button>
@@ -430,12 +431,11 @@ export function UserPermissionsPanel({
       {/* Save Button */}
       <Can permissions={['roles.manage']}>
         {overrides.join(',') !== currentOverrides.join(',') && (
-          <div className="flex items-center gap-3 border-t border-gray-200 pt-4">
-            <button
+          <div className="flex items-center gap-3 border-t border-divider pt-4">
+            <Button
               type="button"
               onClick={handleSaveOverrides}
               disabled={overridesMutation.isPending}
-              className="inline-flex items-center rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {overridesMutation.isPending ? (
                 <>
@@ -463,11 +463,11 @@ export function UserPermissionsPanel({
               ) : (
                 'Save Overrides'
               )}
-            </button>
+            </Button>
             <button
               type="button"
               onClick={() => setOverrides(currentOverrides)}
-              className="text-sm text-gray-500 hover:text-gray-700"
+              className="text-sm text-ink-secondary hover:text-ink-primary"
             >
               Reset
             </button>

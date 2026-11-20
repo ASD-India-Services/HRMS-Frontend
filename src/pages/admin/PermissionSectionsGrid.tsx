@@ -162,10 +162,10 @@ function PermissionCheckbox({
         type="checkbox"
         checked={checked}
         onChange={() => onToggle(perm.id)}
-        className={`h-4 w-4 flex-shrink-0 rounded border-gray-300 ${accent}`}
+        className={`h-4 w-4 flex-shrink-0 rounded border-divider ${accent}`}
         aria-label={perm.display_name}
       />
-      <span className="text-sm font-medium text-gray-700">{perm.display_name}</span>
+      <span className="text-sm font-medium text-ink-primary">{perm.display_name}</span>
     </label>
   );
 }
@@ -186,7 +186,7 @@ export function PermissionSectionsGrid({
   selectedIds,
   onTogglePermission,
   onToggleGroup,
-  accent = 'text-primary-600 focus:ring-primary-500',
+  accent = 'text-primary-main focus:ring-primary-main',
 }: PermissionSectionsGridProps) {
   return (
     <div className="space-y-4">
@@ -199,9 +199,9 @@ export function PermissionSectionsGrid({
         const someSelected = !allSelected && selectedCount > 0;
 
         return (
-          <div key={section.module} className="rounded-lg border border-gray-200 bg-white p-4">
+          <div key={section.module} className="rounded-lg border border-divider bg-surface-paper p-4">
             {/* ── Section heading ───────────────────────────────────────── */}
-            <div className="mb-3 flex items-center gap-3 border-b border-gray-100 pb-3">
+            <div className="mb-3 flex items-center gap-3 border-b border-divider pb-3">
               <label className="flex cursor-pointer items-center gap-2">
                 <input
                   type="checkbox"
@@ -210,12 +210,12 @@ export function PermissionSectionsGrid({
                     if (el) el.indeterminate = someSelected;
                   }}
                   onChange={() => onToggleGroup(allSectionPerms)}
-                  className={`h-4 w-4 rounded border-gray-300 ${accent}`}
+                  className={`h-4 w-4 rounded border-divider ${accent}`}
                   aria-label={`Select all ${section.label} permissions`}
                 />
-                <span className="text-sm font-semibold text-gray-900">{section.label}</span>
+                <span className="text-sm font-semibold text-ink-primary">{section.label}</span>
               </label>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-ink-disabled">
                 {selectedCount}/{allSectionPerms.length} selected
               </span>
             </div>
@@ -244,7 +244,7 @@ export function PermissionSectionsGrid({
                   const subSome = !subAll && subSelected > 0;
 
                   return (
-                    <div key={sub.key} className="ml-4 border-l-2 border-gray-100 pl-4">
+                    <div key={sub.key} className="ml-4 border-l-2 border-divider pl-4">
                       {/* Subsection subheading */}
                       <div className="mb-2 flex items-center gap-2">
                         <label className="flex cursor-pointer items-center gap-2">
@@ -255,14 +255,14 @@ export function PermissionSectionsGrid({
                               if (el) el.indeterminate = subSome;
                             }}
                             onChange={() => onToggleGroup(sub.permissions)}
-                            className={`h-4 w-4 rounded border-gray-300 ${accent}`}
+                            className={`h-4 w-4 rounded border-divider ${accent}`}
                             aria-label={`Select all ${sub.label} permissions`}
                           />
-                          <span className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+                          <span className="text-xs font-semibold uppercase tracking-wide text-ink-secondary">
                             {sub.label}
                           </span>
                         </label>
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-ink-disabled">
                           {subSelected}/{sub.permissions.length}
                         </span>
                       </div>

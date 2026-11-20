@@ -15,6 +15,7 @@
 import { useUser } from '@platform/auth-sdk';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
+import { Button } from '@/components/ui/Button';
 
 interface RoleGatedRouteProps {
   /** HRMS permission required to access this route (e.g. "employees.view") */
@@ -50,13 +51,12 @@ export function RoleGatedRoute({
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <p className="text-sm text-gray-600 mb-4">Failed to load permissions. Please try again.</p>
-        <button
+        <p className="text-sm text-ink-secondary mb-4">Failed to load permissions. Please try again.</p>
+        <Button type="submit"
           onClick={() => refetch()}
-          className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
         >
           Retry
-        </button>
+        </Button>
       </div>
     );
   }

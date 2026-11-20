@@ -132,7 +132,7 @@ export default function BulkImportExport() {
           <div className="mt-4 space-y-3">
             <button
               onClick={handleDownloadTemplate}
-              className="text-sm font-medium text-primary-main hover:text-primary-main underline"
+              className="text-sm font-medium text-primary-main hover:text-primary-dark underline"
             >
               Download CSV Template
             </button>

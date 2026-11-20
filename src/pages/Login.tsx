@@ -21,15 +21,15 @@ export default function Login() {
 
   // Show loading while SDK checks auth state or while redirecting
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-white">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-surface-paper">
       <div className="text-center">
         <img
           src="/favicon.svg"
           alt="DigiHRMS"
           className="mx-auto h-12 w-auto mb-6"
         />
-        <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent mx-auto" />
-        <p className="text-gray-500 text-sm">Redirecting to login...</p>
+        <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary-main border-t-transparent mx-auto" />
+        <p className="text-ink-secondary text-sm">Redirecting to login...</p>
       </div>
     </div>
   )

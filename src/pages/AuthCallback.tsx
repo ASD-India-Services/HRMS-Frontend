@@ -40,8 +40,8 @@ export function AuthCallback() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
-        <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent mx-auto" />
-        <p className="text-gray-600">
+        <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary-main border-t-transparent mx-auto" />
+        <p className="text-ink-secondary">
           {callbackError ?? 'Completing sign in...'}
         </p>
       </div>

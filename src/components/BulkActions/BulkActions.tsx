@@ -193,7 +193,7 @@ export function BulkActions({
           <button
             type="button"
             onClick={handleDownloadTemplate}
-            className="text-sm font-medium text-primary-main hover:text-primary-main underline"
+            className="text-sm font-medium text-primary-main hover:text-primary-dark underline"
           >
             Download Template
           </button>

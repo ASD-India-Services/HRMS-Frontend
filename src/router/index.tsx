@@ -220,7 +220,7 @@ const RoleDetailPage = lazy(() => import('@/pages/admin/RoleDetailPage'));
 function PageLoader() {
   return (
     <div className="flex h-64 items-center justify-center">
-      <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-500 border-t-transparent" />
+      <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-main border-t-transparent" />
     </div>
   );
 }

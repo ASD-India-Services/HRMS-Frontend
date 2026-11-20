@@ -76,7 +76,7 @@ export const DOCUMENT_TYPE_PRESETS: {
     label: 'Bonafide / Employment Certificate',
     defaultTitle: 'Bonafide Certificate of Employment',
     description: 'Confirms current employment, job title, and tenure in the organization.',
-    badgeColor: 'bg-blue-50 text-blue-700 border-blue-200',
+    badgeColor: 'bg-primary-lighter text-primary-dark border-primary-light',
   },
   {
     key: 'salary_certificate',
@@ -118,6 +118,6 @@ export const DOCUMENT_TYPE_PRESETS: {
     label: 'Other / Custom Document',
     defaultTitle: 'Custom Document Request',
     description: 'Any other specific document, certificate, or letter required from HR.',
-    badgeColor: 'bg-gray-50 text-gray-700 border-gray-200',
+    badgeColor: 'bg-surface-neutral text-ink-primary border-divider',
   },
 ];

@@ -10,6 +10,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 const IC_URL = import.meta.env.VITE_IDENTITY_CENTER_URL;
 
@@ -30,7 +32,7 @@ function getPasswordStrength(password: string): PasswordStrength {
     { score: 0, label: 'Too Weak', color: 'bg-red-500' },
     { score: 1, label: 'Weak', color: 'bg-orange-500' },
     { score: 2, label: 'Fair', color: 'bg-yellow-500' },
-    { score: 3, label: 'Good', color: 'bg-blue-500' },
+    { score: 3, label: 'Good', color: 'bg-primary-main' },
     { score: 4, label: 'Strong', color: 'bg-green-500' },
   ];
 
@@ -115,8 +117,8 @@ export default function ResetPassword() {
     return (
       <PageWrapper>
         <div className="flex items-center justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
-          <span className="ml-3 text-sm text-gray-600">Validating reset link...</span>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-main border-t-transparent" />
+          <span className="ml-3 text-sm text-ink-secondary">Validating reset link...</span>
         </div>
       </PageWrapper>
     );
@@ -133,7 +135,7 @@ export default function ResetPassword() {
           <p className="mt-2 text-sm text-red-700">{tokenError}</p>
           <Link
             to="/auth/forgot-password"
-            className="mt-4 inline-block text-sm font-medium text-primary-600 hover:text-primary-500"
+            className="mt-4 inline-block text-sm font-medium text-primary-main hover:text-primary-dark"
           >
             Request a new reset link
           </Link>
@@ -163,24 +165,24 @@ export default function ResetPassword() {
   return (
     <PageWrapper>
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Reset Your Password</h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-ink-primary">Reset Your Password</h1>
+        <p className="mt-2 text-sm text-ink-secondary">
           Enter a new password for your account.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="password" className="block text-sm font-medium text-ink-primary">
             New Password
           </label>
-          <input
+          <Input
             id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="new-password"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="mt-1"
           />
 
           {/* Strength meter */}
@@ -191,12 +193,12 @@ export default function ResetPassword() {
                   <div
                     key={i}
                     className={`h-1.5 flex-1 rounded-full ${
-                      i < strength.score ? strength.color : 'bg-gray-200'
+                      i < strength.score ? strength.color : 'bg-grey-200'
                     }`}
                   />
                 ))}
               </div>
-              <p className={`mt-1 text-xs ${strength.score >= 3 ? 'text-green-600' : 'text-gray-500'}`}>
+              <p className={`mt-1 text-xs ${strength.score >= 3 ? 'text-green-600' : 'text-ink-secondary'}`}>
                 {strength.label}
               </p>
             </div>
@@ -212,16 +214,16 @@ export default function ResetPassword() {
         </div>
 
         <div>
-          <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="confirm-password" className="block text-sm font-medium text-ink-primary">
             Confirm New Password
           </label>
-          <input
+          <Input
             id="confirm-password"
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             autoComplete="new-password"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="mt-1"
           />
           {confirmPassword.length > 0 && !passwordsMatch && (
             <p className="mt-1 text-xs text-red-600">Passwords do not match</p>
@@ -234,13 +236,13 @@ export default function ResetPassword() {
           </div>
         )}
 
-        <button
+        <Button
           type="submit"
           disabled={!canSubmit || submitting}
-          className="w-full rounded-md bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full"
         >
           {submitting ? 'Resetting...' : 'Reset Password'}
-        </button>
+        </Button>
       </form>
     </PageWrapper>
   );
@@ -248,8 +250,8 @@ export default function ResetPassword() {
 
 function PageWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+    <div className="flex min-h-screen items-center justify-center bg-surface-neutral px-4 py-12">
+      <div className="w-full max-w-md rounded-xl border border-divider bg-surface-paper p-8 shadow-sm">
         {children}
       </div>
     </div>
