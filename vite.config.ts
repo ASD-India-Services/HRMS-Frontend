@@ -18,7 +18,7 @@ export default defineConfig({
         name: 'DigiHRMS',
         short_name: 'DigiHRMS',
         description: 'Human Resource Management System',
-        theme_color: '#1d4ed8',
+        theme_color: '#00A76F',
         background_color: '#ffffff',
         display: 'standalone',
         scope: '/',

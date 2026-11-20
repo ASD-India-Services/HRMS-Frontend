@@ -18,7 +18,7 @@ import { OfflineIndicator } from '@/components/OfflineIndicator';
 function PageLoader() {
   return (
     <div className="flex h-64 items-center justify-center">
-      <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-500 border-t-transparent" />
+      <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-main border-t-transparent" />
     </div>
   );
 }
@@ -28,7 +28,7 @@ export function AppShell() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="flex h-screen w-full max-w-full overflow-hidden bg-gray-50">
+    <div className="flex h-screen w-full max-w-full overflow-hidden bg-surface-default">
       {/* Offline banner */}
       <OfflineIndicator />
 
@@ -49,7 +49,7 @@ export function AppShell() {
           This ensures lazy-loaded route components properly trigger the 
           fallback during navigation transitions (React Router v7 + React 19).
         */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 min-w-0">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:px-10 lg:py-8 min-w-0">
           <Suspense fallback={<PageLoader />}>
             <Outlet />
           </Suspense>

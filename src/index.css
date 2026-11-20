@@ -2,18 +2,111 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Design tokens (Minimal template). RGB channels so Tailwind can apply alpha.
+ * Mapped in tailwind.config.ts; do not use raw values in components.
+ */
+:root {
+  --primary-lighter: 200 250 214;
+  --primary-light: 91 228 155;
+  --primary-main: 0 167 111;
+  --primary-dark: 0 120 103;
+  --primary-darker: 0 75 80;
+  --primary-contrast: 255 255 255;
+  --secondary-lighter: 239 214 255;
+  --secondary-light: 198 132 255;
+  --secondary-main: 142 51 255;
+  --secondary-dark: 81 25 183;
+  --secondary-darker: 39 9 122;
+  --secondary-contrast: 255 255 255;
+  --info-lighter: 202 253 245;
+  --info-light: 97 243 243;
+  --info-main: 0 184 217;
+  --info-dark: 0 108 156;
+  --info-darker: 0 55 104;
+  --info-contrast: 255 255 255;
+  --success-lighter: 211 252 210;
+  --success-light: 119 237 139;
+  --success-main: 34 197 94;
+  --success-dark: 17 141 87;
+  --success-darker: 6 94 73;
+  --success-contrast: 255 255 255;
+  --warning-lighter: 255 245 204;
+  --warning-light: 255 214 102;
+  --warning-main: 255 171 0;
+  --warning-dark: 183 110 0;
+  --warning-darker: 122 65 0;
+  --warning-contrast: 28 37 46;
+  --error-lighter: 255 233 213;
+  --error-light: 255 172 130;
+  --error-main: 255 86 48;
+  --error-dark: 183 29 24;
+  --error-darker: 122 9 22;
+  --error-contrast: 255 255 255;
+  --grey-50: 252 253 253;
+  --grey-100: 249 250 251;
+  --grey-200: 244 246 248;
+  --grey-300: 223 227 232;
+  --grey-400: 196 205 213;
+  --grey-500: 145 158 171;
+  --grey-600: 99 115 129;
+  --grey-700: 69 79 91;
+  --grey-800: 28 37 46;
+  --grey-900: 20 26 33;
+
+  --ink-primary: 28 37 46;
+  --ink-secondary: 99 115 129;
+  --ink-disabled: 145 158 171;
+  --surface-paper: 255 255 255;
+  --surface-default: 255 255 255;
+  --surface-neutral: 244 246 248;
+  --divider: 145 158 171;
+  --shadow-channel: 145 158 171;
+}
+
+.dark {
+  --ink-primary: 255 255 255;
+  --ink-secondary: 145 158 171;
+  --ink-disabled: 99 115 129;
+  --surface-paper: 28 37 46;
+  --surface-default: 20 26 33;
+  --surface-neutral: 40 50 61;
+  --divider: 145 158 171;
+  --shadow-channel: 0 0 0;
+}
+
+/* Shadows (custom-shadows.js). Declared for :root and .dark so they follow --shadow-channel. */
+:root,
+.dark {
+  --shadow-z1: 0 1px 2px 0 rgb(var(--shadow-channel) / 0.16);
+  --shadow-z4: 0 4px 8px 0 rgb(var(--shadow-channel) / 0.16);
+  --shadow-z8: 0 8px 16px 0 rgb(var(--shadow-channel) / 0.16);
+  --shadow-z12: 0 12px 24px -4px rgb(var(--shadow-channel) / 0.16);
+  --shadow-z16: 0 16px 32px -4px rgb(var(--shadow-channel) / 0.16);
+  --shadow-z20: 0 20px 40px -4px rgb(var(--shadow-channel) / 0.16);
+  --shadow-z24: 0 24px 48px 0 rgb(var(--shadow-channel) / 0.16);
+  --shadow-dialog: -40px 40px 80px -8px rgb(0 0 0 / 0.24);
+  --shadow-card: 0 0 2px 0 rgb(var(--shadow-channel) / 0.2), 0 12px 24px -4px rgb(var(--shadow-channel) / 0.12);
+  --shadow-dropdown: 0 0 2px 0 rgb(var(--shadow-channel) / 0.24), -20px 20px 40px -4px rgb(var(--shadow-channel) / 0.24);
+  --shadow-primary: 0 8px 16px 0 rgb(var(--primary-main) / 0.24);
+  --shadow-secondary: 0 8px 16px 0 rgb(var(--secondary-main) / 0.24);
+  --shadow-info: 0 8px 16px 0 rgb(var(--info-main) / 0.24);
+  --shadow-success: 0 8px 16px 0 rgb(var(--success-main) / 0.24);
+  --shadow-warning: 0 8px 16px 0 rgb(var(--warning-main) / 0.24);
+  --shadow-error: 0 8px 16px 0 rgb(var(--error-main) / 0.24);
+}
+
+
 html,
 body {
-  @apply bg-gray-50 text-gray-900 antialiased;
+  @apply bg-surface-default text-ink-primary antialiased;
   margin: 0;
   padding: 0;
   width: 100%;
   max-width: 100%;
   height: 100%;
   overflow-x: hidden !important;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Public Sans Variable', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

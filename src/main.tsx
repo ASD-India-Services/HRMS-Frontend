@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { AuthProvider } from '@platform/auth-sdk'
 import type { AuthSDKConfig } from '@platform/auth-sdk'
 import App from './App'
+import '@fontsource-variable/public-sans'
 import './index.css'
 
 const authConfig: AuthSDKConfig = {
