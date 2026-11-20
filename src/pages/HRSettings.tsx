@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { EMAIL_CONFIG } from '@/lib/endpoints';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 
 const ENDPOINT = '/api/v1/hr-settings/';
 
@@ -209,28 +213,27 @@ export default function HRSettings() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">HR Settings</h1>
-        <p className="mt-1 text-sm text-gray-600">Configure global HR system settings</p>
+        <h1 className="text-2xl font-bold text-ink-primary">HR Settings</h1>
+        <p className="mt-1 text-sm text-ink-secondary">Configure global HR system settings</p>
       </div>
 
       {/* General HR Settings */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <div className="rounded-lg border border-divider bg-surface-paper p-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>
-            <label htmlFor="company_name" className="mb-1 block text-sm font-medium text-gray-700">Company Name</label>
-            <input
+            <label htmlFor="company_name" className="mb-1 block text-sm font-medium text-ink-primary">Company Name</label>
+            <Input
               id="company_name"
               type="text"
               value={form.company_name}
               onChange={(e) => handleChange('company_name', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               placeholder="Your company name"
             />
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label htmlFor="embed_code" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="embed_code" className="block text-sm font-medium text-ink-primary">
                 Careers Embed Code
               </label>
               <div className="flex items-center gap-2">
@@ -238,7 +241,7 @@ export default function HRSettings() {
                   href="/careers/embed"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-medium text-primary-600 hover:text-primary-700"
+                  className="text-xs font-medium text-primary-main hover:text-primary-dark"
                   title="Open live preview in new tab"
                 >
                   Preview ↗
@@ -246,102 +249,97 @@ export default function HRSettings() {
                 <button
                   type="button"
                   onClick={handleCopyEmbed}
-                  className="inline-flex items-center gap-1 rounded bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700 hover:bg-primary-100 transition-colors"
+                  className="inline-flex items-center gap-1 rounded bg-primary-lighter px-2 py-0.5 text-xs font-semibold text-primary-dark hover:bg-primary-lighter transition-colors"
                 >
                   {copiedEmbed ? '✓ Copied!' : 'Copy Code'}
                 </button>
               </div>
             </div>
             <div className="relative">
-              <input
+              <Input
                 id="embed_code"
                 type="text"
                 readOnly
                 value={embedCodeSnippet}
                 onClick={(e) => (e.target as HTMLInputElement).select()}
-                className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-xs font-mono text-gray-600 shadow-sm cursor-pointer focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="font-mono cursor-pointer"
                 title="Click to select all and copy embed code"
               />
             </div>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-ink-secondary">
               Embed this iframe into your company website to display live open positions.
             </p>
           </div>
 
           <div>
-            <label htmlFor="fiscal_year_start" className="mb-1 block text-sm font-medium text-gray-700">Fiscal Year Start</label>
-            <input
+            <label htmlFor="fiscal_year_start" className="mb-1 block text-sm font-medium text-ink-primary">Fiscal Year Start</label>
+            <Input
               id="fiscal_year_start"
               type="date"
               value={form.fiscal_year_start}
               onChange={(e) => handleChange('fiscal_year_start', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
 
           <div>
-            <label htmlFor="probation_period_days" className="mb-1 block text-sm font-medium text-gray-700">Probation Period (days)</label>
-            <input
+            <label htmlFor="probation_period_days" className="mb-1 block text-sm font-medium text-ink-primary">Probation Period (days)</label>
+            <Input
               id="probation_period_days"
               type="number"
               min={0}
               value={form.probation_period_days}
               onChange={(e) => handleChange('probation_period_days', parseInt(e.target.value, 10) || 0)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
 
           <div>
-            <label htmlFor="notice_period_days" className="mb-1 block text-sm font-medium text-gray-700">Notice Period (days)</label>
-            <input
+            <label htmlFor="notice_period_days" className="mb-1 block text-sm font-medium text-ink-primary">Notice Period (days)</label>
+            <Input
               id="notice_period_days"
               type="number"
               min={0}
               value={form.notice_period_days}
               onChange={(e) => handleChange('notice_period_days', parseInt(e.target.value, 10) || 0)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
 
           <div>
-            <label htmlFor="location_check_interval_minutes" className="mb-1 block text-sm font-medium text-gray-700">
+            <label htmlFor="location_check_interval_minutes" className="mb-1 block text-sm font-medium text-ink-primary">
               Mobile Location Check Interval
             </label>
-            <select
+            <Select
               id="location_check_interval_minutes"
               value={form.location_check_interval_minutes}
               onChange={(e) => handleChange('location_check_interval_minutes', parseInt(e.target.value, 10) || 30)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             >
               <option value={15}>15 Minutes (High Precision)</option>
               <option value={30}>30 Minutes (Recommended)</option>
               <option value={45}>45 Minutes</option>
               <option value={60}>60 Minutes (Battery Saver)</option>
-            </select>
-            <p className="mt-1 text-xs text-gray-500">
+            </Select>
+            <p className="mt-1 text-xs text-ink-secondary">
               Interval at which the mobile app checks whether a checked-in employee is inside the office.
             </p>
           </div>
         </div>
 
         <div className="mt-6 flex items-center gap-4">
-          <button
+          <Button type="submit"
             onClick={handleSave}
             disabled={saving}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Save Settings'}
-          </button>
+          </Button>
           {saved && <span className="text-sm text-green-600">Settings saved successfully.</span>}
         </div>
       </div>
 
       {/* Email Configuration */}
-      <div className="mt-8 rounded-lg border border-gray-200 bg-white p-6">
+      <div className="mt-8 rounded-lg border border-divider bg-surface-paper p-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Email Configuration (SMTP)</h2>
-            <p className="mt-1 text-sm text-gray-600">
+            <h2 className="text-lg font-semibold text-ink-primary">Email Configuration (SMTP)</h2>
+            <p className="mt-1 text-sm text-ink-secondary">
               Configure your organization&apos;s SMTP settings for sending emails (payslips, notifications, reminders).
             </p>
           </div>
@@ -360,105 +358,98 @@ export default function HRSettings() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {/* SMTP Host */}
           <div>
-            <label htmlFor="smtp_host" className="mb-1 block text-sm font-medium text-gray-700">SMTP Host</label>
-            <input
+            <label htmlFor="smtp_host" className="mb-1 block text-sm font-medium text-ink-primary">SMTP Host</label>
+            <Input
               id="smtp_host"
               type="text"
               value={emailForm.smtp_host}
               onChange={(e) => handleEmailChange('smtp_host', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               placeholder="smtp.gmail.com"
             />
           </div>
 
           {/* SMTP Port */}
           <div>
-            <label htmlFor="smtp_port" className="mb-1 block text-sm font-medium text-gray-700">SMTP Port</label>
-            <input
+            <label htmlFor="smtp_port" className="mb-1 block text-sm font-medium text-ink-primary">SMTP Port</label>
+            <Input
               id="smtp_port"
               type="number"
               min={1}
               max={65535}
               value={emailForm.smtp_port}
               onChange={(e) => handleEmailChange('smtp_port', parseInt(e.target.value, 10) || 587)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               placeholder="587"
             />
           </div>
 
           {/* SMTP Username */}
           <div>
-            <label htmlFor="smtp_username" className="mb-1 block text-sm font-medium text-gray-700">SMTP Username</label>
-            <input
+            <label htmlFor="smtp_username" className="mb-1 block text-sm font-medium text-ink-primary">SMTP Username</label>
+            <Input
               id="smtp_username"
               type="text"
               value={emailForm.smtp_username}
               onChange={(e) => handleEmailChange('smtp_username', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               placeholder="your-email@gmail.com"
             />
           </div>
 
           {/* SMTP Password */}
           <div>
-            <label htmlFor="smtp_password" className="mb-1 block text-sm font-medium text-gray-700">
+            <label htmlFor="smtp_password" className="mb-1 block text-sm font-medium text-ink-primary">
               SMTP Password
               {emailConfig?.password_set && (
-                <span className="ml-2 text-xs text-gray-500">(leave blank to keep current)</span>
+                <span className="ml-2 text-xs text-ink-secondary">(leave blank to keep current)</span>
               )}
             </label>
-            <input
+            <Input
               id="smtp_password"
               type="password"
               value={emailForm.smtp_password}
               onChange={(e) => handleEmailChange('smtp_password', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               placeholder={emailConfig?.password_set ? '••••••••' : 'App password or SMTP password'}
             />
           </div>
 
           {/* From Email */}
           <div>
-            <label htmlFor="from_email" className="mb-1 block text-sm font-medium text-gray-700">From Email</label>
-            <input
+            <label htmlFor="from_email" className="mb-1 block text-sm font-medium text-ink-primary">From Email</label>
+            <Input
               id="from_email"
               type="email"
               value={emailForm.from_email}
               onChange={(e) => handleEmailChange('from_email', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               placeholder="hr@company.com"
             />
           </div>
 
           {/* From Name */}
           <div>
-            <label htmlFor="from_name" className="mb-1 block text-sm font-medium text-gray-700">From Name</label>
-            <input
+            <label htmlFor="from_name" className="mb-1 block text-sm font-medium text-ink-primary">From Name</label>
+            <Input
               id="from_name"
               type="text"
               value={emailForm.from_name}
               onChange={(e) => handleEmailChange('from_name', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               placeholder="HR Team"
             />
           </div>
 
           {/* Reply-To Email */}
           <div>
-            <label htmlFor="reply_to_email" className="mb-1 block text-sm font-medium text-gray-700">Reply-To Email (optional)</label>
-            <input
+            <label htmlFor="reply_to_email" className="mb-1 block text-sm font-medium text-ink-primary">Reply-To Email (optional)</label>
+            <Input
               id="reply_to_email"
               type="email"
               value={emailForm.reply_to_email}
               onChange={(e) => handleEmailChange('reply_to_email', e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               placeholder="noreply@company.com"
             />
           </div>
 
           {/* Encryption Options */}
           <div className="flex items-center gap-6">
-            <label className="flex items-center gap-2 text-sm text-gray-700">
+            <label className="flex items-center gap-2 text-sm text-ink-primary">
               <input
                 type="checkbox"
                 checked={emailForm.use_tls}
@@ -466,11 +457,11 @@ export default function HRSettings() {
                   handleEmailChange('use_tls', e.target.checked);
                   if (e.target.checked) handleEmailChange('use_ssl', false);
                 }}
-                className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                className="h-4 w-4 rounded border-divider text-primary-main focus:ring-primary-main"
               />
               Use TLS (port 587)
             </label>
-            <label className="flex items-center gap-2 text-sm text-gray-700">
+            <label className="flex items-center gap-2 text-sm text-ink-primary">
               <input
                 type="checkbox"
                 checked={emailForm.use_ssl}
@@ -478,7 +469,7 @@ export default function HRSettings() {
                   handleEmailChange('use_ssl', e.target.checked);
                   if (e.target.checked) handleEmailChange('use_tls', false);
                 }}
-                className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                className="h-4 w-4 rounded border-divider text-primary-main focus:ring-primary-main"
               />
               Use SSL (port 465)
             </label>
@@ -486,12 +477,12 @@ export default function HRSettings() {
 
           {/* Is Active Toggle */}
           <div className="flex items-center gap-2">
-            <label className="flex items-center gap-2 text-sm text-gray-700">
+            <label className="flex items-center gap-2 text-sm text-ink-primary">
               <input
                 type="checkbox"
                 checked={emailForm.is_active}
                 onChange={(e) => handleEmailChange('is_active', e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                className="h-4 w-4 rounded border-divider text-primary-main focus:ring-primary-main"
               />
               Enable email sending
             </label>
@@ -507,27 +498,25 @@ export default function HRSettings() {
 
         {/* Action Buttons */}
         <div className="mt-6 flex flex-wrap items-center gap-4">
-          <button
+          <Button type="submit"
             onClick={handleEmailSave}
             disabled={emailSaving}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
           >
             {emailSaving ? 'Saving...' : 'Save SMTP Settings'}
-          </button>
+          </Button>
 
-          <button
+          <Button type="submit" variant="outlined" color="inherit"
             onClick={() => setShowTestModal(true)}
             disabled={!emailConfig?.configured}
-            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50"
           >
             Send Test Email
-          </button>
+          </Button>
 
           {emailSaved && <span className="text-sm text-green-600">Email settings saved successfully.</span>}
         </div>
 
         {emailConfig?.last_tested_at && (
-          <p className="mt-3 text-xs text-gray-500">
+          <p className="mt-3 text-xs text-ink-secondary">
             Last tested: {new Date(emailConfig.last_tested_at).toLocaleString()}
           </p>
         )}
@@ -535,23 +524,26 @@ export default function HRSettings() {
 
       {/* Test Email Modal */}
       {showTestModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900">Send Test Email</h3>
-            <p className="mt-1 text-sm text-gray-600">
+        <Modal open onClose={() => {
+                  setShowTestModal(false);
+                  setTestResult(null);
+                  setTestEmailAddress('');
+                }} labelledBy="HRSettings-modal-title-1" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+            <h3 id="HRSettings-modal-title-1" className="text-lg font-semibold text-ink-primary">Send Test Email</h3>
+            <p className="mt-1 text-sm text-ink-secondary">
               Enter an email address to receive a test message and verify your SMTP configuration.
             </p>
 
             <div className="mt-4">
-              <label htmlFor="test_email" className="mb-1 block text-sm font-medium text-gray-700">
+              <label htmlFor="test_email" className="mb-1 block text-sm font-medium text-ink-primary">
                 Recipient Email
               </label>
-              <input
+              <Input
                 id="test_email"
                 type="email"
                 value={testEmailAddress}
                 onChange={(e) => setTestEmailAddress(e.target.value)}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 placeholder="test@example.com"
               />
             </div>
@@ -565,26 +557,24 @@ export default function HRSettings() {
             )}
 
             <div className="mt-6 flex justify-end gap-3">
-              <button
+              <Button type="submit" variant="outlined" color="inherit"
                 onClick={() => {
                   setShowTestModal(false);
                   setTestResult(null);
                   setTestEmailAddress('');
                 }}
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
               >
                 Close
-              </button>
-              <button
+              </Button>
+              <Button type="submit"
                 onClick={handleSendTestEmail}
                 disabled={testingEmail || !testEmailAddress}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
               >
                 {testingEmail ? 'Sending...' : 'Send Test'}
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

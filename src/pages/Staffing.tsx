@@ -82,7 +82,7 @@ export default function Staffing() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Staffing Plans</h1><p className="mt-1 text-sm text-gray-600">Workforce planning, job requisitions, and headcount tracking</p></div>
+        <div><h1 className="text-2xl font-bold text-ink-primary">Staffing Plans</h1><p className="mt-1 text-sm text-ink-secondary">Workforce planning, job requisitions, and headcount tracking</p></div>
         <CreateButton permission="recruitment.create" label="Create Plan" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

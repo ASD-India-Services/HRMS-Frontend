@@ -80,7 +80,7 @@ export default function Holidays() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Holiday Lists</h1><p className="mt-1 text-sm text-gray-600">Manage holiday lists for your organization and locations</p></div>
+        <div><h1 className="text-2xl font-bold text-ink-primary">Holiday Lists</h1><p className="mt-1 text-sm text-ink-secondary">Manage holiday lists for your organization and locations</p></div>
         <CreateButton permission="holidays.create" label="Create Holiday List" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

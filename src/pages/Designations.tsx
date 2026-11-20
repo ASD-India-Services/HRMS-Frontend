@@ -79,8 +79,8 @@ export default function Designations() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Designations</h1>
-          <p className="mt-1 text-sm text-gray-600">Manage job designations and titles</p>
+          <h1 className="text-2xl font-bold text-ink-primary">Designations</h1>
+          <p className="mt-1 text-sm text-ink-secondary">Manage job designations and titles</p>
         </div>
         <CreateButton permission="designations.create" label="Add Designation" onClick={() => setShowCreate(true)} />
       </div>

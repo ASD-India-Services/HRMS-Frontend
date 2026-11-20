@@ -64,7 +64,7 @@ function useTravelColumns(): ColumnDef<TravelRequest>[] {
         header: 'From',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm text-gray-700">{formatDate(value as string)}</span>
+          <span className="text-sm text-ink-primary">{formatDate(value as string)}</span>
         ),
       },
       {
@@ -72,7 +72,7 @@ function useTravelColumns(): ColumnDef<TravelRequest>[] {
         header: 'To',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm text-gray-700">{formatDate(value as string)}</span>
+          <span className="text-sm text-ink-primary">{formatDate(value as string)}</span>
         ),
       },
       {
@@ -80,7 +80,7 @@ function useTravelColumns(): ColumnDef<TravelRequest>[] {
         header: 'Purpose',
         sortable: false,
         render: (value: unknown) => (
-          <span className="text-sm text-gray-600 line-clamp-2 max-w-[200px]">
+          <span className="text-sm text-ink-secondary line-clamp-2 max-w-[200px]">
             {value ? String(value) : '—'}
           </span>
         ),
@@ -174,8 +174,8 @@ function TravelApprovalsContent() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Travel Approvals</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-ink-primary">Travel Approvals</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
             Review and approve or reject pending travel requests.
           </p>
         </div>
@@ -183,7 +183,7 @@ function TravelApprovalsContent() {
       </div>
 
       {isApproverOrAdmin && (
-        <div className="mb-4 border-b border-gray-200" role="tablist">
+        <div className="mb-4 border-b border-divider" role="tablist">
           <nav className="-mb-px flex gap-4">
             <button
               type="button"
@@ -192,8 +192,8 @@ function TravelApprovalsContent() {
               onClick={() => { setViewTab('mine'); setPage(1); }}
               className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
                 viewTab === 'mine'
-                  ? 'border-primary-500 text-primary-600 font-semibold'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  ? 'border-primary-main text-primary-main font-semibold'
+                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
               }`}
             >
               My Requests
@@ -205,8 +205,8 @@ function TravelApprovalsContent() {
               onClick={() => { setViewTab('approvals'); setPage(1); }}
               className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
                 viewTab === 'approvals'
-                  ? 'border-primary-500 text-primary-600 font-semibold'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  ? 'border-primary-main text-primary-main font-semibold'
+                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
               }`}
             >
               Team Approvals
@@ -259,8 +259,8 @@ function TravelApprovalsContent() {
               }
 
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-gray-50 border border-gray-200 px-4 py-2">
-                  <span className="text-sm font-medium text-gray-800">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-surface-neutral border border-divider px-4 py-2">
+                  <span className="text-sm font-medium text-ink-primary">
                     {queryResult.data.count} request{queryResult.data.count !== 1 ? 's' : ''} found
                   </span>
                 </div>

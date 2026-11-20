@@ -9,6 +9,11 @@ import {
   type CompanyLeave,
 } from '@/hooks/useCompanyLeaves';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { Modal } from '@/components/ui/Modal';
+import { useToast } from '@/components/ui/Toast';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 
 const WEEK_OPTIONS = [
   { value: 'all', label: 'All' },
@@ -30,6 +35,7 @@ const WEEK_DAY_OPTIONS = [
 ];
 
 export default function CompanyLeaves() {
+  const { showToast } = useToast();
   // Search & Filter State
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -215,7 +221,7 @@ export default function CompanyLeaves() {
       setDeletingLeave(null);
       refetch();
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to delete company leave.');
+      showToast(err.response?.data?.detail || 'Failed to delete company leave.', 'error');
     }
   };
 
@@ -241,22 +247,22 @@ export default function CompanyLeaves() {
     <div className="p-6 max-w-7xl mx-auto">
       {/* Top Header & Action Controls (Matching Screenshot 2) */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Company Leaves</h1>
+        <h1 className="text-2xl font-bold text-ink-primary tracking-tight">Company Leaves</h1>
 
         <div className="flex items-center gap-2.5 self-end sm:self-auto">
           {/* Search Input with Q icon */}
           <div className="relative">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none text-gray-400">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none text-ink-disabled">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </span>
-            <input
+            <Input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search"
-              className="pl-8 pr-3 py-1.5 text-sm bg-white border border-gray-300 rounded-xs focus:outline-none focus:ring-1 focus:ring-gray-400 w-44 sm:w-56"
+              className="pl-8 pr-3 w-44 sm:w-56"
             />
           </div>
 
@@ -267,28 +273,28 @@ export default function CompanyLeaves() {
               onClick={() => setIsFilterOpen(!isFilterOpen)}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xs border transition-colors ${
                 hasActiveFilters || isFilterOpen
-                  ? 'border-gray-400 bg-gray-100 text-gray-900'
-                  : 'border-gray-300 bg-gray-50/70 hover:bg-gray-100 text-gray-700'
+                  ? 'border-grey-400 bg-surface-neutral text-ink-primary'
+                  : 'border-divider bg-surface-neutral/70 hover:bg-surface-neutral text-ink-primary'
               }`}
             >
-              <svg className="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
               <span>Filter</span>
               {hasActiveFilters && (
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                <span className="w-1.5 h-1.5 rounded-full bg-primary-main" />
               )}
             </button>
 
             {/* Filter Dropdown / Card (Matching Screenshot 3) */}
             {isFilterOpen && (
-              <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded-sm shadow-xl p-5 z-40 animate-in fade-in zoom-in-95 duration-100">
-                <div className="flex items-center justify-between border-b border-gray-100 pb-2 mb-4">
-                  <h3 className="text-sm font-bold text-gray-900">Company Leave</h3>
+              <div className="absolute right-0 top-full mt-2 w-80 bg-surface-paper border border-divider rounded-sm shadow-xl p-5 z-40 animate-in fade-in zoom-in-95 duration-100">
+                <div className="flex items-center justify-between border-b border-divider pb-2 mb-4">
+                  <h3 className="text-sm font-bold text-ink-primary">Company Leave</h3>
                   <button
                     type="button"
                     onClick={() => setIsFilterOpen(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-ink-disabled hover:text-ink-secondary"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
@@ -298,13 +304,12 @@ export default function CompanyLeaves() {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-900 mb-1.5">
+                    <label className="block text-xs font-bold text-ink-primary mb-1.5">
                       Based On Week
                     </label>
-                    <select
+                    <Select
                       value={filterWeek}
                       onChange={(e) => setFilterWeek(e.target.value)}
-                      className="w-full text-xs border border-gray-300 rounded-xs px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-400"
                     >
                       <option value="">---------</option>
                       {WEEK_OPTIONS.map((opt) => (
@@ -312,17 +317,16 @@ export default function CompanyLeaves() {
                           {opt.label}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-gray-900 mb-1.5">
+                    <label className="block text-xs font-bold text-ink-primary mb-1.5">
                       Based On Week Day
                     </label>
-                    <select
+                    <Select
                       value={filterWeekDay}
                       onChange={(e) => setFilterWeekDay(e.target.value)}
-                      className="w-full text-xs border border-gray-300 rounded-xs px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-400"
                     >
                       <option value="">---------</option>
                       {WEEK_DAY_OPTIONS.map((opt) => (
@@ -330,22 +334,22 @@ export default function CompanyLeaves() {
                           {opt.label}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   <div className="pt-2 flex flex-col gap-2">
-                    <button
+                    <Button size="small"
                       type="button"
                       onClick={handleApplyFilter}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xs font-semibold text-xs tracking-wide shadow-xs cursor-pointer transition-colors"
+                      className="w-full"
                     >
                       Filter
-                    </button>
+                    </Button>
                     {hasActiveFilters && (
                       <button
                         type="button"
                         onClick={handleResetFilter}
-                        className="w-full py-1.5 text-xs text-gray-500 hover:text-gray-800 underline text-center"
+                        className="w-full py-1.5 text-xs text-ink-secondary hover:text-ink-primary underline text-center"
                       >
                         Reset Filter
                       </button>
@@ -357,75 +361,74 @@ export default function CompanyLeaves() {
           </div>
 
           {/* + Create Button (Blue) */}
-          <button
+          <Button size="small"
             type="button"
             onClick={handleOpenCreate}
-            className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-xs text-xs font-semibold shadow-xs cursor-pointer transition-colors"
           >
             <span>+ Create</span>
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Main Table (Matching Screenshot 2) */}
-      <div className="bg-white border border-gray-200/90 rounded-xs shadow-2xs overflow-hidden">
+      <div className="bg-surface-paper border border-grey-300/90 rounded-xs shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 text-left">
+          <table className="min-w-full divide-y divide-divider text-left">
             <thead>
-              <tr className="bg-white">
+              <tr className="bg-surface-paper">
                 <th
                   scope="col"
-                  className="py-3 px-4 text-xs font-bold text-gray-900 uppercase tracking-wider"
+                  className="py-3 px-4 text-xs font-bold text-ink-primary uppercase tracking-wider"
                 >
                   Based On Week
                 </th>
                 <th
                   scope="col"
-                  className="py-3 px-4 text-xs font-bold text-gray-900 uppercase tracking-wider"
+                  className="py-3 px-4 text-xs font-bold text-ink-primary uppercase tracking-wider"
                 >
                   Based On Week Day
                 </th>
                 <th
                   scope="col"
-                  className="py-3 px-4 text-xs font-bold text-gray-900 uppercase tracking-wider text-center border-l border-gray-100 w-36"
+                  className="py-3 px-4 text-xs font-bold text-ink-primary uppercase tracking-wider text-center border-l border-divider w-36"
                 >
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-divider bg-surface-paper">
               {isLoading ? (
                 <tr>
-                  <td colSpan={3} className="py-8 text-center text-sm text-gray-500">
+                  <td colSpan={3} className="py-8 text-center text-sm text-ink-secondary">
                     Loading company leaves...
                   </td>
                 </tr>
               ) : records.length === 0 ? (
                 <tr>
                   <td colSpan={3} className="py-12 text-center">
-                    <p className="text-sm font-medium text-gray-600">No company leaves configured yet.</p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-sm font-medium text-ink-secondary">No company leaves configured yet.</p>
+                    <p className="text-xs text-ink-disabled mt-1">
                       Click "+ Create" to configure recurring leaves like All Sundays or Second/Fourth Saturdays.
                     </p>
                   </td>
                 </tr>
               ) : (
                 records.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50/70 transition-colors">
-                    <td className="py-3.5 px-4 text-sm text-gray-800 font-normal">
+                  <tr key={item.id} className="hover:bg-surface-neutral/70 transition-colors">
+                    <td className="py-3.5 px-4 text-sm text-ink-primary font-normal">
                       {item.based_on_week_display || item.based_on_week}
                     </td>
-                    <td className="py-3.5 px-4 text-sm text-gray-800 font-normal">
+                    <td className="py-3.5 px-4 text-sm text-ink-primary font-normal">
                       {item.based_on_week_day_display || item.based_on_week_day}
                     </td>
-                    <td className="py-2 px-4 text-center border-l border-gray-100">
+                    <td className="py-2 px-4 text-center border-l border-divider">
                       <div className="inline-flex items-center justify-center gap-4">
                         {/* Edit Icon (Pencil in Square) */}
                         <button
                           type="button"
                           onClick={() => handleOpenEdit(item)}
                           title="Edit"
-                          className="text-gray-400 hover:text-gray-700 p-1 rounded-xs transition-colors cursor-pointer"
+                          className="text-ink-disabled hover:text-ink-primary p-1 rounded-xs transition-colors cursor-pointer"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
@@ -463,13 +466,13 @@ export default function CompanyLeaves() {
         </div>
 
         {/* Pagination Bar (Matching Screenshot 2) */}
-        <div className="py-3 px-4 flex items-center justify-between border-t border-gray-100 bg-white text-xs text-gray-700">
+        <div className="py-3 px-4 flex items-center justify-between border-t border-divider bg-surface-paper text-xs text-ink-primary">
           <div>
             Page {page} of {totalPages}.
           </div>
           <div className="flex items-center gap-2">
             <span>Page</span>
-            <span className="inline-flex items-center justify-center border border-gray-300 rounded-xs px-2 py-0.5 min-w-[28px] text-center font-medium bg-white">
+            <span className="inline-flex items-center justify-center border border-divider rounded-xs px-2 py-0.5 min-w-[28px] text-center font-medium bg-surface-paper">
               {page}
             </span>
             <span>of {totalPages}</span>
@@ -478,10 +481,10 @@ export default function CompanyLeaves() {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="p-1 rounded-xs border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="p-1 rounded-xs border border-divider hover:bg-surface-neutral disabled:opacity-30 disabled:cursor-not-allowed"
                 title="Previous Page"
               >
-                <svg className="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3.5 h-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
@@ -489,10 +492,10 @@ export default function CompanyLeaves() {
                 type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages}
-                className="p-1 rounded-xs border border-gray-200 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="p-1 rounded-xs border border-divider hover:bg-surface-neutral disabled:opacity-30 disabled:cursor-not-allowed"
                 title="Next Page"
               >
-                <svg className="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3.5 h-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
@@ -503,17 +506,17 @@ export default function CompanyLeaves() {
 
       {/* Create / Edit Modal (Matching Screenshot 1) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-2xs">
-          <div className="w-full max-w-md bg-white rounded-xs shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-150">
+        <Modal open onClose={() => setIsModalOpen(false)} labelledBy="CompanyLeaves-modal-title-1" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900 tracking-tight">
+              <h2 id="CompanyLeaves-modal-title-1" className="text-lg font-bold text-ink-primary tracking-tight">
                 {editingLeave ? 'Edit Company Leave' : 'Create Company Leave'}
               </h2>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-gray-700 text-lg leading-none"
+                className="text-ink-disabled hover:text-ink-primary text-lg leading-none"
               >
                 ✕
               </button>
@@ -521,7 +524,7 @@ export default function CompanyLeaves() {
 
             {/* Inner Bordered Card (Matching Screenshot 1) */}
             <form onSubmit={handleSaveModal}>
-              <div className="border border-gray-200 rounded-xs p-5 space-y-4 bg-white">
+              <div className="border border-divider rounded-xs p-5 space-y-4 bg-surface-paper">
                 {formError && (
                   <div className="p-2.5 rounded-xs bg-red-50 border border-red-200 text-xs text-red-700">
                     {formError}
@@ -530,32 +533,30 @@ export default function CompanyLeaves() {
 
                 {/* Field 1: Based On Week */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-bold text-ink-primary mb-1.5">
                     Based On Week
                   </label>
-                  <select
+                  <Select
                     value={formWeek}
                     onChange={(e) => setFormWeek(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xs px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-1 focus:ring-gray-400"
                   >
                     {WEEK_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
                         {opt.label}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 {/* Field 2: Based On Week Day */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-bold text-ink-primary mb-1.5">
                     Based On Week Day
                   </label>
-                  <select
+                  <Select
                     value={formWeekDay}
                     onChange={(e) => setFormWeekDay(e.target.value)}
                     required
-                    className="w-full border border-gray-200 rounded-xs px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-1 focus:ring-gray-400"
                   >
                     <option value="">---------</option>
                     {WEEK_DAY_OPTIONS.map((opt) => (
@@ -563,18 +564,17 @@ export default function CompanyLeaves() {
                         {opt.label}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 {/* Field 3: Company */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-bold text-ink-primary mb-1.5">
                     Company
                   </label>
-                  <select
+                  <Select
                     value={formCompany}
                     onChange={(e) => setFormCompany(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xs px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-1 focus:ring-gray-400"
                   >
                     {availableCompanies.length === 0 ? (
                       <option value="">Default Organization</option>
@@ -585,25 +585,24 @@ export default function CompanyLeaves() {
                         </option>
                       ))
                     )}
-                  </select>
+                  </Select>
                 </div>
 
                 {/* Save Button (Blue) */}
                 <div className="pt-2 flex justify-end">
-                  <button
+                  <Button
                     type="submit"
                     disabled={createMutation.isPending || updateMutation.isPending}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xs font-semibold text-sm shadow-xs cursor-pointer transition-colors disabled:opacity-50"
                   >
                     {createMutation.isPending || updateMutation.isPending
                       ? 'Saving...'
                       : 'Save'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Delete Confirmation Dialog */}

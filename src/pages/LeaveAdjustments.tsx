@@ -7,6 +7,11 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
 
 const ENDPOINT = '/api/v1/leaves/adjustments/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -173,11 +178,11 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+    <Modal open onClose={onClose} labelledBy="LeaveAdjustments-modal-title-1" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+      <div className="p-6 min-h-0 flex-1 overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Create Leave Adjustment</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+          <h2 id="LeaveAdjustments-modal-title-1" className="text-lg font-semibold">Create Leave Adjustment</h2>
+          <button onClick={onClose} className="text-ink-disabled hover:text-ink-secondary text-xl">&times;</button>
         </div>
 
         {error && (
@@ -189,9 +194,8 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
         <div className="space-y-4">
           {/* Employee */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Employee *</label>
-            <select
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            <label className="block text-sm font-medium text-ink-primary mb-1">Employee *</label>
+            <Select
               value={selectedEmployee}
               onChange={e => {
                 setSelectedEmployee(e.target.value);
@@ -200,14 +204,13 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
             >
               <option value="">Select Employee</option>
               {employees.map(emp => <option key={emp.id} value={emp.id}>{emp.full_name || emp.name}</option>)}
-            </select>
+            </Select>
           </div>
 
           {/* Leave Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Leave Type *</label>
-            <select
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            <label className="block text-sm font-medium text-ink-primary mb-1">Leave Type *</label>
+            <Select
               value={selectedLeaveType}
               onChange={e => {
                 setSelectedLeaveType(e.target.value);
@@ -216,16 +219,16 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
             >
               <option value="">Select Leave Type</option>
               {leaveTypes.map(lt => <option key={lt.id} value={lt.id}>{lt.name}</option>)}
-            </select>
+            </Select>
           </div>
 
           {/* Current Balance Display */}
           {selectedEmployee && selectedLeaveType && (
-            <div className="rounded-md bg-blue-50 border border-blue-200 p-3">
+            <div className="rounded-md bg-primary-lighter border border-primary-light p-3">
               {balanceLoading ? (
-                <p className="text-sm text-blue-600">Loading balance...</p>
+                <p className="text-sm text-primary-main">Loading balance...</p>
               ) : balance ? (
-                <div className="text-sm text-blue-800">
+                <div className="text-sm text-primary-dark">
                   <p className="font-medium">Current Balance</p>
                   <div className="mt-1 flex gap-4">
                     <span>Allocated: <strong>{balance.allocated_days}</strong></span>
@@ -234,26 +237,25 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-blue-600">No allocation found — balance will be created with this adjustment.</p>
+                <p className="text-sm text-primary-main">No allocation found — balance will be created with this adjustment.</p>
               )}
             </div>
           )}
 
           {/* Adjustment Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Adjustment Type *</label>
-            <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm" value={adjustmentType} onChange={e => setAdjustmentType(e.target.value)}>
+            <label className="block text-sm font-medium text-ink-primary mb-1">Adjustment Type *</label>
+            <Select value={adjustmentType} onChange={e => setAdjustmentType(e.target.value)}>
               <option value="credit">Credit (Add days)</option>
               <option value="debit">Debit (Remove days)</option>
-            </select>
+            </Select>
           </div>
 
           {/* Days */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Days *</label>
-            <input
+            <label className="block text-sm font-medium text-ink-primary mb-1">Days *</label>
+            <Input
               type="number"
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
               placeholder="Number of days"
               value={days}
               onChange={e => {
@@ -264,7 +266,7 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
               step="0.5"
             />
             {balance && days && (
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-ink-secondary">
                 After adjustment: <strong>{(balance.available_balance + (adjustmentType === 'debit' ? -Number(days) : Number(days))).toFixed(1)}</strong> days available
               </p>
             )}
@@ -272,9 +274,8 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
 
           {/* Reason */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Reason *</label>
-            <textarea
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            <label className="block text-sm font-medium text-ink-primary mb-1">Reason *</label>
+            <Textarea
               rows={2}
               placeholder="Reason for adjustment (required)"
               value={reason}
@@ -288,17 +289,16 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
         </div>
 
         <div className="mt-5 flex justify-end gap-2">
-          <button className="px-4 py-2 text-sm rounded border border-gray-300 hover:bg-gray-50" onClick={onClose}>Cancel</button>
-          <button
-            className="px-4 py-2 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+          <button className="px-4 py-2 text-sm rounded border border-divider hover:bg-surface-neutral" onClick={onClose}>Cancel</button>
+          <Button type="submit"
             disabled={submitting || !selectedEmployee || !selectedLeaveType || !days || !reason.trim()}
             onClick={handleSubmit}
           >
             {submitting ? 'Saving...' : 'Save'}
-          </button>
+          </Button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -341,7 +341,7 @@ export default function LeaveAdjustments() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Leave Adjustments</h1><p className="mt-1 text-sm text-gray-600">Manual leave balance adjustments</p></div>
+        <div><h1 className="text-2xl font-bold text-ink-primary">Leave Adjustments</h1><p className="mt-1 text-sm text-ink-secondary">Manual leave balance adjustments</p></div>
         <CreateButton permission="leave_adjustments.create" label="Create Adjustment" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

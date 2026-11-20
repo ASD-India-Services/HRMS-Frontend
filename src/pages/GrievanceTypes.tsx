@@ -56,7 +56,7 @@ export default function GrievanceTypes() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Grievance Types</h1><p className="mt-1 text-sm text-gray-600">Manage grievance categories</p></div>
+        <div><h1 className="text-2xl font-bold text-ink-primary">Grievance Types</h1><p className="mt-1 text-sm text-ink-secondary">Manage grievance categories</p></div>
         <CreateButton permission="grievance_types.create" label="Create Type" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />

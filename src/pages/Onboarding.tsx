@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { OnboardingChecklist } from '@/pages/onboarding/OnboardingChecklist';
 import api from '@/lib/api';
+import { Select } from '@/components/ui/Select';
 
 export default function Onboarding() {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>('');
@@ -39,30 +40,30 @@ export default function Onboarding() {
     <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Onboarding Checklist</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-ink-primary">Onboarding Checklist</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
             View and complete new hire onboarding tasks and orientation milestones.
           </p>
         </div>
 
         {/* Employee Switcher for HR/Admins */}
         {employeesData?.results && employeesData.results.length > 0 && (
-          <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200 shadow-xs">
-            <label htmlFor="employee-select" className="text-xs font-semibold text-gray-500 whitespace-nowrap">
+          <div className="flex items-center gap-2 bg-surface-paper px-3 py-2 rounded-lg border border-divider shadow-xs">
+            <label htmlFor="employee-select" className="text-xs font-semibold text-ink-secondary whitespace-nowrap">
               Viewing Employee:
             </label>
-            <select
+            <Select
               id="employee-select"
               value={activeEmployeeId || ''}
               onChange={(e) => setSelectedEmployeeId(e.target.value)}
-              className="rounded-md border border-gray-200 py-1 pl-2.5 pr-8 text-xs font-medium text-gray-800 bg-gray-50 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 cursor-pointer"
+              className="pl-2.5 pr-8 font-medium cursor-pointer"
             >
               {employeesData.results.map((emp) => (
                 <option key={emp.id} value={emp.id}>
                   {emp.full_name || emp.email} {emp.id === currentEmployee?.id ? '(Me)' : ''}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         )}
       </div>
@@ -71,7 +72,7 @@ export default function Onboarding() {
         {activeEmployeeId ? (
           <OnboardingChecklist employeeId={activeEmployeeId} />
         ) : (
-          <div className="flex h-32 items-center justify-center rounded-lg bg-gray-50 text-sm text-gray-500">
+          <div className="flex h-32 items-center justify-center rounded-lg bg-surface-neutral text-sm text-ink-secondary">
             Loading checklist...
           </div>
         )}

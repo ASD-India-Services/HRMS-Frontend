@@ -8,8 +8,14 @@ import {
   useDeleteFAQCategory,
 } from '@/hooks/useHelpdesk';
 import type { FAQCategory } from '@/types/helpdesk';
+import { Modal } from '@/components/ui/Modal';
+import { useToast } from '@/components/ui/Toast';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 
 export default function FAQCategories() {
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const { hasPermission } = useHrmsPermissionsContext();
 
@@ -91,7 +97,7 @@ export default function FAQCategories() {
       await deleteMutation.mutateAsync(deletingCategory.id);
       setDeletingCategory(null);
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : 'Failed to delete category');
+      showToast(err instanceof Error ? err.message : 'Failed to delete category', 'error');
     }
   };
 
@@ -100,28 +106,28 @@ export default function FAQCategories() {
       {/* Breadcrumb & Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-1">
+          <div className="flex items-center gap-1.5 text-xs text-ink-secondary mb-1">
             <span>Help Desk</span>
             <span>&gt;</span>
-            <span className="text-gray-900 font-medium">FAQ</span>
+            <span className="text-ink-primary font-medium">FAQ</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">FAQ Categories</h1>
+          <h1 className="text-2xl font-bold text-ink-primary">FAQ Categories</h1>
         </div>
 
         <div className="flex items-center gap-3">
           {/* Search bar */}
           <div className="relative">
-            <input
+            <Input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search..."
-              className="w-48 sm:w-64 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+              className="w-48 sm:w-64"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-sm"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-disabled hover:text-ink-secondary text-sm"
               >
                 &times;
               </button>
@@ -130,14 +136,13 @@ export default function FAQCategories() {
 
           {/* Create Button */}
           {canCreate && (
-            <button
+            <Button
               type="button"
               onClick={handleOpenCreateModal}
-              className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition"
             >
               <span className="text-base font-bold leading-none">+</span>
               <span>Create</span>
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -145,8 +150,8 @@ export default function FAQCategories() {
       {/* Loading & Error States */}
       {isLoading && (
         <div className="flex items-center justify-center py-20">
-          <div className="h-8 w-8 animate-spin rounded-full border-3 border-blue-600 border-t-transparent" />
-          <span className="ml-3 text-sm text-gray-600">Loading FAQ categories...</span>
+          <div className="h-8 w-8 animate-spin rounded-full border-3 border-primary-main border-t-transparent" />
+          <span className="ml-3 text-sm text-ink-secondary">Loading FAQ categories...</span>
         </div>
       )}
 
@@ -158,26 +163,26 @@ export default function FAQCategories() {
 
       {/* Empty State */}
       {!isLoading && !isError && categories.length === 0 && (
-        <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-white py-16 text-center shadow-xs">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+        <div className="rounded-2xl border-2 border-dashed border-divider bg-surface-paper py-16 text-center shadow-xs">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-lighter text-primary-main">
             <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm0 5.25h.007v.008H3.75V12Zm0 5.25h.007v.008H3.75v-.008Z" />
             </svg>
           </div>
-          <h3 className="mt-3 text-sm font-bold text-gray-900">No FAQ Categories Found</h3>
-          <p className="mt-1 text-xs text-gray-500 max-w-sm mx-auto">
+          <h3 className="mt-3 text-sm font-bold text-ink-primary">No FAQ Categories Found</h3>
+          <p className="mt-1 text-xs text-ink-secondary max-w-sm mx-auto">
             {searchTerm
               ? 'No categories match your search. Try a different query.'
               : 'Create categories like Leave, Payroll, Asset, and Recruitment to organize help topics.'}
           </p>
           {canCreate && (
-            <button
+            <Button size="small"
               type="button"
               onClick={handleOpenCreateModal}
-              className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 transition"
+              className="mt-4"
             >
               + Create Category
-            </button>
+            </Button>
           )}
         </div>
       )}
@@ -188,12 +193,12 @@ export default function FAQCategories() {
           {categories.map((cat) => (
             <div
               key={cat.id}
-              className="rounded-lg border border-gray-200 bg-white p-6 shadow-xs hover:shadow-md transition flex flex-col justify-between relative"
+              className="rounded-lg border border-divider bg-surface-paper p-6 shadow-xs hover:shadow-md transition flex flex-col justify-between relative"
             >
               {/* Card Header */}
               <div>
                 <div className="flex items-start justify-between">
-                  <h3 className="text-lg font-bold text-gray-900 capitalize">{cat.title}</h3>
+                  <h3 className="text-lg font-bold text-ink-primary capitalize">{cat.title}</h3>
 
                   {/* 3 dots menu button */}
                   {(canEdit || canDelete) && (
@@ -201,7 +206,7 @@ export default function FAQCategories() {
                       <button
                         type="button"
                         onClick={() => setActiveMenuId(activeMenuId === cat.id ? null : cat.id)}
-                        className="p-1 text-gray-400 hover:text-gray-600 rounded transition"
+                        className="p-1 text-ink-disabled hover:text-ink-secondary rounded transition"
                         title="Actions"
                       >
                         <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -212,16 +217,16 @@ export default function FAQCategories() {
                       {/* Dropdown Menu */}
                       {activeMenuId === cat.id && (
                         <div
-                          className="absolute right-0 top-full mt-1 w-32 rounded-md bg-white py-1 shadow-lg border border-gray-200 z-20 animate-in fade-in zoom-in-95"
+                          className="absolute right-0 top-full mt-1 w-32 rounded-md bg-surface-paper py-1 shadow-lg border border-divider z-20 animate-in fade-in zoom-in-95"
                           onMouseLeave={() => setActiveMenuId(null)}
                         >
                           {canEdit && (
                             <button
                               type="button"
                               onClick={() => handleOpenEditModal(cat)}
-                              className="w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                              className="w-full text-left px-3 py-1.5 text-xs text-ink-primary hover:bg-surface-neutral flex items-center gap-2"
                             >
-                              <svg className="h-3.5 w-3.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg className="h-3.5 w-3.5 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                               </svg>
                               <span>Edit</span>
@@ -249,20 +254,20 @@ export default function FAQCategories() {
                 </div>
 
                 {/* Description */}
-                <p className="mt-2 text-xs text-gray-500 line-clamp-3 min-h-[36px]">
+                <p className="mt-2 text-xs text-ink-secondary line-clamp-3 min-h-[36px]">
                   {cat.description || `FAQs related to ${cat.title.toLowerCase()} are shown here`}
                 </p>
               </div>
 
               {/* View FAQs Button */}
               <div className="mt-6 pt-2">
-                <button
+                <Button
                   type="button"
                   onClick={() => navigate(`/helpdesk/faq-view/${cat.id}`)}
-                  className="w-full rounded bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition focus:outline-none"
+                  className="w-full"
                 >
                   View FAQs
-                </button>
+                </Button>
               </div>
             </div>
           ))}
@@ -271,17 +276,17 @@ export default function FAQCategories() {
 
       {/* ─── MODAL: Create / Edit FAQ Category ────────────────────────────── */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+        <Modal open onClose={() => setIsModalOpen(false)} labelledBy="FAQCategories-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <h3 className="text-lg font-medium text-gray-900">
+            <div className="flex items-center justify-between pb-4 border-b border-divider">
+              <h3 id="FAQCategories-modal-title-1" className="text-lg font-medium text-ink-primary">
                 {editingCategory ? 'Edit FAQ Category' : 'Create FAQ Category'}
               </h3>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 text-lg leading-none p-1"
+                className="text-ink-disabled hover:text-ink-secondary text-lg leading-none p-1"
               >
                 ✕
               </button>
@@ -296,64 +301,60 @@ export default function FAQCategories() {
             <form onSubmit={handleFormSubmit} className="mt-4 space-y-4">
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-ink-primary mb-1">
                   Title: <span className="text-red-500">*</span>
                 </label>
-                <input
+                <Input
                   type="text"
                   required
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                   placeholder="Title"
-                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-ink-primary mb-1">
                   Description:
                 </label>
-                <textarea
+                <Textarea
                   rows={4}
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
                   placeholder="Description"
-                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:border-blue-500 focus:outline-none"
                 />
               </div>
 
               {/* Save Button */}
               <div className="flex justify-end pt-3">
-                <button
+                <Button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
-                  className="rounded-md bg-blue-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 transition focus:outline-none disabled:opacity-50"
                 >
                   {createMutation.isPending || updateMutation.isPending ? 'Saving...' : 'Save'}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* ─── MODAL: Delete Confirmation ────────────────────────────────────── */}
       {deletingCategory && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <h3 className="text-base font-bold text-gray-900">Delete FAQ Category</h3>
-            <p className="mt-2 text-xs text-gray-600">
-              Are you sure you want to delete <span className="font-semibold text-gray-900">{deletingCategory.title}</span>? All FAQs under this category will also be deleted.
+        <Modal open onClose={() => setDeletingCategory(null)} labelledBy="FAQCategories-modal-title-2" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+            <h3 id="FAQCategories-modal-title-2" className="text-base font-bold text-ink-primary">Delete FAQ Category</h3>
+            <p className="mt-2 text-xs text-ink-secondary">
+              Are you sure you want to delete <span className="font-semibold text-ink-primary">{deletingCategory.title}</span>? All FAQs under this category will also be deleted.
             </p>
             <div className="mt-5 flex justify-end gap-2.5">
-              <button
+              <Button variant="outlined" color="inherit" size="small"
                 type="button"
                 onClick={() => setDeletingCategory(null)}
-                className="rounded border border-gray-300 bg-white px-3.5 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
               >
                 Cancel
-              </button>
+              </Button>
               <button
                 type="button"
                 onClick={handleDeleteConfirm}
@@ -364,7 +365,7 @@ export default function FAQCategories() {
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

@@ -56,7 +56,7 @@ function useGrievanceColumns(): ColumnDef<Grievance>[] {
         header: 'Subject',
         sortable: true,
         render: (value: unknown) => (
-          <span className="font-medium text-gray-900">{value ? String(value) : '—'}</span>
+          <span className="font-medium text-ink-primary">{value ? String(value) : '—'}</span>
         ),
       },
       {
@@ -64,7 +64,7 @@ function useGrievanceColumns(): ColumnDef<Grievance>[] {
         header: 'Description',
         sortable: false,
         render: (value: unknown) => (
-          <span className="text-sm text-gray-600 line-clamp-2 max-w-[250px]">
+          <span className="text-sm text-ink-secondary line-clamp-2 max-w-[250px]">
             {value ? String(value) : '—'}
           </span>
         ),
@@ -169,8 +169,8 @@ function GrievanceListContent() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Grievances</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-ink-primary">Grievances</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
             Submit, track, and manage workplace issues and grievances through investigation and resolution.
           </p>
         </div>
@@ -178,7 +178,7 @@ function GrievanceListContent() {
       </div>
 
       {canManage && (
-        <div className="mb-4 border-b border-gray-200" role="tablist">
+        <div className="mb-4 border-b border-divider" role="tablist">
           <nav className="-mb-px flex gap-4">
             <button
               type="button"
@@ -187,8 +187,8 @@ function GrievanceListContent() {
               onClick={() => { setViewTab('mine'); setPage(1); }}
               className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
                 viewTab === 'mine'
-                  ? 'border-primary-500 text-primary-600 font-semibold'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  ? 'border-primary-main text-primary-main font-semibold'
+                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
               }`}
             >
               My Grievances
@@ -200,8 +200,8 @@ function GrievanceListContent() {
               onClick={() => { setViewTab('all'); setPage(1); }}
               className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
                 viewTab === 'all'
-                  ? 'border-primary-500 text-primary-600 font-semibold'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  ? 'border-primary-main text-primary-main font-semibold'
+                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
               }`}
             >
               All Grievances
@@ -218,12 +218,12 @@ function GrievanceListContent() {
             onClick={() => { setFilter('status', ''); setPage(1); }}
             className={`flex flex-col rounded-xl border p-4 text-left transition-all ${
               !filterValues.status
-                ? 'border-primary-500 bg-primary-50/40 ring-1 ring-primary-500 shadow-sm'
-                : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                ? 'border-primary-main bg-primary-lighter/40 ring-1 ring-primary-main shadow-sm'
+                : 'border-divider bg-surface-paper hover:border-divider hover:shadow-sm'
             }`}
           >
-            <span className="text-xs font-medium text-gray-500">Total Grievances</span>
-            <span className="mt-1 text-2xl font-bold text-gray-900">{summary.total}</span>
+            <span className="text-xs font-medium text-ink-secondary">Total Grievances</span>
+            <span className="mt-1 text-2xl font-bold text-ink-primary">{summary.total}</span>
           </button>
 
           <button
@@ -232,7 +232,7 @@ function GrievanceListContent() {
             className={`flex flex-col rounded-xl border p-4 text-left transition-all ${
               filterValues.status === 'open'
                 ? 'border-amber-500 bg-amber-50/40 ring-1 ring-amber-500 shadow-sm'
-                : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                : 'border-divider bg-surface-paper hover:border-divider hover:shadow-sm'
             }`}
           >
             <span className="text-xs font-medium text-amber-700">Open</span>
@@ -244,12 +244,12 @@ function GrievanceListContent() {
             onClick={() => { setFilter('status', 'investigating'); setPage(1); }}
             className={`flex flex-col rounded-xl border p-4 text-left transition-all ${
               filterValues.status === 'investigating'
-                ? 'border-blue-500 bg-blue-50/40 ring-1 ring-blue-500 shadow-sm'
-                : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                ? 'border-primary-main bg-primary-lighter/40 ring-1 ring-primary-main shadow-sm'
+                : 'border-divider bg-surface-paper hover:border-divider hover:shadow-sm'
             }`}
           >
-            <span className="text-xs font-medium text-blue-700">Investigating</span>
-            <span className="mt-1 text-2xl font-bold text-blue-900">{summary.investigating}</span>
+            <span className="text-xs font-medium text-primary-dark">Investigating</span>
+            <span className="mt-1 text-2xl font-bold text-primary-darker">{summary.investigating}</span>
           </button>
 
           <button
@@ -258,7 +258,7 @@ function GrievanceListContent() {
             className={`flex flex-col rounded-xl border p-4 text-left transition-all ${
               filterValues.status === 'resolved'
                 ? 'border-emerald-500 bg-emerald-50/40 ring-1 ring-emerald-500 shadow-sm'
-                : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                : 'border-divider bg-surface-paper hover:border-divider hover:shadow-sm'
             }`}
           >
             <span className="text-xs font-medium text-emerald-700">Resolved</span>
@@ -286,8 +286,8 @@ function GrievanceListContent() {
             }
             if (currentStatus === 'closed') {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-gray-50 border border-gray-200 px-4 py-2">
-                  <span className="text-sm font-medium text-gray-800">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-surface-neutral border border-divider px-4 py-2">
+                  <span className="text-sm font-medium text-ink-primary">
                     {queryResult.data.count} grievance{queryResult.data.count !== 1 ? 's' : ''} closed
                   </span>
                 </div>
@@ -295,8 +295,8 @@ function GrievanceListContent() {
             }
             if (currentStatus === 'investigating') {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-blue-50 border border-blue-200 px-4 py-2">
-                  <span className="text-sm font-medium text-blue-800">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-primary-lighter border border-primary-light px-4 py-2">
+                  <span className="text-sm font-medium text-primary-dark">
                     {queryResult.data.count} grievance{queryResult.data.count !== 1 ? 's' : ''} under investigation
                   </span>
                 </div>

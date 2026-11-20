@@ -81,13 +81,13 @@ function useTrackingColumns(): ColumnDef<OnboardingTask>[] {
         render: (value: unknown) => {
           const status = value as string;
           const colors: Record<string, string> = {
-            pending: 'bg-gray-100 text-gray-700',
-            in_progress: 'bg-blue-100 text-blue-700',
+            pending: 'bg-surface-neutral text-ink-primary',
+            in_progress: 'bg-primary-lighter text-primary-dark',
             completed: 'bg-green-100 text-green-700',
           };
           return (
             <span
-              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${colors[status] || 'bg-gray-100 text-gray-700'}`}
+              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${colors[status] || 'bg-surface-neutral text-ink-primary'}`}
             >
               {status?.replace('_', ' ') || '—'}
             </span>
@@ -99,7 +99,7 @@ function useTrackingColumns(): ColumnDef<OnboardingTask>[] {
         header: 'Due (days)',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-ink-primary">
             {value ? `${value} days` : '—'}
           </span>
         ),
@@ -152,16 +152,16 @@ function OnboardingTrackingContent() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Onboarding Tracking</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-ink-primary">Onboarding Tracking</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
             Track employee onboarding task progress and completion.
           </p>
         </div>
         {queryResult.data && (
-          <div className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-2 shadow-sm">
+          <div className="flex items-center gap-3 rounded-lg border border-divider bg-surface-paper px-4 py-2 shadow-sm">
             <div className="text-right">
-              <p className="text-lg font-semibold text-gray-900">{progress}%</p>
-              <p className="text-xs text-gray-500">Completed</p>
+              <p className="text-lg font-semibold text-ink-primary">{progress}%</p>
+              <p className="text-xs text-ink-secondary">Completed</p>
             </div>
             <div
               className="h-10 w-10 rounded-full"

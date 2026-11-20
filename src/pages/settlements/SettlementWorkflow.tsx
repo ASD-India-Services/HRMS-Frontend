@@ -89,7 +89,7 @@ function useSettlementColumns(): ColumnDef<Settlement>[] {
         header: 'Final Amount',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm font-medium text-gray-900">
+          <span className="text-sm font-medium text-ink-primary">
             {formatCurrency(value as number)}
           </span>
         ),
@@ -99,7 +99,7 @@ function useSettlementColumns(): ColumnDef<Settlement>[] {
         header: 'Separation Date',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-ink-primary">
             {value
               ? new Date(value as string).toLocaleDateString('en-IN', {
                   day: '2-digit',
@@ -174,8 +174,8 @@ function SettlementWorkflowContent() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Full & Final Settlements</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-ink-primary">Full & Final Settlements</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
             Manage employee exit settlements — submit, approve, or reject final payouts.
           </p>
         </div>

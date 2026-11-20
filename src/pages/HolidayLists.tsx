@@ -56,7 +56,7 @@ export default function HolidayLists() {
     ...columns,
     { key: 'id', header: 'Actions', sortable: false, render: (_v: unknown, row: Record<string, unknown>) => (
       <div className="flex items-center gap-1">
-        <button onClick={() => setSelectedList(row)} className="rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100">Entries</button>
+        <button onClick={() => setSelectedList(row)} className="rounded bg-primary-lighter px-2 py-1 text-xs font-medium text-primary-dark hover:bg-primary-lighter">Entries</button>
         <EditButton permission="holidays.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
         <DeleteButton permission="holidays.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
       </div>
@@ -77,7 +77,7 @@ export default function HolidayLists() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Holiday Lists</h1><p className="mt-1 text-sm text-gray-600">Manage holiday calendars for the organization</p></div>
+        <div><h1 className="text-2xl font-bold text-ink-primary">Holiday Lists</h1><p className="mt-1 text-sm text-ink-secondary">Manage holiday calendars for the organization</p></div>
         <CreateButton permission="holidays.create" label="Create Holiday List" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
@@ -130,13 +130,13 @@ function HolidayEntries({ list, onBack }: { list: Record<string, unknown>; onBac
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6">
-        <button onClick={onBack} className="mb-3 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700">
+        <button onClick={onBack} className="mb-3 inline-flex items-center gap-1 text-sm text-ink-secondary hover:text-ink-primary">
           ← Back to Holiday Lists
         </button>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{list.name as string}</h1>
-            <p className="mt-1 text-sm text-gray-600">
+            <h1 className="text-2xl font-bold text-ink-primary">{list.name as string}</h1>
+            <p className="mt-1 text-sm text-ink-secondary">
               {list.from_date as string} to {list.to_date as string} · {entries.length} holidays
             </p>
           </div>
@@ -145,26 +145,26 @@ function HolidayEntries({ list, onBack }: { list: Record<string, unknown>; onBac
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-8"><div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-500 border-t-transparent" /></div>
+        <div className="flex justify-center py-8"><div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-main border-t-transparent" /></div>
       ) : entries.length === 0 ? (
-        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-gray-500">No holidays added yet. Click "Add Holiday" to add entries.</div>
+        <div className="rounded-lg border border-divider bg-surface-paper p-8 text-center text-ink-secondary">No holidays added yet. Click "Add Holiday" to add entries.</div>
       ) : (
-        <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="rounded-lg border border-divider bg-surface-paper overflow-hidden">
+          <table className="min-w-full divide-y divide-divider">
+            <thead className="bg-surface-neutral">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Date</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Holiday</th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Date</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Holiday</th>
+                <th className="px-4 py-3 text-right text-xs font-medium uppercase text-ink-secondary">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-divider">
               {entries.map((entry: Record<string, unknown>) => (
                 <tr key={entry.id as string}>
-                  <td className="px-4 py-3 text-sm text-gray-900">
+                  <td className="px-4 py-3 text-sm text-ink-primary">
                     {new Date(entry.holiday_date as string).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', weekday: 'short' })}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-700">{entry.description as string}</td>
+                  <td className="px-4 py-3 text-sm text-ink-primary">{entry.description as string}</td>
                   <td className="px-4 py-3 text-right">
                     <DeleteButton permission="holidays.delete" label="Delete" size="sm" onClick={() => setDeleteId(entry.id as string)} />
                   </td>

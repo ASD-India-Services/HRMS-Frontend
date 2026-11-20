@@ -48,14 +48,14 @@ export default function Recruitment() {
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       {/* Page Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Recruitment</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-ink-primary">Recruitment</h1>
+        <p className="mt-1 text-sm text-ink-secondary">
           Manage job openings, applicants, and the hiring pipeline.
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="mb-6 border-b border-gray-200">
+      <div className="mb-6 border-b border-divider">
         <nav className="-mb-px flex gap-6" aria-label="Recruitment tabs">
           {TABS.map((tab) => (
             <button
@@ -63,8 +63,8 @@ export default function Recruitment() {
               onClick={() => setActiveTab(tab.key)}
               className={`whitespace-nowrap border-b-2 pb-3 text-sm font-medium transition-colors ${
                 activeTab === tab.key
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  ? 'border-primary-main text-primary-main'
+                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
               }`}
               aria-current={activeTab === tab.key ? 'page' : undefined}
             >

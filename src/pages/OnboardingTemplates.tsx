@@ -100,19 +100,19 @@ export default function OnboardingTemplates() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Onboarding Management</h1>
-        <p className="mt-1 text-sm text-gray-600">Create templates and assign onboarding tasks to employees</p>
+        <h1 className="text-2xl font-bold text-ink-primary">Onboarding Management</h1>
+        <p className="mt-1 text-sm text-ink-secondary">Create templates and assign onboarding tasks to employees</p>
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 border-b border-gray-200">
+      <div className="mb-6 border-b border-divider">
         <nav className="flex gap-0">
           <button
             onClick={() => setActiveTab('templates')}
             className={`border-b-2 px-4 py-2 text-sm font-medium ${
               activeTab === 'templates'
-                ? 'border-primary-500 text-primary-700'
-                : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                ? 'border-primary-main text-primary-dark'
+                : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
             }`}
           >
             Templates
@@ -121,8 +121,8 @@ export default function OnboardingTemplates() {
             onClick={() => setActiveTab('tasks')}
             className={`border-b-2 px-4 py-2 text-sm font-medium ${
               activeTab === 'tasks'
-                ? 'border-primary-500 text-primary-700'
-                : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                ? 'border-primary-main text-primary-dark'
+                : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
             }`}
           >
             Tasks

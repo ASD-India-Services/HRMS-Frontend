@@ -7,6 +7,9 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 const ENDPOINT = '/api/v1/leaves/earned-leave-schedules/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -69,7 +72,7 @@ export default function EarnedLeaveSchedules() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Earned Leave Schedules</h1><p className="mt-1 text-sm text-gray-600">Configure automatic leave accrual — days earned per period for all employees</p></div>
+        <div><h1 className="text-2xl font-bold text-ink-primary">Earned Leave Schedules</h1><p className="mt-1 text-sm text-ink-secondary">Configure automatic leave accrual — days earned per period for all employees</p></div>
         <CreateButton permission="earned_leave_schedules.create" label="Create Schedule" onClick={() => setShowCreate(true)} />
       </div>
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
@@ -87,44 +90,42 @@ export default function EarnedLeaveSchedules() {
 
       {/* Edit Modal */}
       {editRecord && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-sm p-6">
+        <Modal open onClose={() => setEditRecord(null)} labelledBy="EarnedLeaveSchedules-modal-title-1" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Edit Earned Leave Schedule</h2>
-              <button onClick={() => setEditRecord(null)} className="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+              <h2 id="EarnedLeaveSchedules-modal-title-1" className="text-lg font-semibold">Edit Earned Leave Schedule</h2>
+              <button onClick={() => setEditRecord(null)} className="text-ink-disabled hover:text-ink-secondary text-xl">&times;</button>
             </div>
 
-            <div className="mb-4 text-sm text-gray-600">
+            <div className="mb-4 text-sm text-ink-secondary">
               <span className="font-medium">{editRecord.leave_type_name as string || '–'}</span> — {editRecord.earning_frequency as string || '–'}
             </div>
 
-            <div className="mb-4 rounded-md bg-gray-50 border border-gray-200 p-3">
-              <p className="text-xs text-gray-500">Current Monthly Leave Days</p>
-              <p className="text-lg font-bold text-gray-800">{String(editRecord.fraction_of_daily_earning ?? 0)} days/period</p>
+            <div className="mb-4 rounded-md bg-surface-neutral border border-divider p-3">
+              <p className="text-xs text-ink-secondary">Current Monthly Leave Days</p>
+              <p className="text-lg font-bold text-ink-primary">{String(editRecord.fraction_of_daily_earning ?? 0)} days/period</p>
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Add Days Per Period</label>
-              <input
+              <label className="block text-sm font-medium text-ink-primary mb-1">Add Days Per Period</label>
+              <Input
                 type="number"
                 value={editDaysEarned}
                 onChange={e => setEditDaysEarned(e.target.value)}
                 placeholder="0"
                 step="0.25"
                 min="0"
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
               {editDaysEarned && Number(editDaysEarned) > 0 && (
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-ink-secondary">
                   New monthly leave days: <strong>{(Number(editRecord.fraction_of_daily_earning) + Number(editDaysEarned)).toFixed(2)}</strong> days/period
                 </p>
               )}
             </div>
 
             <div className="flex justify-end gap-2">
-              <button className="px-4 py-2 text-sm rounded border border-gray-300 hover:bg-gray-50" onClick={() => setEditRecord(null)}>Cancel</button>
-              <button
-                className="px-4 py-2 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+              <button className="px-4 py-2 text-sm rounded border border-divider hover:bg-surface-neutral" onClick={() => setEditRecord(null)}>Cancel</button>
+              <Button type="submit"
                 disabled={editLoading || !editDaysEarned || Number(editDaysEarned) === 0}
                 onClick={async () => {
                   if (!editRecord) return;
@@ -142,10 +143,10 @@ export default function EarnedLeaveSchedules() {
                 }}
               >
                 {editLoading ? 'Saving...' : 'Save'}
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       <ConfirmDialog
