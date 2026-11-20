@@ -121,11 +121,11 @@ export function RecruitmentPipeline() {
           return (
             <div className="flex items-center gap-2.5">
               {isSelected ? (
-                <span className="h-2.5 w-2.5 rounded-full bg-blue-600 ring-4 ring-blue-100 animate-pulse" />
+                <span className="h-2.5 w-2.5 rounded-full bg-primary-main ring-4 ring-primary-lighter animate-pulse" />
               ) : (
-                <span className="h-2 w-2 rounded-full bg-gray-300" />
+                <span className="h-2 w-2 rounded-full bg-grey-300" />
               )}
-              <span className={`font-medium ${isSelected ? 'text-blue-700 font-semibold' : 'text-gray-900'}`}>
+              <span className={`font-medium ${isSelected ? 'text-primary-dark font-semibold' : 'text-ink-primary'}`}>
                 {String(value || '—')}
               </span>
               {row.is_referral && (
@@ -143,7 +143,7 @@ export function RecruitmentPipeline() {
         header: 'Phone',
         sortable: false,
         render: (value: unknown) => (
-          <span className="text-gray-600">{String(value || '—')}</span>
+          <span className="text-ink-secondary">{String(value || '—')}</span>
         ),
       },
       {
@@ -162,8 +162,8 @@ export function RecruitmentPipeline() {
             title = row.job_opening_title;
           }
           return (
-            <span className="inline-flex items-center gap-1.5 text-gray-800 font-medium">
-              <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <span className="inline-flex items-center gap-1.5 text-ink-primary font-medium">
+              <svg className="w-3.5 h-3.5 text-ink-disabled" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               {title || '—'}
@@ -180,7 +180,7 @@ export function RecruitmentPipeline() {
             <div className="flex items-center gap-1.5">
               <StatusBadge status={String(row.status ?? '')} config={recruitmentWorkflow} />
               {row.stage_name && row.stage_name !== row.status && (
-                <span className="text-xs text-gray-500 font-normal">
+                <span className="text-xs text-ink-secondary font-normal">
                   ({String(row.stage_name)})
                 </span>
               )}
@@ -198,8 +198,8 @@ export function RecruitmentPipeline() {
         {/* Page header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Pipeline — All Candidates</h1>
-            <p className="mt-1 text-sm text-gray-600">
+            <h1 className="text-2xl font-bold text-ink-primary">Pipeline — All Candidates</h1>
+            <p className="mt-1 text-sm text-ink-secondary">
               Select any candidate to view their complete application details. Candidates with "Applied" status can be moved to Screening.
             </p>
           </div>

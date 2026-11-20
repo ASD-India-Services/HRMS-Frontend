@@ -14,6 +14,10 @@ import { CrudModal } from '@/components/CrudModal';
 import type { FieldConfig } from '@/components/CrudModal';
 import api from '@/lib/api';
 import type { ApplicantStatus, JobApplicant } from '@/types/recruitment';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
 
 const APPLICANT_FIELDS: FieldConfig[] = [
   { key: 'name', label: 'Name', type: 'text', required: true },
@@ -25,7 +29,7 @@ const APPLICANT_FIELDS: FieldConfig[] = [
 ];
 
 const PIPELINE_STAGES: { key: ApplicantStatus; label: string; color: string }[] = [
-  { key: 'applied', label: 'Applied', color: 'border-blue-400 bg-blue-50' },
+  { key: 'applied', label: 'Applied', color: 'border-primary-light bg-primary-lighter' },
   { key: 'screening', label: 'Screening', color: 'border-yellow-400 bg-yellow-50' },
   { key: 'interview', label: 'Interview', color: 'border-purple-400 bg-purple-50' },
   { key: 'selected', label: 'Selected', color: 'border-green-400 bg-green-50' },
@@ -320,7 +324,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
           {onBack && (
             <button
               onClick={onBack}
-              className="rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="rounded-md p-1.5 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary"
               aria-label="Go back"
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -329,8 +333,8 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
             </button>
           )}
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Applicant Pipeline</h2>
-            <p className="mt-0.5 text-sm text-gray-500">
+            <h2 className="text-lg font-semibold text-ink-primary">Applicant Pipeline</h2>
+            <p className="mt-0.5 text-sm text-ink-secondary">
               {applicantsData ? `${applicantsData.count} applicant${applicantsData.count !== 1 ? 's' : ''}` : 'Loading...'}
             </p>
           </div>
@@ -340,7 +344,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
         <div className="flex flex-wrap items-center gap-2">
           <Link
             to="/recruitment/stages"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-semibold text-gray-700 shadow-xs hover:bg-gray-50 transition"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-surface-paper px-3 py-2 text-xs font-semibold text-ink-primary shadow-xs hover:bg-surface-neutral transition"
           >
             <svg className="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
@@ -348,10 +352,9 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
             Configure Stages
           </Link>
           <CreateButton permission="recruitment.create" label="Add Applicant" onClick={() => setShowCreate(true)} />
-          <select
+          <Select
             value={selectedJobOpening}
             onChange={(e) => setSelectedJobOpening(e.target.value)}
-            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             aria-label="Filter by job opening"
           >
             <option value="">All Job Openings</option>
@@ -360,15 +363,15 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                 {opening.title}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 
       {/* Loading */}
       {isLoading && (
         <div className="flex items-center justify-center py-12">
-          <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-500 border-t-transparent" />
-          <span className="ml-3 text-sm text-gray-600">Loading applicants...</span>
+          <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-main border-t-transparent" />
+          <span className="ml-3 text-sm text-ink-secondary">Loading applicants...</span>
         </div>
       )}
 
@@ -389,15 +392,15 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
             return (
               <div
                 key={stage.key}
-                className={`min-w-[270px] flex-1 rounded-xl border-t-4 bg-white p-3 shadow-xs border ${stage.border}`}
+                className={`min-w-[270px] flex-1 rounded-xl border-t-4 bg-surface-paper p-3 shadow-xs border ${stage.border}`}
               >
                 {/* Column Header */}
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <span className={`h-2.5 w-2.5 rounded-full ${stage.dot}`} />
-                    <h3 className="text-sm font-semibold text-gray-800">{stage.label}</h3>
+                    <h3 className="text-sm font-semibold text-ink-primary">{stage.label}</h3>
                   </div>
-                  <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-600">
+                  <span className="rounded-full bg-surface-neutral px-2 py-0.5 text-xs font-semibold text-ink-secondary">
                     {applicants.length}
                   </span>
                 </div>
@@ -405,7 +408,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                 {/* Applicant Cards */}
                 <div className="space-y-2">
                   {applicants.length === 0 && (
-                    <p className="py-6 text-center text-xs text-gray-400">No applicants</p>
+                    <p className="py-6 text-center text-xs text-ink-disabled">No applicants</p>
                   )}
                   {applicants.map((applicant) => (
                     <ApplicantCard
@@ -449,8 +452,8 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
 
       {/* Move to Onboarding Confirmation Modal */}
       {onboardingApplicant && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl animate-in fade-in zoom-in-95 duration-150">
+        <Modal open onClose={() => setOnboardingApplicant(null)} labelledBy="ApplicantPipeline-modal-title-1" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
                 <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -458,25 +461,25 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-semibold text-gray-900">Move to Onboarding</h3>
-                <p className="mt-1 text-xs text-gray-500">
+                <h3 id="ApplicantPipeline-modal-title-1" className="text-base font-semibold text-ink-primary">Move to Onboarding</h3>
+                <p className="mt-1 text-xs text-ink-secondary">
                   You are about to initiate the employee onboarding cycle for this candidate.
                 </p>
               </div>
             </div>
 
-            <div className="mt-4 rounded-lg bg-gray-50 p-3.5 text-xs text-gray-700 space-y-1.5 border border-gray-200/80">
+            <div className="mt-4 rounded-lg bg-surface-neutral p-3.5 text-xs text-ink-primary space-y-1.5 border border-grey-300/80">
               <div className="flex justify-between">
-                <span className="text-gray-500">Candidate:</span>
-                <span className="font-semibold text-gray-900">{onboardingApplicant.name}</span>
+                <span className="text-ink-secondary">Candidate:</span>
+                <span className="font-semibold text-ink-primary">{onboardingApplicant.name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Email:</span>
-                <span className="font-mono text-gray-900">{onboardingApplicant.email}</span>
+                <span className="text-ink-secondary">Email:</span>
+                <span className="font-mono text-ink-primary">{onboardingApplicant.email}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Job Opening:</span>
-                <span className="font-medium text-gray-900">{onboardingApplicant.job_opening?.title || '—'}</span>
+                <span className="text-ink-secondary">Job Opening:</span>
+                <span className="font-medium text-ink-primary">{onboardingApplicant.job_opening?.title || '—'}</span>
               </div>
               {onboardingApplicant.referred_by_name && (
                 <div className="flex justify-between text-amber-700">
@@ -486,9 +489,9 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
               )}
             </div>
 
-            <ul className="mt-3.5 space-y-1 text-[11px] text-gray-500 list-disc list-inside">
+            <ul className="mt-3.5 space-y-1 text-[11px] text-ink-secondary list-disc list-inside">
               <li>Creates new employee profile in the employee directory</li>
-              <li>Sets employee onboarding status to <strong className="text-gray-700">Pending</strong></li>
+              <li>Sets employee onboarding status to <strong className="text-ink-primary">Pending</strong></li>
               <li>Sends an account setup invitation to the candidate's email</li>
               <li>Transitions recruitment pipeline status to <strong className="text-emerald-700">Onboarded</strong></li>
             </ul>
@@ -500,14 +503,13 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
             )}
 
             <div className="mt-6 flex justify-end gap-2.5">
-              <button
+              <Button variant="outlined" color="inherit" size="small"
                 type="button"
                 onClick={() => setOnboardingApplicant(null)}
                 disabled={onboardMutation.isPending}
-                className="rounded-lg border border-gray-300 bg-white px-3.5 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
               >
                 Cancel
-              </button>
+              </Button>
               <button
                 type="button"
                 onClick={handleConfirmOnboarding}
@@ -530,13 +532,13 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Revoke Offer / Cancel Onboarding Confirmation Modal */}
       {cancellingApplicant && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl animate-in fade-in zoom-in-95 duration-150">
+        <Modal open onClose={() => setCancellingApplicant(null)} labelledBy="ApplicantPipeline-modal-title-2" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600">
                 <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -544,29 +546,29 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-semibold text-gray-900">Revoke Offer / Cancel Onboarding</h3>
-                <p className="mt-1 text-xs text-gray-500">
+                <h3 id="ApplicantPipeline-modal-title-2" className="text-base font-semibold text-ink-primary">Revoke Offer / Cancel Onboarding</h3>
+                <p className="mt-1 text-xs text-ink-secondary">
                   Onboarding represents completed recruitment. If this candidate backed out or the offer was revoked, confirm below.
                 </p>
               </div>
             </div>
 
-            <div className="mt-4 rounded-lg bg-gray-50 p-3.5 text-xs text-gray-700 space-y-1.5 border border-gray-200/80">
+            <div className="mt-4 rounded-lg bg-surface-neutral p-3.5 text-xs text-ink-primary space-y-1.5 border border-grey-300/80">
               <div className="flex justify-between">
-                <span className="text-gray-500">Candidate:</span>
-                <span className="font-semibold text-gray-900">{cancellingApplicant.name}</span>
+                <span className="text-ink-secondary">Candidate:</span>
+                <span className="font-semibold text-ink-primary">{cancellingApplicant.name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Email:</span>
-                <span className="font-mono text-gray-900">{cancellingApplicant.email}</span>
+                <span className="text-ink-secondary">Email:</span>
+                <span className="font-mono text-ink-primary">{cancellingApplicant.email}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Job Opening:</span>
-                <span className="font-medium text-gray-900">{cancellingApplicant.job_opening?.title || '—'}</span>
+                <span className="text-ink-secondary">Job Opening:</span>
+                <span className="font-medium text-ink-primary">{cancellingApplicant.job_opening?.title || '—'}</span>
               </div>
             </div>
 
-            <div className="mt-3.5 space-y-1 text-[11px] text-gray-600 rounded-lg bg-amber-50/70 p-3 border border-amber-200/80">
+            <div className="mt-3.5 space-y-1 text-[11px] text-ink-secondary rounded-lg bg-amber-50/70 p-3 border border-amber-200/80">
               <p className="font-semibold text-amber-900">Confirming this action will:</p>
               <ul className="list-disc list-inside space-y-0.5 text-amber-800">
                 <li>Remove the employee profile from the Employee Directory</li>
@@ -576,14 +578,14 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
             </div>
 
             <div className="mt-4">
-              <label htmlFor="cancel-reason" className="block text-xs font-medium text-gray-700 mb-1">
-                Reason for cancellation <span className="text-gray-400 font-normal">(optional)</span>
+              <label htmlFor="cancel-reason" className="block text-xs font-medium text-ink-primary mb-1">
+                Reason for cancellation <span className="text-ink-disabled font-normal">(optional)</span>
               </label>
               {configuredRejectReasons.length > 0 && (
-                <select
+                <Select
                   value={cancelReason}
                   onChange={(e) => setCancelReason(e.target.value)}
-                  className="mb-2 w-full rounded-lg border border-gray-300 p-2 text-xs text-gray-800 shadow-2xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mb-2"
                 >
                   <option value="">-- Select from configured reject reasons --</option>
                   {configuredRejectReasons.map((r: any) => (
@@ -591,15 +593,14 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                       {r.title}
                     </option>
                   ))}
-                </select>
+                </Select>
               )}
-              <textarea
+              <Textarea
                 id="cancel-reason"
                 rows={2}
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
                 placeholder="e.g. Candidate backed out / accepted counter-offer, failed check..."
-                className="w-full rounded-lg border border-gray-300 p-2 text-xs text-gray-800 shadow-2xs focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
               />
             </div>
 
@@ -610,7 +611,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
             )}
 
             <div className="mt-6 flex justify-end gap-2.5">
-              <button
+              <Button variant="outlined" color="inherit" size="small"
                 type="button"
                 onClick={() => {
                   setCancellingApplicant(null);
@@ -618,10 +619,9 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                   setCancelErrorMessage(null);
                 }}
                 disabled={cancelOnboardMutation.isPending}
-                className="rounded-lg border border-gray-300 bg-white px-3.5 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
               >
                 Keep Onboarded
-              </button>
+              </Button>
               <button
                 type="button"
                 onClick={handleConfirmCancelOnboarding}
@@ -644,13 +644,13 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Reject Candidate Modal Linked to Settings Rejection Reasons */}
       {rejectingApplicant && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl animate-in fade-in zoom-in-95 duration-150">
+        <Modal open onClose={() => setRejectingApplicant(null)} labelledBy="ApplicantPipeline-modal-title-3" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
                 <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -658,25 +658,25 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                 </svg>
               </div>
               <div>
-                <h3 className="text-base font-semibold text-gray-900">Reject Candidate</h3>
-                <p className="mt-1 text-xs text-gray-500">
+                <h3 id="ApplicantPipeline-modal-title-3" className="text-base font-semibold text-ink-primary">Reject Candidate</h3>
+                <p className="mt-1 text-xs text-ink-secondary">
                   Select a rejection reason configured in Recruitment Settings.
                 </p>
               </div>
             </div>
 
-            <div className="mt-4 rounded-lg bg-gray-50 p-3 text-xs space-y-1.5 border border-gray-200">
+            <div className="mt-4 rounded-lg bg-surface-neutral p-3 text-xs space-y-1.5 border border-divider">
               <div className="flex justify-between">
-                <span className="text-gray-500">Candidate:</span>
-                <span className="font-semibold text-gray-900">{rejectingApplicant.name}</span>
+                <span className="text-ink-secondary">Candidate:</span>
+                <span className="font-semibold text-ink-primary">{rejectingApplicant.name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Email:</span>
-                <span className="font-medium text-gray-700">{rejectingApplicant.email}</span>
+                <span className="text-ink-secondary">Email:</span>
+                <span className="font-medium text-ink-primary">{rejectingApplicant.email}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Job Opening:</span>
-                <span className="font-medium text-gray-900">
+                <span className="text-ink-secondary">Job Opening:</span>
+                <span className="font-medium text-ink-primary">
                   {rejectingApplicant.job_opening?.title || (rejectingApplicant as any).job_opening_title || '—'}
                 </span>
               </div>
@@ -684,43 +684,41 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
 
             <div className="mt-4 space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-gray-800 mb-1">
+                <label className="block text-xs font-semibold text-ink-primary mb-1">
                   Rejection Reason <span className="text-red-500">*</span>
                 </label>
-                <select
+                <Select
                   value={selectedRejectReason}
                   onChange={(e) => setSelectedRejectReason(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 p-2 text-xs text-gray-900 shadow-2xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   {configuredRejectReasons.map((r: any) => (
                     <option key={r.id} value={r.title}>
                       {r.title}
                     </option>
                   ))}
-                </select>
+                </Select>
                 {selectedRejectReason && (
-                  <p className="mt-1 text-[11px] text-gray-500 italic">
+                  <p className="mt-1 text-[11px] text-ink-secondary italic">
                     {configuredRejectReasons.find((r: any) => r.title === selectedRejectReason)?.description}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Additional Notes <span className="text-gray-400 font-normal">(optional)</span>
+                <label className="block text-xs font-medium text-ink-primary mb-1">
+                  Additional Notes <span className="text-ink-disabled font-normal">(optional)</span>
                 </label>
-                <textarea
+                <Textarea
                   rows={2}
                   value={rejectNotes}
                   onChange={(e) => setRejectNotes(e.target.value)}
                   placeholder="Additional context or interview feedback..."
-                  className="w-full rounded-lg border border-gray-300 p-2 text-xs text-gray-800 shadow-2xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
             </div>
 
             <div className="mt-6 flex justify-end gap-2.5">
-              <button
+              <Button variant="outlined" color="inherit" size="small"
                 type="button"
                 onClick={() => {
                   setRejectingApplicant(null);
@@ -728,15 +726,13 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                   setRejectNotes('');
                 }}
                 disabled={changeStatus.isPending}
-                className="rounded-lg border border-gray-300 bg-white px-3.5 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button size="small"
                 type="button"
                 onClick={handleConfirmReject}
                 disabled={changeStatus.isPending}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 disabled:opacity-50"
               >
                 {changeStatus.isPending ? (
                   <>
@@ -746,10 +742,10 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                 ) : (
                   <span>Confirm Rejection</span>
                 )}
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );
@@ -782,13 +778,13 @@ function ApplicantCard({
   const nextStages = availableStages.filter((s) => s.key !== currentStage);
 
   return (
-    <div className="rounded-md border border-gray-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md">
+    <div className="rounded-md border border-divider bg-surface-paper p-3 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-gray-900">{applicant.name}</p>
-          <p className="truncate text-xs text-gray-500">{applicant.email}</p>
+          <p className="truncate text-sm font-semibold text-ink-primary">{applicant.name}</p>
+          <p className="truncate text-xs text-ink-secondary">{applicant.email}</p>
           {applicant.job_opening && (
-            <p className="mt-0.5 truncate text-[11px] text-gray-400">{applicant.job_opening.title}</p>
+            <p className="mt-0.5 truncate text-[11px] text-ink-disabled">{applicant.job_opening.title}</p>
           )}
 
           {/* Employee Referral Badge */}
@@ -806,7 +802,7 @@ function ApplicantCard({
             <svg className="h-3.5 w-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
-            <span className="text-xs text-gray-600">{applicant.rating}</span>
+            <span className="text-xs text-ink-secondary">{applicant.rating}</span>
           </div>
         )}
       </div>
@@ -842,12 +838,12 @@ function ApplicantCard({
             <span className="text-[10px] text-emerald-600 font-mono">Employee Created</span>
           </div>
 
-          <div className="flex items-center justify-between pt-1 border-t border-gray-100">
+          <div className="flex items-center justify-between pt-1 border-t border-divider">
             <div
-              className="inline-flex items-center gap-1 text-[11px] font-medium text-gray-400"
+              className="inline-flex items-center gap-1 text-[11px] font-medium text-ink-disabled"
               title="Moving backwards is locked. Recruitment cycle completed."
             >
-              <svg className="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-3.5 w-3.5 text-ink-disabled" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
               <span>Locked</span>
@@ -869,10 +865,10 @@ function ApplicantCard({
         </div>
       ) : (
         /* Move Actions Dropdown (Only for stages other than onboarded) */
-        <div className="mt-2 flex items-center justify-between pt-1 border-t border-gray-100">
+        <div className="mt-2 flex items-center justify-between pt-1 border-t border-divider">
           <button
             onClick={() => setShowActions(!showActions)}
-            className="text-xs text-primary-600 hover:text-primary-700 font-medium"
+            className="text-xs text-primary-main hover:text-primary-dark font-medium"
             disabled={isMoving}
           >
             {showActions ? 'Cancel' : 'Change stage...'}
@@ -888,7 +884,7 @@ function ApplicantCard({
                     setShowActions(false);
                   }}
                   disabled={isMoving}
-                  className="rounded border border-gray-200 px-2 py-0.5 text-xs text-gray-600 hover:bg-gray-100 disabled:opacity-50 capitalize"
+                  className="rounded border border-divider px-2 py-0.5 text-xs text-ink-secondary hover:bg-surface-neutral disabled:opacity-50 capitalize"
                 >
                   {stage.label}
                 </button>

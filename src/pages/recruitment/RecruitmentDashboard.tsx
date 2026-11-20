@@ -15,16 +15,16 @@ import {
 import { useJobOpenings, useApplicants, useInterviews } from '@/hooks/useRecruitment';
 
 const STAGE_COLORS: Record<string, string> = {
-  Applied: '#3b82f6',
-  Screening: '#8b5cf6',
-  Interview: '#f59e0b',
-  Selected: '#10b981',
-  Hired: '#059669',
-  Rejected: '#ef4444',
-  Other: '#6b7280',
+  Applied: 'rgb(var(--info-main))',
+  Screening: 'rgb(var(--secondary-main))',
+  Interview: 'rgb(var(--warning-main))',
+  Selected: 'rgb(var(--success-main))',
+  Hired: 'rgb(var(--success-dark))',
+  Rejected: 'rgb(var(--error-main))',
+  Other: 'rgb(var(--grey-500))',
 };
 
-const DEPT_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316'];
+const DEPT_COLORS = ['rgb(var(--info-main))', 'rgb(var(--success-main))', 'rgb(var(--warning-main))', 'rgb(var(--secondary-main))', 'rgb(var(--error-light))', 'rgb(var(--primary-main))', 'rgb(var(--warning-dark))'];
 
 export default function RecruitmentDashboard() {
   const { data: openingsData, isLoading: openingsLoading } = useJobOpenings({ page: 1, page_size: 100 });
@@ -70,7 +70,7 @@ export default function RecruitmentDashboard() {
   const pipelineChartData = Object.entries(stageCounts).map(([label, value]) => ({
     label,
     count: value,
-    fill: STAGE_COLORS[label] || '#3b82f6',
+    fill: STAGE_COLORS[label] || 'rgb(var(--info-main))',
   }));
 
   // Department distribution of open positions
@@ -98,24 +98,24 @@ export default function RecruitmentDashboard() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Recruitment Dashboard</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-ink-primary">Recruitment Dashboard</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
             Real-time hiring metrics, applicant pipeline progression, and recruitment analytics.
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Link
             to="/recruitment/job-openings"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md border border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral shadow-sm transition-colors"
           >
-            <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
             Job Openings
           </Link>
           <Link
             to="/recruitment/pipeline"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
@@ -128,32 +128,32 @@ export default function RecruitmentDashboard() {
       {/* Top Metric Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Openings */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Active Positions
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-lighter text-primary-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="text-2xl font-bold text-ink-primary">
               {isLoading ? '...' : activeOpenings}
             </span>
-            <span className="ml-2 text-xs text-gray-500">of {totalOpenings} total</span>
+            <span className="ml-2 text-xs text-ink-secondary">of {totalOpenings} total</span>
           </div>
-          <div className="mt-2 text-xs text-blue-600 font-medium">
+          <div className="mt-2 text-xs text-primary-main font-medium">
             <Link to="/recruitment/job-openings" className="hover:underline">View all openings →</Link>
           </div>
         </div>
 
         {/* Total Candidates */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Total Candidates
             </span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
@@ -163,10 +163,10 @@ export default function RecruitmentDashboard() {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="text-2xl font-bold text-ink-primary">
               {isLoading ? '...' : totalApplicants}
             </span>
-            <span className="ml-2 text-xs text-gray-500">applicants received</span>
+            <span className="ml-2 text-xs text-ink-secondary">applicants received</span>
           </div>
           <div className="mt-2 text-xs text-indigo-600 font-medium">
             <Link to="/recruitment/pipeline" className="hover:underline">View pipeline →</Link>
@@ -174,9 +174,9 @@ export default function RecruitmentDashboard() {
         </div>
 
         {/* In Evaluation */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               In Evaluation
             </span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
@@ -186,10 +186,10 @@ export default function RecruitmentDashboard() {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="text-2xl font-bold text-ink-primary">
               {isLoading ? '...' : inEvaluation}
             </span>
-            <span className="ml-2 text-xs text-gray-500">screening / interview</span>
+            <span className="ml-2 text-xs text-ink-secondary">screening / interview</span>
           </div>
           <div className="mt-2 text-xs text-amber-600 font-medium">
             <span>Active hiring rounds</span>
@@ -197,9 +197,9 @@ export default function RecruitmentDashboard() {
         </div>
 
         {/* Hired */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Hired / Selected
             </span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
@@ -209,7 +209,7 @@ export default function RecruitmentDashboard() {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">
+            <span className="text-2xl font-bold text-ink-primary">
               {isLoading ? '...' : hiredCount}
             </span>
             <span className="ml-2 text-xs text-emerald-600 font-semibold">Offer Accepted</span>
@@ -223,25 +223,25 @@ export default function RecruitmentDashboard() {
       {/* Visual Charts Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Pipeline Stage Funnel Chart */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">Applicant Pipeline Stages</h2>
-              <p className="text-xs text-gray-500">Candidate distribution across active recruitment stages</p>
+              <h2 className="text-base font-semibold text-ink-primary">Applicant Pipeline Stages</h2>
+              <p className="text-xs text-ink-secondary">Candidate distribution across active recruitment stages</p>
             </div>
-            <Link to="/recruitment/stages" className="text-xs font-medium text-blue-600 hover:underline">
+            <Link to="/recruitment/stages" className="text-xs font-medium text-primary-main hover:underline">
               Stages Setup →
             </Link>
           </div>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={pipelineChartData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--grey-200))" />
                 <XAxis dataKey="label" tick={{ fontSize: 11 }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                 <Tooltip
                   formatter={(val: unknown) => [typeof val === 'number' ? val : 0, 'Applicants']}
-                  contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                  contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
                 />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                   {pipelineChartData.map((entry, index) => (
@@ -254,16 +254,16 @@ export default function RecruitmentDashboard() {
         </div>
 
         {/* Positions by Department */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">Openings by Department</h2>
-              <p className="text-xs text-gray-500">Distribution of positions across organizational teams</p>
+              <h2 className="text-base font-semibold text-ink-primary">Openings by Department</h2>
+              <p className="text-xs text-ink-secondary">Distribution of positions across organizational teams</p>
             </div>
-            <span className="text-xs font-medium text-gray-500">{deptChartData.length} Departments</span>
+            <span className="text-xs font-medium text-ink-secondary">{deptChartData.length} Departments</span>
           </div>
           {deptChartData.length === 0 ? (
-            <div className="flex h-64 items-center justify-center text-sm text-gray-400">
+            <div className="flex h-64 items-center justify-center text-sm text-ink-disabled">
               No active job openings found
             </div>
           ) : (
@@ -287,7 +287,7 @@ export default function RecruitmentDashboard() {
                     </Pie>
                     <Tooltip
                       formatter={(val: unknown) => [typeof val === 'number' ? val : 0, 'Openings']}
-                      contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                      contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -300,9 +300,9 @@ export default function RecruitmentDashboard() {
                         className="w-2.5 h-2.5 rounded-full"
                         style={{ backgroundColor: DEPT_COLORS[idx % DEPT_COLORS.length] }}
                       />
-                      <span className="text-gray-700 truncate max-w-[140px]">{item.name}</span>
+                      <span className="text-ink-primary truncate max-w-[140px]">{item.name}</span>
                     </span>
-                    <span className="font-semibold text-gray-900">{item.value} openings</span>
+                    <span className="font-semibold text-ink-primary">{item.value} openings</span>
                   </div>
                 ))}
               </div>
@@ -314,37 +314,37 @@ export default function RecruitmentDashboard() {
       {/* Two-Column Tables Section: Recent Applicants & Upcoming Interviews */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Recent Applicants */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">Recent Applicants</h2>
-              <p className="text-xs text-gray-500">Latest candidate submissions</p>
+              <h2 className="text-base font-semibold text-ink-primary">Recent Applicants</h2>
+              <p className="text-xs text-ink-secondary">Latest candidate submissions</p>
             </div>
-            <Link to="/recruitment/pipeline" className="text-xs font-semibold text-blue-600 hover:underline">
+            <Link to="/recruitment/pipeline" className="text-xs font-semibold text-primary-main hover:underline">
               View all →
             </Link>
           </div>
           {recentApplicants.length === 0 ? (
-            <p className="py-8 text-center text-sm text-gray-400">No applicants found.</p>
+            <p className="py-8 text-center text-sm text-ink-disabled">No applicants found.</p>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-divider">
               {recentApplicants.map((app) => (
                 <div key={app.id} className="py-3 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">
+                    <div className="w-8 h-8 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center text-xs font-bold">
                       {app.name ? app.name.slice(0, 2).toUpperCase() : 'NA'}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{app.name}</p>
-                      <p className="text-xs text-gray-500">{app.job_opening_title || 'General Opening'}</p>
+                      <p className="text-sm font-medium text-ink-primary">{app.name}</p>
+                      <p className="text-xs text-ink-secondary">{app.job_opening_title || 'General Opening'}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <span
                       className="px-2 py-0.5 text-xs font-semibold rounded-full capitalize"
                       style={{
-                        backgroundColor: `${STAGE_COLORS[app.status || 'Applied'] || '#3b82f6'}15`,
-                        color: STAGE_COLORS[app.status || 'Applied'] || '#3b82f6',
+                        backgroundColor: `color-mix(in srgb, ${STAGE_COLORS[app.status || 'Applied'] || 'rgb(var(--info-main))'} 8%, transparent)`,
+                        color: STAGE_COLORS[app.status || 'Applied'] || 'rgb(var(--info-main))',
                       }}
                     >
                       {app.status || 'Applied'}
@@ -357,25 +357,25 @@ export default function RecruitmentDashboard() {
         </div>
 
         {/* Upcoming Interviews */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">Upcoming Interviews</h2>
-              <p className="text-xs text-gray-500">Scheduled evaluation rounds</p>
+              <h2 className="text-base font-semibold text-ink-primary">Upcoming Interviews</h2>
+              <p className="text-xs text-ink-secondary">Scheduled evaluation rounds</p>
             </div>
-            <Link to="/recruitment/interviews" className="text-xs font-semibold text-blue-600 hover:underline">
+            <Link to="/recruitment/interviews" className="text-xs font-semibold text-primary-main hover:underline">
               Interview calendar →
             </Link>
           </div>
           {upcomingInterviews.length === 0 ? (
-            <p className="py-8 text-center text-sm text-gray-400">No upcoming interviews scheduled.</p>
+            <p className="py-8 text-center text-sm text-ink-disabled">No upcoming interviews scheduled.</p>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-divider">
               {upcomingInterviews.map((item) => (
                 <div key={item.id} className="py-3 flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{item.applicant_name || 'Candidate'}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm font-medium text-ink-primary">{item.applicant_name || 'Candidate'}</p>
+                    <p className="text-xs text-ink-secondary">
                       {item.scheduled_time ? new Date(item.scheduled_time).toLocaleString() : 'Date TBD'}
                     </p>
                   </div>

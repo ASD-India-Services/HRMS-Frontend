@@ -18,6 +18,8 @@ import { jobApplicantsCrudConfig } from '@/config/crud/jobApplicants';
 import { recruitmentWorkflow } from '@/config/workflows/recruitment';
 import { StatusBadge } from '@/components/WorkflowEngine/StatusBadge';
 import { useRecruitmentStages } from '@/hooks/useRecruitment';
+import { Button } from '@/components/ui/Button';
+import { Textarea } from '@/components/ui/Textarea';
 
 export interface ApplicantRow {
   id: string;
@@ -312,17 +314,17 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
 
       {/* Slide-over Right Side Drawer */}
       <div
-        className="fixed inset-y-0 right-0 z-50 w-full sm:w-[520px] lg:w-[600px] bg-white shadow-2xl flex flex-col h-full border-l border-gray-200 animate-in slide-in-from-right duration-200"
+        className="fixed inset-y-0 right-0 z-50 w-full sm:w-[520px] lg:w-[600px] bg-surface-paper shadow-2xl flex flex-col h-full border-l border-divider animate-in slide-in-from-right duration-200"
         role="dialog"
         aria-modal="true"
         aria-label={`Applicant details for ${applicant.name}`}
       >
         {/* Drawer Header (Clean - No action buttons up here) */}
-        <div className="relative border-b border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50/30 px-6 py-5">
+        <div className="relative border-b border-divider bg-gradient-to-r from-grey-50 to-primary-lighter/30 px-6 py-5">
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 rounded-full p-1.5 text-gray-400 hover:bg-gray-200 hover:text-gray-700 transition-colors cursor-pointer"
+            className="absolute top-4 right-4 rounded-full p-1.5 text-ink-disabled hover:bg-grey-200 hover:text-ink-primary transition-colors cursor-pointer"
             aria-label="Close drawer"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -331,14 +333,14 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
           </button>
 
           <div className="flex items-start gap-4 pr-8">
-            <div className="h-14 w-14 flex-shrink-0 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-bold text-lg flex items-center justify-center shadow-md ring-4 ring-white">
+            <div className="h-14 w-14 flex-shrink-0 rounded-full bg-gradient-to-br from-primary-main to-indigo-700 text-white font-bold text-lg flex items-center justify-center shadow-md ring-4 ring-white">
               {initials}
             </div>
 
             <div className="min-w-0 flex-1">
-              <h2 className="text-xl font-bold text-gray-900 truncate">{applicant.name}</h2>
-              <div className="mt-1 flex items-center gap-1.5 text-sm font-medium text-blue-700 truncate">
-                <svg className="w-4 h-4 flex-shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <h2 className="text-xl font-bold text-ink-primary truncate">{applicant.name}</h2>
+              <div className="mt-1 flex items-center gap-1.5 text-sm font-medium text-primary-dark truncate">
+                <svg className="w-4 h-4 flex-shrink-0 text-primary-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 <span>{jobTitle}</span>
@@ -347,7 +349,7 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
               <div className="mt-2.5 flex flex-wrap items-center gap-2">
                 <StatusBadge status={applicant.status} config={recruitmentWorkflow} />
                 {applicant.stage_name && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-lighter text-primary-dark border border-primary-light">
                     Stage: {applicant.stage_name}
                   </span>
                 )}
@@ -370,7 +372,7 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
           {/* Visual Recruitment Stage Stepper (Read-only journey) */}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary mb-3">
               Recruitment Pipeline Journey
             </h3>
             <div className="relative flex flex-col gap-2">
@@ -386,30 +388,30 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
                     key={stageItem.id || stageItem.slug}
                     className={`flex items-center gap-3 p-2.5 rounded-lg border transition-all ${
                       isCurrent
-                        ? 'border-blue-500 bg-blue-50/70 shadow-xs'
+                        ? 'border-primary-main bg-primary-lighter/70 shadow-xs'
                         : isPassed
                         ? 'border-emerald-200 bg-emerald-50/40'
-                        : 'border-gray-200 bg-gray-50/50'
+                        : 'border-divider bg-surface-neutral/50'
                     }`}
                   >
                     <div
                       className={`h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold ${
                         isCurrent
-                          ? 'bg-blue-600 text-white ring-2 ring-blue-300'
+                          ? 'bg-primary-main text-white ring-2 ring-primary-light'
                           : isPassed
                           ? 'bg-emerald-600 text-white'
-                          : 'bg-gray-200 text-gray-600'
+                          : 'bg-grey-200 text-ink-secondary'
                       }`}
                     >
                       {isPassed ? '✓' : idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <span className={`text-sm font-medium ${isCurrent ? 'text-blue-900 font-semibold' : 'text-gray-800'}`}>
+                        <span className={`text-sm font-medium ${isCurrent ? 'text-primary-darker font-semibold' : 'text-ink-primary'}`}>
                           {stageItem.name}
                         </span>
                         {isCurrent && (
-                          <span className="text-[10px] uppercase font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] uppercase font-bold text-primary-dark bg-primary-lighter px-2 py-0.5 rounded-full">
                             Current Stage
                           </span>
                         )}
@@ -428,81 +430,79 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
 
           {/* Contact & Application Information Grid */}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary mb-3">
               Contact & Application Info
             </h3>
-            <div className="grid grid-cols-1 gap-3 rounded-xl border border-gray-200 bg-gray-50/50 p-4">
+            <div className="grid grid-cols-1 gap-3 rounded-xl border border-divider bg-surface-neutral/50 p-4">
               {/* Email */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-gray-600 min-w-0">
-                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex items-center gap-2 text-sm text-ink-secondary min-w-0">
+                  <svg className="w-4 h-4 text-ink-disabled flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <a href={`mailto:${applicant.email}`} className="text-blue-600 hover:underline truncate">
+                  <a href={`mailto:${applicant.email}`} className="text-primary-main hover:underline truncate">
                     {applicant.email}
                   </a>
                 </div>
-                <button
+                <Button variant="outlined" color="inherit" size="small"
                   type="button"
                   onClick={() => handleCopy(applicant.email, 'email')}
-                  className="text-xs text-gray-500 hover:text-gray-800 px-2 py-0.5 rounded border border-gray-200 bg-white cursor-pointer"
                 >
                   {copiedField === 'email' ? 'Copied!' : 'Copy'}
-                </button>
+                </Button>
               </div>
 
               {/* Phone */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-gray-600 min-w-0">
-                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex items-center gap-2 text-sm text-ink-secondary min-w-0">
+                  <svg className="w-4 h-4 text-ink-disabled flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
                   {applicant.phone ? (
-                    <a href={`tel:${applicant.phone}`} className="text-gray-800 hover:underline truncate">
+                    <a href={`tel:${applicant.phone}`} className="text-ink-primary hover:underline truncate">
                       {applicant.phone}
                     </a>
                   ) : (
-                    <span className="text-gray-400">Phone not provided</span>
+                    <span className="text-ink-disabled">Phone not provided</span>
                   )}
                 </div>
                 {applicant.phone && (
-                  <button
+                  <Button variant="outlined" color="inherit" size="small"
                     type="button"
                     onClick={() => handleCopy(applicant.phone || '', 'phone')}
-                    className="text-xs text-gray-500 hover:text-gray-800 px-2 py-0.5 rounded border border-gray-200 bg-white cursor-pointer"
                   >
                     {copiedField === 'phone' ? 'Copied!' : 'Copy'}
-                  </button>
+                  </Button>
                 )}
               </div>
 
               {/* Applied Date */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex items-center gap-2 text-sm text-ink-secondary">
+                  <svg className="w-4 h-4 text-ink-disabled flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   <span>Applied Date:</span>
                 </div>
-                <span className="text-sm font-semibold text-gray-900">{formattedAppliedDate}</span>
+                <span className="text-sm font-semibold text-ink-primary">{formattedAppliedDate}</span>
               </div>
 
               {/* Rating */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-ink-secondary">
                   <svg className="w-4 h-4 text-yellow-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                   <span>Candidate Rating:</span>
                 </div>
-                <span className="text-sm font-semibold text-gray-900">
+                <span className="text-sm font-semibold text-ink-primary">
                   {applicant.rating !== undefined && applicant.rating !== null ? `${applicant.rating} / 5.0` : 'Not rated yet'}
                 </span>
               </div>
 
               {/* Referral Details */}
               {applicant.is_referral && (
-                <div className="flex items-center justify-between border-t border-gray-200 pt-2">
+                <div className="flex items-center justify-between border-t border-divider pt-2">
                   <div className="flex items-center gap-2 text-sm text-amber-700">
                     <svg className="w-4 h-4 text-amber-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -519,20 +519,20 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
 
           {/* Resume / CV Document */}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary mb-3">
               Resume / Curriculum Vitae
             </h3>
             {applicant.resume_url ? (
-              <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-xs flex items-center justify-between gap-3">
+              <div className="rounded-xl border border-divider bg-surface-paper p-4 shadow-xs flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-10 w-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
+                  <div className="h-10 w-10 rounded-lg bg-primary-lighter text-primary-dark flex items-center justify-center flex-shrink-0">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">Candidate_Resume.pdf</p>
-                    <p className="text-xs text-gray-500 truncate max-w-xs">{applicant.resume_url}</p>
+                    <p className="text-sm font-semibold text-ink-primary truncate">Candidate_Resume.pdf</p>
+                    <p className="text-xs text-ink-secondary truncate max-w-xs">{applicant.resume_url}</p>
                   </div>
                 </div>
 
@@ -540,7 +540,7 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
                   href={applicant.resume_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm flex-shrink-0"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-white bg-primary-main hover:bg-primary-dark transition-colors shadow-sm flex-shrink-0"
                 >
                   <span>View Resume</span>
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -549,8 +549,8 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
                 </a>
               </div>
             ) : (
-              <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50/50 p-4 text-center">
-                <p className="text-sm text-gray-500">No resume document attached to this application.</p>
+              <div className="rounded-xl border border-dashed border-divider bg-surface-neutral/50 p-4 text-center">
+                <p className="text-sm text-ink-secondary">No resume document attached to this application.</p>
               </div>
             )}
           </div>
@@ -558,14 +558,14 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
           {/* Notes / Cover Letter Section */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
                 Application Notes & Cover Letter
               </h3>
               {!isEditingNotes && (
                 <button
                   type="button"
                   onClick={() => setIsEditingNotes(true)}
-                  className="text-xs font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
+                  className="text-xs font-semibold text-primary-main hover:text-primary-dark cursor-pointer"
                 >
                   {applicant.notes ? 'Edit Notes' : '+ Add Notes'}
                 </button>
@@ -574,12 +574,11 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
 
             {isEditingNotes ? (
               <div className="space-y-2">
-                <textarea
+                <Textarea
                   rows={4}
                   value={notesDraft}
                   onChange={(e) => setNotesDraft(e.target.value)}
                   placeholder="Enter candidate application notes or interview feedback..."
-                  className="w-full text-sm rounded-lg border border-gray-300 p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <div className="flex items-center justify-end gap-2">
                   <button
@@ -588,50 +587,49 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
                       setNotesDraft(applicant.notes || '');
                       setIsEditingNotes(false);
                     }}
-                    className="px-3 py-1.5 rounded-md text-xs font-medium text-gray-600 hover:bg-gray-100 cursor-pointer"
+                    className="px-3 py-1.5 rounded-md text-xs font-medium text-ink-secondary hover:bg-surface-neutral cursor-pointer"
                   >
                     Cancel
                   </button>
-                  <button
+                  <Button size="small"
                     type="button"
                     onClick={handleSaveNotes}
                     disabled={isSavingNotes}
-                    className="px-3.5 py-1.5 rounded-md text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm cursor-pointer"
                   >
                     {isSavingNotes ? 'Saving...' : 'Save Notes'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : applicant.notes ? (
-              <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4 text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
+              <div className="rounded-xl border border-divider bg-surface-neutral/50 p-4 text-sm text-ink-primary whitespace-pre-wrap leading-relaxed">
                 {applicant.notes}
               </div>
             ) : (
-              <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/30 p-4 text-center">
-                <p className="text-sm text-gray-400">No notes or cover letter provided by the candidate.</p>
+              <div className="rounded-xl border border-dashed border-divider bg-surface-neutral/30 p-4 text-center">
+                <p className="text-sm text-ink-disabled">No notes or cover letter provided by the candidate.</p>
               </div>
             )}
           </div>
 
           {/* Application Actions (Placed below all details as requested) */}
           {isApplied && (
-            <div className="rounded-xl border border-blue-200 bg-blue-50/60 p-4 shadow-xs">
+            <div className="rounded-xl border border-primary-light bg-primary-lighter/60 p-4 shadow-xs">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold uppercase tracking-wider text-blue-900">
+                <span className="text-xs font-semibold uppercase tracking-wider text-primary-darker">
                   Application Actions
                 </span>
-                <span className="text-xs text-blue-700 font-medium bg-blue-100 px-2.5 py-0.5 rounded-full">
+                <span className="text-xs text-primary-dark font-medium bg-primary-lighter px-2.5 py-0.5 rounded-full">
                   Status: Applied
                 </span>
               </div>
 
               <div className="flex items-center gap-3">
                 {/* Move to Screening Button */}
-                <button
+                <Button
                   type="button"
                   onClick={handleMoveToScreening}
                   disabled={isAdvancing}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 transition-all shadow-sm cursor-pointer"
+                  className="flex-1"
                 >
                   {isAdvancing ? (
                     <>
@@ -649,20 +647,19 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
                       </svg>
                     </>
                   )}
-                </button>
+                </Button>
 
                 {/* Reject Button */}
-                <button
+                <Button variant="outlined" color="inherit"
                   type="button"
                   onClick={handleReject}
                   disabled={isAdvancing}
-                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold text-red-600 bg-white hover:bg-red-50 border border-red-200 active:bg-red-100 disabled:opacity-50 transition-colors shadow-xs cursor-pointer"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                   <span>Reject</span>
-                </button>
+                </Button>
               </div>
 
               {actionSuccess && (
@@ -686,17 +683,16 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
         </div>
 
         {/* Drawer Footer */}
-        <div className="border-t border-gray-200 bg-gray-50 px-6 py-3 flex items-center justify-between text-xs text-gray-500">
+        <div className="border-t border-divider bg-surface-neutral px-6 py-3 flex items-center justify-between text-xs text-ink-secondary">
           <span>
             Applicant ID: <span className="font-mono">{applicant.id ? `${applicant.id.slice(0, 8)}...` : '—'}</span>
           </span>
-          <button
+          <Button variant="outlined" color="inherit" size="small"
             type="button"
             onClick={onClose}
-            className="px-3 py-1.5 rounded-md text-xs font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer"
           >
             Close Panel
-          </button>
+          </Button>
         </div>
       </div>
     </>
