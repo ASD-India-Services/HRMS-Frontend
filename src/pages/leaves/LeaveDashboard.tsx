@@ -44,7 +44,7 @@ interface CompanyLeave {
   leave_type?: string;
 }
 
-const TYPE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
+const TYPE_COLORS = ['rgb(var(--info-main))', 'rgb(var(--success-main))', 'rgb(var(--warning-main))', 'rgb(var(--secondary-main))', 'rgb(var(--error-light))', 'rgb(var(--primary-main))'];
 
 export default function LeaveDashboard() {
   const todayStr = new Date().toISOString().split('T')[0];
@@ -111,9 +111,9 @@ export default function LeaveDashboard() {
 
   // Status chart
   const statusChartData = [
-    { label: 'Approved', count: approvedApps.length, fill: '#10b981' },
-    { label: 'Pending', count: pendingApps.length, fill: '#f59e0b' },
-    { label: 'Rejected', count: rejectedApps.length, fill: '#ef4444' },
+    { label: 'Approved', count: approvedApps.length, fill: 'rgb(var(--success-main))' },
+    { label: 'Pending', count: pendingApps.length, fill: 'rgb(var(--warning-main))' },
+    { label: 'Rejected', count: rejectedApps.length, fill: 'rgb(var(--error-main))' },
   ];
 
   // Leaves by Type distribution
@@ -269,12 +269,12 @@ export default function LeaveDashboard() {
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={statusChartData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--grey-200))" />
                 <XAxis dataKey="label" tick={{ fontSize: 11 }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                 <Tooltip
                   formatter={(val: unknown) => [typeof val === 'number' ? val : 0, 'Applications']}
-                  contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                  contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
                 />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                   {statusChartData.map((entry, index) => (
@@ -320,7 +320,7 @@ export default function LeaveDashboard() {
                     </Pie>
                     <Tooltip
                       formatter={(val: unknown) => [typeof val === 'number' ? val : 0, 'Requests']}
-                      contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                      contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
                     />
                   </PieChart>
                 </ResponsiveContainer>
