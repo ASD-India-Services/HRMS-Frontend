@@ -28,7 +28,7 @@ export function AppShell() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen w-full max-w-full overflow-hidden bg-gray-50">
       {/* Offline banner */}
       <OfflineIndicator />
 
@@ -41,7 +41,7 @@ export function AppShell() {
       />
 
       {/* Main content area */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         <Header onMenuToggle={() => setSidebarOpen((prev) => !prev)} />
 
         {/* 
@@ -49,7 +49,7 @@ export function AppShell() {
           This ensures lazy-loaded route components properly trigger the 
           fallback during navigation transitions (React Router v7 + React 19).
         */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 min-w-0">
           <Suspense fallback={<PageLoader />}>
             <Outlet />
           </Suspense>

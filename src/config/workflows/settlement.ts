@@ -24,6 +24,7 @@ export const settlementWorkflow: WorkflowConfig = {
       action: 'Submit for Approval',
       endpoint: (id) => `/api/v1/full-final-settlement/${id}/submit/`,
       method: 'POST',
+      requiredPermission: 'settlements.edit',
       allowedRoles: ['org_admin', 'hr_manager'],
       variant: 'primary',
       confirm: {
@@ -76,6 +77,7 @@ export const settlementWorkflow: WorkflowConfig = {
       action: 'Delete',
       endpoint: (id) => `/api/v1/full-final-settlement/${id}/`,
       method: 'DELETE',
+      requiredPermission: 'settlements.delete',
       allowedRoles: ['org_admin', 'hr_manager'],
       variant: 'destructive',
       confirm: {

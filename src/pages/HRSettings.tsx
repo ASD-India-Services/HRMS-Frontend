@@ -11,6 +11,13 @@ interface HRSettingsData {
   notice_period_days: number;
   employee_naming_series?: string;
   retirement_age?: number;
+  location_check_interval_minutes: number;
+  leave_settings?: {
+    compensatory_leave_enabled?: boolean;
+    compensatory_leave_allow_weekend?: boolean;
+    compensatory_leave_validity_days?: number;
+    [key: string]: any;
+  };
 }
 
 interface EmailConfigData {
@@ -36,9 +43,19 @@ export default function HRSettings() {
     fiscal_year_start: '',
     probation_period_days: 90,
     notice_period_days: 30,
+    location_check_interval_minutes: 30,
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [copiedEmbed, setCopiedEmbed] = useState(false);
+
+  const embedCodeSnippet = `<iframe id="hrms-careers-frame" src="${typeof window !== 'undefined' ? window.location.origin : ''}/careers/embed" width="100%" height="750" style="border:none;width:100%;min-height:700px;overflow:hidden;border-radius:12px;" scrolling="no" title="Careers Portal"></iframe>`;
+
+  const handleCopyEmbed = () => {
+    navigator.clipboard.writeText(embedCodeSnippet);
+    setCopiedEmbed(true);
+    setTimeout(() => setCopiedEmbed(false), 2000);
+  };
 
   // Email config state
   const [emailForm, setEmailForm] = useState({
@@ -73,6 +90,12 @@ export default function HRSettings() {
           fiscal_year_start: data.fiscal_year_start || '',
           probation_period_days: data.probation_period_days || 90,
           notice_period_days: data.notice_period_days || 30,
+          location_check_interval_minutes: data.location_check_interval_minutes ?? 30,
+          leave_settings: data.leave_settings || {
+            compensatory_leave_enabled: true,
+            compensatory_leave_allow_weekend: true,
+            compensatory_leave_validity_days: 60,
+          },
         });
       } catch {
         // Settings not found yet — keep defaults
@@ -206,6 +229,46 @@ export default function HRSettings() {
           </div>
 
           <div>
+            <div className="flex items-center justify-between mb-1">
+              <label htmlFor="embed_code" className="block text-sm font-medium text-gray-700">
+                Careers Embed Code
+              </label>
+              <div className="flex items-center gap-2">
+                <a
+                  href="/careers/embed"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-medium text-primary-600 hover:text-primary-700"
+                  title="Open live preview in new tab"
+                >
+                  Preview ↗
+                </a>
+                <button
+                  type="button"
+                  onClick={handleCopyEmbed}
+                  className="inline-flex items-center gap-1 rounded bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700 hover:bg-primary-100 transition-colors"
+                >
+                  {copiedEmbed ? '✓ Copied!' : 'Copy Code'}
+                </button>
+              </div>
+            </div>
+            <div className="relative">
+              <input
+                id="embed_code"
+                type="text"
+                readOnly
+                value={embedCodeSnippet}
+                onClick={(e) => (e.target as HTMLInputElement).select()}
+                className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-xs font-mono text-gray-600 shadow-sm cursor-pointer focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                title="Click to select all and copy embed code"
+              />
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              Embed this iframe into your company website to display live open positions.
+            </p>
+          </div>
+
+          <div>
             <label htmlFor="fiscal_year_start" className="mb-1 block text-sm font-medium text-gray-700">Fiscal Year Start</label>
             <input
               id="fiscal_year_start"
@@ -239,13 +302,33 @@ export default function HRSettings() {
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
+
+          <div>
+            <label htmlFor="location_check_interval_minutes" className="mb-1 block text-sm font-medium text-gray-700">
+              Mobile Location Check Interval
+            </label>
+            <select
+              id="location_check_interval_minutes"
+              value={form.location_check_interval_minutes}
+              onChange={(e) => handleChange('location_check_interval_minutes', parseInt(e.target.value, 10) || 30)}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            >
+              <option value={15}>15 Minutes (High Precision)</option>
+              <option value={30}>30 Minutes (Recommended)</option>
+              <option value={45}>45 Minutes</option>
+              <option value={60}>60 Minutes (Battery Saver)</option>
+            </select>
+            <p className="mt-1 text-xs text-gray-500">
+              Interval at which the mobile app checks whether a checked-in employee is inside the office.
+            </p>
+          </div>
         </div>
 
         <div className="mt-6 flex items-center gap-4">
           <button
             onClick={handleSave}
             disabled={saving}
-            className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:opacity-50"
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Save Settings'}
           </button>
@@ -264,11 +347,10 @@ export default function HRSettings() {
           </div>
           {emailConfig?.configured && (
             <span
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                emailConfig.is_verified
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${emailConfig.is_verified
                   ? 'bg-green-100 text-green-800'
                   : 'bg-yellow-100 text-yellow-800'
-              }`}
+                }`}
             >
               {emailConfig.is_verified ? '✓ Verified' : 'Not Verified'}
             </span>
@@ -428,7 +510,7 @@ export default function HRSettings() {
           <button
             onClick={handleEmailSave}
             disabled={emailSaving}
-            className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:opacity-50"
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
           >
             {emailSaving ? 'Saving...' : 'Save SMTP Settings'}
           </button>
@@ -496,7 +578,7 @@ export default function HRSettings() {
               <button
                 onClick={handleSendTestEmail}
                 disabled={testingEmail || !testEmailAddress}
-                className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:opacity-50"
+                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
               >
                 {testingEmail ? 'Sending...' : 'Send Test'}
               </button>

@@ -25,8 +25,8 @@ const createFields: FieldConfig[] = [
   { key: 'kra', label: 'KRA', type: 'select', optionsEndpoint: '/api/v1/appraisals/kras/' },
   { key: 'start_date', label: 'Start Date', type: 'date', required: true },
   { key: 'end_date', label: 'End Date', type: 'date', required: true },
-  { key: 'status', label: 'Status', type: 'select', options: [{ value: 'not_started', label: 'Not Started' }, { value: 'in_progress', label: 'In Progress' }, { value: 'completed', label: 'Completed' }] },
-  { key: 'progress_percentage', label: 'Progress %', type: 'number', placeholder: '0' },
+  { key: 'status', label: 'Status', type: 'select', required: true, options: [{ value: 'not_started', label: 'Not Started' }, { value: 'in_progress', label: 'In Progress' }, { value: 'completed', label: 'Completed' }] },
+  { key: 'progress_percentage', label: 'Progress %', type: 'number', required: true, placeholder: '0' },
 ];
 
 export default function Goals() {

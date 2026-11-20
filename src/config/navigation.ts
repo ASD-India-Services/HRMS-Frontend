@@ -155,6 +155,18 @@ const ICONS = {
     'M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z',
   hrSettings:
     'M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.049.58.025 1.193-.14 1.743',
+  orgChart:
+    'M7.5 3.75A1.5 1.5 0 0 0 6 5.25v1.5a1.5 1.5 0 0 0 1.5 1.5h1.5A1.5 1.5 0 0 0 10.5 6.75v-1.5A1.5 1.5 0 0 0 9 3.75h-1.5ZM12 8.25v3.75m0 0H6.75A2.25 2.25 0 0 0 4.5 14.25v1.5a1.5 1.5 0 0 0 1.5 1.5h1.5a1.5 1.5 0 0 0 1.5-1.5v-1.5a2.25 2.25 0 0 0-2.25-2.25M12 12h5.25A2.25 2.25 0 0 1 19.5 14.25v1.5a1.5 1.5 0 0 1-1.5 1.5h-1.5a1.5 1.5 0 0 1-1.5-1.5v-1.5a2.25 2.25 0 0 1-2.25-2.25',
+  helpdesk:
+    'M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z',
+  faqs:
+    'M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z',
+  policies:
+    'M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25',
+  meetings:
+    'M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z',
+  bonusPoints:
+    'M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z',
 } as const;
 
 export const navigationConfig: NavGroup[] = [
@@ -168,6 +180,7 @@ export const navigationConfig: NavGroup[] = [
     label: 'People',
     items: [
       { label: 'Employees', href: '/employees', icon: ICONS.employees, requiredPermission: 'employees.view', featureFlag: 'employees_enabled' },
+      { label: 'Org Chart', href: '/org-chart', icon: ICONS.orgChart, requiredPermission: 'employees.view', featureFlag: 'employees_enabled' },
       { label: 'Departments', href: '/departments', icon: ICONS.departments, requiredPermission: 'departments.view', featureFlag: 'employees_enabled' },
       { label: 'Designations', href: '/designations', icon: ICONS.designations, requiredPermission: 'designations.view', featureFlag: 'employees_enabled' },
       { label: 'Grades', href: '/employee-grades', icon: ICONS.grades, requiredPermission: 'employee_grades.view', featureFlag: 'employees_enabled' },
@@ -175,28 +188,36 @@ export const navigationConfig: NavGroup[] = [
       { label: 'Branches', href: '/branches', icon: ICONS.branches, requiredPermission: 'branches.view', featureFlag: 'employees_enabled' },
       { label: 'Transfers', href: '/transfers', icon: ICONS.transfers, requiredPermission: 'transfers.view', featureFlag: 'employees_enabled' },
       { label: 'Promotions', href: '/promotions', icon: ICONS.promotions, requiredPermission: 'promotions.view', featureFlag: 'employees_enabled' },
+      { label: 'Meetings', href: '/meetings', icon: ICONS.meetings, requiredPermission: 'meetings.view', featureFlag: null },
+      { label: 'Employee Bonus Point', href: '/employee-bonus-points', icon: ICONS.bonusPoints, requiredPermission: 'bonus_points.view', featureFlag: null },
     ],
   },
   {
     label: 'Leaves',
     items: [
+      { label: 'Dashboard', href: '/leaves/dashboard', icon: ICONS.dashboard, requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
       { label: 'My Leaves', href: '/my-leaves', icon: ICONS.leaves, requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
       { label: 'Leave Approvals', href: '/leaves/approvals', icon: ICONS.leaveApprovals, requiredPermission: 'leave_approvals.view', featureFlag: 'leaves_enabled' },
+      { label: 'Compensatory Leave', href: '/leaves/compensatory', icon: ICONS.leaveApprovals, requiredPermission: 'compensatory_leave.view', featureFlag: 'leaves_enabled' },
       { label: 'Leave Policies', href: '/leave-policies', icon: ICONS.leavePolicies, requiredPermission: 'leave_policies.view', featureFlag: 'leaves_enabled' },
       { label: 'Policy Assignments', href: '/leave-policy-assignments', icon: ICONS.leaveAdjust, requiredPermission: 'leave_policy_assignments.view', featureFlag: 'leaves_enabled' },
       { label: 'Block Lists', href: '/leave-block-lists', icon: ICONS.leaveBlock, requiredPermission: 'leave_block_lists.view', featureFlag: 'leaves_enabled' },
       { label: 'Adjustments', href: '/leave-adjustments', icon: ICONS.leaveAdjust, requiredPermission: 'leave_adjustments.view', featureFlag: 'leaves_enabled' },
       { label: 'Earned Leave Schedules', href: '/earned-leave-schedules', icon: ICONS.leaveEarned, requiredPermission: 'earned_leave_schedules.view', featureFlag: 'leaves_enabled' },
       { label: 'Loss of Pay', href: '/loss-of-pay', icon: ICONS.leaveAdjust, requiredPermission: 'loss_of_pay.view', featureFlag: 'leaves_enabled' },
+      { label: 'Company Leaves', href: '/leaves/company-leaves', icon: ICONS.leaves, requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
     ],
   },
   {
     label: 'Attendance',
     items: [
+      { label: 'Dashboard', href: '/attendance/dashboard', icon: ICONS.dashboard, requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
       { label: 'Attendance', href: '/attendance', icon: ICONS.attendance, requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
       { label: 'My Attendance', href: '/my-attendance', icon: ICONS.attendanceRegister, requiredPermission: 'my_attendance.view', featureFlag: 'attendance_enabled' },
       { label: 'Attendance Register', href: '/attendance-register', icon: ICONS.attendanceRegister, requiredPermission: 'attendance_register.view', featureFlag: 'attendance_enabled' },
       { label: 'Attendance Requests', href: '/attendance-requests', icon: ICONS.attendanceRequest, requiredPermission: 'attendance_requests.view', featureFlag: 'attendance_enabled' },
+      { label: 'Hour Account', href: '/attendance/hour-account', icon: ICONS.overtime, requiredPermission: 'hour_account.view', featureFlag: 'attendance_enabled' },
+      { label: 'Work Records', href: '/attendance/work-records', icon: ICONS.attendanceRegister, requiredPermission: 'work_records.view', featureFlag: 'attendance_enabled' },
       { label: 'Attendance Upload', href: '/attendance-upload', icon: ICONS.attendanceUpload, requiredPermission: 'attendance_upload.manage', featureFlag: 'attendance_enabled' },
       { label: 'Geo Locations', href: '/geofence-locations', icon: ICONS.geoLocations, requiredPermission: 'geofence_locations.view', featureFlag: 'attendance_enabled' },
       { label: 'Shifts', href: '/shifts', icon: ICONS.shifts, requiredPermission: 'shifts.view_own', requiredAnyPermission: ['shifts.view_own', 'shifts.view_team'], featureFlag: 'shifts_enabled' },
@@ -208,6 +229,7 @@ export const navigationConfig: NavGroup[] = [
   {
     label: 'Payroll',
     items: [
+      { label: 'Dashboard', href: '/payroll/dashboard', icon: ICONS.dashboard, requiredPermission: 'payroll.view', featureFlag: 'payroll_enabled' },
       { label: 'Payroll Runs', href: '/payroll/runs', icon: ICONS.payroll, requiredPermission: 'payroll_runs.view', featureFlag: 'payroll_enabled' },
       { label: 'Salary Slips', href: '/payroll', icon: ICONS.salarySlips, requiredPermission: 'payroll.view', featureFlag: 'payroll_enabled' },
       { label: 'Components', href: '/salary-components', icon: ICONS.expenseTaxes, requiredPermission: 'salary_components.view', featureFlag: 'payroll_enabled' },
@@ -222,8 +244,10 @@ export const navigationConfig: NavGroup[] = [
   {
     label: 'Recruitment',
     items: [
+      { label: 'Dashboard', href: '/recruitment/dashboard', icon: ICONS.dashboard, requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
       { label: 'Job Openings', href: '/recruitment/job-openings', icon: ICONS.recruitment, requiredPermission: 'job_openings.view', featureFlag: 'recruitment_enabled' },
       { label: 'Pipeline', href: '/recruitment/pipeline', icon: ICONS.pipeline, requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
+      { label: 'Stages', href: '/recruitment/stages', icon: ICONS.pipeline, requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
       { label: 'Referrals', href: '/referrals', icon: ICONS.referrals, requiredPermission: 'referrals.view', featureFlag: 'recruitment_enabled' },
       { label: 'Interview Types', href: '/interview-types', icon: ICONS.interviewTypes, requiredPermission: 'interview_types.view', featureFlag: 'recruitment_enabled' },
       { label: 'Job Templates', href: '/job-templates', icon: ICONS.jobTemplates, requiredPermission: 'job_templates.view', featureFlag: 'recruitment_enabled' },
@@ -262,7 +286,7 @@ export const navigationConfig: NavGroup[] = [
   {
     label: 'More',
     items: [
-      { label: 'Grievances', href: '/grievances', icon: ICONS.grievances, requiredPermission: 'grievances.view', featureFlag: 'grievances_enabled' },
+      { label: 'Grievances', href: '/grievances', icon: ICONS.grievances, requiredPermission: 'grievances.view', requiredAnyPermission: ['grievances.view', 'grievances.create'], featureFlag: null },
       { label: 'Grievance Types', href: '/grievance-types', icon: ICONS.grievanceTypes, requiredPermission: 'grievance_types.view' },
       { label: 'Travel', href: '/travel', icon: ICONS.travel, requiredPermission: 'travel.view', featureFlag: 'travel_enabled' },
       { label: 'Overtime', href: '/overtime', icon: ICONS.overtime, requiredPermission: 'overtime.view', featureFlag: null },
@@ -276,14 +300,37 @@ export const navigationConfig: NavGroup[] = [
       { label: 'Cost Centers', href: '/cost-centers', icon: ICONS.costCenters, requiredPermission: 'cost_centers.view' },
       { label: 'Document Types', href: '/document-types', icon: ICONS.documentTypes, requiredPermission: 'document_types.view' },
       { label: 'Employee Documents', href: '/employee-documents', icon: ICONS.employeeDocuments, requiredPermission: 'documents.view' },
+      { label: 'Document Requests', href: '/document-requests', icon: ICONS.employeeDocuments, requiredPermission: 'document_requests.view', requiredAnyPermission: ['document_requests.view', 'documents.view'] },
       { label: 'Appointment Letters', href: '/appointment-letters', icon: ICONS.appointmentLetters, requiredPermission: 'appointment_letters.view' },
+      { label: 'Policies', href: '/policies', icon: ICONS.policies, requiredPermission: 'policies.view', requiredAnyPermission: ['policies.view', 'documents.view'], featureFlag: null },
+    ],
+  },
+  {
+    label: 'Help Desk',
+    items: [
+      {
+        label: 'Helpdesk Tags',
+        href: '/settings/helpdesk-tags',
+        icon: ICONS.helpdesk,
+        requiredPermission: null,
+        requiredAnyPermission: null,
+        featureFlag: null,
+      },
+    ],
+  },
+  {
+    label: 'Permissions',
+    items: [
+      { label: 'Dashboard', href: '/permissions/dashboard', icon: ICONS.dashboard, requiredPermission: 'roles.manage', featureFlag: null },
+      { label: 'Roles & Permissions', href: '/admin/roles', icon: ICONS.settings, requiredPermission: 'roles.manage', featureFlag: null },
     ],
   },
   {
     label: 'Admin',
     items: [
+      { label: 'Dashboard', href: '/admin/permissions/dashboard', icon: ICONS.dashboard, requiredPermission: 'roles.manage', featureFlag: null },
       { label: 'Roles & Permissions', href: '/admin/roles', icon: ICONS.settings, requiredPermission: 'roles.manage', featureFlag: null },
-      { label: 'HR Settings', href: '/hr-settings', icon: ICONS.hrSettings, requiredPermission: 'hr_settings.view', featureFlag: null },
+      { label: 'Settings', href: '/settings/general-settings', icon: ICONS.settings, requiredPermission: 'hr_settings.view', featureFlag: null },
       { label: 'Audit Logs', href: '/audit-logs', icon: ICONS.auditLogs, requiredPermission: 'audit_logs.view', featureFlag: null },
     ],
   },

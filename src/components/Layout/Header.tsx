@@ -13,6 +13,7 @@ import { useAuth, useUser } from '@platform/auth-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { ProductSwitcher } from '@/components/ProductSwitcher';
 import { useNotifications } from '@/hooks/useNotifications';
+import { SettingsIcon } from '@/pages/settings/SettingsIcons';
 import api from '@/lib/api';
 
 interface HeaderProps {
@@ -65,7 +66,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
   const pendingCount = notifications.length;
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-gray-200 bg-white px-4 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 w-full max-w-full min-w-0 items-center gap-4 border-b border-gray-200 bg-white px-4 sm:px-6">
       {/* Mobile menu toggle */}
       <button
         type="button"
@@ -79,10 +80,10 @@ export function Header({ onMenuToggle }: HeaderProps) {
       </button>
 
       {/* Spacer */}
-      <div className="flex-1" />
+      <div className="flex-1 min-w-0" />
 
       {/* Right side actions */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
         {/* Notification bell */}
         <div className="relative" ref={notificationRef}>
           <button
@@ -152,6 +153,17 @@ export function Header({ onMenuToggle }: HeaderProps) {
           )}
         </div>
 
+        {/* Settings button */}
+        <button
+          type="button"
+          onClick={() => navigate('/settings/general-settings')}
+          className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+          title="Settings"
+          aria-label="Settings"
+        >
+          <SettingsIcon className="w-5 h-5" />
+        </button>
+
         {/* Product Switcher */}
         <ProductSwitcher />
 
@@ -168,11 +180,11 @@ export function Header({ onMenuToggle }: HeaderProps) {
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700 text-sm font-semibold">
               {initials}
             </div>
-            <div className="hidden sm:block text-left">
-              <p className="text-sm font-medium text-gray-900 leading-tight">{name ?? 'User'}</p>
-              <p className="text-xs text-gray-500 leading-tight capitalize">{displayRole}</p>
+            <div className="hidden sm:block text-left shrink-0">
+              <p className="text-sm font-medium text-gray-900 leading-tight whitespace-nowrap">{name ?? 'User'}</p>
+              <p className="text-xs text-gray-500 leading-tight capitalize whitespace-nowrap">{displayRole}</p>
             </div>
-            <svg className="hidden sm:block w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="hidden sm:block w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
             </svg>
           </button>

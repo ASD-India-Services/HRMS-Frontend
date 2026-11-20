@@ -1,0 +1,220 @@
+import { useState } from 'react';
+import { InfoIcon, CheckIcon, LoaderIcon, CopyIcon } from './SettingsIcons';
+
+function SwitchToggle({
+  checked,
+  onChange,
+  disabled = false,
+}: {
+  checked: boolean;
+  onChange: (val: boolean) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      disabled={disabled}
+      onClick={() => onChange(!checked)}
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500/30 ${
+        checked ? 'bg-blue-600' : 'bg-gray-200'
+      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+    >
+      <span
+        aria-hidden="true"
+        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+          checked ? 'translate-x-5' : 'translate-x-0'
+        }`}
+      />
+    </button>
+  );
+}
+
+export function LinkedinIntegrationTab() {
+  const [clientId, setClientId] = useState('');
+  const [clientSecret, setClientSecret] = useState('');
+  const [showSecret, setShowSecret] = useState(false);
+  const [applyWithLinkedin, setApplyWithLinkedin] = useState(true);
+  const [autoPostJobs, setAutoPostJobs] = useState(false);
+  const [syncInMail, setSyncInMail] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const redirectUri = `${window.location.origin}/api/v1/auth/linkedin/callback`;
+
+  const handleCopyUri = () => {
+    navigator.clipboard.writeText(redirectUri);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleSave = () => {
+    setSaving(true);
+    setSaved(false);
+    setTimeout(() => {
+      setSaving(false);
+      setSaved(true);
+      if (clientId && clientSecret) {
+        setIsConnected(true);
+      }
+      setTimeout(() => setSaved(false), 3000);
+    }, 600);
+  };
+
+  return (
+    <div className="space-y-6 py-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Linkedin Integration</h2>
+          <p className="mt-1 text-sm text-gray-500">
+            Connect LinkedIn Recruiter &amp; Talent Solutions API to distribute job vacancies and source candidates.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+              isConnected
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                : 'bg-amber-50 text-amber-700 border border-amber-200'
+            }`}
+          >
+            <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+            {isConnected ? 'LinkedIn Connected' : 'Not Configured'}
+          </span>
+        </div>
+      </div>
+
+      <hr className="border-gray-200" />
+
+      {/* Redirect URI Guidance */}
+      <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-1.5">
+        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700">
+          Authorized Redirect URI (Enter in LinkedIn Developer Portal)
+        </label>
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            readOnly
+            value={redirectUri}
+            className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-800 font-mono shadow-xs select-all"
+          />
+          <button
+            type="button"
+            onClick={handleCopyUri}
+            className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-100 transition-colors"
+          >
+            <CopyIcon className="h-4 w-4" />
+            {copied ? 'Copied' : 'Copy'}
+          </button>
+        </div>
+        <p className="text-xs text-gray-500">
+          Add this redirect URI to your LinkedIn App under <strong>Auth &gt; OAuth 2.0 settings</strong>.
+        </p>
+      </div>
+
+      {/* API Credentials */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+        <div className="space-y-2">
+          <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-800">
+            <span>LinkedIn Client ID *</span>
+            <span title="Your LinkedIn Application Client ID." className="cursor-help text-gray-400 hover:text-gray-600">
+              <InfoIcon className="h-4 w-4" />
+            </span>
+          </label>
+          <input
+            type="text"
+            placeholder="e.g. 77x1y2z3a4b5"
+            value={clientId}
+            onChange={(e) => setClientId(e.target.value)}
+            className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-800">
+            <span>LinkedIn Client Secret *</span>
+            <span title="Your LinkedIn Application Secret Key." className="cursor-help text-gray-400 hover:text-gray-600">
+              <InfoIcon className="h-4 w-4" />
+            </span>
+          </label>
+          <div className="relative">
+            <input
+              type={showSecret ? 'text' : 'password'}
+              placeholder="••••••••••••••••••••••••"
+              value={clientSecret}
+              onChange={(e) => setClientSecret(e.target.value)}
+              className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 pr-16"
+            />
+            <button
+              type="button"
+              onClick={() => setShowSecret(!showSecret)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-500 hover:text-gray-800"
+            >
+              {showSecret ? 'Hide' : 'Show'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Feature Toggles */}
+      <div className="pt-4 border-t border-gray-100 space-y-5">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-gray-600">Sync &amp; Apply Features</h3>
+
+        <div className="flex items-center justify-between max-w-xl">
+          <div>
+            <p className="text-sm font-semibold text-gray-800">Enable "Apply with LinkedIn"</p>
+            <p className="text-xs text-gray-500">Allow candidates on the careers page to autofill applications using LinkedIn.</p>
+          </div>
+          <SwitchToggle checked={applyWithLinkedin} onChange={setApplyWithLinkedin} />
+        </div>
+
+        <div className="flex items-center justify-between max-w-xl">
+          <div>
+            <p className="text-sm font-semibold text-gray-800">Automated Job Postings</p>
+            <p className="text-xs text-gray-500">Automatically broadcast newly published openings to LinkedIn Jobs.</p>
+          </div>
+          <SwitchToggle checked={autoPostJobs} onChange={setAutoPostJobs} />
+        </div>
+
+        <div className="flex items-center justify-between max-w-xl">
+          <div>
+            <p className="text-sm font-semibold text-gray-800">Recruiter System Connect (RSC)</p>
+            <p className="text-xs text-gray-500">Sync recruiter notes and candidate InMails directly with HRMS profiles.</p>
+          </div>
+          <SwitchToggle checked={syncInMail} onChange={setSyncInMail} />
+        </div>
+      </div>
+
+      {saved && (
+        <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 flex items-center gap-2">
+          <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0" />
+          <span>LinkedIn integration settings saved successfully.</span>
+        </div>
+      )}
+
+      {/* Save Button */}
+      <div className="pt-6 flex justify-end gap-3">
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saving}
+          className="inline-flex items-center justify-center rounded-md bg-blue-600 px-8 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 transition-colors"
+        >
+          {saving ? (
+            <>
+              <LoaderIcon className="mr-2 h-4 w-4" /> Saving...
+            </>
+          ) : (
+            'Save Changes'
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+

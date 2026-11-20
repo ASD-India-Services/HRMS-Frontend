@@ -2,6 +2,24 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
 import { ATTENDANCE } from '@/lib/endpoints'
 
+export interface AttendanceSession {
+  id: string
+  attendance: string
+  employee: string
+  check_in_time: string
+  check_out_time: string | null
+  duration_hours: number | null
+  is_auto_checkout: boolean
+  auto_checkout_reason: string | null
+  check_in_latitude: number | null
+  check_in_longitude: number | null
+  check_out_latitude: number | null
+  check_out_longitude: number | null
+  device_id: string
+  created_at: string
+  updated_at: string
+}
+
 /**
  * Attendance record returned from the backend.
  */
@@ -11,12 +29,16 @@ export interface AttendanceRecord {
   attendance_date: string
   check_in: string | null
   check_out: string | null
-  working_hours: number | null
+  working_hours: number | string | null
   status: 'present' | 'absent' | 'half_day' | 'on_leave' | 'holiday'
   shift: string | null
   is_late: boolean
   late_reason: string
   is_outside_geofence: boolean
+  sessions?: AttendanceSession[]
+  active_session?: AttendanceSession | null
+  is_currently_punched_in?: boolean
+  total_sessions_count?: number
   created_at: string
   updated_at: string
 }

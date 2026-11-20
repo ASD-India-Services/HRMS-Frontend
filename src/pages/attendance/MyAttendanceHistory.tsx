@@ -132,29 +132,53 @@ export default function MyAttendanceHistory() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {records.map((r: any) => (
-                <tr key={r.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-sm text-gray-900">
-                    {new Date(r.attendance_date).toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' })}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-700">{formatTime(r.check_in)}</td>
-                  <td className="px-4 py-3 text-sm text-gray-700">{formatTime(r.check_out)}</td>
-                  <td className="px-4 py-3 text-sm font-medium text-gray-900">{formatHours(r.working_hours, r.check_in, r.check_out)}</td>
-                  <td className="px-4 py-3 text-sm">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                      r.status === 'present' ? 'bg-green-100 text-green-700' :
-                      r.status === 'absent' ? 'bg-red-100 text-red-700' :
-                      r.status === 'half_day' ? 'bg-amber-100 text-amber-700' :
-                      r.status === 'on_leave' ? 'bg-blue-100 text-blue-700' :
-                      r.status === 'holiday' ? 'bg-purple-100 text-purple-700' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
-                      {r.status === 'on_leave' ? 'On Leave' : r.status === 'half_day' ? 'Half Day' : r.status}
-                      {r.is_late && ' (Late)'}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+              {records.map((r: any) => {
+                const sessionCount = r.sessions?.length || r.total_sessions_count || (r.check_in ? 1 : 0);
+                const hasAuto = r.sessions?.some((s: any) => s.is_auto_checkout);
+
+                return (
+                  <tr key={r.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 text-sm text-gray-900 font-medium">
+                      {new Date(r.attendance_date).toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' })}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">{formatTime(r.check_in)}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {r.check_out ? formatTime(r.check_out) : (r.sessions?.some((s: any) => !s.check_out_time) ? 'Active' : '—')}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                      <div className="flex items-center gap-1.5">
+                        <span>{formatHours(r.working_hours, r.check_in, r.check_out)}</span>
+                        {sessionCount > 1 && (
+                          <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                            {sessionCount} sessions
+                          </span>
+                        )}
+                        {hasAuto && (
+                          <span
+                            title="Contains auto check-out session"
+                            className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200"
+                          >
+                            ⚡ Auto
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                        r.status === 'present' ? 'bg-green-100 text-green-700' :
+                        r.status === 'absent' ? 'bg-red-100 text-red-700' :
+                        r.status === 'half_day' ? 'bg-amber-100 text-amber-700' :
+                        r.status === 'on_leave' ? 'bg-blue-100 text-blue-700' :
+                        r.status === 'holiday' ? 'bg-purple-100 text-purple-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {r.status === 'on_leave' ? 'On Leave' : r.status === 'half_day' ? 'Half Day' : r.status}
+                        {r.is_late && ' (Late)'}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

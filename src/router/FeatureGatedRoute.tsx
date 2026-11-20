@@ -3,7 +3,7 @@ import { UpgradePrompt } from '@/components/UpgradePrompt';
 
 interface FeatureGatedRouteProps {
   /** The feature flag key to check (e.g., 'payroll_enabled') */
-  featureFlag: string;
+  featureFlag?: string | null;
   /** Human-readable module name for the upgrade prompt */
   moduleName: string;
   /** The child route element to render when access is granted */
@@ -17,7 +17,7 @@ interface FeatureGatedRouteProps {
 export function FeatureGatedRoute({ featureFlag, moduleName, children }: FeatureGatedRouteProps) {
   const { hasFeature } = usePermissions();
 
-  if (!hasFeature(featureFlag)) {
+  if (featureFlag && !hasFeature(featureFlag)) {
     return <UpgradePrompt moduleName={moduleName} />;
   }
 

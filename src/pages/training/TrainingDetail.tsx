@@ -7,19 +7,43 @@ import { useState } from 'react';
 import { useTrainingEvent, useEnrollInEvent, useCompleteEnrollment } from '@/hooks/useTraining';
 import type { TrainingEventStatus, EnrollmentStatus } from '@/types/training';
 
-const STATUS_BADGES: Record<TrainingEventStatus, { label: string; className: string }> = {
+const STATUS_BADGES: Record<string, { label: string; className: string }> = {
+  draft: { label: 'Draft', className: 'bg-gray-100 text-gray-800' },
   scheduled: { label: 'Scheduled', className: 'bg-blue-100 text-blue-800' },
   in_progress: { label: 'In Progress', className: 'bg-yellow-100 text-yellow-800' },
   completed: { label: 'Completed', className: 'bg-green-100 text-green-800' },
   cancelled: { label: 'Cancelled', className: 'bg-red-100 text-red-800' },
 };
 
-const ENROLLMENT_BADGES: Record<EnrollmentStatus, { label: string; className: string }> = {
+const ENROLLMENT_BADGES: Record<string, { label: string; className: string }> = {
   enrolled: { label: 'Enrolled', className: 'bg-blue-100 text-blue-800' },
   completed: { label: 'Completed', className: 'bg-green-100 text-green-800' },
   cancelled: { label: 'Cancelled', className: 'bg-red-100 text-red-800' },
   waitlisted: { label: 'Waitlisted', className: 'bg-yellow-100 text-yellow-800' },
+  no_show: { label: 'No Show', className: 'bg-gray-100 text-gray-800' },
 };
+
+function getStatusBadge(status?: string) {
+  const s = status?.toLowerCase() || 'draft';
+  return STATUS_BADGES[s] || {
+    label: status ? status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : 'Unknown',
+    className: 'bg-gray-100 text-gray-800',
+  };
+}
+
+function getEnrollmentBadge(status?: string) {
+  const s = status?.toLowerCase() || '';
+  return ENROLLMENT_BADGES[s] || {
+    label: status ? status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : 'Unknown',
+    className: 'bg-gray-100 text-gray-800',
+  };
+}
+
+function formatDate(dateStr?: string | null): string {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? '—' : d.toLocaleDateString();
+}
 
 interface TrainingDetailProps {
   eventId: string;
@@ -37,10 +61,12 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
 
   // Find current employee's enrollment
-  const myEnrollment = event?.enrollments?.find((e) => {
-    const empId = typeof e.employee === 'object' ? e.employee?.id : e.employee;
-    return String(empId) === String(employeeId);
-  });
+  const myEnrollment = event?.enrollments && Array.isArray(event.enrollments)
+    ? event.enrollments.find((e) => {
+        const empId = typeof e.employee === 'object' ? e.employee?.id : e.employee;
+        return String(empId) === String(employeeId);
+      })
+    : undefined;
 
   const handleEnroll = () => {
     enrollMutation.mutate({ event: eventId, employee: employeeId });
@@ -75,8 +101,11 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
 
   if (!event) return null;
 
-  const badge = STATUS_BADGES[event.status];
-  const canEnroll = event.status === 'scheduled' && event.available_seats > 0 && !myEnrollment;
+  const badge = getStatusBadge(event.status);
+  const enrolledCount = event.enrolled_count ?? 0;
+  const maxSeats = event.max_participants ?? event.max_seats ?? 0;
+  const availableSeats = event.available_seats ?? Math.max(0, maxSeats - enrolledCount);
+  const canEnroll = event.status === 'scheduled' && availableSeats > 0 && !myEnrollment;
   const canComplete = myEnrollment?.status === 'enrolled' && event.status !== 'cancelled';
 
   return (
@@ -98,7 +127,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h2 className="text-xl font-semibold text-gray-900">{event.name}</h2>
-          <p className="mt-1 text-sm text-gray-500">{event.type}</p>
+          <p className="mt-1 text-sm text-gray-500 capitalize">{event.event_type || event.type || '—'}</p>
         </div>
         <span className={`rounded-full px-3 py-1 text-xs font-medium ${badge.className}`}>
           {badge.label}
@@ -110,24 +139,24 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
         <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wider text-gray-500">Trainer</dt>
-            <dd className="mt-1 text-sm text-gray-900">{event.trainer}</dd>
+            <dd className="mt-1 text-sm text-gray-900">{event.trainer || '—'}</dd>
           </div>
           <div>
             <dt className="text-xs font-medium uppercase tracking-wider text-gray-500">Location</dt>
-            <dd className="mt-1 text-sm text-gray-900">{event.location}</dd>
+            <dd className="mt-1 text-sm text-gray-900">{event.location || '—'}</dd>
           </div>
           <div>
             <dt className="text-xs font-medium uppercase tracking-wider text-gray-500">Duration</dt>
             <dd className="mt-1 text-sm text-gray-900">
-              {new Date(event.start_date).toLocaleDateString()} – {new Date(event.end_date).toLocaleDateString()}
+              {formatDate(event.start_date)} – {formatDate(event.end_date)}
             </dd>
           </div>
           <div>
             <dt className="text-xs font-medium uppercase tracking-wider text-gray-500">Seats</dt>
             <dd className="mt-1 text-sm text-gray-900">
-              {event.enrolled_count} / {event.max_seats} enrolled
-              <span className={`ml-2 text-xs ${event.available_seats > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                ({event.available_seats} available)
+              {enrolledCount} / {maxSeats} enrolled
+              <span className={`ml-2 text-xs ${availableSeats > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                ({availableSeats} available)
               </span>
             </dd>
           </div>
@@ -150,11 +179,11 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
         )}
 
         {/* Prerequisites */}
-        {event.prerequisites?.length > 0 && (
+        {Array.isArray(event.prerequisites) && event.prerequisites.length > 0 && (
           <div className="mt-4 border-t border-gray-100 pt-4">
             <h4 className="text-xs font-medium uppercase tracking-wider text-gray-500">Prerequisites</h4>
             <ul className="mt-1 list-inside list-disc text-sm text-gray-700">
-              {event.prerequisites?.map((prereq, idx) => (
+              {event.prerequisites.map((prereq, idx) => (
                 <li key={idx}>{prereq}</li>
               ))}
             </ul>
@@ -169,11 +198,16 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
         {myEnrollment ? (
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${ENROLLMENT_BADGES[myEnrollment.status].className}`}>
-                {ENROLLMENT_BADGES[myEnrollment.status].label}
-              </span>
+              {(() => {
+                const myEnrollBadge = getEnrollmentBadge(myEnrollment.status);
+                return (
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${myEnrollBadge.className}`}>
+                    {myEnrollBadge.label}
+                  </span>
+                );
+              })()}
               <span className="text-xs text-gray-500">
-                Enrolled on {new Date(myEnrollment.enrolled_at).toLocaleDateString()}
+                Enrolled on {formatDate(myEnrollment.enrolled_at)}
               </span>
             </div>
 
@@ -268,7 +302,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
                 {enrollMutation.isPending ? 'Enrolling...' : 'Enroll Now'}
               </button>
             )}
-            {!canEnroll && event.available_seats === 0 && (
+            {!canEnroll && availableSeats === 0 && (
               <span className="text-xs text-red-500">No seats available</span>
             )}
           </div>
@@ -276,10 +310,10 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
       </div>
 
       {/* Enrollments list */}
-      {event.enrollments?.length > 0 && (
+      {Array.isArray(event.enrollments) && event.enrollments.length > 0 && (
         <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
           <h3 className="mb-3 text-sm font-semibold text-gray-900">
-            Participants ({event.enrollments?.length || 0})
+            Participants ({event.enrollments.length})
           </h3>
           <div className="overflow-hidden rounded-md border border-gray-100">
             <table className="min-w-full divide-y divide-gray-200">
@@ -292,8 +326,8 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {event.enrollments?.map((enrollment) => {
-                  const enrollBadge = ENROLLMENT_BADGES[enrollment.status];
+                {event.enrollments.map((enrollment) => {
+                  const enrollBadge = getEnrollmentBadge(enrollment.status);
                   return (
                     <tr key={enrollment.id}>
                       <td className="px-4 py-2 text-sm text-gray-900">
@@ -305,7 +339,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
                         </span>
                       </td>
                       <td className="px-4 py-2 text-xs text-gray-500">
-                        {new Date(enrollment.enrolled_at).toLocaleDateString()}
+                        {formatDate(enrollment.enrolled_at)}
                       </td>
                       <td className="px-4 py-2 text-sm text-gray-600">
                         {enrollment.feedback_score !== null ? `${enrollment.feedback_score}/5` : '—'}

@@ -14,6 +14,7 @@ import type {
   LeaveApprovalPayload,
   LeaveFilters,
   PaginatedLeaveResponse,
+  LeaveCalculationResult,
 } from '@/types/leave';
 
 // --- Fetch Functions ---
@@ -84,6 +85,24 @@ export function useLeaveApplications(filters: LeaveFilters) {
     queryKey: ['leave-applications', filters],
     queryFn: () => fetchLeaveApplications(filters),
     placeholderData: keepPreviousData,
+  });
+}
+
+export function useCalculateLeaveDays(fromDate?: string, toDate?: string, leaveType?: string) {
+  return useQuery<LeaveCalculationResult>({
+    queryKey: ['leave-calculate-days', fromDate, toDate, leaveType],
+    queryFn: async () => {
+      const res = await api.get('/api/v1/leaves/calculate-days/', {
+        params: {
+          from_date: fromDate,
+          to_date: toDate,
+          leave_type: leaveType && leaveType !== '__lop__' ? leaveType : undefined,
+        },
+      });
+      return res.data;
+    },
+    enabled: Boolean(fromDate && toDate && fromDate <= toDate),
+    staleTime: 30 * 1000,
   });
 }
 

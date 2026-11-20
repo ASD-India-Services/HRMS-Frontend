@@ -95,7 +95,7 @@ export default function RoleDetailPage() {
   const { data: allPermissions, isLoading: permsLoading, isError: permsError } = useAllPermissions();
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [dataScope, setDataScope] = useState<DataScope>('organisation');
+  const [dataScope, setDataScope] = useState<DataScope>('self');
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [permSearch, setPermSearch] = useState('');
@@ -104,7 +104,7 @@ export default function RoleDetailPage() {
   useEffect(() => {
     if (role) {
       setSelectedIds(new Set(role.permissions.map((p) => p.id)));
-      setDataScope(role.data_scope || 'organisation');
+      setDataScope(role.data_scope || 'self');
     }
   }, [role]);
 

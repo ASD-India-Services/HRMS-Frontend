@@ -11,6 +11,7 @@ import { SALARY_STRUCTURE_ASSIGNMENTS, EMPLOYEES, PAYROLL } from '@/lib/endpoint
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldSchema } from '@/types/form';
 import type { CrudEndpoints } from '@/hooks/useCrud';
+import { formatCurrency } from '@/utils/formatters';
 
 export interface SalaryStructureAssignment {
   id: string;
@@ -46,10 +47,7 @@ export const salaryStructureAssignmentColumns: ColumnDef<SalaryStructureAssignme
     key: 'base_amount',
     header: 'Base Amount',
     sortable: true,
-    render: (value: unknown) => {
-      const num = Number(value);
-      return isNaN(num) ? String(value) : num.toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
-    },
+    render: (value: unknown) => formatCurrency(value as number),
   },
   {
     key: 'is_active',

@@ -103,7 +103,7 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
       {/* Sidebar panel */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 flex flex-col bg-white border-r border-gray-200/80
+          fixed inset-y-0 left-0 z-50 flex flex-col shrink-0 bg-white border-r border-gray-200/80
           transform transition-all duration-200 ease-in-out
           ${isCollapsed ? 'w-[60px]' : 'w-60'}
           lg:translate-x-0 lg:static lg:z-auto

@@ -18,6 +18,14 @@ export const EMPLOYEES = {
   PROPERTY_HISTORY: (id: string) => `/api/v1/employees/${id}/property-history/`,
 } as const;
 
+export const BONUS_POINTS = {
+  LIST: '/api/v1/employee-bonus-points/',
+  CREATE: '/api/v1/employee-bonus-points/',
+  DETAIL: (id: string) => `/api/v1/employee-bonus-points/${id}/`,
+  UPDATE: (id: string) => `/api/v1/employee-bonus-points/${id}/`,
+  DELETE: (id: string) => `/api/v1/employee-bonus-points/${id}/`,
+} as const;
+
 export const DEPARTMENTS = {
   LIST: '/api/v1/departments/',
   CREATE: '/api/v1/departments/',
@@ -33,6 +41,8 @@ export const DESIGNATIONS = {
   UPDATE: (id: string) => `/api/v1/designations/${id}/`,
   DELETE: (id: string) => `/api/v1/designations/${id}/`,
 } as const;
+
+
 
 export const EMPLOYEE_GRADES = {
   LIST: '/api/v1/employee-grades/',
@@ -84,6 +94,20 @@ export const LEAVES = {
   COMPENSATORY: '/api/v1/leaves/compensatory/',
   COMPENSATORY_APPROVE: (id: string) => `/api/v1/leaves/compensatory/${id}/approve/`,
   COMPENSATORY_REJECT: (id: string) => `/api/v1/leaves/compensatory/${id}/reject/`,
+  COMPENSATORY_ELIGIBLE_ATTENDANCES: '/api/v1/leaves/compensatory-leave/eligible-attendances/',
+  COMPANY_LEAVES: '/api/v1/leaves/company-leaves/',
+  COMPANY_LEAVE_DETAIL: (id: string) => `/api/v1/leaves/company-leaves/${id}/`,
+} as const;
+
+export const COMPENSATORY_LEAVE = {
+  LIST: '/api/v1/leaves/compensatory-leave/',
+  CREATE: '/api/v1/leaves/compensatory-leave/',
+  DETAIL: (id: string) => `/api/v1/leaves/compensatory-leave/${id}/`,
+  UPDATE: (id: string) => `/api/v1/leaves/compensatory-leave/${id}/`,
+  DELETE: (id: string) => `/api/v1/leaves/compensatory-leave/${id}/`,
+  APPROVE: (id: string) => `/api/v1/leaves/compensatory-leave/${id}/approve/`,
+  REJECT: (id: string) => `/api/v1/leaves/compensatory-leave/${id}/reject/`,
+  ELIGIBLE_ATTENDANCES: '/api/v1/leaves/compensatory-leave/eligible-attendances/',
 } as const;
 
 // ─── Salary Components ───────────────────────────────────────────────────────
@@ -435,6 +459,24 @@ export const ATTENDANCE_UPLOAD = {
   UPLOAD: '/api/v1/attendance/upload/',
 } as const;
 
+// ─── Hour Accounts ───────────────────────────────────────────────────────────
+
+export const HOUR_ACCOUNTS = {
+  LIST: '/api/v1/attendance/hour-accounts/',
+  CREATE: '/api/v1/attendance/hour-accounts/',
+  DETAIL: (id: string) => `/api/v1/attendance/hour-accounts/${id}/`,
+  UPDATE: (id: string) => `/api/v1/attendance/hour-accounts/${id}/`,
+  DELETE: (id: string) => `/api/v1/attendance/hour-accounts/${id}/`,
+  BULK_DELETE: '/api/v1/attendance/hour-accounts/bulk-delete/',
+  SYNC: '/api/v1/attendance/hour-accounts/sync/',
+} as const;
+
+// ─── Work Records ────────────────────────────────────────────────────────────
+
+export const WORK_RECORDS = {
+  LIST: '/api/v1/attendance/work-records/',
+} as const;
+
 // ─── Geo-Fence Locations ─────────────────────────────────────────────────────
 
 export const GEOFENCE_LOCATIONS = {
@@ -605,6 +647,17 @@ export const EMPLOYEE_DOCUMENTS = {
   DELETE: (id: string) => `/api/v1/employee-documents/${id}/`,
 } as const;
 
+export const DOCUMENT_REQUESTS = {
+  LIST: '/api/v1/document-requests/',
+  CREATE: '/api/v1/document-requests/',
+  DETAIL: (id: string) => `/api/v1/document-requests/${id}/`,
+  UPDATE: (id: string) => `/api/v1/document-requests/${id}/`,
+  DELETE: (id: string) => `/api/v1/document-requests/${id}/`,
+  APPROVE: (id: string) => `/api/v1/document-requests/${id}/approve/`,
+  REJECT: (id: string) => `/api/v1/document-requests/${id}/reject/`,
+  SUMMARY: '/api/v1/document-requests/summary/',
+} as const;
+
 // ─── Expense Taxes ───────────────────────────────────────────────────────────
 
 export const EXPENSE_TAXES = {
@@ -624,3 +677,39 @@ export const EMPLOYEE_INCENTIVES = {
   UPDATE: (id: string) => `/api/v1/employee-incentives/${id}/`,
   DELETE: (id: string) => `/api/v1/employee-incentives/${id}/`,
 } as const;
+
+// ─── Help Desk ───────────────────────────────────────────────────────────────
+
+export const HELPDESK = {
+  CATEGORIES: '/api/v1/helpdesk/faq-categories/',
+  CATEGORY_DETAIL: (id: string) => `/api/v1/helpdesk/faq-categories/${id}/`,
+  FAQS: '/api/v1/helpdesk/faqs/',
+  FAQ_DETAIL: (id: string) => `/api/v1/helpdesk/faqs/${id}/`,
+  TAGS: '/api/v1/helpdesk/tags/',
+  TAG_DETAIL: (id: string) => `/api/v1/helpdesk/tags/${id}/`,
+} as const;
+
+// ─── Policies ────────────────────────────────────────────────────────────────
+
+export const POLICIES = {
+  LIST: '/api/v1/policies/',
+  CREATE: '/api/v1/policies/',
+  DETAIL: (id: string) => `/api/v1/policies/${id}/`,
+  UPDATE: (id: string) => `/api/v1/policies/${id}/`,
+  DELETE: (id: string) => `/api/v1/policies/${id}/`,
+} as const;
+
+// ─── Meetings ────────────────────────────────────────────────────────────────
+
+export const MEETINGS = {
+  LIST: '/api/v1/meetings/',
+  CREATE: '/api/v1/meetings/',
+  DETAIL: (id: string) => `/api/v1/meetings/${id}/`,
+  UPDATE: (id: string) => `/api/v1/meetings/${id}/`,
+  DELETE: (id: string) => `/api/v1/meetings/${id}/`,
+  CANCEL: (id: string) => `/api/v1/meetings/${id}/cancel/`,
+  COMPLETE: (id: string) => `/api/v1/meetings/${id}/complete/`,
+  QUESTION_TEMPLATES: '/api/v1/question-templates/',
+} as const;
+
+

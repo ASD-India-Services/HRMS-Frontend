@@ -71,6 +71,7 @@ const HIGHER_ACTIONS = new Set([
   'delete',
   'manage',
   'approve',
+  'reject',
   'mark_paid',
 ]);
 

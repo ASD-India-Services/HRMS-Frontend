@@ -9,6 +9,7 @@ import { useExpenseClaims } from '@/hooks/useExpenses';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
 import type { ExpenseClaimStatus } from '@/types/expense';
+import { formatDate, formatCurrency } from '@/utils/formatters';
 
 const STATUS_TABS: { label: string; value: ExpenseClaimStatus | '' }[] = [
   { label: 'All', value: '' },
@@ -25,22 +26,6 @@ const statusStyles: Record<ExpenseClaimStatus, string> = {
   paid: 'bg-blue-100 text-blue-800',
 };
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
-
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 2,
-  }).format(amount);
-}
-
 export function ExpenseList() {
   const [activeStatus, setActiveStatus] = useState<ExpenseClaimStatus | ''>('');
   const [page, setPage] = useState(1);
@@ -50,6 +35,7 @@ export function ExpenseList() {
     status: activeStatus || undefined,
     page,
     page_size: 10,
+    mine: true,
   });
 
   return (

@@ -36,6 +36,10 @@ const ResetPassword = lazy(() => import('@/pages/auth/ResetPassword'));
 // Self-onboarding (inside ProtectedRoute but outside OnboardingGuard)
 const SelfOnboarding = lazy(() => import('@/pages/onboarding/SelfOnboarding'));
 
+// Public candidate application page
+const PublicJobApplyPage = lazy(() => import('@/pages/recruitment/PublicJobApplyPage'));
+const CareersEmbedWidget = lazy(() => import('@/pages/recruitment/CareersEmbedWidget'));
+
 // ─── Lazy-loaded page components ─────────────────────────────────────────────
 
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
@@ -48,6 +52,7 @@ const Branches = lazy(() => import('@/pages/Branches'));
 const EmployeeDetailPage = lazy(() => import('@/pages/employees/EmployeeDetailPage'));
 const EmployeeEditPage = lazy(() => import('@/pages/employees/EmployeeEditPage'));
 const EmployeeForm = lazy(() => import('@/pages/employees/EmployeeForm').then((m) => ({ default: m.EmployeeForm as React.ComponentType })));
+const OrgChart = lazy(() => import('@/pages/employees/OrgChart'));
 const Profile = lazy(() => import('@/pages/Profile'));
 const Holidays = lazy(() => import('@/pages/Holidays'));
 const TaxBenefits = lazy(() => import('@/pages/TaxBenefits'));
@@ -59,6 +64,7 @@ const DailySummary = lazy(() => import('@/pages/DailySummary'));
 const Staffing = lazy(() => import('@/pages/Staffing'));
 
 // New module pages
+const CompanyLeaves = lazy(() => import('@/pages/CompanyLeaves'));
 const LeavePolicies = lazy(() => import('@/pages/LeavePolicies'));
 const LeavePolicyAssignments = lazy(() => import('@/pages/LeavePolicyAssignments'));
 const LeaveBlockLists = lazy(() => import('@/pages/LeaveBlockLists'));
@@ -91,6 +97,7 @@ const EmployeeHealthInsurance = lazy(() => import('@/pages/EmployeeHealthInsuran
 const EmployeeCostCenters = lazy(() => import('@/pages/EmployeeCostCenters'));
 const DocumentTypes = lazy(() => import('@/pages/DocumentTypes'));
 const EmployeeDocuments = lazy(() => import('@/pages/EmployeeDocuments'));
+const DocumentRequests = lazy(() => import('@/pages/DocumentRequests'));
 const ExpenseTaxes = lazy(() => import('@/pages/ExpenseTaxes'));
 const ExpenseTypes = lazy(() => import('@/pages/ExpenseTypes'));
 const EmployeeIncentives = lazy(() => import('@/pages/EmployeeIncentives'));
@@ -98,19 +105,60 @@ const Transfers = lazy(() => import('@/pages/Transfers'));
 const Promotions = lazy(() => import('@/pages/Promotions'));
 const Gratuity = lazy(() => import('@/pages/Gratuity'));
 const AppointmentLetters = lazy(() => import('@/pages/AppointmentLetters'));
-const HRSettings = lazy(() => import('@/pages/HRSettings'));
+const Policies = lazy(() => import('@/pages/Policies'));
+const Meetings = lazy(() => import('@/pages/Meetings'));
+const EmployeeBonusPoints = lazy(() => import('@/pages/EmployeeBonusPoints'));
 const AuditLogs = lazy(() => import('@/pages/AuditLogs'));
+
+// Settings Module
+const SettingsLayout = lazy(() => import('@/pages/settings/SettingsLayout').then(m => ({ default: m.SettingsLayout })));
+const GeneralSettingsTab = lazy(() => import('@/pages/settings/GeneralSettingsTab').then(m => ({ default: m.GeneralSettingsTab })));
+const PrefixNamingSeriesTab = lazy(() => import('@/pages/settings/PrefixNamingSeriesTab').then(m => ({ default: m.PrefixNamingSeriesTab })));
+const DateTimeFormatTab = lazy(() => import('@/pages/settings/DateTimeFormatTab').then(m => ({ default: m.DateTimeFormatTab })));
+const MailServerTab = lazy(() => import('@/pages/settings/MailServerTab').then(m => ({ default: m.MailServerTab })));
+const AccessibilityTab = lazy(() => import('@/pages/settings/AccessibilityTab').then(m => ({ default: m.AccessibilityTab })));
+const CompanyProfileTab = lazy(() => import('@/pages/settings/CompanyProfileTab').then(m => ({ default: m.CompanyProfileTab })));
+const EmployeePermissionTab = lazy(() => import('@/pages/settings/EmployeePermissionTab').then(m => ({ default: m.EmployeePermissionTab })));
+const HistoryTagsTab = lazy(() => import('@/pages/settings/HistoryTagsTab').then(m => ({ default: m.HistoryTagsTab })));
+const GdriveBackupTab = lazy(() => import('@/pages/settings/GdriveBackupTab').then(m => ({ default: m.GdriveBackupTab })));
+const EmploymentTypesTab = lazy(() => import('@/pages/settings/SecondarySettingsTabs').then(m => ({ default: m.EmploymentTypesTab })));
+const CandidateSelfTrackingTab = lazy(() => import('@/pages/settings/CandidateSelfTrackingTab').then(m => ({ default: m.CandidateSelfTrackingTab })));
+const CandidateRejectReasonTab = lazy(() => import('@/pages/settings/CandidateRejectReasonTab').then(m => ({ default: m.CandidateRejectReasonTab })));
+const LinkedinIntegrationTab = lazy(() => import('@/pages/settings/LinkedinIntegrationTab').then(m => ({ default: m.LinkedinIntegrationTab })));
+const WorkTypeTab = lazy(() => import('@/pages/settings/WorkTypeTab').then(m => ({ default: m.WorkTypeTab })));
+const LeaveTypeTab = lazy(() => import('@/pages/settings/LeaveTypeTab').then(m => ({ default: m.LeaveTypeTab })));
+const EmployeeTypeTab = lazy(() => import('@/pages/settings/EmployeeTypeTab').then(m => ({ default: m.EmployeeTypeTab })));
+const RotatingWorkTypeTab = lazy(() => import('@/pages/settings/RotatingWorkTypeTab').then(m => ({ default: m.RotatingWorkTypeTab })));
+const RotatingShiftTab = lazy(() => import('@/pages/settings/RotatingShiftTab').then(m => ({ default: m.RotatingShiftTab })));
+const DisciplinaryActionTypeTab = lazy(() => import('@/pages/settings/DisciplinaryActionTypeTab').then(m => ({ default: m.DisciplinaryActionTypeTab })));
+const TrackLateComeEarlyOutTab = lazy(() => import('@/pages/settings/TrackLateComeEarlyOutTab').then(m => ({ default: m.TrackLateComeEarlyOutTab })));
+const AttendanceBreakPointTab = lazy(() => import('@/pages/settings/AttendanceBreakPointTab').then(m => ({ default: m.AttendanceBreakPointTab })));
+const GraceTimeTab = lazy(() => import('@/pages/settings/GraceTimeTab').then(m => ({ default: m.GraceTimeTab })));
+const RestrictPastLeaveTab = lazy(() => import('@/pages/settings/RestrictPastLeaveTab').then(m => ({ default: m.RestrictPastLeaveTab })));
+const CompensatoryLeaveSettingsTab = lazy(() => import('@/pages/settings/CompensatoryLeaveSettingsTab').then(m => ({ default: m.CompensatoryLeaveSettingsTab })));
+const AutoPayslipSettingsTab = lazy(() => import('@/pages/settings/AutoPayslipSettingsTab').then(m => ({ default: m.AutoPayslipSettingsTab })));
+const BonusPointSettingTab = lazy(() => import('@/pages/settings/BonusPointSettingTab').then(m => ({ default: m.BonusPointSettingTab })));
+const HelpdeskTagsTab = lazy(() => import('@/pages/settings/HelpdeskTagsTab').then(m => ({ default: m.HelpdeskTagsTab })));
+
+// Module-specific Dashboards
+const RecruitmentDashboard = lazy(() => import('@/pages/recruitment/RecruitmentDashboard'));
+const AttendanceDashboard = lazy(() => import('@/pages/attendance/AttendanceDashboard'));
+const LeaveDashboard = lazy(() => import('@/pages/leaves/LeaveDashboard'));
+const PayrollDashboard = lazy(() => import('@/pages/payroll/PayrollDashboard'));
+const PermissionDashboard = lazy(() => import('@/pages/admin/PermissionDashboard'));
 
 // Leaves — direct component imports (no sub-routing in Leaves.tsx)
 const MyLeaves = lazy(() => import('@/pages/leaves/MyLeaves'));
-const LeaveList = lazy(() => import('@/pages/leaves/LeaveList').then((m) => ({ default: m.LeaveList })));
 const LeaveApply = lazy(() => import('@/pages/leaves/LeaveApply').then((m) => ({ default: m.LeaveApply })));
 const LeaveApprovals = lazy(() => import('@/pages/leaves/LeaveApprovals').then((m) => ({ default: m.LeaveApprovals })));
+const CompensatoryLeave = lazy(() => import('@/pages/CompensatoryLeave'));
 
 // Attendance
 const Attendance = lazy(() => import('@/pages/Attendance'));
 const AttendanceRegister = lazy(() => import('@/pages/AttendanceRegister'));
 const MyAttendanceHistory = lazy(() => import('@/pages/attendance/MyAttendanceHistory'));
+const HourAccount = lazy(() => import('@/pages/HourAccount'));
+const WorkRecords = lazy(() => import('@/pages/WorkRecords'));
 
 // Shifts — direct component imports (no sub-routing in Shifts.tsx)
 const Shifts = lazy(() => import('@/pages/Shifts'));
@@ -126,6 +174,7 @@ const SalaryStructureAssignments = lazy(() => import('@/pages/SalaryStructureAss
 // Recruitment — direct component imports
 const Recruitment = lazy(() => import('@/pages/Recruitment'));
 const RecruitmentPipeline = lazy(() => import('@/pages/recruitment/RecruitmentPipeline').then((m) => ({ default: m.RecruitmentPipeline })));
+const RecruitmentStages = lazy(() => import('@/pages/recruitment/RecruitmentStages'));
 
 // Appraisals — direct component imports
 const AppraisalCycles = lazy(() => import('@/pages/appraisals/AppraisalCycles').then((m) => ({ default: m.AppraisalCycles })));
@@ -155,6 +204,10 @@ const OvertimeApprovals = lazy(() => import('@/pages/overtime/OvertimeApprovals'
 
 // Settlements
 const SettlementWorkflow = lazy(() => import('@/pages/settlements/SettlementWorkflow').then((m) => ({ default: m.SettlementWorkflow })));
+
+// Help Desk
+const FAQCategories = lazy(() => import('@/pages/helpdesk/FAQCategories'));
+const FAQs = lazy(() => import('@/pages/helpdesk/FAQs'));
 
 // Admin
 const RolesPage = lazy(() => import('@/pages/admin/RolesPage'));
@@ -195,6 +248,17 @@ function permGated(requiredPermission: string, element: React.ReactNode) {
   return (
     <OnboardingGuard>
       <RoleGatedRoute requiredPermission={requiredPermission}>
+        {element}
+      </RoleGatedRoute>
+    </OnboardingGuard>
+  );
+}
+
+/** Like permGated(), but grants access if the user has ANY of the given permissions. */
+function permGatedAny(requiredAnyPermission: string[], element: React.ReactNode) {
+  return (
+    <OnboardingGuard>
+      <RoleGatedRoute requiredAnyPermission={requiredAnyPermission}>
         {element}
       </RoleGatedRoute>
     </OnboardingGuard>
@@ -248,6 +312,21 @@ export const router = createBrowserRouter([
     element: <Suspense fallback={<PageLoader />}><ResetPassword /></Suspense>,
   },
 
+  // Public candidate job application page (zero authentication required)
+  {
+    path: '/careers/apply/:jobId',
+    element: <Suspense fallback={<PageLoader />}><PublicJobApplyPage /></Suspense>,
+  },
+  // Public careers embed widget & public careers portal (Method 2 integration)
+  {
+    path: '/careers/embed',
+    element: <Suspense fallback={<PageLoader />}><CareersEmbedWidget /></Suspense>,
+  },
+  {
+    path: '/careers',
+    element: <Suspense fallback={<PageLoader />}><CareersEmbedWidget /></Suspense>,
+  },
+
   // Self-Onboarding — protected but NO sidebar/header (outside AppShell)
   {
     path: '/onboarding/self',
@@ -291,6 +370,10 @@ export const router = createBrowserRouter([
         element: gated('employees_enabled', 'Employees', 'employees.view', <Employees />),
       },
       {
+        path: 'org-chart',
+        element: gated('employees_enabled', 'Employees', 'employees.view', <OrgChart />),
+      },
+      {
         path: 'employees/new',
         element: gated('employees_enabled', 'Employees', 'employees.create', <EmployeeForm />),
       },
@@ -322,8 +405,20 @@ export const router = createBrowserRouter([
         path: 'branches',
         element: gated('employees_enabled', 'Employees', 'branches.view', <Branches />),
       },
+      {
+        path: 'meetings',
+        element: permGated('meetings.view', <Meetings />),
+      },
+      {
+        path: 'employee-bonus-points',
+        element: permGated('bonus_points.view', <EmployeeBonusPoints />),
+      },
 
       // ─── Leaves (explicit sub-routes, no wildcard) ─────────────
+      {
+        path: 'leaves/dashboard',
+        element: gated('leaves_enabled', 'Leave Dashboard', 'leaves.view', <LeaveDashboard />),
+      },
       {
         path: 'my-leaves',
         element: gated('leaves_enabled', 'My Leaves', 'leaves.view', <MyLeaves />),
@@ -344,11 +439,39 @@ export const router = createBrowserRouter([
         path: 'leaves/approvals',
         element: gated('leaves_enabled', 'Leave Management', 'leave_approvals.view', <LeaveApprovals />),
       },
+      {
+        path: 'leaves/compensatory',
+        element: gated('leaves_enabled', 'Compensatory Leave', 'compensatory_leave.view', <CompensatoryLeave />),
+      },
+      {
+        path: 'compensatory-leave',
+        element: gated('leaves_enabled', 'Compensatory Leave', 'compensatory_leave.view', <CompensatoryLeave />),
+      },
 
       // ─── Attendance ──────────────────────────────────────────────
       {
+        path: 'attendance/dashboard',
+        element: gated('attendance_enabled', 'Attendance Dashboard', 'attendance.view', <AttendanceDashboard />),
+      },
+      {
         path: 'attendance',
         element: gated('attendance_enabled', 'Attendance', 'attendance.view', <Attendance />),
+      },
+      {
+        path: 'attendance/hour-account',
+        element: gated('attendance_enabled', 'Hour Account', 'hour_account.view', <HourAccount />),
+      },
+      {
+        path: 'attendance/attendance-overtime-view',
+        element: gated('attendance_enabled', 'Hour Account', 'hour_account.view', <HourAccount />),
+      },
+      {
+        path: 'attendance/work-records',
+        element: gated('attendance_enabled', 'Work Records', 'work_records.view', <WorkRecords />),
+      },
+      {
+        path: 'work-records',
+        element: gated('attendance_enabled', 'Work Records', 'work_records.view', <WorkRecords />),
       },
       {
         path: 'my-attendance',
@@ -370,6 +493,10 @@ export const router = createBrowserRouter([
       },
 
       // ─── Payroll (explicit sub-routes, no wildcard) ────────────
+      {
+        path: 'payroll/dashboard',
+        element: gated('payroll_enabled', 'Payroll Dashboard', 'payroll.view', <PayrollDashboard />),
+      },
       {
         path: 'payroll',
         element: gated('payroll_enabled', 'Payroll', 'payroll.view', <PayslipViewer />),
@@ -393,6 +520,10 @@ export const router = createBrowserRouter([
 
       // ─── Recruitment (explicit sub-routes, no wildcard) ────────
       {
+        path: 'recruitment/dashboard',
+        element: gated('recruitment_enabled', 'Recruitment Dashboard', 'recruitment.view', <RecruitmentDashboard />),
+      },
+      {
         path: 'recruitment',
         element: gated('recruitment_enabled', 'Recruitment', 'recruitment.view', <Recruitment />),
       },
@@ -411,6 +542,10 @@ export const router = createBrowserRouter([
       {
         path: 'recruitment/pipeline',
         element: gated('recruitment_enabled', 'Recruitment', 'recruitment.view', <RecruitmentPipeline />),
+      },
+      {
+        path: 'recruitment/stages',
+        element: gated('recruitment_enabled', 'Recruitment', 'recruitment.view', <RecruitmentStages />),
       },
 
       // ─── Appraisals (explicit sub-routes, no wildcard) ─────────
@@ -460,7 +595,13 @@ export const router = createBrowserRouter([
       // ─── Grievances ──────────────────────────────────────────────
       {
         path: 'grievances',
-        element: gated('grievances_enabled', 'Grievances', 'grievances.view', <GrievanceList />),
+        element: (
+          <OnboardingGuard>
+            <RoleGatedRoute requiredAnyPermission={['grievances.view', 'grievances.create']}>
+              <GrievanceList />
+            </RoleGatedRoute>
+          </OnboardingGuard>
+        ),
       },
       {
         path: 'grievance-types',
@@ -551,6 +692,14 @@ export const router = createBrowserRouter([
       {
         path: 'loss-of-pay',
         element: gated('leaves_enabled', 'Leave Management', 'loss_of_pay.view', <LossOfPay />),
+      },
+      {
+        path: 'company-leaves',
+        element: gated('leaves_enabled', 'Company Leaves', 'leaves.view', <CompanyLeaves />),
+      },
+      {
+        path: 'leaves/company-leaves',
+        element: gated('leaves_enabled', 'Company Leaves', 'leaves.view', <CompanyLeaves />),
       },
 
       // ─── Shift Requests & Schedules ────────────────────────────
@@ -662,6 +811,10 @@ export const router = createBrowserRouter([
         path: 'employee-documents',
         element: permGated('documents.view', <EmployeeDocuments />),
       },
+      {
+        path: 'document-requests',
+        element: permGatedAny(['document_requests.view', 'documents.view'], <DocumentRequests />),
+      },
 
       // ─── Expense Taxes ─────────────────────────────────────────
       {
@@ -697,11 +850,165 @@ export const router = createBrowserRouter([
         element: permGated('appointment_letters.view', <AppointmentLetters />),
       },
       {
+        path: 'policies',
+        element: permGatedAny(['policies.view', 'documents.view'], <Policies />),
+      },
+      {
         path: 'hr-settings',
-        element: permGated('hr_settings.view', <HRSettings />),
+        element: <Navigate to="/settings/general-settings" replace />,
+      },
+      {
+        path: 'user_accessibility',
+        element: <Navigate to="/settings/accessibility" replace />,
+      },
+      {
+        path: 'tag-view',
+        element: <Navigate to="/settings/history-tags" replace />,
+      },
+      {
+        path: 'tag_view',
+        element: <Navigate to="/settings/history-tags" replace />,
+      },
+      {
+        path: 'payroll/auto-payslip-settings-view',
+        element: <Navigate to="/settings/auto-payslip" replace />,
+      },
+      {
+        path: 'pms/bonus-point-setting',
+        element: <Navigate to="/settings/bonus-point-setting" replace />,
+      },
+      {
+        path: 'pms/bonus_point_setting',
+        element: <Navigate to="/settings/bonus-point-setting" replace />,
+      },
+      {
+        path: 'helpdesk/tags',
+        element: <Navigate to="/settings/helpdesk-tags" replace />,
+      },
+      {
+        path: 'helpdesk/helpdesk-tags',
+        element: <Navigate to="/settings/helpdesk-tags" replace />,
+      },
+      {
+        path: 'settings',
+        element: permGated('hr_settings.view', <SettingsLayout />),
+        children: [
+          { index: true, element: <Navigate to="general-settings" replace /> },
+          { path: 'general-settings', element: <GeneralSettingsTab /> },
+          { path: 'employee-permission', element: <EmployeePermissionTab /> },
+          { path: 'accessibility', element: <AccessibilityTab /> },
+          { path: 'user-group', element: <Navigate to="/settings/general-settings" replace /> },
+          { path: 'date-time-format', element: <DateTimeFormatTab /> },
+          { path: 'date_settings', element: <Navigate to="date-time-format" replace /> },
+          { path: 'history-tags', element: <HistoryTagsTab /> },
+          { path: 'tag-view', element: <Navigate to="history-tags" replace /> },
+          { path: 'tag_view', element: <Navigate to="history-tags" replace /> },
+          { path: 'mail-server', element: <MailServerTab /> },
+          { path: 'gdrive-backup', element: <GdriveBackupTab /> },
+          { path: 'gdrive_backup', element: <Navigate to="gdrive-backup" replace /> },
+          { path: 'prefixes', element: <Navigate to="general-settings" replace /> },
+          { path: 'company-profile', element: <Navigate to="general-settings" replace /> },
+          { path: 'employment-types', element: <Navigate to="general-settings" replace /> },
+
+          // ─── Recruitment Settings ──────────────────────────────────
+          { path: 'candidate-self-tracking', element: <CandidateSelfTrackingTab /> },
+          { path: 'candidate-reject-reasons', element: <CandidateRejectReasonTab /> },
+          { path: 'candidate-reject-reason', element: <Navigate to="candidate-reject-reasons" replace /> },
+          { path: 'skills', element: <Navigate to="candidate-reject-reasons" replace /> },
+          { path: 'linkedin-integration', element: <Navigate to="candidate-reject-reasons" replace /> },
+
+          // ─── Employee Settings ─────────────────────────────────────
+          { path: 'work-types', element: <WorkTypeTab /> },
+          { path: 'work-type', element: <Navigate to="work-types" replace /> },
+          { path: 'leave-types', element: <LeaveTypeTab /> },
+          { path: 'leave-type', element: <Navigate to="leave-types" replace /> },
+          { path: 'employee-types', element: <EmployeeTypeTab /> },
+          { path: 'employee-type', element: <Navigate to="employee-types" replace /> },
+          { path: 'rotating-work-types', element: <Navigate to="work-types" replace /> },
+          { path: 'employee-shifts', element: <Navigate to="work-types" replace /> },
+          { path: 'rotating-shifts', element: <Navigate to="work-types" replace /> },
+          { path: 'shift-schedules', element: <Navigate to="work-types" replace /> },
+          { path: 'disciplinary-action-types', element: <Navigate to="work-types" replace /> },
+
+          // ─── Attendance Settings ───────────────────────────────────
+          { path: 'track-late-come-early-out', element: <TrackLateComeEarlyOutTab /> },
+          { path: 'late-come-early-out', element: <Navigate to="track-late-come-early-out" replace /> },
+          { path: 'attendance-breakpoints', element: <AttendanceBreakPointTab /> },
+          { path: 'break-point-condition', element: <Navigate to="attendance-breakpoints" replace /> },
+          { path: 'breakpoint-condition', element: <Navigate to="attendance-breakpoints" replace /> },
+          { path: 'ip-restrictions', element: <Navigate to="attendance-breakpoints" replace /> },
+          { path: 'grace-time', element: <GraceTimeTab /> },
+
+          // ─── Leave Settings ────────────────────────────────────────
+          { path: 'restrict-past-leave', element: <RestrictPastLeaveTab /> },
+          { path: 'compensatory-leave', element: <CompensatoryLeaveSettingsTab /> },
+          { path: 'compensatory-leave-settings', element: <Navigate to="compensatory-leave" replace /> },
+          { path: 'leave-policies', element: <Navigate to="restrict-past-leave" replace /> },
+          { path: 'holiday-lists', element: <Navigate to="restrict-past-leave" replace /> },
+
+          // ─── Payroll Settings ──────────────────────────────────────
+          { path: 'auto-payslip', element: <AutoPayslipSettingsTab /> },
+          { path: 'auto-payslip-settings-view', element: <Navigate to="auto-payslip" replace /> },
+          { path: 'auto_payslip_settings_view', element: <Navigate to="auto-payslip" replace /> },
+          { path: 'salary-components', element: <Navigate to="auto-payslip" replace /> },
+          { path: 'salary-structures', element: <Navigate to="auto-payslip" replace /> },
+          { path: 'tax-benefits', element: <Navigate to="auto-payslip" replace /> },
+          { path: 'payroll-periods', element: <Navigate to="auto-payslip" replace /> },
+
+          // ─── Performance Settings ──────────────────────────────────
+          { path: 'bonus-point-setting', element: <BonusPointSettingTab /> },
+          { path: 'bonus_point_setting', element: <Navigate to="bonus-point-setting" replace /> },
+          { path: 'bonus-point-settings', element: <Navigate to="bonus-point-setting" replace /> },
+          { path: 'appraisal-templates', element: <Navigate to="bonus-point-setting" replace /> },
+          { path: 'kras', element: <Navigate to="bonus-point-setting" replace /> },
+          { path: 'goals', element: <Navigate to="bonus-point-setting" replace /> },
+          { path: 'performance-feedback', element: <Navigate to="bonus-point-setting" replace /> },
+
+          // ─── Help Desk Settings ────────────────────────────────────
+          { path: 'helpdesk-tags', element: <HelpdeskTagsTab /> },
+          { path: 'helpdesk_tags', element: <Navigate to="helpdesk-tags" replace /> },
+          { path: 'helpdesk-tag', element: <Navigate to="helpdesk-tags" replace /> },
+          { path: 'tags', element: <Navigate to="helpdesk-tags" replace /> },
+          { path: 'faq-categories', element: <Navigate to="helpdesk-tags" replace /> },
+          { path: 'faqs', element: <Navigate to="helpdesk-tags" replace /> },
+        ],
+      },
+
+      // ─── Help Desk ──────────────────────────────────────────────
+      {
+        path: 'helpdesk',
+        element: <Navigate to="/settings/helpdesk-tags" replace />,
+      },
+      {
+        path: 'helpdesk/tags',
+        element: <Navigate to="/settings/helpdesk-tags" replace />,
+      },
+      {
+        path: 'helpdesk/helpdesk-tags',
+        element: <Navigate to="/settings/helpdesk-tags" replace />,
+      },
+      {
+        path: 'helpdesk/faq-categories',
+        element: <Navigate to="/settings/helpdesk-tags" replace />,
+      },
+      {
+        path: 'helpdesk/faqs',
+        element: <Navigate to="/settings/helpdesk-tags" replace />,
+      },
+      {
+        path: 'helpdesk/faq-view/:categoryId',
+        element: <Navigate to="/settings/helpdesk-tags" replace />,
       },
 
       // ─── Admin: Roles & Permissions ────────────────────────────
+      {
+        path: 'permissions/dashboard',
+        element: permGated('roles.manage', <PermissionDashboard />),
+      },
+      {
+        path: 'admin/permissions/dashboard',
+        element: permGated('roles.manage', <PermissionDashboard />),
+      },
       {
         path: 'admin/roles',
         element: permGated('roles.manage', <RolesPage />),

@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useSalarySlips, useSalarySlipDetail, downloadPayslip } from '@/hooks/usePayroll';
 import { PayslipCard } from './components/PayslipCard';
 import type { SalaryComponent } from '@/types/payroll';
+import { formatCurrency } from '@/utils/formatters';
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -28,14 +29,6 @@ function getYearOptions(): number[] {
     years.push(y);
   }
   return years;
-}
-
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(amount);
 }
 
 function ComponentTable({ title, components, variant }: {

@@ -29,6 +29,8 @@ async function fetchExpenseClaims(filters: ExpenseFilters): Promise<PaginatedExp
   if (filters.status) params.status = filters.status;
   if (filters.page) params.page = filters.page;
   if (filters.page_size) params.page_size = filters.page_size;
+  if (filters.mine !== undefined) params.mine = String(filters.mine);
+  if (filters.approvals !== undefined) params.approvals = String(filters.approvals);
 
   const response = await api.get<PaginatedExpenseResponse>('/api/v1/expenses/claims/', { params });
   return response.data;

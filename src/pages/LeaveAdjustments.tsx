@@ -17,17 +17,21 @@ const crud = createCrudHooks<Record<string, unknown>>({
 const columns: ColumnDef<Record<string, unknown>>[] = [
   { key: 'employee_name', header: 'Employee', sortable: true, render: (v: unknown) => v ? String(v) : '–' },
   { key: 'leave_type_name', header: 'Leave Type', sortable: true, render: (v: unknown) => v ? String(v) : '–' },
-  { key: 'adjustment_amount', header: 'Adjustment', sortable: true, render: (v: unknown) => {
-    const num = Number(v);
-    return <span className={num > 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>{num > 0 ? `+${num}` : num}</span>;
-  }},
+  {
+    key: 'adjustment_amount', header: 'Adjustment', sortable: true, render: (v: unknown) => {
+      const num = Number(v);
+      return <span className={num > 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>{num > 0 ? `+${num}` : num}</span>;
+    }
+  },
   { key: 'reason', header: 'Reason', sortable: false, render: (v: unknown) => v ? String(v) : '–' },
   { key: 'adjusted_by_name', header: 'Adjusted By', sortable: false, render: (v: unknown) => v ? String(v) : '–' },
-  { key: 'created_at', header: 'Date', sortable: true, render: (v: unknown) => {
-    if (!v) return '–';
-    const d = new Date(v as string);
-    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-  }},
+  {
+    key: 'created_at', header: 'Date', sortable: true, render: (v: unknown) => {
+      if (!v) return '–';
+      const d = new Date(v as string);
+      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+  },
 ];
 
 const filters: FilterConfig[] = [
@@ -40,7 +44,7 @@ const createFields: FieldConfig[] = [
   { key: 'leave_type', label: 'Leave Type', type: 'select', required: true, optionsEndpoint: '/api/v1/leaves/types/' },
   { key: 'adjustment_type', label: 'Adjustment Type', type: 'select', required: true, options: [{ value: 'credit', label: 'Credit' }, { value: 'debit', label: 'Debit' }] },
   { key: 'days', label: 'Days', type: 'number', required: true, placeholder: 'Number of days' },
-  { key: 'reason', label: 'Reason', type: 'textarea', placeholder: 'Reason for adjustment' },
+  { key: 'reason', label: 'Reason', type: 'textarea', required: true, placeholder: 'Reason for adjustment' },
 ];
 
 interface BalanceInfo {
@@ -64,9 +68,11 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
   const [balance, setBalance] = useState<BalanceInfo | null>(null);
   const [balanceLoading, setBalanceLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
+      setError(null);
       api.get('/api/v1/employees/').then(res => {
         const d = res.data as { results?: EmployeeOption[] } | EmployeeOption[];
         setEmployees(Array.isArray(d) ? d : d.results || []);
@@ -109,15 +115,32 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
   }, [selectedEmployee, selectedLeaveType]);
 
   const handleSubmit = async () => {
-    if (!selectedEmployee || !selectedLeaveType || !days) return;
+    if (!selectedEmployee) {
+      setError('Please select an employee.');
+      return;
+    }
+    if (!selectedLeaveType) {
+      setError('Please select a leave type.');
+      return;
+    }
+    if (!days || Number(days) <= 0) {
+      setError('Please enter a valid number of days.');
+      return;
+    }
+    if (!reason.trim()) {
+      setError('Reason is required.');
+      return;
+    }
+
     setSubmitting(true);
+    setError(null);
     const amount = adjustmentType === 'debit' ? -Number(days) : Number(days);
     try {
       await api.post(ENDPOINT, {
         employee: selectedEmployee,
         leave_type: selectedLeaveType,
         adjustment_amount: amount,
-        reason,
+        reason: reason.trim(),
       });
       // Reset form
       setSelectedEmployee('');
@@ -126,8 +149,22 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
       setDays('');
       setReason('');
       setBalance(null);
+      setError(null);
       onSuccess();
       onClose();
+    } catch (err: unknown) {
+      const errObj = err as { response?: { data?: Record<string, unknown> | string } };
+      const data = errObj?.response?.data;
+      if (typeof data === 'string') {
+        setError(data);
+      } else if (data && typeof data === 'object') {
+        const messages = Object.entries(data)
+          .map(([field, msg]) => `${field !== 'detail' ? `${field}: ` : ''}${Array.isArray(msg) ? msg.join(', ') : msg}`)
+          .join('\n');
+        setError(messages || 'Failed to create adjustment.');
+      } else {
+        setError('Failed to create adjustment. Please try again.');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -143,11 +180,24 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
         </div>
 
+        {error && (
+          <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700 border border-red-200">
+            {error}
+          </div>
+        )}
+
         <div className="space-y-4">
           {/* Employee */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Employee *</label>
-            <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm" value={selectedEmployee} onChange={e => setSelectedEmployee(e.target.value)}>
+            <select
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+              value={selectedEmployee}
+              onChange={e => {
+                setSelectedEmployee(e.target.value);
+                if (error) setError(null);
+              }}
+            >
               <option value="">Select Employee</option>
               {employees.map(emp => <option key={emp.id} value={emp.id}>{emp.full_name || emp.name}</option>)}
             </select>
@@ -156,7 +206,14 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
           {/* Leave Type */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Leave Type *</label>
-            <select className="w-full rounded border border-gray-300 px-3 py-2 text-sm" value={selectedLeaveType} onChange={e => setSelectedLeaveType(e.target.value)}>
+            <select
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+              value={selectedLeaveType}
+              onChange={e => {
+                setSelectedLeaveType(e.target.value);
+                if (error) setError(null);
+              }}
+            >
               <option value="">Select Leave Type</option>
               {leaveTypes.map(lt => <option key={lt.id} value={lt.id}>{lt.name}</option>)}
             </select>
@@ -194,7 +251,18 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
           {/* Days */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Days *</label>
-            <input type="number" className="w-full rounded border border-gray-300 px-3 py-2 text-sm" placeholder="Number of days" value={days} onChange={e => setDays(e.target.value)} min="0.5" step="0.5" />
+            <input
+              type="number"
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+              placeholder="Number of days"
+              value={days}
+              onChange={e => {
+                setDays(e.target.value);
+                if (error) setError(null);
+              }}
+              min="0.5"
+              step="0.5"
+            />
             {balance && days && (
               <p className="mt-1 text-xs text-gray-500">
                 After adjustment: <strong>{(balance.available_balance + (adjustmentType === 'debit' ? -Number(days) : Number(days))).toFixed(1)}</strong> days available
@@ -204,14 +272,28 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
 
           {/* Reason */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Reason</label>
-            <textarea className="w-full rounded border border-gray-300 px-3 py-2 text-sm" rows={2} placeholder="Reason for adjustment" value={reason} onChange={e => setReason(e.target.value)} />
+            <label className="block text-sm font-medium text-gray-700 mb-1">Reason *</label>
+            <textarea
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+              rows={2}
+              placeholder="Reason for adjustment (required)"
+              value={reason}
+              required
+              onChange={e => {
+                setReason(e.target.value);
+                if (error) setError(null);
+              }}
+            />
           </div>
         </div>
 
         <div className="mt-5 flex justify-end gap-2">
           <button className="px-4 py-2 text-sm rounded border border-gray-300 hover:bg-gray-50" onClick={onClose}>Cancel</button>
-          <button className="px-4 py-2 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50" disabled={submitting || !selectedEmployee || !selectedLeaveType || !days} onClick={handleSubmit}>
+          <button
+            className="px-4 py-2 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+            disabled={submitting || !selectedEmployee || !selectedLeaveType || !days || !reason.trim()}
+            onClick={handleSubmit}
+          >
             {submitting ? 'Saving...' : 'Save'}
           </button>
         </div>

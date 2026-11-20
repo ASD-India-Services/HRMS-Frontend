@@ -142,7 +142,7 @@ function AppraisalCyclesContent() {
             Manage performance appraisal cycles and their lifecycle.
           </p>
         </div>
-        <CreateButton label="Create Appraisal Cycle" onClick={() => setShowCreate(true)} />
+        <CreateButton permission="appraisals.create" label="Create Appraisal Cycle" onClick={() => setShowCreate(true)} />
       </div>
 
       <FilterBar

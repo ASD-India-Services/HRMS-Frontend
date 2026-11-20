@@ -25,6 +25,7 @@ export const trainingWorkflow: WorkflowConfig = {
       action: 'Start',
       endpoint: (id) => TRAINING.EVENT_DETAIL(id),
       method: 'PATCH',
+      requiredPermission: 'training.edit',
       allowedRoles: ['org_admin', 'hr_manager'],
       variant: 'primary',
     },
@@ -34,6 +35,7 @@ export const trainingWorkflow: WorkflowConfig = {
       action: 'Complete',
       endpoint: (id) => TRAINING.EVENT_DETAIL(id),
       method: 'PATCH',
+      requiredPermission: 'training.edit',
       allowedRoles: ['org_admin', 'hr_manager'],
       variant: 'primary',
       confirm: {
@@ -47,6 +49,7 @@ export const trainingWorkflow: WorkflowConfig = {
       action: 'Cancel',
       endpoint: (id) => TRAINING.EVENT_DETAIL(id),
       method: 'PATCH',
+      requiredPermission: 'training.edit',
       allowedRoles: ['org_admin', 'hr_manager'],
       requiresReason: true,
       variant: 'destructive',

@@ -25,6 +25,7 @@ export const overtimeApprovalWorkflow: WorkflowConfig = {
       action: 'Submit',
       endpoint: (id) => `/api/v1/overtime-slips/${id}/submit/`,
       method: 'POST',
+      requiredPermission: 'overtime.create',
       allowedRoles: ['org_admin', 'hr_manager', 'department_head', 'employee'],
       variant: 'primary',
     },
@@ -57,6 +58,7 @@ export const overtimeApprovalWorkflow: WorkflowConfig = {
       action: 'Delete',
       endpoint: (id) => `/api/v1/overtime-slips/${id}/`,
       method: 'DELETE',
+      requiredPermission: 'overtime.delete',
       allowedRoles: ['org_admin', 'hr_manager', 'employee'],
       variant: 'destructive',
       confirm: {

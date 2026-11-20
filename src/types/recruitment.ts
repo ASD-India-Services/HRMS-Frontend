@@ -8,24 +8,46 @@ export type JobOpeningStatus = 'open' | 'closed' | 'on_hold' | 'cancelled';
 export interface JobOpening {
   id: string;
   title: string;
-  department: {
-    id: number;
+  department?: {
+    id: number | string;
     name: string;
-  };
-  designation: {
-    id: number;
-    title: string;
-  };
+  } | null;
+  department_name?: string | null;
+  designation?: {
+    id: number | string;
+    title?: string;
+    name?: string;
+  } | null;
+  designation_name?: string | null;
   vacancies: number;
-  filled: number;
+  filled?: number;
   status: JobOpeningStatus;
   posted_on: string;
   closes_on: string | null;
   description?: string;
+  company_website?: string;
+  applicant_count?: number;
+  stage_count?: number;
+  has_custom_stages?: boolean;
   created_at: string;
 }
 
-export type ApplicantStatus = 'applied' | 'screening' | 'interview' | 'selected' | 'rejected';
+export type DefaultApplicantStatus = 'applied' | 'screening' | 'interview' | 'selected' | 'onboarded' | 'rejected';
+export type ApplicantStatus = DefaultApplicantStatus | (string & {});
+
+export interface RecruitmentStage {
+  id: string;
+  name: string;
+  slug: string;
+  color: string;
+  order: number;
+  is_system: boolean;
+  job_opening?: string | null;
+  job_opening_title?: string | null;
+  applicant_count: number;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface JobApplicant {
   id: string;
@@ -36,9 +58,15 @@ export interface JobApplicant {
     id: string;
     title: string;
   };
+  stage?: string | null;
+  stage_name?: string | null;
+  stage_color?: string | null;
   status: ApplicantStatus;
   resume_url?: string;
+  notes?: string;
   rating: number | null;
+  referred_by_name?: string | null;
+  is_referral?: boolean;
   applied_on: string;
   created_at: string;
 }
@@ -94,6 +122,8 @@ export interface InterviewFilters {
 
 export interface ChangeStatusPayload {
   status: ApplicantStatus;
+  stage?: string;
+  notes?: string;
 }
 
 export interface PaginatedResponse<T> {

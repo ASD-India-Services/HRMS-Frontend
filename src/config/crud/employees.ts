@@ -12,6 +12,53 @@ import type { ColumnDef } from '@/types/datatable';
 import type { FilterConfig } from '@/types/datatable';
 import type { FieldSchema } from '@/types/form';
 
+export function getEmployeeTypeOptions(): { value: string; label: string }[] {
+  try {
+    const saved = localStorage.getItem('hrms_employee_types_settings');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map((item: any) => ({
+          value: item.name?.toLowerCase().replace(/[^a-z0-9_]/g, '_') || item.id,
+          label: item.name,
+        }));
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return [
+    { value: 'permanent', label: 'Permanent / Full-Time' },
+    { value: 'contract', label: 'Contract / Consultant' },
+    { value: 'probation', label: 'Probationary' },
+    { value: 'intern', label: 'Internship' },
+    { value: 'freelance', label: 'Part-Time' },
+  ];
+}
+
+export function getWorkTypeOptions(): { value: string; label: string }[] {
+  try {
+    const saved = localStorage.getItem('hrms_work_types');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map((item: any) => ({
+          value: item.name,
+          label: item.name,
+        }));
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return [
+    { value: 'Full-time On-site', label: 'Full-time On-site' },
+    { value: 'Remote / Work From Home', label: 'Remote / Work From Home' },
+    { value: 'Hybrid', label: 'Hybrid' },
+    { value: 'Field & Client Site', label: 'Field & Client Site' },
+  ];
+}
+
 export const employeeCrudConfig = {
   id: 'employees',
   title: 'Employees',
@@ -49,13 +96,13 @@ export const employeeCrudConfig = {
       key: 'employment_type',
       label: 'Employment Type',
       type: 'select',
-      options: [
-        { value: 'permanent', label: 'Permanent' },
-        { value: 'contract', label: 'Contract' },
-        { value: 'intern', label: 'Intern' },
-        { value: 'probation', label: 'Probation' },
-        { value: 'freelance', label: 'Freelance' },
-      ],
+      options: getEmployeeTypeOptions(),
+    },
+    {
+      key: 'work_type',
+      label: 'Work Type',
+      type: 'select',
+      options: getWorkTypeOptions(),
     },
   ] as FilterConfig[],
   formFields: [
@@ -113,13 +160,14 @@ export const employeeCrudConfig = {
       type: 'select',
       required: true,
       step: 1,
-      options: [
-        { value: 'permanent', label: 'Permanent' },
-        { value: 'contract', label: 'Contract' },
-        { value: 'intern', label: 'Intern' },
-        { value: 'probation', label: 'Probation' },
-        { value: 'freelance', label: 'Freelance' },
-      ],
+      options: getEmployeeTypeOptions(),
+    },
+    {
+      name: 'work_type',
+      label: 'Work Type',
+      type: 'select',
+      step: 1,
+      options: getWorkTypeOptions(),
     },
     {
       name: 'reporting_manager_id',

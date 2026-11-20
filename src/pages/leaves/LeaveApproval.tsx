@@ -4,16 +4,11 @@
  */
 
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/api';
 import { useLeaveApplications, useApproveLeave, useRejectLeave } from '@/hooks/useLeaves';
 import type { LeaveApplication } from '@/types/leave';
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
+import { formatDate } from '@/utils/formatters';
 
 interface ApprovalModalProps {
   application: LeaveApplication;
@@ -86,6 +81,14 @@ export function LeaveApproval() {
   const approveLeave = useApproveLeave();
   const rejectLeave = useRejectLeave();
 
+  const { data: currentEmployee } = useQuery({
+    queryKey: ['current-employee'],
+    queryFn: async () => {
+      const res = await api.get('/api/v1/employees/me/');
+      return res.data;
+    },
+  });
+
   const [selectedApplication, setSelectedApplication] = useState<LeaveApplication | null>(null);
   const [modalAction, setModalAction] = useState<'approve' | 'reject'>('approve');
 
@@ -131,6 +134,12 @@ export function LeaveApproval() {
           <div className="space-y-3">
             {data.results.map((application) => {
               const employeeName = `${application.employee.first_name} ${application.employee.last_name}`;
+              const isOwn = currentEmployee && (
+                String(application.employee?.id) === String(currentEmployee.id) ||
+                String(application.employee?.employee_id) === String(currentEmployee.employee_id) ||
+                String((application.employee as any)?.user_id) === String((currentEmployee as any)?.user_id)
+              );
+
               return (
                 <div
                   key={application.id}
@@ -162,19 +171,27 @@ export function LeaveApproval() {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex shrink-0 gap-2">
-                      <button
-                        onClick={() => openModal(application, 'approve')}
-                        className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => openModal(application, 'reject')}
-                        className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                      >
-                        Reject
-                      </button>
+                    <div className="flex shrink-0 gap-2 items-center">
+                      {isOwn ? (
+                        <span className="inline-flex items-center rounded-md bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 border border-amber-200">
+                          Own Request (Cannot self-approve)
+                        </span>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => openModal(application, 'approve')}
+                            className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => openModal(application, 'reject')}
+                            className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>

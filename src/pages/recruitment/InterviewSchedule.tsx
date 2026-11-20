@@ -15,7 +15,7 @@ const INTERVIEW_FIELDS: FieldConfig[] = [
   { key: 'applicant', label: 'Applicant', type: 'select', optionsEndpoint: '/api/v1/recruitment/applicants/', optionsLabelKey: 'name' },
   { key: 'interviewer', label: 'Interviewer', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name' },
   { key: 'scheduled_at', label: 'Scheduled At', type: 'date', required: true },
-  { key: 'duration_minutes', label: 'Duration (minutes)', type: 'number', placeholder: '60' },
+  { key: 'duration_minutes', label: 'Duration (minutes)', type: 'number', required: true, placeholder: '60' },
   { key: 'location', label: 'Location', type: 'text', placeholder: 'Conference Room / Video Link' },
   {
     key: 'interview_type',
@@ -71,7 +71,7 @@ export function InterviewSchedule() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <CreateButton label="Schedule Interview" onClick={() => setShowCreate(true)} />
+          <CreateButton permission="recruitment.create" label="Schedule Interview" onClick={() => setShowCreate(true)} />
           <select
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}

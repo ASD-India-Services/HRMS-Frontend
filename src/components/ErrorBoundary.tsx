@@ -8,6 +8,8 @@ export function RouteErrorBoundary() {
   const error = useRouteError();
   const navigate = useNavigate();
 
+  console.error('RouteErrorBoundary error:', error);
+
   let title = 'Something went wrong';
   let message = 'An unexpected error occurred. Please try again.';
   let statusCode: number | null = null;
@@ -24,6 +26,8 @@ export function RouteErrorBoundary() {
       title = 'Server error';
       message = 'Something went wrong on our end. Please try again later.';
     }
+  } else if (error instanceof Error) {
+    message = error.message;
   }
 
   return (

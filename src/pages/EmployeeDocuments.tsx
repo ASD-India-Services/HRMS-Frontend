@@ -58,7 +58,6 @@ export default function EmployeeDocuments() {
   const createMutation = crud.useCreate();
   const deleteMutation = crud.useDelete();
 
-
   const columnsWithActions: ColumnDef<Record<string, unknown>>[] = [
     ...columns,
     {
@@ -95,16 +94,21 @@ export default function EmployeeDocuments() {
     }
   };
 
-
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Employee Documents</h1><p className="mt-1 text-sm text-gray-600">Track employee document submissions</p></div>
-        <CreateButton permission="documents.create" label="Create Document" onClick={() => setShowCreate(true)} />
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-gray-900">Employee Documents</h2>
+          <p className="mt-0.5 text-xs text-gray-500">Track and manage employee-submitted credentials, IDs, and certificates</p>
+        </div>
+        <CreateButton permission="documents.create" label="Add Document" onClick={() => setShowCreate(true)} />
       </div>
+
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
-      {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
+      {queryResult.data && queryResult.data.count > 0 && (
+        <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />
+      )}
 
       <CrudModal
         isOpen={showCreate}

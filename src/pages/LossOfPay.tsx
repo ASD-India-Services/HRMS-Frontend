@@ -265,6 +265,45 @@ export default function LossOfPay() {
             When enabled, employees can apply for LOP leave. Configure deduction rates below.
           </p>
         </div>
+        {/* ─── Default Policy Settings ─────────────────────────── */}
+<div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Default Deduction Per Day (₹) <span className="text-red-500">*</span>
+    </label>
+    <input
+      type="number"
+      value={deductionPerDay}
+      onChange={(e) => setDeductionPerDay(e.target.value)}
+      min="1"
+      step="0.01"
+      placeholder="e.g. 500"
+      required
+      className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+    />
+    <p className="mt-1 text-xs text-gray-500">
+      Amount deducted per day of LOP. Used when no specific rate applies.
+    </p>
+  </div>
+
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Max Days Per Year <span className="text-gray-400">(Optional)</span>
+    </label>
+    <input
+      type="number"
+      value={maxDays}
+      onChange={(e) => setMaxDays(e.target.value)}
+      min="0"
+      step="0.5"
+      placeholder="Leave blank for unlimited"
+      className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+    />
+    <p className="mt-1 text-xs text-gray-500">
+      Maximum LOP days allowed per year. Leave blank for unlimited.
+    </p>
+  </div>
+</div>
 
         {/* ─── Deduction Rates Section ─────────────────────────── */}
         {policy && (

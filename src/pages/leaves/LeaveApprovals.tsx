@@ -9,6 +9,8 @@
  */
 
 import { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import api from '@/lib/api';
 import { createCrudHooks } from '@/hooks/useCrud';
 import { leaveApplicationsCrudConfig } from '@/config/crud/leaveApplications';
 import { leaveApprovalWorkflow } from '@/config/workflows/leaveApproval';
@@ -19,6 +21,7 @@ import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
 import { useApproveLeave, useRejectLeave } from '@/hooks/useLeaves';
 import type { LeaveApplication } from '@/types/leave';
 import type { ColumnDef } from '@/types/datatable';
+import { formatDate } from '@/utils/formatters';
 
 // Create CRUD hooks from the leave applications config
 const leaveAppsCrud = createCrudHooks<LeaveApplication>({
@@ -60,18 +63,6 @@ const approvalFilters = [
 ];
 
 /**
- * Format a date string for display
- */
-function formatDate(dateStr: string): string {
-  if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
-
-/**
  * Main LeaveApprovals component wrapped in RBAC check.
  */
 export function LeaveApprovals() {
@@ -94,6 +85,29 @@ function LeaveApprovalsContent() {
   
   const approveMutation = useApproveLeave();
   const rejectMutation = useRejectLeave();
+
+  const { data: currentEmployee } = useQuery({
+    queryKey: ['current-employee'],
+    queryFn: async () => {
+      const res = await api.get('/api/v1/employees/me/');
+      return res.data;
+    },
+  });
+
+  const isOwnApplication = (row: LeaveApplication | null) => {
+    if (!row || !currentEmployee) return false;
+    const myId = String(currentEmployee.id || '');
+    const rowEmpId = String(row.employee?.id || '');
+    const myEmpCode = String(currentEmployee.employee_id || '');
+    const rowEmpCode = String(row.employee?.employee_id || '');
+    const myUserId = String((currentEmployee as any)?.user_id || '');
+    const rowUserId = String((row.employee as any)?.user_id || '');
+    return (
+      (myId && rowEmpId && myId === rowEmpId) ||
+      (myEmpCode && rowEmpCode && myEmpCode === rowEmpCode) ||
+      (myUserId && rowUserId && myUserId === rowUserId)
+    );
+  };
 
   // URL-synced filters with "pending" as default status
   const {
@@ -220,18 +234,27 @@ function LeaveApprovalsContent() {
         key: 'status',
         header: 'Actions',
         sortable: false,
-        render: (_value: unknown, row: LeaveApplication) => (
-          <WorkflowEngine
-            config={leaveApprovalWorkflow}
-            record={{ ...row, id: row.id, status: row.status }}
-            invalidateKeys={[
-              [leaveApplicationsCrudConfig.queryKey, 'list'],
-            ]}
-          />
-        ),
+        render: (_value: unknown, row: LeaveApplication) => {
+          if (isOwnApplication(row)) {
+            return (
+              <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 border border-amber-200">
+                Self-request (Approval disabled)
+              </span>
+            );
+          }
+          return (
+            <WorkflowEngine
+              config={leaveApprovalWorkflow}
+              record={{ ...row, id: row.id, status: row.status }}
+              invalidateKeys={[
+                [leaveApplicationsCrudConfig.queryKey, 'list'],
+              ]}
+            />
+          );
+        },
       },
     ],
-    []
+    [currentEmployee]
   );
 
   return (
@@ -372,7 +395,21 @@ function LeaveApprovalsContent() {
             </div>
 
             {/* Action Section for Pending Applications */}
-            {selectedApplicant.status === 'pending' && (
+            {selectedApplicant.status === 'pending' && isOwnApplication(selectedApplicant) && (
+              <div className="mt-5 rounded-lg bg-amber-50 p-4 border border-amber-200">
+                <div className="flex items-center gap-2 text-sm font-semibold text-amber-800">
+                  <svg className="h-5 w-5 text-amber-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  Self-Approval Not Allowed
+                </div>
+                <p className="mt-1 text-xs text-amber-700">
+                  This is your own leave application. As per company segregation of duties policy, you cannot approve or reject your own leave. It must be reviewed and approved by your reporting manager or an administrator.
+                </p>
+              </div>
+            )}
+
+            {selectedApplicant.status === 'pending' && !isOwnApplication(selectedApplicant) && (
               <div className="mt-5 border-t pt-4">
                 <label className="block text-xs font-medium text-gray-700 uppercase mb-1">
                   Manager Comments (Optional)

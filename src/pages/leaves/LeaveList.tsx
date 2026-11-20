@@ -16,6 +16,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { BulkActions } from '@/components/BulkActions';
 import api from '@/lib/api';
 import type { LeaveApplicationStatus } from '@/types/leave';
+import { formatDate } from '@/utils/formatters';
 
 const STATUS_TABS: { label: string; value: LeaveApplicationStatus | '' }[] = [
   { label: 'All', value: '' },
@@ -32,14 +33,6 @@ const statusStyles: Record<string, string> = {
   cancelled: 'bg-gray-100 text-gray-800',
   draft: 'bg-blue-100 text-blue-800',
 };
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
 
 export function LeaveList() {
   const [activeStatus, setActiveStatus] = useState<LeaveApplicationStatus | ''>('');

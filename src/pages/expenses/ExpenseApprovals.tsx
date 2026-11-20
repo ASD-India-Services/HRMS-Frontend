@@ -16,6 +16,7 @@ import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/Da
 import { WorkflowEngine } from '@/components/WorkflowEngine/WorkflowEngine';
 import { Can } from '@/components/Can';
 import type { ColumnDef } from '@/types/datatable';
+import { formatCurrency, formatDate } from '@/utils/formatters';
 
 /** Expense claim record shape for the approvals view */
 interface ExpenseClaimRecord {
@@ -54,27 +55,13 @@ const approvalColumns: ColumnDef<ExpenseClaimRecord>[] = [
     key: 'total_amount',
     header: 'Amount',
     sortable: true,
-    render: (value) => {
-      const amount = Number(value);
-      return new Intl.NumberFormat('en-IN', {
-        style: 'currency',
-        currency: 'INR',
-        maximumFractionDigits: 2,
-      }).format(amount);
-    },
+    render: (value) => formatCurrency(Number(value)),
   },
   {
     key: 'expense_date',
     header: 'Date',
     sortable: true,
-    render: (value) => {
-      if (!value) return '—';
-      return new Date(String(value)).toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      });
-    },
+    render: (value) => formatDate(value as string),
   },
   { key: 'status', header: 'Status', sortable: true },
 ];
@@ -96,6 +83,7 @@ export function ExpenseApprovals() {
     page,
     page_size: pageSize,
     status: filterValues.status || '',
+    approvals: 'true',
     ...Object.fromEntries(
       Object.entries(filterValues).filter(([key, val]) => val && key !== 'status')
     ),
@@ -196,17 +184,8 @@ function ExpandedClaimDetail({ claimId, claims, onCollapse }: ExpandedClaimDetai
   const claim = claims.find((c) => c.id === claimId);
   if (!claim) return null;
 
-  const amount = new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 2,
-  }).format(Number(claim.total_amount));
-
-  const formattedDate = new Date(claim.expense_date).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
+  const amount = formatCurrency(Number(claim.total_amount));
+  const formattedDate = formatDate(claim.expense_date);
 
   return (
     <div className="mt-4 rounded-lg border border-indigo-200 bg-indigo-50/30 p-5 shadow-sm">

@@ -16,6 +16,7 @@ import { EditButton, DeleteButton, ActionButton } from '@/components/ActionButto
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { CrudModal } from '@/components/CrudModal';
 import type { FieldConfig } from '@/components/CrudModal';
+import { formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
 
 const statusColors: Record<string, string> = {
@@ -34,15 +35,6 @@ const statusLabels: Record<string, string> = {
 
 function getInitials(firstName?: string | null, lastName?: string | null): string {
   return `${(firstName || '?').charAt(0)}${(lastName || '?').charAt(0)}`.toUpperCase();
-}
-
-function formatDate(dateStr?: string): string {
-  if (!dateStr) return '--';
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
 }
 
 export function EmployeeDetail() {
@@ -187,6 +179,16 @@ export function EmployeeDetail() {
               onClick={() => setShowPromote(true)}
               permission="employees.edit"
             />
+            <Link
+              to={`/org-chart?employee=${employee.id}`}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-xs hover:bg-gray-50 transition-colors"
+              title="View this employee's reporting hierarchy in the Org Chart"
+            >
+              <svg className="h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v1.5a1.5 1.5 0 0 0 1.5 1.5h1.5A1.5 1.5 0 0 0 10.5 6.75v-1.5A1.5 1.5 0 0 0 9 3.75h-1.5ZM12 8.25v3.75m0 0H6.75A2.25 2.25 0 0 0 4.5 14.25v1.5a1.5 1.5 0 0 0 1.5 1.5h1.5a1.5 1.5 0 0 0 1.5-1.5v-1.5A2.25 2.25 0 0 0 6.75 12H12m0 0h5.25A2.25 2.25 0 0 1 19.5 14.25v1.5a1.5 1.5 0 0 1-1.5 1.5h-1.5a1.5 1.5 0 0 1-1.5-1.5v-1.5a2.25 2.25 0 0 1-2.25-2.25" />
+              </svg>
+              <span>Org Chart</span>
+            </Link>
             <EditButton
               label="Edit"
               onClick={() => navigate(`/employees/${employee.id}/edit`)}
@@ -242,6 +244,7 @@ export function EmployeeDetail() {
               value={employee.employment_type?.replace('_', ' ')}
               capitalize
             />
+            <DetailRow label="Work Type" value={(employee as any).work_type} />
             <DetailRow label="Date of Joining" value={formatDate(employee.date_of_joining)} />
             <DetailRow label="Probation End" value={formatDate(employee.probation_end_date)} />
             <DetailRow label="Confirmation Date" value={formatDate(employee.confirmation_date)} />

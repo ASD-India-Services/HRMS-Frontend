@@ -112,6 +112,8 @@ export function TransitionDialog({
     const data: Record<string, unknown> = { ...formData };
     if (transition.requiresReason) {
       data.reason = reason;
+      data.comments = reason;
+      data.rejection_reason = reason;
     }
     onSubmit(data);
   };
