@@ -1113,21 +1113,21 @@ export default function HourAccountPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white p-6">
+    <div className="min-h-screen bg-surface-paper p-6">
       {/* ─── Top Bar ───────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-gray-100">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-divider">
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-bold text-gray-900">Hour Account</h1>
+          <h1 className="text-2xl font-bold text-ink-primary">Hour Account</h1>
 
           {/* Monthly / Weekly View Mode Switcher */}
-          <div className="inline-flex items-center rounded-lg border border-gray-200 bg-gray-100 p-0.5 shadow-2xs">
+          <div className="inline-flex items-center rounded-lg border border-divider bg-surface-neutral p-0.5 shadow-2xs">
             <button
               type="button"
               onClick={() => setViewMode('monthly')}
               className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
                 viewMode === 'monthly'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/60'
+                  ? 'bg-primary-main text-primary-contrast shadow-xs'
+                  : 'text-ink-secondary hover:text-ink-primary hover:bg-grey-200/60'
               }`}
             >
               Monthly
@@ -1137,8 +1137,8 @@ export default function HourAccountPage() {
               onClick={() => setViewMode('weekly')}
               className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
                 viewMode === 'weekly'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/60'
+                  ? 'bg-primary-main text-primary-contrast shadow-xs'
+                  : 'text-ink-secondary hover:text-ink-primary hover:bg-grey-200/60'
               }`}
             >
               Weekly
@@ -1154,10 +1154,10 @@ export default function HourAccountPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search"
-              className="w-48 sm:w-64 pl-8 pr-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="w-48 sm:w-64 pl-8 pr-3 py-1.5 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main focus:border-primary-main"
             />
             <svg
-              className="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5"
+              className="w-4 h-4 text-ink-disabled absolute left-2.5 top-2.5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -1180,9 +1180,9 @@ export default function HourAccountPage() {
                 setShowGroupByPopover(false);
                 setShowActionsMenu(false);
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 shadow-2xs transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-ink-primary bg-surface-paper border border-divider rounded-md hover:bg-surface-neutral shadow-2xs transition-colors"
             >
-              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
               <span>Filter{activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}</span>
@@ -1190,17 +1190,17 @@ export default function HourAccountPage() {
 
             {/* Filter Popover */}
             {showFilterPopover && (
-              <div className="absolute right-0 mt-2 w-80 sm:w-[480px] max-h-[85vh] overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-2xl z-50 p-4 divide-y divide-gray-100">
+              <div className="absolute right-0 mt-2 w-80 sm:w-[480px] max-h-[85vh] overflow-y-auto bg-surface-paper border border-divider rounded-lg shadow-2xl z-50 p-4 divide-y divide-divider">
                 {/* Accordion: Work Info */}
                 <div className="pb-3 mb-1">
                   <button
                     type="button"
                     onClick={() => setFilterWorkInfoOpen(!filterWorkInfoOpen)}
-                    className="w-full flex items-center justify-between text-sm font-semibold text-gray-900"
+                    className="w-full flex items-center justify-between text-sm font-semibold text-ink-primary"
                   >
                     <span>Work Info</span>
                     <svg
-                      className={`w-4 h-4 text-gray-500 transition-transform ${filterWorkInfoOpen ? 'rotate-180' : ''}`}
+                      className={`w-4 h-4 text-ink-secondary transition-transform ${filterWorkInfoOpen ? 'rotate-180' : ''}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1213,11 +1213,11 @@ export default function HourAccountPage() {
                     <div className="grid grid-cols-2 gap-3 mt-3">
                       {/* Employee */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Employee</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Employee</label>
                         <select
                           value={filterEmployee}
                           onChange={(e) => setFilterEmployee(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Employees</option>
                           {employeesList.map((emp) => (
@@ -1230,11 +1230,11 @@ export default function HourAccountPage() {
 
                       {/* Company */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Company</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Company</label>
                         <select
                           value={filterCompany}
                           onChange={(e) => setFilterCompany(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Companies</option>
                           {companyOptions.map((comp) => (
@@ -1247,11 +1247,11 @@ export default function HourAccountPage() {
 
                       {/* Department */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Department</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Department</label>
                         <select
                           value={filterDepartment}
                           onChange={(e) => setFilterDepartment(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Departments</option>
                           {departmentsList.map((dept) => (
@@ -1264,11 +1264,11 @@ export default function HourAccountPage() {
 
                       {/* Job Position */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Job Position</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Job Position</label>
                         <select
                           value={filterJobPosition}
                           onChange={(e) => setFilterJobPosition(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Job Positions</option>
                           {designationsList.map((desig) => {
@@ -1284,11 +1284,11 @@ export default function HourAccountPage() {
 
                       {/* Shift */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Shift</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Shift</label>
                         <select
                           value={filterShift}
                           onChange={(e) => setFilterShift(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Shifts</option>
                           {shiftsList.map((shift) => (
@@ -1301,11 +1301,11 @@ export default function HourAccountPage() {
 
                       {/* Work Type */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Work Type</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Work Type</label>
                         <select
                           value={filterWorkType}
                           onChange={(e) => setFilterWorkType(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Work Types</option>
                           {WORK_TYPES.map((wt) => (
@@ -1318,11 +1318,11 @@ export default function HourAccountPage() {
 
                       {/* Reporting Manager */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Reporting Manager</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Reporting Manager</label>
                         <select
                           value={filterReportingManager}
                           onChange={(e) => setFilterReportingManager(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Reporting Managers</option>
                           {reportingManagersList.map((mgr) => (
@@ -1335,11 +1335,11 @@ export default function HourAccountPage() {
 
                       {/* Work Location */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Work Location</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Work Location</label>
                         <select
                           value={filterWorkLocation}
                           onChange={(e) => setFilterWorkLocation(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Locations</option>
                           {branchesList.map((b) => (
@@ -1358,11 +1358,11 @@ export default function HourAccountPage() {
                   <button
                     type="button"
                     onClick={() => setFilterAttendanceOpen(!filterAttendanceOpen)}
-                    className="w-full flex items-center justify-between text-sm font-semibold text-gray-900"
+                    className="w-full flex items-center justify-between text-sm font-semibold text-ink-primary"
                   >
                     <span>Attendance</span>
                     <svg
-                      className={`w-4 h-4 text-gray-500 transition-transform ${filterAttendanceOpen ? 'rotate-180' : ''}`}
+                      className={`w-4 h-4 text-ink-secondary transition-transform ${filterAttendanceOpen ? 'rotate-180' : ''}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1375,22 +1375,22 @@ export default function HourAccountPage() {
                     <div className="grid grid-cols-2 gap-3 mt-3">
                       {/* Attendance Date */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Attendance Date</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Attendance Date</label>
                         <input
                           type="date"
                           value={filterAttendanceDate}
                           onChange={(e) => setFilterAttendanceDate(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* Batch */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Batch</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Batch</label>
                         <select
                           value={filterBatch}
                           onChange={(e) => setFilterBatch(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">Select</option>
                           <option value="Batch A">Batch A</option>
@@ -1403,33 +1403,33 @@ export default function HourAccountPage() {
 
                       {/* In Time */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">In Time</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">In Time</label>
                         <input
                           type="time"
                           value={filterInTime}
                           onChange={(e) => setFilterInTime(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* Out Time */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Out Time</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Out Time</label>
                         <input
                           type="time"
                           value={filterOutTime}
                           onChange={(e) => setFilterOutTime(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* Validated? */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Validated?</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Validated?</label>
                         <select
                           value={filterValidated}
                           onChange={(e) => setFilterValidated(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">Unknown</option>
                           <option value="true">Yes</option>
@@ -1439,11 +1439,11 @@ export default function HourAccountPage() {
 
                       {/* OT Approved? */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">OT Approved?</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">OT Approved?</label>
                         <select
                           value={filterOtApproved}
                           onChange={(e) => setFilterOtApproved(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">Unknown</option>
                           <option value="true">Yes</option>
@@ -1453,13 +1453,13 @@ export default function HourAccountPage() {
 
                       {/* Min Hour */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Min Hour</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Min Hour</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterMinHour}
                           onChange={(e) => setFilterMinHour(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
@@ -1474,11 +1474,11 @@ export default function HourAccountPage() {
                   <button
                     type="button"
                     onClick={() => setFilterAdvancedOpen(!filterAdvancedOpen)}
-                    className="w-full flex items-center justify-between text-sm font-semibold text-gray-900"
+                    className="w-full flex items-center justify-between text-sm font-semibold text-ink-primary"
                   >
                     <span>Advanced</span>
                     <svg
-                      className={`w-4 h-4 text-gray-500 transition-transform ${filterAdvancedOpen ? 'rotate-180' : ''}`}
+                      className={`w-4 h-4 text-ink-secondary transition-transform ${filterAdvancedOpen ? 'rotate-180' : ''}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1491,149 +1491,149 @@ export default function HourAccountPage() {
                     <div className="grid grid-cols-2 gap-3 mt-3">
                       {/* Attendance From */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Attendance From</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Attendance From</label>
                         <input
                           type="date"
                           value={filterAttendanceFrom}
                           onChange={(e) => setFilterAttendanceFrom(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* Attendance Till */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Attendance Till</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Attendance Till</label>
                         <input
                           type="date"
                           value={filterAttendanceTill}
                           onChange={(e) => setFilterAttendanceTill(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* In From */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">In From</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">In From</label>
                         <input
                           type="time"
                           value={filterInFrom}
                           onChange={(e) => setFilterInFrom(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* In Till */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">In Till</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">In Till</label>
                         <input
                           type="time"
                           value={filterInTill}
                           onChange={(e) => setFilterInTill(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* Out From */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Out From</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Out From</label>
                         <input
                           type="time"
                           value={filterOutFrom}
                           onChange={(e) => setFilterOutFrom(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* Out Till */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Out Till</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Out Till</label>
                         <input
                           type="time"
                           value={filterOutTill}
                           onChange={(e) => setFilterOutTill(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* At Work Greater or Equal */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">At Work Greater or Equal</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">At Work Greater or Equal</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterAtWorkGte}
                           onChange={(e) => setFilterAtWorkGte(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
                       {/* At Work Less Than or Equal */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">At Work Less Than or Equal</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">At Work Less Than or Equal</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterAtWorkLte}
                           onChange={(e) => setFilterAtWorkLte(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
                       {/* Pending Hour Greater or Equal */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Pending Hour Greater or Equal</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Pending Hour Greater or Equal</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterPendingGte}
                           onChange={(e) => setFilterPendingGte(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
                       {/* Pending Hour Less Than or Equal */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Pending Hour Less Than or Equal</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Pending Hour Less Than or Equal</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterPendingLte}
                           onChange={(e) => setFilterPendingLte(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
                       {/* OT Greater or Equal */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">OT Greater or Equal</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">OT Greater or Equal</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterOtGte}
                           onChange={(e) => setFilterOtGte(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
                       {/* OT Less Than or Equal */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">OT Less Than or Equal</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">OT Less Than or Equal</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterOtLte}
                           onChange={(e) => setFilterOtLte(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
                       {/* Month */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Month</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Month</label>
                         <select
                           value={filterMonth}
                           onChange={(e) => setFilterMonth(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All</option>
                           {MONTH_NAMES.map((m) => (
@@ -1644,12 +1644,12 @@ export default function HourAccountPage() {
 
                       {/* Year */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Year</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Year</label>
                         <input
                           type="number"
                           value={selectedYear}
                           onChange={(e) => setSelectedYear(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
                     </div>
@@ -1661,7 +1661,7 @@ export default function HourAccountPage() {
                   <button
                     type="button"
                     onClick={() => setShowFilterPopover(false)}
-                    className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-md transition-colors shadow-sm"
+                    className="w-full py-2 bg-primary-main hover:bg-primary-dark text-primary-contrast font-semibold text-sm rounded-md transition-colors shadow-sm"
                   >
                     Filter
                   </button>
@@ -1679,9 +1679,9 @@ export default function HourAccountPage() {
                 setShowFilterPopover(false);
                 setShowActionsMenu(false);
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 shadow-2xs transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-ink-primary bg-surface-paper border border-divider rounded-md hover:bg-surface-neutral shadow-2xs transition-colors"
             >
-              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
               </svg>
               <span>Group By</span>
@@ -1689,16 +1689,16 @@ export default function HourAccountPage() {
 
             {/* Group By Popover */}
             {showGroupByPopover && (
-              <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-xl z-50 p-4">
-                <h4 className="text-sm font-semibold text-gray-900 mb-2">Group By</h4>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Field</label>
+              <div className="absolute right-0 mt-2 w-64 bg-surface-paper border border-divider rounded-lg shadow-xl z-50 p-4">
+                <h4 className="text-sm font-semibold text-ink-primary mb-2">Group By</h4>
+                <label className="block text-xs font-medium text-ink-secondary mb-1">Field</label>
                 <select
                   value={groupByField}
                   onChange={(e) => {
                     setGroupByField(e.target.value);
                     setShowGroupByPopover(false);
                   }}
-                  className="w-full px-2.5 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-2.5 py-1.5 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main"
                 >
                   {GROUP_BY_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -1719,20 +1719,20 @@ export default function HourAccountPage() {
                 setShowFilterPopover(false);
                 setShowGroupByPopover(false);
               }}
-              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 shadow-2xs transition-colors"
+              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-ink-primary bg-surface-paper border border-divider rounded-md hover:bg-surface-neutral shadow-2xs transition-colors"
             >
               <span>Actions</span>
-              <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
 
             {showActionsMenu && (
-              <div className="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded-md shadow-lg z-50 py-1">
+              <div className="absolute right-0 mt-2 w-36 bg-surface-paper border border-divider rounded-md shadow-lg z-50 py-1">
                 <button
                   type="button"
                   onClick={handleExportCSV}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
+                  className="w-full text-left px-4 py-2 text-sm text-ink-primary hover:bg-surface-neutral flex items-center gap-2"
                 >
                   Export
                 </button>
@@ -1744,7 +1744,7 @@ export default function HourAccountPage() {
                       handleConfirmBulkDelete();
                     }}
                     disabled={selectedIds.size === 0}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="w-full text-left px-4 py-2 text-sm text-error-main hover:bg-error-lighter disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     Delete
                   </button>
@@ -1758,7 +1758,7 @@ export default function HourAccountPage() {
             <button
               type="button"
               onClick={handleOpenCreate}
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold text-primary-contrast bg-primary-main hover:bg-primary-dark rounded-md shadow-sm transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -1770,14 +1770,14 @@ export default function HourAccountPage() {
       </div>
 
       {/* ─── Selection Buttons & Active Filters Bar ────────────────────────────── */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 py-3 border-b border-gray-100">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 py-3 border-b border-divider">
         {/* Left: Selection Action Buttons */}
         <div className="flex flex-wrap items-center gap-2">
           {/* Select All Records Button (White) */}
           <button
             type="button"
             onClick={handleSelectAllRecords}
-            className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs"
+            className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral transition-colors shadow-2xs"
           >
             Select All Records
           </button>
@@ -1788,7 +1788,7 @@ export default function HourAccountPage() {
               <button
                 type="button"
                 onClick={() => setSelectedIds(new Set())}
-                className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs"
+                className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral transition-colors shadow-2xs"
               >
                 Unselect All Records
               </button>
@@ -1797,13 +1797,13 @@ export default function HourAccountPage() {
               <button
                 type="button"
                 onClick={handleExportCSV}
-                className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs"
+                className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral transition-colors shadow-2xs"
               >
                 Export Records
               </button>
 
               {/* N - Selected Badge (Blue / White) */}
-              <span className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-blue-200 text-blue-700 bg-blue-50">
+              <span className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-primary-light text-primary-dark bg-primary-lighter">
                 {selectedIds.size} - Selected
               </span>
             </>
@@ -1812,17 +1812,17 @@ export default function HourAccountPage() {
 
         {/* Right: Active Filter Tags */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-white border border-gray-300 text-gray-700 shadow-2xs">
+          <span className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-surface-paper border border-divider text-ink-primary shadow-2xs">
             Filters:
           </span>
 
           {groupByField && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Field : {GROUP_BY_OPTIONS.find((o) => o.value === groupByField)?.label || groupByField}
               <button
                 type="button"
                 onClick={() => setGroupByField('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1830,12 +1830,12 @@ export default function HourAccountPage() {
           )}
 
           {selectedYear && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Year : {selectedYear}
               <button
                 type="button"
                 onClick={() => setSelectedYear('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1843,12 +1843,12 @@ export default function HourAccountPage() {
           )}
 
           {filterMonth && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Month : {filterMonth}
               <button
                 type="button"
                 onClick={() => setFilterMonth('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1856,12 +1856,12 @@ export default function HourAccountPage() {
           )}
 
           {filterEmployee && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Employee : {employeesList.find((e) => e.id === filterEmployee)?.first_name || filterEmployee}
               <button
                 type="button"
                 onClick={() => setFilterEmployee('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1869,12 +1869,12 @@ export default function HourAccountPage() {
           )}
 
           {filterCompany && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Company : {filterCompany}
               <button
                 type="button"
                 onClick={() => setFilterCompany('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1882,12 +1882,12 @@ export default function HourAccountPage() {
           )}
 
           {filterDepartment && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Dept : {filterDepartment}
               <button
                 type="button"
                 onClick={() => setFilterDepartment('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1895,12 +1895,12 @@ export default function HourAccountPage() {
           )}
 
           {filterJobPosition && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Job : {filterJobPosition}
               <button
                 type="button"
                 onClick={() => setFilterJobPosition('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1908,12 +1908,12 @@ export default function HourAccountPage() {
           )}
 
           {filterShift && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Shift : {filterShift}
               <button
                 type="button"
                 onClick={() => setFilterShift('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1921,12 +1921,12 @@ export default function HourAccountPage() {
           )}
 
           {filterWorkType && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Work Type : {filterWorkType}
               <button
                 type="button"
                 onClick={() => setFilterWorkType('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1934,12 +1934,12 @@ export default function HourAccountPage() {
           )}
 
           {filterReportingManager && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Manager : {filterReportingManager}
               <button
                 type="button"
                 onClick={() => setFilterReportingManager('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1947,12 +1947,12 @@ export default function HourAccountPage() {
           )}
 
           {filterWorkLocation && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Location : {filterWorkLocation}
               <button
                 type="button"
                 onClick={() => setFilterWorkLocation('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1960,12 +1960,12 @@ export default function HourAccountPage() {
           )}
 
           {filterAttendanceDate && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Date : {filterAttendanceDate}
               <button
                 type="button"
                 onClick={() => setFilterAttendanceDate('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1973,12 +1973,12 @@ export default function HourAccountPage() {
           )}
 
           {filterBatch && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Batch : {filterBatch}
               <button
                 type="button"
                 onClick={() => setFilterBatch('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1986,12 +1986,12 @@ export default function HourAccountPage() {
           )}
 
           {filterInTime && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               In : {filterInTime}
               <button
                 type="button"
                 onClick={() => setFilterInTime('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -1999,12 +1999,12 @@ export default function HourAccountPage() {
           )}
 
           {filterOutTime && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Out : {filterOutTime}
               <button
                 type="button"
                 onClick={() => setFilterOutTime('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -2012,12 +2012,12 @@ export default function HourAccountPage() {
           )}
 
           {filterValidated && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Validated : {filterValidated === 'true' ? 'Yes' : 'No'}
               <button
                 type="button"
                 onClick={() => setFilterValidated('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -2025,12 +2025,12 @@ export default function HourAccountPage() {
           )}
 
           {filterOtApproved && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               OT Approved : {filterOtApproved === 'true' ? 'Yes' : 'No'}
               <button
                 type="button"
                 onClick={() => setFilterOtApproved('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -2038,12 +2038,12 @@ export default function HourAccountPage() {
           )}
 
           {filterMinHour && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Min Hour : {filterMinHour}
               <button
                 type="button"
                 onClick={() => setFilterMinHour('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -2051,12 +2051,12 @@ export default function HourAccountPage() {
           )}
 
           {filterAttendanceFrom && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               From : {filterAttendanceFrom}
               <button
                 type="button"
                 onClick={() => setFilterAttendanceFrom('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -2064,12 +2064,12 @@ export default function HourAccountPage() {
           )}
 
           {filterAttendanceTill && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Till : {filterAttendanceTill}
               <button
                 type="button"
                 onClick={() => setFilterAttendanceTill('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -2077,12 +2077,12 @@ export default function HourAccountPage() {
           )}
 
           {filterAtWorkGte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               At Work &gt;= {filterAtWorkGte}
               <button
                 type="button"
                 onClick={() => setFilterAtWorkGte('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -2090,12 +2090,12 @@ export default function HourAccountPage() {
           )}
 
           {filterAtWorkLte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               At Work &lt;= {filterAtWorkLte}
               <button
                 type="button"
                 onClick={() => setFilterAtWorkLte('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -2103,12 +2103,12 @@ export default function HourAccountPage() {
           )}
 
           {filterPendingGte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Pending &gt;= {filterPendingGte}
               <button
                 type="button"
                 onClick={() => setFilterPendingGte('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -2116,12 +2116,12 @@ export default function HourAccountPage() {
           )}
 
           {filterPendingLte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Pending &lt;= {filterPendingLte}
               <button
                 type="button"
                 onClick={() => setFilterPendingLte('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -2129,12 +2129,12 @@ export default function HourAccountPage() {
           )}
 
           {filterOtGte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               OT &gt;= {filterOtGte}
               <button
                 type="button"
                 onClick={() => setFilterOtGte('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -2142,12 +2142,12 @@ export default function HourAccountPage() {
           )}
 
           {filterOtLte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               OT &lt;= {filterOtLte}
               <button
                 type="button"
                 onClick={() => setFilterOtLte('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
+                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
               >
                 ✕
               </button>
@@ -2188,7 +2188,7 @@ export default function HourAccountPage() {
             <button
               type="button"
               onClick={handleClearAllFilters}
-              className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white border border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs font-bold transition-colors shadow-2xs"
+              className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-surface-paper border border-divider text-ink-secondary hover:text-ink-primary hover:bg-surface-neutral text-xs font-bold transition-colors shadow-2xs"
               title="Clear all filters"
             >
               ✕
@@ -2199,23 +2199,23 @@ export default function HourAccountPage() {
 
       {/* ─── Accordion Groups & Tables ─────────────────────────────────────────── */}
       {isLoading ? (
-        <div className="py-16 text-center text-gray-500">
-          <svg className="animate-spin h-8 w-8 text-blue-600 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
+        <div className="py-16 text-center text-ink-secondary">
+          <svg className="animate-spin h-8 w-8 text-primary-main mx-auto mb-2" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
           </svg>
           Loading Hour Accounts...
         </div>
       ) : filteredHourAccounts.length === 0 ? (
-        <div className="py-16 text-center text-gray-500 border border-gray-200 rounded-lg p-6 space-y-3">
-          <p className="text-sm font-medium text-gray-600">
+        <div className="py-16 text-center text-ink-secondary border border-divider rounded-lg p-6 space-y-3">
+          <p className="text-sm font-medium text-ink-secondary">
             No hour account records found.
           </p>
           {canCreate && (
             <button
               type="button"
               onClick={handleOpenCreate}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-primary-contrast bg-primary-main hover:bg-primary-dark rounded-md shadow-sm transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -2225,33 +2225,33 @@ export default function HourAccountPage() {
           )}
         </div>
       ) : viewMode === 'weekly' ? (
-        <div className="border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-200">
+        <div className="border border-divider rounded-lg overflow-hidden divide-y divide-divider">
           {Object.entries(weeklyMonthsData).map(([monthName, monthData]) => {
             const isMonthExpanded = !!expandedGroups[monthName];
             const monthItems = monthData.items;
 
             return (
-              <div key={monthName} className="bg-white">
+              <div key={monthName} className="bg-surface-paper">
                 {/* Accordion Month Header (shows months below, matching monthly view style) */}
                 <button
                   type="button"
                   onClick={() => toggleGroup(monthName)}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 bg-white hover:bg-gray-50/80 transition-colors text-left font-medium text-gray-800 border-l-4 border-transparent hover:border-blue-500"
+                  className="w-full flex items-center gap-3 px-4 py-3.5 bg-surface-paper hover:bg-surface-neutral/80 transition-colors text-left font-medium text-ink-primary border-l-4 border-transparent hover:border-primary-main"
                 >
-                  <span className="text-gray-500 text-lg font-mono leading-none">
+                  <span className="text-ink-secondary text-lg font-mono leading-none">
                     {isMonthExpanded ? '—' : '+'}
                   </span>
-                  <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200 min-w-[20px]">
+                  <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-primary-lighter text-primary-dark border border-primary-light min-w-[20px]">
                     {monthItems.length}
                   </span>
-                  <span className="text-sm font-semibold text-gray-800">{monthName}</span>
+                  <span className="text-sm font-semibold text-ink-primary">{monthName}</span>
                 </button>
 
                 {/* Weeks under this Month */}
                 {isMonthExpanded && (
-                  <div className="border-t border-gray-200 divide-y divide-gray-200 bg-gray-50/20 pl-2 sm:pl-4">
+                  <div className="border-t border-divider divide-y divide-divider bg-surface-neutral/20 pl-2 sm:pl-4">
                     {monthItems.length === 0 ? (
-                      <div className="py-8 text-center text-gray-400 text-sm">
+                      <div className="py-8 text-center text-ink-disabled text-sm">
                         No records for this group.
                       </div>
                     ) : (
@@ -2262,22 +2262,22 @@ export default function HourAccountPage() {
                         const weekAllSelected = items.length > 0 && items.every((item) => selectedIds.has(item.id));
 
                         return (
-                          <div key={weekKey} className="bg-white">
+                          <div key={weekKey} className="bg-surface-paper">
                             {/* Accordion Week Header */}
                             <button
                               type="button"
                               onClick={() => toggleWeek(weekKey)}
-                              className="w-full flex items-center gap-3 px-4 py-3 bg-white hover:bg-gray-50 transition-colors text-left font-medium text-gray-800 border-l-4 border-transparent hover:border-blue-400"
+                              className="w-full flex items-center gap-3 px-4 py-3 bg-surface-paper hover:bg-surface-neutral transition-colors text-left font-medium text-ink-primary border-l-4 border-transparent hover:border-primary-main"
                             >
-                              <span className="text-gray-400 text-base font-mono leading-none">
+                              <span className="text-ink-disabled text-base font-mono leading-none">
                                 {isWeekExpanded ? '—' : '+'}
                               </span>
-                              <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200 min-w-[20px]">
+                              <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-semibold rounded-full bg-primary-lighter text-primary-dark border border-primary-light min-w-[20px]">
                                 {items.length}
                               </span>
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-semibold text-gray-800">{monthName} — {weekLabel}</span>
-                                <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                                <span className="text-sm font-semibold text-ink-primary">{monthName} — {weekLabel}</span>
+                                <span className="text-xs font-medium text-primary-dark bg-primary-lighter px-2 py-0.5 rounded border border-primary-light">
                                   {weekData.definition.dateRange}
                                 </span>
                               </div>
@@ -2285,16 +2285,16 @@ export default function HourAccountPage() {
 
                             {/* Expanded Week Table */}
                             {isWeekExpanded && (
-                              <div className="border-t border-gray-100 overflow-x-auto">
+                              <div className="border-t border-divider overflow-x-auto">
                                 <table className="w-full text-left text-sm">
-                                  <thead className="bg-gray-50 text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                                  <thead className="bg-surface-neutral text-xs font-semibold text-ink-primary uppercase tracking-wider border-b border-divider">
                                     <tr>
                                       <th className="w-10 px-4 py-3">
                                         <input
                                           type="checkbox"
                                           checked={weekAllSelected}
                                           onChange={() => toggleSelectGroup(items)}
-                                          className="w-4 h-4 rounded border-gray-300 accent-blue-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                          className="w-4 h-4 rounded border-divider accent-primary-main text-primary-main focus:ring-primary-main cursor-pointer"
                                         />
                                       </th>
                                       <th className="px-4 py-3">Employee</th>
@@ -2306,14 +2306,14 @@ export default function HourAccountPage() {
                                       <th className="px-4 py-3 text-right">Actions</th>
                                     </tr>
                                   </thead>
-                                  <tbody className="divide-y divide-gray-100">
+                                  <tbody className="divide-y divide-divider">
                                     {items.map((row) => {
                                       const isSelected = selectedIds.has(row.id);
                                       return (
                                         <tr
                                           key={row.weekId}
                                           className={`transition-colors ${
-                                            isSelected ? 'bg-blue-50/50' : 'hover:bg-gray-50/60'
+                                            isSelected ? 'bg-primary-lighter/50' : 'hover:bg-surface-neutral/60'
                                           }`}
                                         >
                                           <td className="w-10 px-4 py-3">
@@ -2321,7 +2321,7 @@ export default function HourAccountPage() {
                                               type="checkbox"
                                               checked={isSelected}
                                               onChange={() => toggleSelectRecord(row.id)}
-                                              className="w-4 h-4 rounded border-gray-300 accent-blue-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                              className="w-4 h-4 rounded border-divider accent-primary-main text-primary-main focus:ring-primary-main cursor-pointer"
                                             />
                                           </td>
                                           <td className="px-4 py-3">
@@ -2333,33 +2333,33 @@ export default function HourAccountPage() {
                                                   className="w-8 h-8 rounded-full object-cover"
                                                 />
                                               ) : (
-                                                <div className="w-8 h-8 rounded-full bg-slate-700 text-white flex items-center justify-center text-xs font-semibold">
+                                                <div className="w-8 h-8 rounded-full bg-grey-700 text-primary-contrast flex items-center justify-center text-xs font-semibold">
                                                   {row.employee_name
                                                     ? row.employee_name.slice(0, 2).toUpperCase()
                                                     : 'EM'}
                                                 </div>
                                               )}
                                               <div>
-                                                <div className="font-medium text-gray-900">
+                                                <div className="font-medium text-ink-primary">
                                                   {row.employee_name || 'Unnamed Employee'}
                                                 </div>
                                                 {row.department_name && (
-                                                  <div className="text-xs text-gray-500">
+                                                  <div className="text-xs text-ink-secondary">
                                                     {row.department_name}
                                                   </div>
                                                 )}
                                               </div>
                                             </div>
                                           </td>
-                                          <td className="px-4 py-3 font-semibold text-gray-800">{weekLabel}</td>
-                                          <td className="px-4 py-3 text-gray-600 text-xs font-mono">{row.weekDateRange}</td>
-                                          <td className="px-4 py-3 font-mono font-medium text-gray-800">
+                                          <td className="px-4 py-3 font-semibold text-ink-primary">{weekLabel}</td>
+                                          <td className="px-4 py-3 text-ink-secondary text-xs font-mono">{row.weekDateRange}</td>
+                                          <td className="px-4 py-3 font-mono font-medium text-ink-primary">
                                             {row.weekWorked}
                                           </td>
-                                          <td className="px-4 py-3 font-mono text-gray-600">
+                                          <td className="px-4 py-3 font-mono text-ink-secondary">
                                             {row.weekPending}
                                           </td>
-                                          <td className="px-4 py-3 font-mono text-gray-600">
+                                          <td className="px-4 py-3 font-mono text-ink-secondary">
                                             {row.weekOvertime}
                                           </td>
                                           <td className="px-4 py-3 text-right">
@@ -2368,7 +2368,7 @@ export default function HourAccountPage() {
                                                 <button
                                                   type="button"
                                                   onClick={() => handleOpenEdit(row)}
-                                                  className="p-1.5 text-gray-500 hover:text-blue-600 border border-gray-200 rounded hover:bg-gray-100 transition-colors"
+                                                  className="p-1.5 text-ink-secondary hover:text-primary-main border border-divider rounded hover:bg-surface-neutral transition-colors"
                                                   title="Edit"
                                                 >
                                                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2380,7 +2380,7 @@ export default function HourAccountPage() {
                                                 <button
                                                   type="button"
                                                   onClick={() => handleConfirmSingleDelete(row)}
-                                                  className="p-1.5 text-rose-500 hover:text-rose-700 border border-gray-200 rounded hover:bg-rose-50 transition-colors"
+                                                  className="p-1.5 text-error-main hover:text-error-dark border border-divider rounded hover:bg-error-lighter transition-colors"
                                                   title="Delete"
                                                 >
                                                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2408,45 +2408,45 @@ export default function HourAccountPage() {
           })}
         </div>
       ) : (
-        <div className="border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-200">
+        <div className="border border-divider rounded-lg overflow-hidden divide-y divide-divider">
           {Object.entries(groupedData).map(([groupKey, items]) => {
             const isExpanded = !!expandedGroups[groupKey];
             const groupAllSelected = items.length > 0 && items.every((item) => selectedIds.has(item.id));
 
             return (
-              <div key={groupKey} className="bg-white">
+              <div key={groupKey} className="bg-surface-paper">
                 {/* Accordion Group Header */}
                 <button
                   type="button"
                   onClick={() => toggleGroup(groupKey)}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 bg-white hover:bg-gray-50/80 transition-colors text-left font-medium text-gray-800 border-l-4 border-transparent hover:border-blue-500"
+                  className="w-full flex items-center gap-3 px-4 py-3.5 bg-surface-paper hover:bg-surface-neutral/80 transition-colors text-left font-medium text-ink-primary border-l-4 border-transparent hover:border-primary-main"
                 >
-                  <span className="text-gray-500 text-lg font-mono leading-none">
+                  <span className="text-ink-secondary text-lg font-mono leading-none">
                     {isExpanded ? '—' : '+'}
                   </span>
-                  <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200 min-w-[20px]">
+                  <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-primary-lighter text-primary-dark border border-primary-light min-w-[20px]">
                     {items.length}
                   </span>
-                  <span className="text-sm font-semibold text-gray-800">{groupKey}</span>
+                  <span className="text-sm font-semibold text-ink-primary">{groupKey}</span>
                 </button>
 
                 {/* Expanded Table */}
                 {isExpanded && (
-                  <div className="border-t border-gray-100 overflow-x-auto">
+                  <div className="border-t border-divider overflow-x-auto">
                     {items.length === 0 ? (
-                      <div className="py-8 text-center text-gray-400 text-sm">
+                      <div className="py-8 text-center text-ink-disabled text-sm">
                         No records for this group.
                       </div>
                     ) : (
                       <table className="w-full text-left text-sm">
-                        <thead className="bg-gray-50 text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                        <thead className="bg-surface-neutral text-xs font-semibold text-ink-primary uppercase tracking-wider border-b border-divider">
                           <tr>
                             <th className="w-10 px-4 py-3">
                               <input
                                 type="checkbox"
                                 checked={groupAllSelected}
                                 onChange={() => toggleSelectGroup(items)}
-                                className="w-4 h-4 rounded border-gray-300 accent-blue-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                className="w-4 h-4 rounded border-divider accent-primary-main text-primary-main focus:ring-primary-main cursor-pointer"
                               />
                             </th>
                             <th className="px-4 py-3">Employee</th>
@@ -2458,14 +2458,14 @@ export default function HourAccountPage() {
                             <th className="px-4 py-3 text-right">Actions</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-divider">
                           {items.map((row) => {
                             const isSelected = selectedIds.has(row.id);
                             return (
                               <tr
                                 key={row.id}
                                 className={`transition-colors ${
-                                  isSelected ? 'bg-blue-50/50' : 'hover:bg-gray-50/60'
+                                  isSelected ? 'bg-primary-lighter/50' : 'hover:bg-surface-neutral/60'
                                 }`}
                               >
                                 <td className="w-10 px-4 py-3">
@@ -2473,7 +2473,7 @@ export default function HourAccountPage() {
                                     type="checkbox"
                                     checked={isSelected}
                                     onChange={() => toggleSelectRecord(row.id)}
-                                    className="w-4 h-4 rounded border-gray-300 accent-blue-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                    className="w-4 h-4 rounded border-divider accent-primary-main text-primary-main focus:ring-primary-main cursor-pointer"
                                   />
                                 </td>
                                 <td className="px-4 py-3">
@@ -2485,33 +2485,33 @@ export default function HourAccountPage() {
                                         className="w-8 h-8 rounded-full object-cover"
                                       />
                                     ) : (
-                                      <div className="w-8 h-8 rounded-full bg-slate-700 text-white flex items-center justify-center text-xs font-semibold">
+                                      <div className="w-8 h-8 rounded-full bg-grey-700 text-primary-contrast flex items-center justify-center text-xs font-semibold">
                                         {row.employee_name
                                           ? row.employee_name.slice(0, 2).toUpperCase()
                                           : 'EM'}
                                       </div>
                                     )}
                                     <div>
-                                      <div className="font-medium text-gray-900">
+                                      <div className="font-medium text-ink-primary">
                                         {row.employee_name || 'Unnamed Employee'}
                                       </div>
                                       {row.department_name && (
-                                        <div className="text-xs text-gray-500">
+                                        <div className="text-xs text-ink-secondary">
                                           {row.department_name}
                                         </div>
                                       )}
                                     </div>
                                   </div>
                                 </td>
-                                <td className="px-4 py-3 text-gray-600">{row.month}</td>
-                                <td className="px-4 py-3 text-gray-600">{row.year}</td>
-                                <td className="px-4 py-3 font-mono font-medium text-gray-800">
+                                <td className="px-4 py-3 text-ink-secondary">{row.month}</td>
+                                <td className="px-4 py-3 text-ink-secondary">{row.year}</td>
+                                <td className="px-4 py-3 font-mono font-medium text-ink-primary">
                                   {row.worked_hours}
                                 </td>
-                                <td className="px-4 py-3 font-mono text-gray-600">
+                                <td className="px-4 py-3 font-mono text-ink-secondary">
                                   {row.pending_hours}
                                 </td>
-                                <td className="px-4 py-3 font-mono text-gray-600">
+                                <td className="px-4 py-3 font-mono text-ink-secondary">
                                   {row.overtime}
                                 </td>
                                 <td className="px-4 py-3 text-right">
@@ -2520,7 +2520,7 @@ export default function HourAccountPage() {
                                       <button
                                         type="button"
                                         onClick={() => handleOpenEdit(row)}
-                                        className="p-1.5 text-gray-500 hover:text-blue-600 border border-gray-200 rounded hover:bg-gray-100 transition-colors"
+                                        className="p-1.5 text-ink-secondary hover:text-primary-main border border-divider rounded hover:bg-surface-neutral transition-colors"
                                         title="Edit"
                                       >
                                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2532,7 +2532,7 @@ export default function HourAccountPage() {
                                       <button
                                         type="button"
                                         onClick={() => handleConfirmSingleDelete(row)}
-                                        className="p-1.5 text-rose-500 hover:text-rose-700 border border-gray-200 rounded hover:bg-rose-50 transition-colors"
+                                        className="p-1.5 text-error-main hover:text-error-dark border border-divider rounded hover:bg-error-lighter transition-colors"
                                         title="Delete"
                                       >
                                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2558,17 +2558,17 @@ export default function HourAccountPage() {
 
       {/* ─── Create / Edit Modal ───────────────────────────────────────────────── */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-lg shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-grey-900/40 p-4">
+          <div className="bg-surface-paper rounded-lg shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-divider">
+              <h3 className="text-lg font-semibold text-ink-primary">
                 {editingItem ? 'Edit Hour Account' : 'Create Hour Account'}
               </h3>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 text-lg font-bold"
+                className="text-ink-disabled hover:text-ink-secondary text-lg font-bold"
               >
                 ✕
               </button>
@@ -2578,7 +2578,7 @@ export default function HourAccountPage() {
             <form onSubmit={handleSaveModal}>
               <div className="px-6 py-4 space-y-4">
                 {formError && (
-                  <div className="p-3 text-xs bg-red-50 text-red-700 border border-red-200 rounded-md">
+                  <div className="p-3 text-xs bg-error-lighter text-error-dark border border-error-light rounded-md">
                     {formError}
                   </div>
                 )}
@@ -2586,14 +2586,14 @@ export default function HourAccountPage() {
                 <div className="grid grid-cols-2 gap-4">
                   {/* Employee */}
                   <div className="col-span-2">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">
                       Employee *
                     </label>
                     <select
                       value={formData.employee}
                       onChange={(e) => setFormData({ ...formData, employee: e.target.value })}
                       required
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="w-full px-3 py-2 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main"
                     >
                       <option value="">Select an employee</option>
                       {employeesList.map((emp) => (
@@ -2606,14 +2606,14 @@ export default function HourAccountPage() {
 
                   {/* Month */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">
                       Month *
                     </label>
                     <select
                       value={formData.month}
                       onChange={(e) => setFormData({ ...formData, month: e.target.value })}
                       required
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="w-full px-3 py-2 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main"
                     >
                       {MONTH_NAMES.map((m) => (
                         <option key={m} value={m}>{m}</option>
@@ -2623,7 +2623,7 @@ export default function HourAccountPage() {
 
                   {/* Year */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">
                       Year *
                     </label>
                     <input
@@ -2631,13 +2631,13 @@ export default function HourAccountPage() {
                       value={formData.year}
                       onChange={(e) => setFormData({ ...formData, year: Number(e.target.value) })}
                       required
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="w-full px-3 py-2 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main"
                     />
                   </div>
 
                   {/* Worked Hours */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">
                       Worked Hours (HH:MM)
                     </label>
                     <input
@@ -2645,13 +2645,13 @@ export default function HourAccountPage() {
                       placeholder="167:10"
                       value={formData.worked_hours}
                       onChange={(e) => setFormData({ ...formData, worked_hours: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                      className="w-full px-3 py-2 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                     />
                   </div>
 
                   {/* Pending Hours */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">
                       Pending Hours (HH:MM)
                     </label>
                     <input
@@ -2659,13 +2659,13 @@ export default function HourAccountPage() {
                       placeholder="00:50"
                       value={formData.pending_hours}
                       onChange={(e) => setFormData({ ...formData, pending_hours: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                      className="w-full px-3 py-2 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                     />
                   </div>
 
                   {/* Overtime */}
                   <div className="col-span-2">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">
                       Overtime (HH:MM)
                     </label>
                     <input
@@ -2673,25 +2673,25 @@ export default function HourAccountPage() {
                       placeholder="00:00"
                       value={formData.overtime}
                       onChange={(e) => setFormData({ ...formData, overtime: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                      className="w-full px-3 py-2 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Modal Footer with Blue Save Button */}
-              <div className="flex items-center justify-end gap-3 px-6 py-3.5 bg-gray-50 border-t border-gray-100">
+              <div className="flex items-center justify-end gap-3 px-6 py-3.5 bg-surface-neutral border-t border-divider">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-ink-primary bg-surface-paper border border-divider rounded-md hover:bg-surface-neutral transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
-                  className="px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm transition-colors disabled:opacity-50"
+                  className="px-5 py-2 text-sm font-semibold text-primary-contrast bg-primary-main hover:bg-primary-dark rounded-md shadow-sm transition-colors disabled:opacity-50"
                 >
                   {createMutation.isPending || updateMutation.isPending ? 'Saving...' : 'Save'}
                 </button>
@@ -2703,10 +2703,10 @@ export default function HourAccountPage() {
 
       {/* ─── Delete Confirmation Modal ─────────────────────────────────────────── */}
       {deleteConfirmOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-5">
-            <h4 className="text-base font-semibold text-gray-900 mb-2">Confirm Delete</h4>
-            <p className="text-sm text-gray-600 mb-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-grey-900/40 p-4">
+          <div className="bg-surface-paper rounded-lg shadow-xl max-w-sm w-full p-5">
+            <h4 className="text-base font-semibold text-ink-primary mb-2">Confirm Delete</h4>
+            <p className="text-sm text-ink-secondary mb-5">
               {isBulkDeleting
                 ? `Are you sure you want to delete ${selectedIds.size} selected hour account records? This action cannot be undone.`
                 : `Are you sure you want to delete the hour account for "${itemToDelete?.employee_name}" (${itemToDelete?.month} ${itemToDelete?.year})?`}
@@ -2715,7 +2715,7 @@ export default function HourAccountPage() {
               <button
                 type="button"
                 onClick={() => setDeleteConfirmOpen(false)}
-                className="px-4 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className="px-4 py-1.5 text-sm font-medium text-ink-primary bg-surface-paper border border-divider rounded-md hover:bg-surface-neutral"
               >
                 Cancel
               </button>
@@ -2723,7 +2723,7 @@ export default function HourAccountPage() {
                 type="button"
                 onClick={handleExecuteDelete}
                 disabled={deleteMutation.isPending || bulkDeleteMutation.isPending}
-                className="px-4 py-1.5 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-md shadow-sm disabled:opacity-50"
+                className="px-4 py-1.5 text-sm font-semibold text-primary-contrast bg-error-main hover:bg-error-dark rounded-md shadow-sm disabled:opacity-50"
               >
                 {deleteMutation.isPending || bulkDeleteMutation.isPending ? 'Deleting...' : 'Delete'}
               </button>
