@@ -111,24 +111,24 @@ export default function AttendanceDashboard() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Attendance Dashboard</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-ink-primary">Attendance Dashboard</h1>
+          <p className="mt-1 text-sm text-ink-secondary">
             Workforce attendance tracking, punctuality metrics, and daily working hours overview.
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Link
             to="/attendance/hour-account"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md border border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral shadow-sm transition-colors"
           >
-            <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             Hour Account
           </Link>
           <Link
             to="/attendance/work-records"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -141,9 +141,9 @@ export default function AttendanceDashboard() {
       {/* Metric Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Attendance Rate */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Attendance Rate
             </span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
@@ -153,39 +153,39 @@ export default function AttendanceDashboard() {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">{todayLoading ? '...' : `${attendanceRate}%`}</span>
+            <span className="text-2xl font-bold text-ink-primary">{todayLoading ? '...' : `${attendanceRate}%`}</span>
             <span className="ml-2 text-xs text-emerald-600 font-medium">overall workforce</span>
           </div>
-          <div className="mt-2 text-xs text-gray-500">
+          <div className="mt-2 text-xs text-ink-secondary">
             {presentCount} of {totalEmployees} employees present
           </div>
         </div>
 
         {/* Present Today */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Present Today
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-lighter text-primary-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">{todayLoading ? '...' : presentCount}</span>
-            <span className="ml-2 text-xs text-blue-600 font-medium">Checked-in</span>
+            <span className="text-2xl font-bold text-ink-primary">{todayLoading ? '...' : presentCount}</span>
+            <span className="ml-2 text-xs text-primary-main font-medium">Checked-in</span>
           </div>
-          <div className="mt-2 text-xs text-blue-600 font-medium">
+          <div className="mt-2 text-xs text-primary-main font-medium">
             <Link to="/attendance-register" className="hover:underline">Open attendance register →</Link>
           </div>
         </div>
 
         {/* Late Check-ins */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Late Arrivals
             </span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
@@ -195,18 +195,18 @@ export default function AttendanceDashboard() {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">{todayLoading ? '...' : lateCount}</span>
+            <span className="text-2xl font-bold text-ink-primary">{todayLoading ? '...' : lateCount}</span>
             <span className="ml-2 text-xs text-amber-600 font-medium">after grace period</span>
           </div>
-          <div className="mt-2 text-xs text-gray-500">
+          <div className="mt-2 text-xs text-ink-secondary">
             <span>Punctuality check</span>
           </div>
         </div>
 
         {/* Absent / Leave */}
-        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               On Leave / Absent
             </span>
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-50 text-rose-600">
@@ -216,8 +216,8 @@ export default function AttendanceDashboard() {
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-gray-900">{todayLoading ? '...' : onLeaveCount + absentCount}</span>
-            <span className="ml-2 text-xs text-gray-500">({onLeaveCount} on approved leave)</span>
+            <span className="text-2xl font-bold text-ink-primary">{todayLoading ? '...' : onLeaveCount + absentCount}</span>
+            <span className="ml-2 text-xs text-ink-secondary">({onLeaveCount} on approved leave)</span>
           </div>
           <div className="mt-2 text-xs text-rose-600 font-medium">
             <Link to="/leaves/approvals" className="hover:underline">Check leave records →</Link>
@@ -228,17 +228,17 @@ export default function AttendanceDashboard() {
       {/* Visual Charts */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Weekly Attendance Trend */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">7-Day Attendance Trend</h2>
-              <p className="text-xs text-gray-500">Daily present employee volume over the past week</p>
+              <h2 className="text-base font-semibold text-ink-primary">7-Day Attendance Trend</h2>
+              <p className="text-xs text-ink-secondary">Daily present employee volume over the past week</p>
             </div>
-            <span className="text-xs font-medium text-gray-500">Live summary</span>
+            <span className="text-xs font-medium text-ink-secondary">Live summary</span>
           </div>
           <div className="h-64 w-full">
             {trendLoading ? (
-              <div className="flex h-full items-center justify-center text-sm text-gray-400">Loading trend...</div>
+              <div className="flex h-full items-center justify-center text-sm text-ink-disabled">Loading trend...</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartTrend} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
@@ -263,13 +263,13 @@ export default function AttendanceDashboard() {
         </div>
 
         {/* Status Distribution */}
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">Today's Attendance Breakdown</h2>
-              <p className="text-xs text-gray-500">Distribution of present, late, on-leave and absent</p>
+              <h2 className="text-base font-semibold text-ink-primary">Today's Attendance Breakdown</h2>
+              <p className="text-xs text-ink-secondary">Distribution of present, late, on-leave and absent</p>
             </div>
-            <span className="text-xs font-medium text-gray-500">{totalEmployees} Total</span>
+            <span className="text-xs font-medium text-ink-secondary">{totalEmployees} Total</span>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-around h-64">
             <div className="w-full sm:w-1/2 h-full">
@@ -301,9 +301,9 @@ export default function AttendanceDashboard() {
                 <div key={item.name} className="flex items-center justify-between">
                   <span className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className="text-gray-700">{item.name}</span>
+                    <span className="text-ink-primary">{item.name}</span>
                   </span>
-                  <span className="font-semibold text-gray-900">{item.value}</span>
+                  <span className="font-semibold text-ink-primary">{item.value}</span>
                 </div>
               ))}
             </div>
@@ -312,24 +312,24 @@ export default function AttendanceDashboard() {
       </div>
 
       {/* Today's Activity Table */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+      <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-base font-semibold text-gray-900">Today's Attendance Activity</h2>
-            <p className="text-xs text-gray-500">Real-time check-ins and time logs</p>
+            <h2 className="text-base font-semibold text-ink-primary">Today's Attendance Activity</h2>
+            <p className="text-xs text-ink-secondary">Real-time check-ins and time logs</p>
           </div>
-          <Link to="/attendance-register" className="text-xs font-semibold text-blue-600 hover:underline">
+          <Link to="/attendance-register" className="text-xs font-semibold text-primary-main hover:underline">
             View full register →
           </Link>
         </div>
         {recentRecords.length === 0 ? (
-          <div className="py-8 text-center text-sm text-gray-400">
+          <div className="py-8 text-center text-sm text-ink-disabled">
             No check-in activity recorded today yet.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <thead className="border-b border-divider bg-surface-neutral text-xs font-semibold text-ink-secondary uppercase tracking-wider">
                 <tr>
                   <th className="px-4 py-3">Employee</th>
                   <th className="px-4 py-3">Check In</th>
@@ -338,19 +338,19 @@ export default function AttendanceDashboard() {
                   <th className="px-4 py-3">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-divider">
                 {recentRecords.map((rec) => (
-                  <tr key={rec.id} className="hover:bg-gray-50/60 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900">
+                  <tr key={rec.id} className="hover:bg-surface-neutral/60 transition-colors">
+                    <td className="px-4 py-3 font-medium text-ink-primary">
                       {rec.employee_name || 'Staff Member'}
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-gray-600">
+                    <td className="px-4 py-3 font-mono text-xs text-ink-secondary">
                       {rec.check_in ? rec.check_in.slice(0, 5) : '—'}
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-gray-600">
+                    <td className="px-4 py-3 font-mono text-xs text-ink-secondary">
                       {rec.check_out ? rec.check_out.slice(0, 5) : '—'}
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-gray-800">
+                    <td className="px-4 py-3 font-mono text-xs text-ink-primary">
                       {rec.working_hours ? String(rec.working_hours) : '—'}
                     </td>
                     <td className="px-4 py-3">

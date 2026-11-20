@@ -8,6 +8,7 @@ import { useState, useMemo } from 'react';
 import { useShiftAssignments } from '@/hooks/useShifts';
 import { ShiftCard } from './components/ShiftCard';
 import type { ShiftAssignment } from '@/types/shift';
+import { Input } from '@/components/ui/Input';
 
 /** Get the Monday of the week containing a given date. */
 function getWeekStart(date: Date): Date {
@@ -102,37 +103,36 @@ export function ShiftRoster() {
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Team Roster</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-lg font-semibold text-ink-primary">Team Roster</h2>
+          <p className="text-sm text-ink-secondary">
             {weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} –{' '}
             {weekDays[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <input
+          <Input
             type="text"
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
             placeholder="Filter by department..."
-            className="rounded-md border border-gray-300 px-3 py-1.5 text-sm placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           />
           <button
             onClick={() => navigateWeek(-1)}
-            className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-md border border-divider px-3 py-1.5 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
             aria-label="Previous week"
           >
             ← Prev
           </button>
           <button
             onClick={goToCurrentWeek}
-            className="rounded-md bg-primary-50 px-3 py-1.5 text-sm font-medium text-primary-700 hover:bg-primary-100"
+            className="rounded-md bg-primary-lighter px-3 py-1.5 text-sm font-medium text-primary-dark hover:bg-primary-lighter"
           >
             Today
           </button>
           <button
             onClick={() => navigateWeek(1)}
-            className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-md border border-divider px-3 py-1.5 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
             aria-label="Next week"
           >
             Next →
@@ -144,10 +144,10 @@ export function ShiftRoster() {
       <div className="mt-6 overflow-x-auto">
         {isLoading ? (
           <div className="flex h-48 items-center justify-center">
-            <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-500 border-t-transparent" />
+            <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-main border-t-transparent" />
           </div>
         ) : isForbidden ? (
-          <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
+          <div className="rounded-lg border border-divider bg-surface-paper p-8 text-center text-sm text-ink-secondary">
             You don&apos;t have permission to view the team roster.
           </div>
         ) : isError ? (
@@ -155,14 +155,14 @@ export function ShiftRoster() {
             Failed to load roster data. Please try again later.
           </div>
         ) : employees.length === 0 ? (
-          <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
+          <div className="rounded-lg border border-divider bg-surface-paper p-8 text-center text-sm text-ink-secondary">
             No shift assignments found for this period.
           </div>
         ) : (
           <table className="min-w-full border-collapse">
             <thead>
               <tr>
-                <th className="sticky left-0 z-10 border-b border-gray-200 bg-gray-50 px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-600">
+                <th className="sticky left-0 z-10 border-b border-divider bg-surface-neutral px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-ink-secondary">
                   Employee
                 </th>
                 {weekDays.map((date, i) => {
@@ -173,8 +173,8 @@ export function ShiftRoster() {
                       key={dateStr}
                       className={`border-b px-2 py-3 text-center text-xs font-medium ${
                         isToday
-                          ? 'border-primary-300 bg-primary-50 text-primary-700'
-                          : 'border-gray-200 bg-gray-50 text-gray-600'
+                          ? 'border-primary-light bg-primary-lighter text-primary-dark'
+                          : 'border-divider bg-surface-neutral text-ink-secondary'
                       }`}
                     >
                       <div>{DAY_LABELS[i]}</div>
@@ -186,8 +186,8 @@ export function ShiftRoster() {
             </thead>
             <tbody>
               {employees.map(([employeeId, { name, assignments: empAssignments }]) => (
-                <tr key={employeeId} className="border-b border-gray-100 hover:bg-gray-50/50">
-                  <td className="sticky left-0 z-10 whitespace-nowrap border-r border-gray-100 bg-white px-4 py-2 text-sm font-medium text-gray-900">
+                <tr key={employeeId} className="border-b border-divider hover:bg-surface-neutral/50">
+                  <td className="sticky left-0 z-10 whitespace-nowrap border-r border-divider bg-surface-paper px-4 py-2 text-sm font-medium text-ink-primary">
                     {name}
                   </td>
                   {weekDays.map((date) => {
@@ -201,11 +201,11 @@ export function ShiftRoster() {
                       <td
                         key={`${employeeId}-${dateStr}`}
                         className={`px-1 py-1.5 text-center ${
-                          isToday ? 'bg-primary-50/30' : ''
+                          isToday ? 'bg-primary-lighter/30' : ''
                         }`}
                       >
                         {dayAssignments.length === 0 ? (
-                          <span className="text-xs text-gray-300">—</span>
+                          <span className="text-xs text-grey-300">—</span>
                         ) : (
                           <div className="flex flex-col gap-0.5">
                             {dayAssignments.map((a) => (
@@ -229,7 +229,7 @@ export function ShiftRoster() {
 
       {/* Summary */}
       {employees.length > 0 && (
-        <p className="mt-4 text-xs text-gray-500">
+        <p className="mt-4 text-xs text-ink-secondary">
           Showing {employees.length} employee{employees.length !== 1 ? 's' : ''} with shift assignments.
         </p>
       )}

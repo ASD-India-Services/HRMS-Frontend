@@ -19,8 +19,8 @@ export function AttendanceCheckIn() {
   return (
     <div>
       {/* Page heading */}
-      <h1 className="text-2xl font-semibold text-gray-900">Attendance</h1>
-      <p className="mt-1 text-sm text-gray-600">
+      <h1 className="text-2xl font-semibold text-ink-primary">Attendance</h1>
+      <p className="mt-1 text-sm text-ink-secondary">
         Mark your daily attendance with location verification
       </p>
 

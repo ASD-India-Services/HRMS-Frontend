@@ -6,6 +6,7 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { Button } from '@/components/ui/Button';
 
 export default function MyAttendanceHistory() {
   const [monthOffset, setMonthOffset] = useState(0);
@@ -58,55 +59,53 @@ export default function MyAttendanceHistory() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">My Attendance</h1>
-        <p className="mt-1 text-sm text-gray-600">View your attendance history by month</p>
+        <h1 className="text-2xl font-bold text-ink-primary">My Attendance</h1>
+        <p className="mt-1 text-sm text-ink-secondary">View your attendance history by month</p>
       </div>
 
       {/* Month Navigation */}
       <div className="flex items-center justify-between mb-6">
-        <button
+        <Button type="submit" variant="outlined" color="inherit"
           onClick={() => setMonthOffset(o => o - 1)}
-          className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
         >
           <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
           Prev
-        </button>
-        <h2 className="text-lg font-semibold text-gray-900">{monthLabel}</h2>
-        <button
+        </Button>
+        <h2 className="text-lg font-semibold text-ink-primary">{monthLabel}</h2>
+        <Button type="submit" variant="outlined" color="inherit"
           onClick={() => setMonthOffset(o => o + 1)}
           disabled={monthOffset >= 0}
-          className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Next
           <svg className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
-        </button>
+        </Button>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-5 gap-4 mb-6">
-        <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
+        <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
           <p className="text-2xl font-bold text-indigo-600">{presentDays}</p>
-          <p className="text-xs text-gray-500 mt-1">Present</p>
+          <p className="text-xs text-ink-secondary mt-1">Present</p>
         </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
+        <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
           <p className="text-2xl font-bold text-red-600">{absentDays}</p>
-          <p className="text-xs text-gray-500 mt-1">Absent</p>
+          <p className="text-xs text-ink-secondary mt-1">Absent</p>
         </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
-          <p className="text-2xl font-bold text-blue-600">{onLeaveDays}</p>
-          <p className="text-xs text-gray-500 mt-1">On Leave</p>
+        <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
+          <p className="text-2xl font-bold text-primary-main">{onLeaveDays}</p>
+          <p className="text-xs text-ink-secondary mt-1">On Leave</p>
         </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
+        <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
           <p className="text-2xl font-bold text-amber-600">{lateDays}</p>
-          <p className="text-xs text-gray-500 mt-1">Late</p>
+          <p className="text-xs text-ink-secondary mt-1">Late</p>
         </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-4 text-center">
+        <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
           <p className="text-2xl font-bold text-green-600">{totalHours.toFixed(1)}h</p>
-          <p className="text-xs text-gray-500 mt-1">Hours</p>
+          <p className="text-xs text-ink-secondary mt-1">Hours</p>
         </div>
       </div>
 
@@ -117,35 +116,35 @@ export default function MyAttendanceHistory() {
         </div>
       ) : records.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">No attendance records for this month</p>
+          <p className="text-ink-secondary">No attendance records for this month</p>
         </div>
       ) : (
-        <div className="overflow-x-auto border border-gray-200 rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="overflow-x-auto border border-divider rounded-lg">
+          <table className="min-w-full divide-y divide-divider">
+            <thead className="bg-surface-neutral">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Check In</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Check Out</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hours</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-ink-secondary uppercase">Date</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-ink-secondary uppercase">Check In</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-ink-secondary uppercase">Check Out</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-ink-secondary uppercase">Hours</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-ink-secondary uppercase">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-divider bg-surface-paper">
               {records.map((r: any) => {
                 const sessionCount = r.sessions?.length || r.total_sessions_count || (r.check_in ? 1 : 0);
                 const hasAuto = r.sessions?.some((s: any) => s.is_auto_checkout);
 
                 return (
-                  <tr key={r.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm text-gray-900 font-medium">
+                  <tr key={r.id} className="hover:bg-surface-neutral">
+                    <td className="px-4 py-3 text-sm text-ink-primary font-medium">
                       {new Date(r.attendance_date).toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' })}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{formatTime(r.check_in)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-ink-primary">{formatTime(r.check_in)}</td>
+                    <td className="px-4 py-3 text-sm text-ink-primary">
                       {r.check_out ? formatTime(r.check_out) : (r.sessions?.some((s: any) => !s.check_out_time) ? 'Active' : '—')}
                     </td>
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                    <td className="px-4 py-3 text-sm font-medium text-ink-primary">
                       <div className="flex items-center gap-1.5">
                         <span>{formatHours(r.working_hours, r.check_in, r.check_out)}</span>
                         {sessionCount > 1 && (
@@ -168,9 +167,9 @@ export default function MyAttendanceHistory() {
                         r.status === 'present' ? 'bg-green-100 text-green-700' :
                         r.status === 'absent' ? 'bg-red-100 text-red-700' :
                         r.status === 'half_day' ? 'bg-amber-100 text-amber-700' :
-                        r.status === 'on_leave' ? 'bg-blue-100 text-blue-700' :
+                        r.status === 'on_leave' ? 'bg-primary-lighter text-primary-dark' :
                         r.status === 'holiday' ? 'bg-purple-100 text-purple-700' :
-                        'bg-gray-100 text-gray-700'
+                        'bg-surface-neutral text-ink-primary'
                       }`}>
                         {r.status === 'on_leave' ? 'On Leave' : r.status === 'half_day' ? 'Half Day' : r.status}
                         {r.is_late && ' (Late)'}

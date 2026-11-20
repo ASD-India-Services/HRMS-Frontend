@@ -30,7 +30,7 @@ const statusBadge = (status: string) => {
     present: 'bg-green-100 text-green-800',
     absent: 'bg-red-100 text-red-800',
     half_day: 'bg-yellow-100 text-yellow-800',
-    on_leave: 'bg-blue-100 text-blue-800',
+    on_leave: 'bg-primary-lighter text-primary-dark',
     holiday: 'bg-purple-100 text-purple-800',
   };
   const labels: Record<string, string> = {
@@ -41,7 +41,7 @@ const statusBadge = (status: string) => {
     holiday: 'Holiday',
   };
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${styles[status] || 'bg-gray-100 text-gray-800'}`}>
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${styles[status] || 'bg-surface-neutral text-ink-primary'}`}>
       {labels[status] || status}
     </span>
   );
@@ -124,17 +124,17 @@ export default function AttendanceRegister() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Attendance Register</h1>
-        <p className="mt-1 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-ink-primary">Attendance Register</h1>
+        <p className="mt-1 text-sm text-ink-secondary">
           Daily attendance record for all employees. Employees without check-in are shown as absent.
         </p>
       </div>
 
       {/* Summary Cards */}
       <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
-          <p className="text-xs font-medium text-gray-500">Total</p>
-          <p className="mt-1 text-xl font-bold text-gray-900">{totalEmployees}</p>
+        <div className="rounded-lg border border-divider bg-surface-paper p-3 shadow-sm">
+          <p className="text-xs font-medium text-ink-secondary">Total</p>
+          <p className="mt-1 text-xl font-bold text-ink-primary">{totalEmployees}</p>
         </div>
         <div className="rounded-lg border border-green-200 bg-green-50 p-3 shadow-sm">
           <p className="text-xs font-medium text-green-600">Present</p>

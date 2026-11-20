@@ -47,7 +47,7 @@ export function ShiftCard({ shiftType, compact = false }: ShiftCardProps) {
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <div className="rounded-lg border border-divider bg-surface-paper p-4 shadow-sm">
       <div className="flex items-center gap-2">
         <div
           className={`h-3 w-3 rounded-full ${
@@ -55,7 +55,7 @@ export function ShiftCard({ shiftType, compact = false }: ShiftCardProps) {
           }`}
           aria-hidden="true"
         />
-        <h4 className="text-sm font-semibold text-gray-900">{name}</h4>
+        <h4 className="text-sm font-semibold text-ink-primary">{name}</h4>
         {is_night_shift && (
           <span className="ml-auto rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700">
             Night
@@ -63,7 +63,7 @@ export function ShiftCard({ shiftType, compact = false }: ShiftCardProps) {
         )}
       </div>
 
-      <div className="mt-2 text-sm text-gray-600">
+      <div className="mt-2 text-sm text-ink-secondary">
         <p>
           {formatTime(start_time)} – {formatTime(end_time)}
         </p>

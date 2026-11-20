@@ -88,8 +88,8 @@ export function ShiftSchedule() {
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">My Shift Schedule</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-lg font-semibold text-ink-primary">My Shift Schedule</h2>
+          <p className="text-sm text-ink-secondary">
             {weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} –{' '}
             {weekDays[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
           </p>
@@ -98,20 +98,20 @@ export function ShiftSchedule() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => navigateWeek(-1)}
-            className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-md border border-divider px-3 py-1.5 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
             aria-label="Previous week"
           >
             ← Prev
           </button>
           <button
             onClick={goToCurrentWeek}
-            className="rounded-md bg-primary-50 px-3 py-1.5 text-sm font-medium text-primary-700 hover:bg-primary-100"
+            className="rounded-md bg-primary-lighter px-3 py-1.5 text-sm font-medium text-primary-dark hover:bg-primary-lighter"
           >
             Today
           </button>
           <button
             onClick={() => navigateWeek(1)}
-            className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-md border border-divider px-3 py-1.5 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
             aria-label="Next week"
           >
             Next →
@@ -123,10 +123,10 @@ export function ShiftSchedule() {
       <div className="mt-6 overflow-x-auto">
         {isLoading ? (
           <div className="flex h-48 items-center justify-center">
-            <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-500 border-t-transparent" />
+            <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-main border-t-transparent" />
           </div>
         ) : isForbidden ? (
-          <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-sm text-gray-500">
+          <div className="rounded-lg border border-divider bg-surface-paper p-8 text-center text-sm text-ink-secondary">
             You don&apos;t have permission to view your shift schedule.
           </div>
         ) : isError ? (
@@ -144,12 +144,12 @@ export function ShiftSchedule() {
                   key={dateStr}
                   className={`rounded-t-lg border-b-2 px-2 py-2 text-center text-xs font-medium ${
                     isToday
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-gray-200 text-gray-600'
+                      ? 'border-primary-main bg-primary-lighter text-primary-dark'
+                      : 'border-divider text-ink-secondary'
                   }`}
                 >
                   <div>{DAY_LABELS[i]}</div>
-                  <div className={`text-lg font-semibold ${isToday ? 'text-primary-700' : 'text-gray-900'}`}>
+                  <div className={`text-lg font-semibold ${isToday ? 'text-primary-dark' : 'text-ink-primary'}`}>
                     {date.getDate()}
                   </div>
                 </div>
@@ -166,11 +166,11 @@ export function ShiftSchedule() {
                 <div
                   key={`cell-${dateStr}`}
                   className={`min-h-[100px] rounded-b-lg border p-1.5 ${
-                    isToday ? 'border-primary-200 bg-primary-50/30' : 'border-gray-100 bg-white'
+                    isToday ? 'border-primary-light bg-primary-lighter/30' : 'border-divider bg-surface-paper'
                   }`}
                 >
                   {dayAssignments.length === 0 ? (
-                    <p className="mt-6 text-center text-xs text-gray-400">No shift</p>
+                    <p className="mt-6 text-center text-xs text-ink-disabled">No shift</p>
                   ) : (
                     <div className="flex flex-col gap-1">
                       {dayAssignments.map((assignment) => (
@@ -191,8 +191,8 @@ export function ShiftSchedule() {
 
       {/* Shift legend */}
       {assignments.length > 0 && (
-        <div className="mt-6 rounded-lg border border-gray-200 bg-white p-4">
-          <h3 className="text-sm font-medium text-gray-700">Active Shifts This Week</h3>
+        <div className="mt-6 rounded-lg border border-divider bg-surface-paper p-4">
+          <h3 className="text-sm font-medium text-ink-primary">Active Shifts This Week</h3>
           <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {/* Deduplicate by shift type ID */}
             {Array.from(

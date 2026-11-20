@@ -44,19 +44,19 @@ export default function Shifts() {
   const linkClasses = (isActive: boolean) =>
     `inline-flex items-center border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
       isActive
-        ? 'border-primary-500 text-primary-700'
-        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+        ? 'border-primary-main text-primary-dark'
+        : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
     }`;
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-gray-900">Shift Management</h1>
-      <p className="mt-1 text-sm text-gray-600">
+      <h1 className="text-2xl font-semibold text-ink-primary">Shift Management</h1>
+      <p className="mt-1 text-sm text-ink-secondary">
         View shift schedules, assignments, and roster planning.
       </p>
 
       <div className="mt-4">
-        <nav className="border-b border-gray-200" aria-label="Shift navigation">
+        <nav className="border-b border-divider" aria-label="Shift navigation">
           <div className="flex gap-0">
             {canViewOwn && (
               <button

@@ -4,6 +4,8 @@ import type { Coordinates, GeolocationError } from '@/utils/geolocation'
 import { useCheckIn, useCheckOut, getDeviceId } from '@/hooks/useAttendance'
 import type { AttendanceRecord } from '@/hooks/useAttendance'
 import api from '@/lib/api'
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
 
 interface CheckInButtonProps {
   /** Current attendance record for today */
@@ -145,12 +147,12 @@ export function CheckInButton({ record }: CheckInButtonProps) {
     <div className="text-center">
       {/* Non-working day message (holiday or on leave) */}
       {isNonWorkingDay && workingDayCheck.reason && (
-        <div className="mb-4 mx-auto max-w-sm rounded-md bg-blue-50 border border-blue-200 p-3" role="alert">
+        <div className="mb-4 mx-auto max-w-sm rounded-md bg-primary-lighter border border-primary-light p-3" role="alert">
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-5 h-5 text-primary-main flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
-            <p className="text-sm text-blue-700">{workingDayCheck.reason}. Attendance can only be entered on working days.</p>
+            <p className="text-sm text-primary-dark">{workingDayCheck.reason}. Attendance can only be entered on working days.</p>
           </div>
         </div>
       )}
@@ -231,7 +233,7 @@ export function CheckInButton({ record }: CheckInButtonProps) {
       </button>
 
       {/* Current date display */}
-      <p className="mt-4 text-sm text-gray-500">
+      <p className="mt-4 text-sm text-ink-secondary">
         {new Date().toLocaleDateString(undefined, {
           weekday: 'long',
           year: 'numeric',
@@ -242,14 +244,14 @@ export function CheckInButton({ record }: CheckInButtonProps) {
 
       {/* Coordinates display */}
       {coordinates && (
-        <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 text-xs text-gray-600">
+        <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-neutral text-xs text-ink-secondary">
           <svg className="w-3.5 h-3.5 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
           </svg>
           <span>
             {coordinates.latitude.toFixed(5)}, {coordinates.longitude.toFixed(5)}
           </span>
-          <span className="text-gray-400">
+          <span className="text-ink-disabled">
             (±{Math.round(coordinates.accuracy)}m)
           </span>
         </div>
@@ -281,43 +283,41 @@ export function CheckInButton({ record }: CheckInButtonProps) {
 
       {/* Checkout Confirmation Dialog */}
       {showCheckoutConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="dialog" aria-modal="true">
-          <div className="mx-4 w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
+        <Modal open onClose={() => setShowCheckoutConfirm(false)} labelledBy="CheckInButton-modal-title-1" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="mx-4 p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center gap-3 mb-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
                 <svg className="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Confirm Check Out</h3>
+              <h3 id="CheckInButton-modal-title-1" className="text-lg font-semibold text-ink-primary">Confirm Check Out</h3>
             </div>
-            <p className="text-sm text-gray-600 mb-2">
+            <p className="text-sm text-ink-secondary mb-2">
               Are you sure you want to end your current work session?
             </p>
             <p className="text-xs text-indigo-600 font-medium mb-5">
               Your session duration will be recorded. You can check back in at any time today to start a new session.
             </p>
             <div className="flex items-center justify-end gap-3">
-              <button
+              <Button variant="outlined" color="inherit"
                 type="button"
                 onClick={() => setShowCheckoutConfirm(false)}
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button color="error"
                 type="button"
                 onClick={() => {
                   setShowCheckoutConfirm(false)
                   handleAction()
                 }}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
               >
                 Yes, Check Out
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   )
