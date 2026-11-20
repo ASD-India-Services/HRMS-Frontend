@@ -7,6 +7,9 @@ import {
 } from '@/hooks/useHelpdesk';
 import type { HelpdeskTag } from '@/types/helpdesk';
 import { PlusIcon, PencilIcon, TrashIcon, CheckIcon, LoaderIcon, SearchIcon } from './SettingsIcons';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 const DEFAULT_TAGS: HelpdeskTag[] = [
   { id: '1', title: 'Horilla', color: '#000000' },
@@ -175,95 +178,95 @@ export function HelpdeskTagsTab() {
       {/* Page Header matching screenshot */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Helpdesk Tags</h2>
-          <p className="mt-1 text-sm text-gray-500">
+          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Helpdesk Tags</h2>
+          <p className="mt-1 text-sm text-ink-secondary">
             Create and organize tags to label and categorize Help Desk tickets, inquiries, and FAQs.
           </p>
         </div>
-        <button
+        <Button
           type="button"
           onClick={handleOpenCreate}
-          className="inline-flex items-center justify-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors shrink-0"
+          className="shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
           + Create
-        </button>
+        </Button>
       </div>
 
-      <hr className="border-gray-200" />
+      <hr className="border-divider" />
 
       {/* Filter / Search Bar */}
       <div className="flex items-center justify-between gap-4">
         <div className="relative max-w-sm flex-1">
-          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
+          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-disabled" />
+          <Input
             type="text"
             placeholder="Search tags..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-md border border-gray-300 bg-white pl-9 pr-3 py-1.5 text-sm text-gray-900 shadow-xs placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="pl-9 pr-3"
           />
         </div>
         {isLoading && (
-          <div className="flex items-center gap-1.5 text-xs text-gray-500">
-            <LoaderIcon className="h-3.5 w-3.5 animate-spin text-blue-600" />
+          <div className="flex items-center gap-1.5 text-xs text-ink-secondary">
+            <LoaderIcon className="h-3.5 w-3.5 animate-spin text-primary-main" />
             <span>Syncing...</span>
           </div>
         )}
       </div>
 
       {/* Table matching screenshot */}
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs">
-        <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
-          <thead className="bg-gray-50/70 text-xs font-semibold text-gray-900">
+      <div className="overflow-hidden rounded-lg border border-divider bg-surface-paper shadow-xs">
+        <table className="min-w-full divide-y divide-divider text-left text-sm">
+          <thead className="bg-surface-neutral/70 text-xs font-semibold text-ink-primary">
             <tr>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                 Title
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                 Color
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900 text-right">
+              <th scope="col" className="px-6 py-4 font-bold text-ink-primary text-right">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 bg-white text-gray-800">
+          <tbody className="divide-y divide-divider bg-surface-paper text-ink-primary">
             {filteredTags.length === 0 ? (
               <tr>
-                <td colSpan={3} className="px-6 py-10 text-center text-gray-400">
+                <td colSpan={3} className="px-6 py-10 text-center text-ink-disabled">
                   No helpdesk tags found. Click &quot;+ Create&quot; to add one.
                 </td>
               </tr>
             ) : (
               filteredTags.map((tag) => (
-                <tr key={tag.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-gray-900">{tag.title}</td>
+                <tr key={tag.id} className="hover:bg-surface-neutral/50 transition-colors">
+                  <td className="px-6 py-4 font-medium text-ink-primary">{tag.title}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2.5">
                       <span
                         className="inline-block h-6 w-6 rounded-full shadow-xs border border-black/10 shrink-0"
                         style={{ backgroundColor: tag.color }}
                       />
-                      <span className="text-xs font-mono text-gray-500 uppercase">{tag.color}</span>
+                      <span className="text-xs font-mono text-ink-secondary uppercase">{tag.color}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <div className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50/50 p-0.5">
+                    <div className="inline-flex items-center rounded-md border border-divider bg-surface-neutral/50 p-0.5">
                       <button
                         type="button"
                         onClick={() => handleOpenEdit(tag)}
                         title="Edit Tag"
-                        className="rounded p-1.5 text-gray-500 hover:bg-white hover:text-blue-600 hover:shadow-xs transition-colors"
+                        className="rounded p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
                       >
                         <PencilIcon className="h-4 w-4" />
                       </button>
-                      <div className="h-4 w-px bg-gray-200 my-auto" />
+                      <div className="h-4 w-px bg-grey-200 my-auto" />
                       <button
                         type="button"
                         onClick={() => setDeleteTarget(tag)}
                         title="Delete Tag"
-                        className="rounded p-1.5 text-gray-400 hover:bg-white hover:text-blue-600 hover:shadow-xs transition-colors"
+                        className="rounded p-1.5 text-ink-disabled hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
                       >
                         <TrashIcon className="h-4 w-4" />
                       </button>
@@ -280,17 +283,17 @@ export function HelpdeskTagsTab() {
           MODAL: Create / Edit Helpdesk Tag matching screenshot
          ─────────────────────────────────────────────────────────── */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-xl rounded-lg bg-white p-6 shadow-2xl transition-all animate-in fade-in zoom-in-95 duration-150">
+        <Modal open onClose={() => setModalOpen(false)} labelledBy="HelpdeskTagsTab-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             {/* Modal Header Bar */}
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h3 className="text-base font-semibold text-gray-800">
+            <div className="flex items-center justify-between pb-3 border-b border-divider">
+              <h3 id="HelpdeskTagsTab-modal-title-1" className="text-base font-semibold text-ink-primary">
                 {editingTag ? 'Edit Helpdesk Tag' : 'Create Helpdesk Tag'}
               </h3>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
               >
                 <span className="text-xl font-light leading-none">&times;</span>
               </button>
@@ -304,29 +307,28 @@ export function HelpdeskTagsTab() {
               )}
 
               {/* Box container matching screenshot */}
-              <div className="rounded-md border border-gray-200 p-5">
+              <div className="rounded-md border border-divider p-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-start">
                   {/* Title * */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    <label className="block text-sm font-semibold text-ink-primary mb-2">
                       Title *
                     </label>
-                    <input
+                    <Input
                       type="text"
                       placeholder="Title"
                       value={formTitle}
                       onChange={(e) => setFormTitle(e.target.value)}
                       required
-                      className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                   </div>
 
                   {/* Color * */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    <label className="block text-sm font-semibold text-ink-primary mb-2">
                       Color *
                     </label>
-                    <div className="rounded-md bg-gray-100 p-3 flex flex-col gap-2">
+                    <div className="rounded-md bg-surface-neutral p-3 flex flex-col gap-2">
                       {/* Color Preview Bar matching screenshot */}
                       <div
                         className="w-full h-8 rounded shadow-inner border border-black/10 transition-colors cursor-pointer"
@@ -341,13 +343,13 @@ export function HelpdeskTagsTab() {
                           type="color"
                           value={formColor}
                           onChange={(e) => setFormColor(e.target.value)}
-                          className="h-8 w-10 cursor-pointer rounded border border-gray-300 bg-transparent p-0"
+                          className="h-8 w-10 cursor-pointer rounded border border-divider bg-transparent p-0"
                         />
-                        <input
+                        <Input
                           type="text"
                           value={formColor}
                           onChange={(e) => setFormColor(e.target.value)}
-                          className="w-full rounded border border-gray-300 bg-white px-2 py-1 text-xs font-mono uppercase text-gray-800"
+                          className="font-mono uppercase"
                           placeholder="#000000"
                         />
                       </div>
@@ -361,7 +363,7 @@ export function HelpdeskTagsTab() {
                             onClick={() => setFormColor(c)}
                             className={`h-5 w-5 rounded-full border border-black/15 transition-transform hover:scale-110 shrink-0 ${
                               formColor.toLowerCase() === c.toLowerCase()
-                                ? 'ring-2 ring-blue-500 ring-offset-1 scale-110'
+                                ? 'ring-2 ring-primary-main ring-offset-1 scale-110'
                                 : ''
                             }`}
                             style={{ backgroundColor: c }}
@@ -375,10 +377,9 @@ export function HelpdeskTagsTab() {
 
                 {/* Save Button matching bottom right positioning */}
                 <div className="flex justify-end pt-5">
-                  <button
+                  <Button
                     type="submit"
                     disabled={createMutation.isPending || updateMutation.isPending}
-                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-7 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50"
                   >
                     {createMutation.isPending || updateMutation.isPending ? (
                       <span className="flex items-center gap-1.5">
@@ -388,40 +389,38 @@ export function HelpdeskTagsTab() {
                     ) : (
                       'Save'
                     )}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Delete Confirmation Modal */}
       {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-2xl transition-all">
-            <h3 className="text-lg font-bold text-gray-900">Delete Helpdesk Tag</h3>
-            <p className="mt-2 text-sm text-gray-500">
+        <Modal open onClose={() => setDeleteTarget(null)} labelledBy="HelpdeskTagsTab-modal-title-2" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+            <h3 id="HelpdeskTagsTab-modal-title-2" className="text-lg font-bold text-ink-primary">Delete Helpdesk Tag</h3>
+            <p className="mt-2 text-sm text-ink-secondary">
               Are you sure you want to delete the tag &quot;{deleteTarget.title}&quot;? This action cannot be undone.
             </p>
             <div className="mt-6 flex justify-end gap-3">
-              <button
+              <Button variant="outlined" color="inherit"
                 type="button"
                 onClick={() => setDeleteTarget(null)}
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={confirmDelete}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
               >
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

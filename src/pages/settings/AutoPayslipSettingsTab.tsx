@@ -4,6 +4,10 @@ import api from '@/lib/api';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
 import type { AutoPayslipRuleItem } from '@/hooks/useHRSettings';
 import { PlusIcon, PencilIcon, TrashIcon, InfoIcon, CheckIcon, LoaderIcon, SearchIcon } from './SettingsIcons';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 
 const LOCAL_STORAGE_KEY = 'hrms_auto_payslip_rules';
 
@@ -211,76 +215,76 @@ export function AutoPayslipSettingsTab() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Payslip Auto Generate</h2>
-          <p className="mt-1 text-sm text-gray-500">
+          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Payslip Auto Generate</h2>
+          <p className="mt-1 text-sm text-ink-secondary">
             Configure automated monthly payslip generation schedules and rules per company entity.
           </p>
         </div>
-        <button
+        <Button
           type="button"
           onClick={handleOpenCreate}
-          className="inline-flex items-center justify-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors shrink-0"
+          className="shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
           + Create
-        </button>
+        </Button>
       </div>
 
-      <hr className="border-gray-200" />
+      <hr className="border-divider" />
 
       {/* Filter / Search Bar */}
       <div className="flex items-center justify-between gap-4">
         <div className="relative max-w-sm flex-1">
-          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
+          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-disabled" />
+          <Input
             type="text"
             placeholder="Search company or day..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-md border border-gray-300 bg-white pl-9 pr-3 py-1.5 text-sm text-gray-900 shadow-xs placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="pl-9 pr-3"
           />
         </div>
         {isLoading && (
-          <div className="flex items-center gap-1.5 text-xs text-gray-500">
-            <LoaderIcon className="h-3.5 w-3.5 animate-spin text-blue-600" />
+          <div className="flex items-center gap-1.5 text-xs text-ink-secondary">
+            <LoaderIcon className="h-3.5 w-3.5 animate-spin text-primary-main" />
             <span>Syncing...</span>
           </div>
         )}
       </div>
 
       {/* Table matching screenshot */}
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs">
-        <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
-          <thead className="bg-gray-50/70 text-xs font-semibold text-gray-900">
+      <div className="overflow-hidden rounded-lg border border-divider bg-surface-paper shadow-xs">
+        <table className="min-w-full divide-y divide-divider text-left text-sm">
+          <thead className="bg-surface-neutral/70 text-xs font-semibold text-ink-primary">
             <tr>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                 Payslip Generate Day
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                 Company
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                 Auto generate
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 bg-white text-gray-800">
+          <tbody className="divide-y divide-divider bg-surface-paper text-ink-primary">
             {filteredRules.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-10 text-center text-gray-400">
+                <td colSpan={4} className="px-6 py-10 text-center text-ink-disabled">
                   No auto payslip schedules configured. Click &quot;+ Create&quot; to add one.
                 </td>
               </tr>
             ) : (
               filteredRules.map((rule) => (
-                <tr key={rule.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-gray-900">
+                <tr key={rule.id} className="hover:bg-surface-neutral/50 transition-colors">
+                  <td className="px-6 py-4 font-medium text-ink-primary">
                     {rule.generate_day}
                   </td>
-                  <td className="px-6 py-4 font-medium text-gray-900">
+                  <td className="px-6 py-4 font-medium text-ink-primary">
                     {rule.company}
                   </td>
                   <td className="px-6 py-4">
@@ -289,34 +293,34 @@ export function AutoPayslipSettingsTab() {
                       role="switch"
                       aria-checked={rule.auto_generate}
                       onClick={() => handleToggleAutoGenerate(rule.id)}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                        rule.auto_generate ? 'bg-blue-600' : 'bg-gray-300'
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                        rule.auto_generate ? 'bg-primary-main' : 'bg-grey-300'
                       }`}
                     >
                       <span
                         aria-hidden="true"
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                           rule.auto_generate ? 'translate-x-5' : 'translate-x-0'
                         }`}
                       />
                     </button>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50/50 p-0.5">
+                    <div className="inline-flex items-center rounded-md border border-divider bg-surface-neutral/50 p-0.5">
                       <button
                         type="button"
                         onClick={() => handleOpenEdit(rule)}
                         title="Edit Schedule"
-                        className="rounded p-1.5 text-gray-500 hover:bg-white hover:text-blue-600 hover:shadow-xs transition-colors"
+                        className="rounded p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
                       >
                         <PencilIcon className="h-4 w-4" />
                       </button>
-                      <div className="h-4 w-px bg-gray-200 my-auto" />
+                      <div className="h-4 w-px bg-grey-200 my-auto" />
                       <button
                         type="button"
                         onClick={() => setDeleteId(rule.id)}
                         title="Delete Schedule"
-                        className="rounded p-1.5 text-red-500 hover:bg-white hover:text-red-700 hover:shadow-xs transition-colors"
+                        className="rounded p-1.5 text-red-500 hover:bg-surface-paper hover:text-red-700 hover:shadow-xs transition-colors"
                       >
                         <TrashIcon className="h-4 w-4" />
                       </button>
@@ -333,17 +337,17 @@ export function AutoPayslipSettingsTab() {
           MODAL: Create / Edit Auto Payslip Generate matching screenshot
          ─────────────────────────────────────────────────────────── */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-xl rounded-lg bg-white p-6 shadow-2xl transition-all animate-in fade-in zoom-in-95 duration-150">
+        <Modal open onClose={() => setModalOpen(false)} labelledBy="AutoPayslipSettingsTab-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             {/* Modal Header Bar */}
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h3 className="text-sm font-semibold text-gray-700">
+            <div className="flex items-center justify-between pb-3 border-b border-divider">
+              <h3 id="AutoPayslipSettingsTab-modal-title-1" className="text-sm font-semibold text-ink-primary">
                 {editingItem ? 'Edit Auto Payslip Generate' : 'Create Auto Payslip Generate'}
               </h3>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
               >
                 <span className="text-xl font-light leading-none">&times;</span>
               </button>
@@ -351,7 +355,7 @@ export function AutoPayslipSettingsTab() {
 
             {/* Modal Body Title matching screenshot */}
             <div className="pt-4 pb-2">
-              <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+              <h2 className="text-2xl font-bold tracking-tight text-ink-primary">
                 payslip auto generate
               </h2>
             </div>
@@ -362,51 +366,49 @@ export function AutoPayslipSettingsTab() {
                 {/* Left: Payslip Generate Day * */}
                 <div>
                   <div className="flex items-center gap-1 mb-2">
-                    <label className="block text-sm font-semibold text-gray-900">
+                    <label className="block text-sm font-semibold text-ink-primary">
                       Payslip Generate Day *
                     </label>
-                    <div className="group relative cursor-pointer text-gray-400 hover:text-gray-600">
+                    <div className="group relative cursor-pointer text-ink-disabled hover:text-ink-secondary">
                       <InfoIcon className="h-3.5 w-3.5" />
-                      <div className="absolute left-1/2 -top-8 -translate-x-1/2 hidden group-hover:block rounded bg-gray-900 px-2 py-1 text-[11px] text-white whitespace-nowrap shadow-md z-10">
+                      <div className="absolute left-1/2 -top-8 -translate-x-1/2 hidden group-hover:block rounded bg-grey-900 px-2 py-1 text-[11px] text-white whitespace-nowrap shadow-md z-10">
                         Day of the month to automatically generate payslips
                       </div>
                     </div>
                   </div>
-                  <select
+                  <Select
                     value={formGenerateDay}
                     onChange={(e) => setFormGenerateDay(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     {GENERATE_DAYS.map((day) => (
                       <option key={day} value={day}>
                         {day}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 {/* Right: Company (Only organization's linked companies) */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  <label className="block text-sm font-semibold text-ink-primary mb-2">
                     Company
                   </label>
-                  <select
+                  <Select
                     value={formCompany}
                     onChange={(e) => setFormCompany(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     {availableCompanies.map((c) => (
                       <option key={c} value={c}>
                         {c}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               {/* Below: Auto generate toggle */}
               <div className="space-y-2 pt-1">
-                <label className="block text-sm font-semibold text-gray-900">
+                <label className="block text-sm font-semibold text-ink-primary">
                   Auto generate
                 </label>
                 <div>
@@ -415,13 +417,13 @@ export function AutoPayslipSettingsTab() {
                     role="switch"
                     aria-checked={formAutoGenerate}
                     onClick={() => setFormAutoGenerate((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formAutoGenerate ? 'bg-blue-600' : 'bg-gray-300'
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                      formAutoGenerate ? 'bg-primary-main' : 'bg-grey-300'
                     }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                         formAutoGenerate ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
@@ -431,10 +433,9 @@ export function AutoPayslipSettingsTab() {
 
               {/* Bottom Right Save Button */}
               <div className="flex justify-end gap-3 pt-3">
-                <button
+                <Button
                   type="submit"
                   disabled={updateSettings.isPending}
-                  className="inline-flex items-center justify-center rounded-md bg-blue-600 px-7 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50"
                 >
                   {updateSettings.isPending ? (
                     <span className="flex items-center gap-1.5">
@@ -444,39 +445,37 @@ export function AutoPayslipSettingsTab() {
                   ) : (
                     'Save'
                   )}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Delete Confirmation Modal */}
       {deleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-2xl transition-all">
-            <h3 className="text-lg font-bold text-gray-900">Delete Auto Payslip Rule</h3>
-            <p className="mt-2 text-sm text-gray-500">
+        <Modal open onClose={() => setDeleteId(null)} labelledBy="AutoPayslipSettingsTab-modal-title-2" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+            <h3 id="AutoPayslipSettingsTab-modal-title-2" className="text-lg font-bold text-ink-primary">Delete Auto Payslip Rule</h3>
+            <p className="mt-2 text-sm text-ink-secondary">
               Are you sure you want to delete this auto payslip generation rule? This action cannot be undone.
             </p>
             <div className="mt-6 flex justify-end gap-3">
-              <button
+              <Button variant="outlined" color="inherit"
                 type="button"
                 onClick={() => setDeleteId(null)}
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={confirmDelete}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
               >
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

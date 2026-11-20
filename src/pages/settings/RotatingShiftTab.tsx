@@ -1,5 +1,10 @@
 import { useState } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon, CheckIcon } from './SettingsIcons';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
 
 interface RotatingShift {
   id: string;
@@ -126,27 +131,27 @@ export function RotatingShiftTab() {
     <div className="space-y-6 py-2">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Rotating Shift</h2>
-          <p className="mt-1 text-sm text-gray-500">
+          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Rotating Shift</h2>
+          <p className="mt-1 text-sm text-ink-secondary">
             Configure cyclical rotation sequences between multiple shifts with mandatory transition rest hours.
           </p>
         </div>
-        <button
+        <Button
           type="button"
           onClick={handleOpenAdd}
-          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors shrink-0"
+          className="shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
           Add Rotating Shift
-        </button>
+        </Button>
       </div>
 
-      <hr className="border-gray-200" />
+      <hr className="border-divider" />
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs">
-        <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
-          <thead className="bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
+      <div className="overflow-hidden rounded-xl border border-divider bg-surface-paper shadow-xs">
+        <table className="min-w-full divide-y divide-divider text-left text-sm">
+          <thead className="bg-surface-neutral text-xs font-semibold uppercase tracking-wider text-ink-secondary">
             <tr>
               <th className="px-6 py-3.5">Policy Name</th>
               <th className="px-6 py-3.5">Cycle Frequency</th>
@@ -156,17 +161,17 @@ export function RotatingShiftTab() {
               <th className="px-6 py-3.5 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 bg-white">
+          <tbody className="divide-y divide-divider bg-surface-paper">
             {shifts.map((item) => (
-              <tr key={item.id} className="hover:bg-gray-50/80 transition-colors">
-                <td className="px-6 py-4 font-semibold text-gray-900">{item.name}</td>
-                <td className="px-6 py-4 text-gray-700 font-medium">{item.rotationPeriod}</td>
+              <tr key={item.id} className="hover:bg-surface-neutral/80 transition-colors">
+                <td className="px-6 py-4 font-semibold text-ink-primary">{item.name}</td>
+                <td className="px-6 py-4 text-ink-primary font-medium">{item.rotationPeriod}</td>
                 <td className="px-6 py-4">
-                  <span className="font-mono text-xs text-blue-700 font-medium bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-md block max-w-md">
+                  <span className="font-mono text-xs text-primary-dark font-medium bg-primary-lighter border border-primary-light px-2.5 py-1 rounded-md block max-w-md">
                     {item.shiftsInOrder}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-gray-700 font-mono text-xs">{item.restHours} hrs</td>
+                <td className="px-6 py-4 text-ink-primary font-mono text-xs">{item.restHours} hrs</td>
                 <td className="px-6 py-4">
                   <button
                     type="button"
@@ -174,7 +179,7 @@ export function RotatingShiftTab() {
                     className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
                       item.isActive
                         ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        : 'bg-surface-neutral text-ink-secondary hover:bg-grey-200'
                     }`}
                   >
                     {item.isActive && <CheckIcon className="h-3 w-3" />}
@@ -186,7 +191,7 @@ export function RotatingShiftTab() {
                     <button
                       type="button"
                       onClick={() => handleOpenEdit(item)}
-                      className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-blue-600 transition-colors"
+                      className="rounded p-1.5 text-ink-secondary hover:bg-surface-neutral hover:text-primary-main transition-colors"
                       title="Edit shift"
                     >
                       <PencilIcon className="h-4 w-4" />
@@ -194,7 +199,7 @@ export function RotatingShiftTab() {
                     <button
                       type="button"
                       onClick={() => handleDelete(item.id)}
-                      className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-red-600 transition-colors"
+                      className="rounded p-1.5 text-ink-secondary hover:bg-surface-neutral hover:text-red-600 transition-colors"
                       title="Delete shift"
                     >
                       <TrashIcon className="h-4 w-4" />
@@ -209,61 +214,61 @@ export function RotatingShiftTab() {
 
       {/* Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl space-y-4">
-            <h3 className="text-lg font-bold text-gray-900">
+        <Modal open onClose={() => setModalOpen(false)} labelledBy="RotatingShiftTab-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 space-y-4 min-h-0 flex-1 overflow-y-auto">
+            <h3 id="RotatingShiftTab-modal-title-1" className="text-lg font-bold text-ink-primary">
               {editingItem ? 'Edit Rotating Shift Policy' : 'Add Rotating Shift Policy'}
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700">Policy Name *</label>
-                <input
+                <label className="block text-sm font-semibold text-ink-primary">Policy Name *</label>
+                <Input
                   type="text"
                   required
                   placeholder="e.g. 24/7 Operations 3-Shift Roster"
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700">Rotation Cycle</label>
-                  <select
+                  <label className="block text-sm font-semibold text-ink-primary">Rotation Cycle</label>
+                  <Select
                     value={formPeriod}
                     onChange={(e) => setFormPeriod(e.target.value)}
-                    className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mt-1"
                   >
                     <option value="Weekly (Every 7 Days)">Weekly (Every 7 Days)</option>
                     <option value="Bi-Weekly (Every 14 Days)">Bi-Weekly (Every 14 Days)</option>
                     <option value="Monthly (Every 30 Days)">Monthly (Every 30 Days)</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700">Rest Gap (Hours)</label>
-                  <input
+                  <label className="block text-sm font-semibold text-ink-primary">Rest Gap (Hours)</label>
+                  <Input
                     type="number"
                     min={8}
                     max={72}
                     value={formRestHours}
                     onChange={(e) => setFormRestHours(Number(e.target.value))}
-                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mt-1"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700">Shift Progression Sequence *</label>
-                <textarea
+                <label className="block text-sm font-semibold text-ink-primary">Shift Progression Sequence *</label>
+                <Textarea
                   rows={2}
                   required
                   value={formShifts}
                   onChange={(e) => setFormShifts(e.target.value)}
                   placeholder="Morning ➔ Afternoon ➔ Night"
-                  className="mt-1 w-full rounded-md border border-gray-300 px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1"
                 />
               </div>
 
@@ -273,31 +278,29 @@ export function RotatingShiftTab() {
                   id="shiftActive"
                   checked={formIsActive}
                   onChange={(e) => setFormIsActive(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="h-4 w-4 rounded border-divider text-primary-main focus:ring-primary-main"
                 />
-                <label htmlFor="shiftActive" className="text-sm font-medium text-gray-700">
+                <label htmlFor="shiftActive" className="text-sm font-medium text-ink-primary">
                   Active Rotating Shift Policy
                 </label>
               </div>
 
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
-                <button
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-divider">
+                <Button variant="outlined" color="inherit"
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors"
                 >
                   Save Policy
-                </button>
+                </Button>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

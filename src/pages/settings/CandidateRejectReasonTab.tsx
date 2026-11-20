@@ -3,6 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useHRSettings } from '@/hooks/useHRSettings';
 import { PlusIcon, PencilIcon, TrashIcon, SearchIcon, CheckIcon, LoaderIcon } from './SettingsIcons';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
 
 export interface RejectReason {
   id: string;
@@ -241,78 +246,78 @@ export function CandidateRejectReasonTab() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Candidate Reject Reason</h2>
-          <p className="mt-1 text-sm text-gray-500">
+          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Candidate Reject Reason</h2>
+          <p className="mt-1 text-sm text-ink-secondary">
             Define standardized rejection categories across applicant review and hiring pipeline stages.
           </p>
         </div>
-        <button
+        <Button
           type="button"
           onClick={handleOpenAdd}
-          className="inline-flex items-center justify-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors shrink-0"
+          className="shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
           + Create
-        </button>
+        </Button>
       </div>
 
-      <hr className="border-gray-200" />
+      <hr className="border-divider" />
 
       {/* Filter / Search Bar */}
       <div className="flex items-center justify-between gap-4">
         <div className="relative max-w-sm flex-1">
-          <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
+          <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-disabled" />
+          <Input
             type="text"
             placeholder="Search reject reasons..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-md border border-gray-300 bg-white pl-9 pr-3 py-1.5 text-sm text-gray-900 shadow-xs placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="pl-9 pr-3"
           />
         </div>
         {isLoading && (
-          <div className="flex items-center gap-1.5 text-xs text-gray-500">
-            <LoaderIcon className="h-3.5 w-3.5 animate-spin text-blue-600" />
+          <div className="flex items-center gap-1.5 text-xs text-ink-secondary">
+            <LoaderIcon className="h-3.5 w-3.5 animate-spin text-primary-main" />
             <span>Syncing...</span>
           </div>
         )}
       </div>
 
       {/* Table of Reasons with Company column */}
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs">
-        <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
-          <thead className="bg-gray-50/70 text-xs font-semibold text-gray-900">
+      <div className="overflow-hidden rounded-lg border border-divider bg-surface-paper shadow-xs">
+        <table className="min-w-full divide-y divide-divider text-left text-sm">
+          <thead className="bg-surface-neutral/70 text-xs font-semibold text-ink-primary">
             <tr>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                 Reject Reason
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                 Company
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                 Description
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+              <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                 Status
               </th>
-              <th scope="col" className="px-6 py-4 font-bold text-gray-900 text-right">
+              <th scope="col" className="px-6 py-4 font-bold text-ink-primary text-right">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 bg-white text-gray-800">
+          <tbody className="divide-y divide-divider bg-surface-paper text-ink-primary">
             {filteredReasons.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-10 text-center text-gray-400">
+                <td colSpan={5} className="px-6 py-10 text-center text-ink-disabled">
                   No reject reasons found. Click &quot;+ Create&quot; to add one.
                 </td>
               </tr>
             ) : (
               filteredReasons.map((reason) => (
-                <tr key={reason.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 font-medium text-gray-900">{reason.title}</td>
-                  <td className="px-6 py-4 text-gray-600">{reason.company}</td>
-                  <td className="px-6 py-4 text-gray-500 max-w-sm truncate" title={reason.description}>
+                <tr key={reason.id} className="hover:bg-surface-neutral/50 transition-colors">
+                  <td className="px-6 py-4 font-medium text-ink-primary">{reason.title}</td>
+                  <td className="px-6 py-4 text-ink-secondary">{reason.company}</td>
+                  <td className="px-6 py-4 text-ink-secondary max-w-sm truncate" title={reason.description}>
                     {reason.description || '—'}
                   </td>
                   <td className="px-6 py-4">
@@ -322,7 +327,7 @@ export function CandidateRejectReasonTab() {
                       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
                         reason.isActive
                           ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          : 'bg-surface-neutral text-ink-secondary hover:bg-grey-200'
                       }`}
                     >
                       {reason.isActive && <CheckIcon className="h-3 w-3" />}
@@ -330,20 +335,20 @@ export function CandidateRejectReasonTab() {
                     </button>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <div className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50/50 p-0.5">
+                    <div className="inline-flex items-center rounded-md border border-divider bg-surface-neutral/50 p-0.5">
                       <button
                         type="button"
                         onClick={() => handleOpenEdit(reason)}
-                        className="rounded p-1.5 text-gray-500 hover:bg-white hover:text-blue-600 hover:shadow-xs transition-colors"
+                        className="rounded p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
                         title="Edit reason"
                       >
                         <PencilIcon className="h-4 w-4" />
                       </button>
-                      <div className="h-4 w-px bg-gray-200 my-auto" />
+                      <div className="h-4 w-px bg-grey-200 my-auto" />
                       <button
                         type="button"
                         onClick={() => setDeleteTarget(reason)}
-                        className="rounded p-1.5 text-gray-400 hover:bg-white hover:text-blue-600 hover:shadow-xs transition-colors"
+                        className="rounded p-1.5 text-ink-disabled hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
                         title="Delete reason"
                       >
                         <TrashIcon className="h-4 w-4" />
@@ -359,17 +364,17 @@ export function CandidateRejectReasonTab() {
 
       {/* Modal Dialog with Company field */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-xl rounded-lg bg-white p-6 shadow-2xl transition-all animate-in fade-in zoom-in-95 duration-150">
+        <Modal open onClose={() => setModalOpen(false)} labelledBy="CandidateRejectReasonTab-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             {/* Modal Header Bar */}
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h3 className="text-base font-semibold text-gray-800">
+            <div className="flex items-center justify-between pb-3 border-b border-divider">
+              <h3 id="CandidateRejectReasonTab-modal-title-1" className="text-base font-semibold text-ink-primary">
                 {editingReason ? 'Edit Reject Reason' : 'Create Reject Reason'}
               </h3>
               <button
                 type="button"
                 onClick={() => setModalOpen(false)}
-                className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
               >
                 <span className="text-xl font-light leading-none">&times;</span>
               </button>
@@ -377,40 +382,39 @@ export function CandidateRejectReasonTab() {
 
             {/* Form inside border box matching screenshot standard */}
             <form onSubmit={handleSubmitModal} className="pt-4">
-              <div className="rounded-md border border-gray-200 p-6 space-y-5">
+              <div className="rounded-md border border-divider p-6 space-y-5">
                 {/* Field 1: Reason Title */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Reason Title:
                   </label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="e.g. Salary Expectation Exceeds Band"
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-xs placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
 
                 {/* Field 2: Company */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Company:
                   </label>
                   <div className="relative">
-                    <select
+                    <Select
                       value={formCompany}
                       onChange={(e) => setFormCompany(e.target.value)}
-                      className="w-full appearance-none rounded-md border border-gray-300 bg-white px-3.5 py-2.5 pr-10 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                      className="appearance-none pr-10 cursor-pointer"
                     >
                       {availableCompanies.map((c) => (
                         <option key={c} value={c}>
                           {c}
                         </option>
                       ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex flex-col justify-center px-2.5 text-gray-400">
+                    </Select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex flex-col justify-center px-2.5 text-ink-disabled">
                       <svg className="h-3 w-3 -mb-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
                       </svg>
@@ -423,15 +427,14 @@ export function CandidateRejectReasonTab() {
 
                 {/* Field 3: Description */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Description:
                   </label>
-                  <textarea
+                  <Textarea
                     rows={3}
                     placeholder="Explanation of when this rejection reason should be applied..."
                     value={formDescription}
                     onChange={(e) => setFormDescription(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-xs placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
 
@@ -442,54 +445,51 @@ export function CandidateRejectReasonTab() {
                     id="formIsActive"
                     checked={formIsActive}
                     onChange={(e) => setFormIsActive(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    className="h-4 w-4 rounded border-divider text-primary-main focus:ring-primary-main cursor-pointer"
                   />
-                  <label htmlFor="formIsActive" className="text-sm font-medium text-gray-700 cursor-pointer">
+                  <label htmlFor="formIsActive" className="text-sm font-medium text-ink-primary cursor-pointer">
                     Mark as Active
                   </label>
                 </div>
 
                 {/* Save Button */}
                 <div className="flex justify-end pt-3">
-                  <button
+                  <Button
                     type="submit"
-                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-7 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                   >
                     Save
-                  </button>
+                  </Button>
                 </div>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Delete Confirmation Modal */}
       {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-2xl transition-all">
-            <h3 className="text-lg font-bold text-gray-900">Delete Reject Reason</h3>
-            <p className="mt-2 text-sm text-gray-500">
+        <Modal open onClose={() => setDeleteTarget(null)} labelledBy="CandidateRejectReasonTab-modal-title-2" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+            <h3 id="CandidateRejectReasonTab-modal-title-2" className="text-lg font-bold text-ink-primary">Delete Reject Reason</h3>
+            <p className="mt-2 text-sm text-ink-secondary">
               Are you sure you want to delete the rejection reason &quot;{deleteTarget.title}&quot;? This action cannot be undone.
             </p>
             <div className="mt-6 flex justify-end gap-3">
-              <button
+              <Button variant="outlined" color="inherit"
                 type="button"
                 onClick={() => setDeleteTarget(null)}
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={confirmDelete}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
               >
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

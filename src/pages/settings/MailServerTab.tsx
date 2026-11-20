@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { CheckIcon, LoaderIcon, AlertCircleIcon, MailIcon, SendIcon, ShieldCheckIcon, ShieldAlertIcon } from './SettingsIcons';
 import api from '@/lib/api';
 import { EMAIL_CONFIG } from '@/lib/endpoints';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 interface EmailConfigData {
   configured: boolean;
@@ -127,7 +130,7 @@ export function MailServerTab() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <LoaderIcon className="h-8 w-8 text-blue-600" />
+        <LoaderIcon className="h-8 w-8 text-primary-main" />
       </div>
     );
   }
@@ -136,8 +139,8 @@ export function MailServerTab() {
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-gray-900">Mail Server (SMTP)</h2>
-          <p className="mt-1 text-sm text-gray-500">
+          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Mail Server (SMTP)</h2>
+          <p className="mt-1 text-sm text-ink-secondary">
             Configure SMTP credentials for transactional emails, payslips, and applicant invitations.
           </p>
         </div>
@@ -163,103 +166,96 @@ export function MailServerTab() {
         )}
       </div>
 
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-6">
+      <div className="rounded-2xl border border-divider bg-surface-paper p-6 shadow-xs space-y-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {/* SMTP Host */}
           <div>
-            <label className="mb-1 block text-sm font-semibold text-gray-700">SMTP Host</label>
-            <input
+            <label className="mb-1 block text-sm font-semibold text-ink-primary">SMTP Host</label>
+            <Input
               type="text"
               value={emailForm.smtp_host}
               onChange={(e) => setEmailForm((p) => ({ ...p, smtp_host: e.target.value }))}
               placeholder="smtp.gmail.com"
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           {/* SMTP Port */}
           <div>
-            <label className="mb-1 block text-sm font-semibold text-gray-700">SMTP Port</label>
-            <input
+            <label className="mb-1 block text-sm font-semibold text-ink-primary">SMTP Port</label>
+            <Input
               type="number"
               min={1}
               max={65535}
               value={emailForm.smtp_port}
               onChange={(e) => setEmailForm((p) => ({ ...p, smtp_port: parseInt(e.target.value, 10) || 587 }))}
               placeholder="587"
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           {/* SMTP Username */}
           <div>
-            <label className="mb-1 block text-sm font-semibold text-gray-700">SMTP Username</label>
-            <input
+            <label className="mb-1 block text-sm font-semibold text-ink-primary">SMTP Username</label>
+            <Input
               type="text"
               value={emailForm.smtp_username}
               onChange={(e) => setEmailForm((p) => ({ ...p, smtp_username: e.target.value }))}
               placeholder="hr@company.com"
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           {/* SMTP Password */}
           <div>
-            <label className="mb-1 block text-sm font-semibold text-gray-700">
+            <label className="mb-1 block text-sm font-semibold text-ink-primary">
               SMTP Password
               {emailConfig?.password_set && (
-                <span className="ml-2 text-xs font-normal text-gray-400">(leave blank to keep current)</span>
+                <span className="ml-2 text-xs font-normal text-ink-disabled">(leave blank to keep current)</span>
               )}
             </label>
-            <input
+            <Input
               type="password"
               value={emailForm.smtp_password}
               onChange={(e) => setEmailForm((p) => ({ ...p, smtp_password: e.target.value }))}
               placeholder={emailConfig?.password_set ? '••••••••' : 'App password or SMTP secret'}
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           {/* From Email */}
           <div>
-            <label className="mb-1 block text-sm font-semibold text-gray-700">From Email Address</label>
-            <input
+            <label className="mb-1 block text-sm font-semibold text-ink-primary">From Email Address</label>
+            <Input
               type="email"
               value={emailForm.from_email}
               onChange={(e) => setEmailForm((p) => ({ ...p, from_email: e.target.value }))}
               placeholder="notifications@company.com"
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           {/* From Name */}
           <div>
-            <label className="mb-1 block text-sm font-semibold text-gray-700">From Name</label>
-            <input
+            <label className="mb-1 block text-sm font-semibold text-ink-primary">From Name</label>
+            <Input
               type="text"
               value={emailForm.from_name}
               onChange={(e) => setEmailForm((p) => ({ ...p, from_name: e.target.value }))}
               placeholder="DigiHRMS Notifications"
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
 
           {/* Reply-To Email */}
           <div>
-            <label className="mb-1 block text-sm font-semibold text-gray-700">Reply-To Email (Optional)</label>
-            <input
+            <label className="mb-1 block text-sm font-semibold text-ink-primary">Reply-To Email (Optional)</label>
+            <Input
               type="email"
               value={emailForm.reply_to_email}
               onChange={(e) => setEmailForm((p) => ({ ...p, reply_to_email: e.target.value }))}
               placeholder="support@company.com"
-              className="w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
         </div>
 
         {/* Encryption Checkboxes */}
         <div className="flex flex-wrap items-center gap-6 pt-2">
-          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-ink-primary cursor-pointer">
             <input
               type="checkbox"
               checked={emailForm.use_tls}
@@ -270,12 +266,12 @@ export function MailServerTab() {
                   use_ssl: e.target.checked ? false : p.use_ssl,
                 }));
               }}
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 rounded border-divider text-primary-main focus:ring-primary-main"
             />
             <span>Use TLS (Port 587 recommended)</span>
           </label>
 
-          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-ink-primary cursor-pointer">
             <input
               type="checkbox"
               checked={emailForm.use_ssl}
@@ -286,17 +282,17 @@ export function MailServerTab() {
                   use_tls: e.target.checked ? false : p.use_tls,
                 }));
               }}
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 rounded border-divider text-primary-main focus:ring-primary-main"
             />
             <span>Use SSL (Port 465)</span>
           </label>
 
-          <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm font-semibold text-ink-primary cursor-pointer">
             <input
               type="checkbox"
               checked={emailForm.is_active}
               onChange={(e) => setEmailForm((p) => ({ ...p, is_active: e.target.checked }))}
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 rounded border-divider text-primary-main focus:ring-primary-main"
             />
             <span>Enable System Email Delivery</span>
           </label>
@@ -310,11 +306,10 @@ export function MailServerTab() {
 
         {/* Buttons */}
         <div className="pt-2 flex flex-wrap items-center gap-4">
-          <button
+          <Button
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 transition-colors"
           >
             {saving ? (
               <>
@@ -323,16 +318,15 @@ export function MailServerTab() {
             ) : (
               'Save SMTP Settings'
             )}
-          </button>
+          </Button>
 
-          <button
+          <Button variant="outlined" color="inherit"
             type="button"
             onClick={() => setShowTestModal(true)}
             disabled={!emailConfig?.configured}
-            className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:opacity-50 transition-colors"
           >
-            <SendIcon className="h-4 w-4 text-gray-500" /> Send Test Email
-          </button>
+            <SendIcon className="h-4 w-4 text-ink-secondary" /> Send Test Email
+          </Button>
 
           {saved && (
             <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
@@ -342,7 +336,7 @@ export function MailServerTab() {
         </div>
 
         {emailConfig?.last_tested_at && (
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-ink-disabled">
             Last successful delivery test: {new Date(emailConfig.last_tested_at).toLocaleString()}
           </p>
         )}
@@ -350,26 +344,29 @@ export function MailServerTab() {
 
       {/* Test Email Modal */}
       {showTestModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+        <Modal open onClose={() => {
+                  setShowTestModal(false);
+                  setTestResult(null);
+                }} labelledBy="MailServerTab-modal-title-1" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-lighter text-primary-main">
                 <MailIcon className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-gray-900">Send Test Email</h3>
-                <p className="text-xs text-gray-500">Verify SMTP handshake & authentication</p>
+                <h3 id="MailServerTab-modal-title-1" className="text-base font-bold text-ink-primary">Send Test Email</h3>
+                <p className="text-xs text-ink-secondary">Verify SMTP handshake & authentication</p>
               </div>
             </div>
 
             <div className="mt-4">
-              <label className="block text-xs font-semibold text-gray-700">Recipient Email</label>
-              <input
+              <label className="block text-xs font-semibold text-ink-primary">Recipient Email</label>
+              <Input
                 type="email"
                 value={testEmailAddress}
                 onChange={(e) => setTestEmailAddress(e.target.value)}
                 placeholder="you@example.com"
-                className="mt-1 w-full rounded-lg border border-gray-300 px-3.5 py-2 text-sm shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="mt-1"
               />
             </div>
 
@@ -390,15 +387,14 @@ export function MailServerTab() {
                   setShowTestModal(false);
                   setTestResult(null);
                 }}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="rounded-lg border border-divider px-4 py-2 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
               >
                 Close
               </button>
-              <button
+              <Button
                 type="button"
                 onClick={handleSendTestEmail}
                 disabled={testingEmail || !testEmailAddress}
-                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
               >
                 {testingEmail ? (
                   <>
@@ -407,10 +403,10 @@ export function MailServerTab() {
                 ) : (
                   'Send Test'
                 )}
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import { PlusIcon, PencilIcon, TrashIcon, CheckIcon } from './SettingsIcons';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 
 interface RotatingWorkType {
   id: string;
@@ -126,27 +130,27 @@ export function RotatingWorkTypeTab() {
     <div className="space-y-6 py-2">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Rotating Work Type</h2>
-          <p className="mt-1 text-sm text-gray-500">
+          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Rotating Work Type</h2>
+          <p className="mt-1 text-sm text-ink-secondary">
             Define recurring cyclic rotation schedules between multiple work arrangements.
           </p>
         </div>
-        <button
+        <Button
           type="button"
           onClick={handleOpenAdd}
-          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors shrink-0"
+          className="shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
           Add Rotating Work Type
-        </button>
+        </Button>
       </div>
 
-      <hr className="border-gray-200" />
+      <hr className="border-divider" />
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs">
-        <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
-          <thead className="bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
+      <div className="overflow-hidden rounded-xl border border-divider bg-surface-paper shadow-xs">
+        <table className="min-w-full divide-y divide-divider text-left text-sm">
+          <thead className="bg-surface-neutral text-xs font-semibold uppercase tracking-wider text-ink-secondary">
             <tr>
               <th className="px-6 py-3.5">Policy / Schedule Name</th>
               <th className="px-6 py-3.5">Rotation Frequency</th>
@@ -156,17 +160,17 @@ export function RotatingWorkTypeTab() {
               <th className="px-6 py-3.5 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 bg-white">
+          <tbody className="divide-y divide-divider bg-surface-paper">
             {items.map((item) => (
-              <tr key={item.id} className="hover:bg-gray-50/80 transition-colors">
-                <td className="px-6 py-4 font-semibold text-gray-900">{item.name}</td>
-                <td className="px-6 py-4 font-medium text-gray-700">{item.frequency}</td>
+              <tr key={item.id} className="hover:bg-surface-neutral/80 transition-colors">
+                <td className="px-6 py-4 font-semibold text-ink-primary">{item.name}</td>
+                <td className="px-6 py-4 font-medium text-ink-primary">{item.frequency}</td>
                 <td className="px-6 py-4">
-                  <span className="font-mono text-xs text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                  <span className="font-mono text-xs text-primary-main font-semibold bg-primary-lighter px-2 py-0.5 rounded border border-primary-light">
                     {item.sequence}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-gray-600 text-xs">{item.departments}</td>
+                <td className="px-6 py-4 text-ink-secondary text-xs">{item.departments}</td>
                 <td className="px-6 py-4">
                   <button
                     type="button"
@@ -174,7 +178,7 @@ export function RotatingWorkTypeTab() {
                     className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
                       item.isActive
                         ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        : 'bg-surface-neutral text-ink-secondary hover:bg-grey-200'
                     }`}
                   >
                     {item.isActive && <CheckIcon className="h-3 w-3" />}
@@ -186,7 +190,7 @@ export function RotatingWorkTypeTab() {
                     <button
                       type="button"
                       onClick={() => handleOpenEdit(item)}
-                      className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-blue-600 transition-colors"
+                      className="rounded p-1.5 text-ink-secondary hover:bg-surface-neutral hover:text-primary-main transition-colors"
                       title="Edit policy"
                     >
                       <PencilIcon className="h-4 w-4" />
@@ -194,7 +198,7 @@ export function RotatingWorkTypeTab() {
                     <button
                       type="button"
                       onClick={() => handleDelete(item.id)}
-                      className="rounded p-1.5 text-gray-500 hover:bg-gray-100 hover:text-red-600 transition-colors"
+                      className="rounded p-1.5 text-ink-secondary hover:bg-surface-neutral hover:text-red-600 transition-colors"
                       title="Delete policy"
                     >
                       <TrashIcon className="h-4 w-4" />
@@ -209,59 +213,59 @@ export function RotatingWorkTypeTab() {
 
       {/* Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl space-y-4">
-            <h3 className="text-lg font-bold text-gray-900">
+        <Modal open onClose={() => setModalOpen(false)} labelledBy="RotatingWorkTypeTab-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 space-y-4 min-h-0 flex-1 overflow-y-auto">
+            <h3 id="RotatingWorkTypeTab-modal-title-1" className="text-lg font-bold text-ink-primary">
               {editingItem ? 'Edit Rotating Work Type' : 'Add Rotating Work Type'}
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700">Schedule Name *</label>
-                <input
+                <label className="block text-sm font-semibold text-ink-primary">Schedule Name *</label>
+                <Input
                   type="text"
                   required
                   placeholder="e.g. Weekly Hybrid Alternation"
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
-                  className="mt-1 w-full rounded-md border border-gray-300 px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700">Rotation Cycle</label>
-                  <select
+                  <label className="block text-sm font-semibold text-ink-primary">Rotation Cycle</label>
+                  <Select
                     value={formFrequency}
                     onChange={(e) => setFormFrequency(e.target.value)}
-                    className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mt-1"
                   >
                     <option value="Every 7 Days">Every 7 Days</option>
                     <option value="Every 14 Days">Every 14 Days</option>
                     <option value="Every 30 Days">Every 30 Days</option>
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700">Sequence Pattern</label>
-                  <input
+                  <label className="block text-sm font-semibold text-ink-primary">Sequence Pattern</label>
+                  <Input
                     type="text"
                     value={formSequence}
                     onChange={(e) => setFormSequence(e.target.value)}
                     placeholder="e.g. On-site ➔ Remote"
-                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="mt-1"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700">Assigned Departments / Teams</label>
-                <input
+                <label className="block text-sm font-semibold text-ink-primary">Assigned Departments / Teams</label>
+                <Input
                   type="text"
                   value={formDepartments}
                   onChange={(e) => setFormDepartments(e.target.value)}
                   placeholder="e.g. Engineering, Sales, QA"
-                  className="mt-1 w-full rounded-md border border-gray-300 px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="mt-1"
                 />
               </div>
 
@@ -271,31 +275,29 @@ export function RotatingWorkTypeTab() {
                   id="rotActive"
                   checked={formIsActive}
                   onChange={(e) => setFormIsActive(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="h-4 w-4 rounded border-divider text-primary-main focus:ring-primary-main"
                 />
-                <label htmlFor="rotActive" className="text-sm font-medium text-gray-700">
+                <label htmlFor="rotActive" className="text-sm font-medium text-ink-primary">
                   Active Rotation Schedule
                 </label>
               </div>
 
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
-                <button
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-divider">
+                <Button variant="outlined" color="inherit"
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors"
                 >
                   Save Schedule
-                </button>
+                </Button>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

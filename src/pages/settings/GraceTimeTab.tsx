@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
 import type { DefaultGraceTimeConfig, GraceTimeRecordItem } from '@/hooks/useHRSettings';
 import { PlusIcon, PencilIcon, TrashIcon, CheckIcon, LoaderIcon } from './SettingsIcons';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 
 const DEFAULT_GRACE_TIME_STORAGE_KEY = 'hrms_default_grace_time';
 const GRACE_TIME_RECORDS_STORAGE_KEY = 'hrms_grace_time_records';
@@ -239,37 +243,37 @@ export function GraceTimeTab() {
          ─────────────────────────────────────────────────────────── */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Default Grace Time</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Default Grace Time</h2>
         </div>
 
-        <hr className="border-gray-200" />
+        <hr className="border-divider" />
 
-        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xs">
-          <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
-            <thead className="bg-gray-50/70 text-xs font-semibold text-gray-900">
+        <div className="overflow-hidden rounded-lg border border-divider bg-surface-paper shadow-xs">
+          <table className="min-w-full divide-y divide-divider text-left text-sm">
+            <thead className="bg-surface-neutral/70 text-xs font-semibold text-ink-primary">
               <tr>
-                <th scope="col" className="px-6 py-4 font-bold text-gray-900 w-1/4">
+                <th scope="col" className="px-6 py-4 font-bold text-ink-primary w-1/4">
                   Allowed time
                 </th>
-                <th scope="col" className="px-6 py-4 font-bold text-gray-900 w-1/6">
+                <th scope="col" className="px-6 py-4 font-bold text-ink-primary w-1/6">
                   Is active
                 </th>
-                <th scope="col" className="px-6 py-4 font-bold text-gray-900 w-1/5">
+                <th scope="col" className="px-6 py-4 font-bold text-ink-primary w-1/5">
                   <div>Applicable on clock-</div>
                   <div>in</div>
                 </th>
-                <th scope="col" className="px-6 py-4 font-bold text-gray-900 w-1/5">
+                <th scope="col" className="px-6 py-4 font-bold text-ink-primary w-1/5">
                   <div>Applicable on clock-</div>
                   <div>out</div>
                 </th>
-                <th scope="col" className="px-6 py-4 font-bold text-gray-900 w-1/6">
+                <th scope="col" className="px-6 py-4 font-bold text-ink-primary w-1/6">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 bg-white text-gray-800">
-              <tr className="hover:bg-gray-50/50 transition-colors">
-                <td className="px-6 py-4 font-medium text-gray-900">
+            <tbody className="divide-y divide-divider bg-surface-paper text-ink-primary">
+              <tr className="hover:bg-surface-neutral/50 transition-colors">
+                <td className="px-6 py-4 font-medium text-ink-primary">
                   {defaultGraceTime.allowed_time || '00:10:00 Hours'}
                 </td>
                 <td className="px-6 py-4">
@@ -278,13 +282,13 @@ export function GraceTimeTab() {
                     role="switch"
                     aria-checked={defaultGraceTime.is_active}
                     onClick={() => handleToggleDefault('is_active')}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      defaultGraceTime.is_active ? 'bg-blue-600' : 'bg-gray-300'
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                      defaultGraceTime.is_active ? 'bg-primary-main' : 'bg-grey-300'
                     }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                         defaultGraceTime.is_active ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
@@ -296,13 +300,13 @@ export function GraceTimeTab() {
                     role="switch"
                     aria-checked={defaultGraceTime.applicable_clock_in}
                     onClick={() => handleToggleDefault('applicable_clock_in')}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      defaultGraceTime.applicable_clock_in ? 'bg-blue-600' : 'bg-gray-300'
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                      defaultGraceTime.applicable_clock_in ? 'bg-primary-main' : 'bg-grey-300'
                     }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                         defaultGraceTime.applicable_clock_in ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
@@ -314,29 +318,29 @@ export function GraceTimeTab() {
                     role="switch"
                     aria-checked={defaultGraceTime.applicable_clock_out}
                     onClick={() => handleToggleDefault('applicable_clock_out')}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      defaultGraceTime.applicable_clock_out ? 'bg-blue-600' : 'bg-gray-300'
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                      defaultGraceTime.applicable_clock_out ? 'bg-primary-main' : 'bg-grey-300'
                     }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                         defaultGraceTime.applicable_clock_out ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
                   </button>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50/50 p-0.5">
+                  <div className="inline-flex items-center rounded-md border border-divider bg-surface-neutral/50 p-0.5">
                     <button
                       type="button"
                       onClick={handleOpenEditDefault}
                       title="Edit Default Grace Time"
-                      className="rounded p-1.5 text-gray-500 hover:bg-white hover:text-blue-600 hover:shadow-xs transition-colors"
+                      className="rounded p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
                     >
                       <PencilIcon className="h-4 w-4" />
                     </button>
-                    <div className="h-4 w-px bg-gray-200 my-auto" />
+                    <div className="h-4 w-px bg-grey-200 my-auto" />
                     <button
                       type="button"
                       onClick={() => {
@@ -346,7 +350,7 @@ export function GraceTimeTab() {
                         );
                       }}
                       title="Reset / Deactivate"
-                      className="rounded p-1.5 text-red-500 hover:bg-white hover:text-red-700 hover:shadow-xs transition-colors"
+                      className="rounded p-1.5 text-red-500 hover:bg-surface-paper hover:text-red-700 hover:shadow-xs transition-colors"
                     >
                       <TrashIcon className="h-4 w-4" />
                     </button>
@@ -364,57 +368,57 @@ export function GraceTimeTab() {
       <div className="space-y-4 pt-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900">Grace Time</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Grace Time</h2>
           </div>
-          <button
+          <Button
             type="button"
             onClick={handleOpenCreateRecord}
-            className="inline-flex items-center justify-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors shrink-0"
+            className="shrink-0"
           >
             <PlusIcon className="h-4 w-4" />
             + Create
-          </button>
+          </Button>
         </div>
 
-        <hr className="border-gray-200" />
+        <hr className="border-divider" />
 
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-xs">
-          <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
-            <thead className="bg-gray-50/70 text-xs font-semibold text-gray-900">
+        <div className="overflow-x-auto rounded-lg border border-divider bg-surface-paper shadow-xs">
+          <table className="min-w-full divide-y divide-divider text-left text-sm">
+            <thead className="bg-surface-neutral/70 text-xs font-semibold text-ink-primary">
               <tr>
-                <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+                <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                   Allowed time
                 </th>
-                <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+                <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                   Is active
                 </th>
-                <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+                <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                   <div>Applicable on</div>
                   <div>clock-in</div>
                 </th>
-                <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+                <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                   <div>Applicable on</div>
                   <div>clock-out</div>
                 </th>
-                <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+                <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                   Assigned Shifts
                 </th>
-                <th scope="col" className="px-6 py-4 font-bold text-gray-900">
+                <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 bg-white text-gray-800">
+            <tbody className="divide-y divide-divider bg-surface-paper text-ink-primary">
               {records.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-10 text-center text-gray-400">
+                  <td colSpan={6} className="px-6 py-10 text-center text-ink-disabled">
                     No shift-specific grace time rules configured. Click &quot;+ Create&quot; to add one.
                   </td>
                 </tr>
               ) : (
                 records.map((record) => (
-                  <tr key={record.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                  <tr key={record.id} className="hover:bg-surface-neutral/50 transition-colors">
+                    <td className="px-6 py-4 font-medium text-ink-primary whitespace-nowrap">
                       {record.allowed_time}
                     </td>
                     <td className="px-6 py-4">
@@ -423,13 +427,13 @@ export function GraceTimeTab() {
                         role="switch"
                         aria-checked={record.is_active}
                         onClick={() => handleToggleRecord(record.id, 'is_active')}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                          record.is_active ? 'bg-blue-600' : 'bg-gray-300'
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                          record.is_active ? 'bg-primary-main' : 'bg-grey-300'
                         }`}
                       >
                         <span
                           aria-hidden="true"
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                             record.is_active ? 'translate-x-5' : 'translate-x-0'
                           }`}
                         />
@@ -441,13 +445,13 @@ export function GraceTimeTab() {
                         role="switch"
                         aria-checked={record.applicable_clock_in}
                         onClick={() => handleToggleRecord(record.id, 'applicable_clock_in')}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                          record.applicable_clock_in ? 'bg-blue-600' : 'bg-gray-300'
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                          record.applicable_clock_in ? 'bg-primary-main' : 'bg-grey-300'
                         }`}
                       >
                         <span
                           aria-hidden="true"
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                             record.applicable_clock_in ? 'translate-x-5' : 'translate-x-0'
                           }`}
                         />
@@ -459,37 +463,37 @@ export function GraceTimeTab() {
                         role="switch"
                         aria-checked={record.applicable_clock_out}
                         onClick={() => handleToggleRecord(record.id, 'applicable_clock_out')}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                          record.applicable_clock_out ? 'bg-blue-600' : 'bg-gray-300'
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                          record.applicable_clock_out ? 'bg-primary-main' : 'bg-grey-300'
                         }`}
                       >
                         <span
                           aria-hidden="true"
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                             record.applicable_clock_out ? 'translate-x-5' : 'translate-x-0'
                           }`}
                         />
                       </button>
                     </td>
-                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                    <td className="px-6 py-4 font-medium text-ink-primary whitespace-nowrap">
                       {record.assigned_shifts || 'General shift'}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50/50 p-0.5">
+                      <div className="inline-flex items-center rounded-md border border-divider bg-surface-neutral/50 p-0.5">
                         <button
                           type="button"
                           onClick={() => handleOpenEditRecord(record)}
                           title="Edit Grace Time"
-                          className="rounded p-1.5 text-gray-500 hover:bg-white hover:text-blue-600 hover:shadow-xs transition-colors"
+                          className="rounded p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
                         >
                           <PencilIcon className="h-4 w-4" />
                         </button>
-                        <div className="h-4 w-px bg-gray-200 my-auto" />
+                        <div className="h-4 w-px bg-grey-200 my-auto" />
                         <button
                           type="button"
                           onClick={() => setDeleteId(record.id)}
                           title="Delete Grace Time"
-                          className="rounded p-1.5 text-red-500 hover:bg-white hover:text-red-700 hover:shadow-xs transition-colors"
+                          className="rounded p-1.5 text-red-500 hover:bg-surface-paper hover:text-red-700 hover:shadow-xs transition-colors"
                         >
                           <TrashIcon className="h-4 w-4" />
                         </button>
@@ -507,50 +511,49 @@ export function GraceTimeTab() {
           MODAL: Edit Default Grace Time
          ─────────────────────────────────────────────────────────── */}
       {editDefaultModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-2xl transition-all animate-in fade-in zoom-in-95 duration-150">
+        <Modal open onClose={() => setEditDefaultModalOpen(false)} labelledBy="GraceTimeTab-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center justify-between pb-4">
-              <h3 className="text-xl font-bold text-gray-900">Edit Default Grace Time</h3>
+              <h3 id="GraceTimeTab-modal-title-1" className="text-xl font-bold text-ink-primary">Edit Default Grace Time</h3>
               <button
                 type="button"
                 onClick={() => setEditDefaultModalOpen(false)}
-                className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
               >
                 <span className="text-xl font-light leading-none">&times;</span>
               </button>
             </div>
 
             <form onSubmit={handleSaveDefault} className="space-y-5">
-              <div className="rounded-md border border-gray-200 p-5 space-y-4">
+              <div className="rounded-md border border-divider p-5 space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Allowed time
                   </label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="00:10:00 Hours"
                     value={formDefaultAllowedTime}
                     onChange={(e) => setFormDefaultAllowedTime(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
-                  <p className="mt-1 text-xs text-gray-500">Default permissible delay (e.g., 00:10:00 Hours).</p>
+                  <p className="mt-1 text-xs text-ink-secondary">Default permissible delay (e.g., 00:10:00 Hours).</p>
                 </div>
 
                 <div className="flex items-center justify-between py-1">
-                  <span className="text-sm font-semibold text-gray-900">Is active</span>
+                  <span className="text-sm font-semibold text-ink-primary">Is active</span>
                   <button
                     type="button"
                     role="switch"
                     aria-checked={formDefaultIsActive}
                     onClick={() => setFormDefaultIsActive((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formDefaultIsActive ? 'bg-blue-600' : 'bg-gray-300'
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                      formDefaultIsActive ? 'bg-primary-main' : 'bg-grey-300'
                     }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                         formDefaultIsActive ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
@@ -558,19 +561,19 @@ export function GraceTimeTab() {
                 </div>
 
                 <div className="flex items-center justify-between py-1">
-                  <span className="text-sm font-semibold text-gray-900">Applicable on clock-in</span>
+                  <span className="text-sm font-semibold text-ink-primary">Applicable on clock-in</span>
                   <button
                     type="button"
                     role="switch"
                     aria-checked={formDefaultClockIn}
                     onClick={() => setFormDefaultClockIn((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formDefaultClockIn ? 'bg-blue-600' : 'bg-gray-300'
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                      formDefaultClockIn ? 'bg-primary-main' : 'bg-grey-300'
                     }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                         formDefaultClockIn ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
@@ -578,19 +581,19 @@ export function GraceTimeTab() {
                 </div>
 
                 <div className="flex items-center justify-between py-1">
-                  <span className="text-sm font-semibold text-gray-900">Applicable on clock-out</span>
+                  <span className="text-sm font-semibold text-ink-primary">Applicable on clock-out</span>
                   <button
                     type="button"
                     role="switch"
                     aria-checked={formDefaultClockOut}
                     onClick={() => setFormDefaultClockOut((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formDefaultClockOut ? 'bg-blue-600' : 'bg-gray-300'
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                      formDefaultClockOut ? 'bg-primary-main' : 'bg-grey-300'
                     }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                         formDefaultClockOut ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
@@ -599,17 +602,15 @@ export function GraceTimeTab() {
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
-                <button
+                <Button variant="outlined" color="inherit"
                   type="button"
                   onClick={() => setEditDefaultModalOpen(false)}
-                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
                   disabled={updateSettings.isPending}
-                  className="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50"
                 >
                   {updateSettings.isPending ? (
                     <span className="flex items-center gap-1.5">
@@ -619,80 +620,78 @@ export function GraceTimeTab() {
                   ) : (
                     'Save'
                   )}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* ───────────────────────────────────────────────────────────
           MODAL: Create / Edit Grace Time Record
          ─────────────────────────────────────────────────────────── */}
       {recordModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-2xl transition-all animate-in fade-in zoom-in-95 duration-150">
+        <Modal open onClose={() => setRecordModalOpen(false)} labelledBy="GraceTimeTab-modal-title-2" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center justify-between pb-4">
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 id="GraceTimeTab-modal-title-2" className="text-xl font-bold text-ink-primary">
                 {editingRecord ? 'Edit Grace Time' : 'Create Grace Time'}
               </h3>
               <button
                 type="button"
                 onClick={() => setRecordModalOpen(false)}
-                className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
               >
                 <span className="text-xl font-light leading-none">&times;</span>
               </button>
             </div>
 
             <form onSubmit={handleSaveRecord} className="space-y-5">
-              <div className="rounded-md border border-gray-200 p-5 space-y-4">
+              <div className="rounded-md border border-divider p-5 space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Allowed time
                   </label>
-                  <input
+                  <Input
                     type="text"
                     required
                     placeholder="00:15:00 Hours"
                     value={formRecordAllowedTime}
                     onChange={(e) => setFormRecordAllowedTime(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
-                  <p className="mt-1 text-xs text-gray-500">Grace period format: HH:MM:SS Hours.</p>
+                  <p className="mt-1 text-xs text-ink-secondary">Grace period format: HH:MM:SS Hours.</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Assigned Shifts
                   </label>
-                  <select
+                  <Select
                     value={formRecordAssignedShift}
                     onChange={(e) => setFormRecordAssignedShift(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     {SHIFT_OPTIONS.map((shift) => (
                       <option key={shift} value={shift}>
                         {shift}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div className="flex items-center justify-between py-1">
-                  <span className="text-sm font-semibold text-gray-900">Is active</span>
+                  <span className="text-sm font-semibold text-ink-primary">Is active</span>
                   <button
                     type="button"
                     role="switch"
                     aria-checked={formRecordIsActive}
                     onClick={() => setFormRecordIsActive((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formRecordIsActive ? 'bg-blue-600' : 'bg-gray-300'
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                      formRecordIsActive ? 'bg-primary-main' : 'bg-grey-300'
                     }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                         formRecordIsActive ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
@@ -700,19 +699,19 @@ export function GraceTimeTab() {
                 </div>
 
                 <div className="flex items-center justify-between py-1">
-                  <span className="text-sm font-semibold text-gray-900">Applicable on clock-in</span>
+                  <span className="text-sm font-semibold text-ink-primary">Applicable on clock-in</span>
                   <button
                     type="button"
                     role="switch"
                     aria-checked={formRecordClockIn}
                     onClick={() => setFormRecordClockIn((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formRecordClockIn ? 'bg-blue-600' : 'bg-gray-300'
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                      formRecordClockIn ? 'bg-primary-main' : 'bg-grey-300'
                     }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                         formRecordClockIn ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
@@ -720,19 +719,19 @@ export function GraceTimeTab() {
                 </div>
 
                 <div className="flex items-center justify-between py-1">
-                  <span className="text-sm font-semibold text-gray-900">Applicable on clock-out</span>
+                  <span className="text-sm font-semibold text-ink-primary">Applicable on clock-out</span>
                   <button
                     type="button"
                     role="switch"
                     aria-checked={formRecordClockOut}
                     onClick={() => setFormRecordClockOut((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formRecordClockOut ? 'bg-blue-600' : 'bg-gray-300'
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                      formRecordClockOut ? 'bg-primary-main' : 'bg-grey-300'
                     }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
                         formRecordClockOut ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
@@ -741,17 +740,15 @@ export function GraceTimeTab() {
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
-                <button
+                <Button variant="outlined" color="inherit"
                   type="button"
                   onClick={() => setRecordModalOpen(false)}
-                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
                   disabled={updateSettings.isPending}
-                  className="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50"
                 >
                   {updateSettings.isPending ? (
                     <span className="flex items-center gap-1.5">
@@ -761,39 +758,37 @@ export function GraceTimeTab() {
                   ) : (
                     'Save'
                   )}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Delete Confirmation Modal */}
       {deleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-2xl transition-all">
-            <h3 className="text-lg font-bold text-gray-900">Delete Grace Time Rule</h3>
-            <p className="mt-2 text-sm text-gray-500">
+        <Modal open onClose={() => setDeleteId(null)} labelledBy="GraceTimeTab-modal-title-3" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+            <h3 id="GraceTimeTab-modal-title-3" className="text-lg font-bold text-ink-primary">Delete Grace Time Rule</h3>
+            <p className="mt-2 text-sm text-ink-secondary">
               Are you sure you want to delete this grace time rule? This action cannot be undone.
             </p>
             <div className="mt-6 flex justify-end gap-3">
-              <button
+              <Button variant="outlined" color="inherit"
                 type="button"
                 onClick={() => setDeleteId(null)}
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={confirmDeleteRecord}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
               >
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

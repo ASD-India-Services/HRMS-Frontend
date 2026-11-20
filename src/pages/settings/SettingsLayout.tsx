@@ -137,29 +137,29 @@ export function SettingsLayout() {
   const currentPathSegment = location.pathname.split('/').pop() || 'general-settings';
 
   return (
-    <div className="min-h-screen bg-[#fafbfc] px-4 py-6 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-surface-neutral px-4 py-6 sm:px-6 lg:px-8">
       {/* ─── Breadcrumb Navigation ────────────────────────────────────── */}
-      <nav className="mb-4 flex items-center gap-2 text-xs text-gray-500">
-        <Link to="/" className="hover:text-gray-900 transition-colors">
+      <nav className="mb-4 flex items-center gap-2 text-xs text-ink-secondary">
+        <Link to="/" className="hover:text-ink-primary transition-colors">
           DigiHRMS
         </Link>
         <span>&gt;</span>
-        <span className="text-gray-600">settings</span>
+        <span className="text-ink-secondary">settings</span>
         <span>&gt;</span>
-        <span className="font-semibold text-gray-900">{currentPathSegment}</span>
+        <span className="font-semibold text-ink-primary">{currentPathSegment}</span>
       </nav>
 
       {/* ─── Page Title ──────────────────────────────────────────────── */}
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">Settings</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight text-ink-primary">Settings</h1>
         </div>
       </div>
 
       {/* ─── Two-Column Container ────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Sidebar Navigation */}
-        <aside className="lg:col-span-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-xs">
+        <aside className="lg:col-span-3 rounded-2xl border border-divider bg-surface-paper p-4 shadow-xs">
           <div className="space-y-6">
             {SETTINGS_GROUPS.map((group) => {
               const isCollapsed = !!collapsedGroups[group.id];
@@ -171,16 +171,16 @@ export function SettingsLayout() {
                   <button
                     type="button"
                     onClick={() => toggleGroup(group.id)}
-                    className="flex w-full items-center justify-between px-2 py-1.5 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition-colors"
+                    className="flex w-full items-center justify-between px-2 py-1.5 text-xs font-bold uppercase tracking-wider text-ink-secondary hover:text-ink-primary transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <GroupIcon className="h-4 w-4 text-gray-400" />
+                      <GroupIcon className="h-4 w-4 text-ink-disabled" />
                       <span>{group.label}</span>
                     </div>
                     {isCollapsed ? (
-                      <ChevronRightIcon className="h-3.5 w-3.5 text-gray-400" />
+                      <ChevronRightIcon className="h-3.5 w-3.5 text-ink-disabled" />
                     ) : (
-                      <ChevronDownIcon className="h-3.5 w-3.5 text-gray-400" />
+                      <ChevronDownIcon className="h-3.5 w-3.5 text-ink-disabled" />
                     )}
                   </button>
 
@@ -198,8 +198,8 @@ export function SettingsLayout() {
                             to={item.path}
                             className={`flex items-center justify-between px-3.5 py-2.5 text-sm transition-all ${
                               isActive
-                                ? 'rounded-2xl border-2 border-blue-600 bg-blue-50/70 font-bold text-blue-600 shadow-xs'
-                                : 'rounded-xl text-gray-700 hover:bg-gray-50 hover:text-gray-900 font-medium'
+                                ? 'rounded-2xl border-2 border-primary-main bg-primary-lighter/70 font-bold text-primary-main shadow-xs'
+                                : 'rounded-xl text-ink-primary hover:bg-surface-neutral hover:text-ink-primary font-medium'
                             }`}
                           >
                             <span>{item.label}</span>
@@ -215,7 +215,7 @@ export function SettingsLayout() {
         </aside>
 
         {/* Right Main Content Panel */}
-        <main className="lg:col-span-9 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-xs min-h-[500px]">
+        <main className="lg:col-span-9 rounded-2xl border border-divider bg-surface-paper p-6 sm:p-8 shadow-xs min-h-[500px]">
           <Outlet />
         </main>
       </div>
