@@ -16,8 +16,15 @@ import {
   useDeleteCompensatoryLeaveComment,
 } from '@/hooks/useCompensatoryLeave';
 import type { CompensatoryLeaveRequest } from '@/hooks/useCompensatoryLeave';
+import { Modal } from '@/components/ui/Modal';
+import { useToast } from '@/components/ui/Toast';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
 
 export default function CompensatoryLeave() {
+  const { showToast } = useToast();
   const { hasPermission } = useHrmsPermissionsContext();
   const canCreate = hasPermission('compensatory_leave.create');
   const canApprove = hasPermission('compensatory_leave.approve') || hasPermission('leaves.approve');
@@ -239,7 +246,7 @@ export default function CompensatoryLeave() {
         err?.response?.data?.detail ||
         err?.response?.data?.message ||
         'Unable to post comment.';
-      alert(msg);
+      showToast(msg, 'error');
     }
   };
 
@@ -255,7 +262,7 @@ export default function CompensatoryLeave() {
       refetchComments();
       refetch();
     } catch (err: any) {
-      alert(err?.response?.data?.detail || 'Failed to delete comment.');
+      showToast(err?.response?.data?.detail || 'Failed to delete comment.', 'error');
     }
   };
 
@@ -279,7 +286,7 @@ export default function CompensatoryLeave() {
       setApproverComment('');
       refetch();
     } catch (err: any) {
-      alert(err?.response?.data?.detail || 'Action failed.');
+      showToast(err?.response?.data?.detail || 'Action failed.', 'error');
     }
   };
 
@@ -290,14 +297,14 @@ export default function CompensatoryLeave() {
       await deleteMutation.mutateAsync(id);
       refetch();
     } catch (err: any) {
-      alert(err?.response?.data?.detail || 'Delete failed.');
+      showToast(err?.response?.data?.detail || 'Delete failed.', 'error');
     }
   };
 
   // If user clicked comments on a request, show the Comments view matching user screenshot
   if (commentsViewReq) {
     return (
-      <div className="p-8 bg-white min-h-screen">
+      <div className="p-8 bg-surface-paper min-h-screen">
         {/* Top Header matching user screenshot: > Comments */}
         <div className="flex items-center justify-between pb-4 mb-4">
           <div className="flex items-center gap-2">
@@ -307,12 +314,12 @@ export default function CompensatoryLeave() {
                 setCommentsViewReq(null);
                 setNewCommentText('');
               }}
-              className="flex items-center gap-2 text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors cursor-pointer"
+              className="flex items-center gap-2 text-2xl font-bold text-ink-primary hover:text-primary-main transition-colors cursor-pointer"
             >
-              <span className="text-gray-600 font-bold">&gt;</span>
+              <span className="text-ink-secondary font-bold">&gt;</span>
               <span>Comments</span>
             </button>
-            <span className="text-xs text-gray-500 font-medium">
+            <span className="text-xs text-ink-secondary font-medium">
               — {commentsViewReq.employee_name} ({commentsViewReq.formatted_work_date})
             </span>
           </div>
@@ -323,7 +330,7 @@ export default function CompensatoryLeave() {
               setCommentsViewReq(null);
               setNewCommentText('');
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary-main hover:text-primary-dark bg-primary-lighter hover:bg-primary-lighter rounded-md transition-colors cursor-pointer"
           >
             ← Back to Requests
           </button>
@@ -332,38 +339,37 @@ export default function CompensatoryLeave() {
         {/* Input box matching screenshot: "Comment here" with full width border */}
         <form onSubmit={handlePostComment} className="mb-4">
           <div className="relative">
-            <input
+            <Input
               type="text"
               value={newCommentText}
               onChange={(e) => setNewCommentText(e.target.value)}
               placeholder="Comment here"
-              className="w-full text-xs px-4 py-3 border border-gray-900 rounded-none bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder-gray-400 text-gray-900"
             />
             {newCommentText.trim() && (
-              <button
+              <Button size="small"
                 type="submit"
                 disabled={addCommentMutation.isPending}
-                className="absolute right-2 top-2 px-3.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                className="absolute"
               >
                 {addCommentMutation.isPending ? 'Posting...' : 'Post'}
-              </button>
+              </Button>
             )}
           </div>
         </form>
 
-        <div className="border-b border-gray-200 mb-8" />
+        <div className="border-b border-divider mb-8" />
 
         {/* Body: Empty State or Comments List */}
         {commentsList.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="text-base font-medium text-gray-800 mb-8">
+            <p className="text-base font-medium text-ink-primary mb-8">
               There are no comments to show.
             </p>
 
             {/* Illustration matching screenshot: speech bubble with user avatar & pencil */}
             <div className="w-28 h-28 flex items-center justify-center">
               <svg
-                className="w-24 h-24 text-gray-900"
+                className="w-24 h-24 text-ink-primary"
                 viewBox="0 0 64 64"
                 fill="none"
                 stroke="currentColor"
@@ -387,21 +393,21 @@ export default function CompensatoryLeave() {
         ) : (
           <div className="space-y-4 max-w-3xl">
             {commentsList.map((c) => (
-              <div key={c.id} className="p-4 bg-white border border-gray-200 rounded-md shadow-2xs">
+              <div key={c.id} className="p-4 bg-surface-paper border border-divider rounded-md shadow-2xs">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">
+                    <div className="w-7 h-7 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center text-xs font-bold">
                       {c.author_name ? c.author_name.charAt(0).toUpperCase() : 'U'}
                     </div>
-                    <span className="text-xs font-bold text-gray-900">{c.author_name}</span>
+                    <span className="text-xs font-bold text-ink-primary">{c.author_name}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-gray-400">{c.created_at_display}</span>
+                    <span className="text-[11px] text-ink-disabled">{c.created_at_display}</span>
                     {(isApproverOrAdmin || (currentEmployee && c.author === currentEmployee.id)) && (
                       <button
                         type="button"
                         onClick={() => handleDeleteComment(c.id)}
-                        className="text-gray-400 hover:text-red-600 transition-colors p-1"
+                        className="text-ink-disabled hover:text-red-600 transition-colors p-1"
                         title="Delete comment"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -411,7 +417,7 @@ export default function CompensatoryLeave() {
                     )}
                   </div>
                 </div>
-                <p className="text-xs text-gray-800 pl-9 whitespace-pre-wrap">{c.comment}</p>
+                <p className="text-xs text-ink-primary pl-9 whitespace-pre-wrap">{c.comment}</p>
               </div>
             ))}
           </div>
@@ -423,11 +429,11 @@ export default function CompensatoryLeave() {
   const requests = data?.results || [];
 
   return (
-    <div className="p-6 bg-slate-50 min-h-screen">
+    <div className="p-6 bg-surface-neutral min-h-screen">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+          <h1 className="text-2xl font-bold text-ink-primary tracking-tight">
             Compensatory Leave Requests
           </h1>
         </div>
@@ -436,7 +442,7 @@ export default function CompensatoryLeave() {
         <div className="flex items-center gap-3">
           {/* Search Input */}
           <div className="relative">
-            <input
+            <Input
               type="text"
               value={search}
               onChange={(e) => {
@@ -444,10 +450,10 @@ export default function CompensatoryLeave() {
                 setPage(1);
               }}
               placeholder="Search"
-              className="text-xs w-48 sm:w-56 pl-8 pr-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-sm"
+              className="w-48 sm:w-56 pl-8 pr-3"
             />
             <svg
-              className="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5"
+              className="w-4 h-4 text-ink-disabled absolute left-2.5 top-2.5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -468,8 +474,8 @@ export default function CompensatoryLeave() {
               onClick={() => setIsFilterOpen(!isFilterOpen)}
               className={`inline-flex items-center gap-1.5 px-3.5 py-2 border rounded-md text-xs font-semibold shadow-sm transition-colors ${
                 statusFilter
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-300 bg-white hover:bg-gray-50 text-gray-700'
+                  ? 'border-primary-main bg-primary-lighter text-primary-dark'
+                  : 'border-divider bg-surface-paper hover:bg-surface-neutral text-ink-primary'
               }`}
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -484,8 +490,8 @@ export default function CompensatoryLeave() {
             </button>
 
             {isFilterOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-xl p-3 z-30">
-                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">
+              <div className="absolute right-0 mt-2 w-48 bg-surface-paper border border-divider rounded-md shadow-xl p-3 z-30">
+                <p className="text-[11px] font-bold text-ink-secondary uppercase tracking-wider mb-2">
                   Filter by Status
                 </p>
                 <div className="space-y-1">
@@ -500,8 +506,8 @@ export default function CompensatoryLeave() {
                       }}
                       className={`w-full text-left text-xs px-2 py-1.5 rounded transition-colors ${
                         statusFilter === s
-                          ? 'bg-blue-600 text-white font-bold'
-                          : 'hover:bg-gray-100 text-gray-700'
+                          ? 'bg-primary-main text-white font-bold'
+                          : 'hover:bg-surface-neutral text-ink-primary'
                       }`}
                     >
                       {s === '' ? 'All Statuses' : s.charAt(0).toUpperCase() + s.slice(1)}
@@ -513,7 +519,7 @@ export default function CompensatoryLeave() {
           </div>
 
           {/* Blue + Create Button gated on compensatory_leave.create permission */}
-          <button
+          <Button size="small"
             type="button"
             onClick={() => {
               if (!canCreate) return;
@@ -528,21 +534,20 @@ export default function CompensatoryLeave() {
             }}
             disabled={!canCreate}
             title={!canCreate ? 'Create permission required' : 'Create Compensatory Leave Request'}
-            className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-semibold px-4 py-2 rounded-md shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             <span>+ Create</span>
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Status Indicators Legend matching Screenshots 1, 2, 4 */}
-      <div className="flex justify-end items-center gap-4 py-2 text-xs font-medium text-gray-700">
+      <div className="flex justify-end items-center gap-4 py-2 text-xs font-medium text-ink-primary">
         <div className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
           <span>Approved</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
+          <span className="w-2.5 h-2.5 rounded-full bg-primary-main inline-block"></span>
           <span>Requested</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -552,7 +557,7 @@ export default function CompensatoryLeave() {
       </div>
 
       {/* Tabs matching Screenshots */}
-      <div className="bg-white rounded-t-lg border border-b-0 border-gray-200 flex items-center">
+      <div className="bg-surface-paper rounded-t-lg border border-b-0 border-divider flex items-center">
         <button
           type="button"
           onClick={() => {
@@ -561,8 +566,8 @@ export default function CompensatoryLeave() {
           }}
           className={`py-3 px-6 text-sm font-semibold transition-colors border-b-2 ${
             activeTab === 'my'
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-gray-600 hover:text-gray-900'
+              ? 'border-primary-main text-primary-main'
+              : 'border-transparent text-ink-secondary hover:text-ink-primary'
           }`}
         >
           My Compensatory Leave Requests
@@ -577,8 +582,8 @@ export default function CompensatoryLeave() {
             }}
             className={`py-3 px-6 text-sm font-semibold transition-colors border-b-2 ${
               activeTab === 'all'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-600 hover:text-gray-900'
+                ? 'border-primary-main text-primary-main'
+                : 'border-transparent text-ink-secondary hover:text-ink-primary'
             }`}
           >
             Compensatory Leave Requests
@@ -587,17 +592,17 @@ export default function CompensatoryLeave() {
       </div>
 
       {/* Main Content: Table or Empty State */}
-      <div className="bg-white border border-gray-200 rounded-b-lg shadow-sm overflow-hidden">
+      <div className="bg-surface-paper border border-divider rounded-b-lg shadow-sm overflow-hidden">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-24 text-gray-500">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-3"></div>
+          <div className="flex flex-col items-center justify-center py-24 text-ink-secondary">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-main mb-3"></div>
             <p className="text-xs font-medium">Loading compensatory leave requests...</p>
           </div>
         ) : requests.length === 0 ? (
           /* Empty State matching Screenshot 1 */
           <div className="py-24 flex flex-col items-center justify-center text-center">
             {/* 3 Checklist Icons illustration */}
-            <div className="flex flex-col items-center gap-1 text-gray-800 mb-4 opacity-80">
+            <div className="flex flex-col items-center gap-1 text-ink-primary mb-4 opacity-80">
               <div className="flex items-center gap-2 text-base font-bold">
                 <span>☑ 👤 ═</span>
               </div>
@@ -608,7 +613,7 @@ export default function CompensatoryLeave() {
                 <span>☑ 👤 ═</span>
               </div>
             </div>
-            <p className="text-sm font-medium text-gray-600">
+            <p className="text-sm font-medium text-ink-secondary">
               You have No leave requests for this filter.
             </p>
           </div>
@@ -617,7 +622,7 @@ export default function CompensatoryLeave() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-gray-50/80 border-b border-gray-200 text-gray-700 font-semibold">
+                <tr className="bg-surface-neutral/80 border-b border-divider text-ink-primary font-semibold">
                   <th className="py-3 px-4 min-w-[200px]">
                     <span className="inline-flex items-center gap-1">⇅ Employee</span>
                   </th>
@@ -636,14 +641,14 @@ export default function CompensatoryLeave() {
                   <th className="py-3 px-3 text-center min-w-[120px]">Confirmation</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-divider">
                 {requests.map((req) => {
                   const isApproved = req.status === 'approved';
                   const isRejected = req.status === 'rejected';
                   const isRequested = req.status === 'submitted' || req.status === 'draft';
 
                   return (
-                    <tr key={req.id} className="hover:bg-blue-50/20 transition-colors relative">
+                    <tr key={req.id} className="hover:bg-primary-lighter/20 transition-colors relative">
                       {/* Employee Column with Avatar & Left Indicator Pill */}
                       <td className="py-3 px-4 relative">
                         {/* Status Left Edge Bar */}
@@ -653,19 +658,19 @@ export default function CompensatoryLeave() {
                               ? 'bg-green-500'
                               : isRejected
                               ? 'bg-red-500'
-                              : 'bg-blue-500'
+                              : 'bg-primary-main'
                           }`}
                         />
                         <div className="flex items-center gap-2.5 pl-1">
-                          <div className="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-bold shrink-0">
+                          <div className="w-7 h-7 rounded-full bg-grey-200 text-ink-secondary flex items-center justify-center text-xs font-bold shrink-0">
                             👤
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text-ink-primary">
                               {req.employee_name || 'Employee'}
                             </span>
                             {req.employee_code && (
-                              <span className="text-[11px] text-gray-500">
+                              <span className="text-[11px] text-ink-secondary">
                                 ({req.employee_code})
                               </span>
                             )}
@@ -674,22 +679,22 @@ export default function CompensatoryLeave() {
                       </td>
 
                       {/* Leave Type */}
-                      <td className="py-3 px-3 text-gray-700 font-medium">
+                      <td className="py-3 px-3 text-ink-primary font-medium">
                         {req.leave_type_name || 'Compensatory Leave'}
                       </td>
 
                       {/* Attendance Dates */}
-                      <td className="py-3 px-3 text-gray-700 font-medium whitespace-nowrap">
+                      <td className="py-3 px-3 text-ink-primary font-medium whitespace-nowrap">
                         {req.formatted_work_date || req.work_date}
                       </td>
 
                       {/* Requested Days */}
-                      <td className="py-3 px-3 text-gray-800 font-bold">
+                      <td className="py-3 px-3 text-ink-primary font-bold">
                         {Number(req.days).toFixed(1)}
                       </td>
 
                       {/* Created By */}
-                      <td className="py-3 px-3 text-gray-600 font-medium">
+                      <td className="py-3 px-3 text-ink-secondary font-medium">
                         {req.created_by || req.employee_name}
                       </td>
 
@@ -701,7 +706,7 @@ export default function CompensatoryLeave() {
                               ? 'text-green-600'
                               : isRejected
                               ? 'text-red-600'
-                              : 'text-blue-600'
+                              : 'text-primary-main'
                           }`}
                         >
                           {req.status_display || (isRequested ? 'Requested' : req.status)}
@@ -709,7 +714,7 @@ export default function CompensatoryLeave() {
                       </td>
 
                       {/* Description */}
-                      <td className="py-3 px-3 text-gray-600 max-w-[220px] truncate" title={req.reason}>
+                      <td className="py-3 px-3 text-ink-secondary max-w-[220px] truncate" title={req.reason}>
                         {req.reason || '—'}
                       </td>
 
@@ -732,7 +737,7 @@ export default function CompensatoryLeave() {
 
                       {/* Actions: Edit & Delete */}
                       <td className="py-3 px-3 text-center">
-                        <div className="inline-flex items-center border border-gray-200 rounded divide-x divide-gray-200 bg-white shadow-2xs">
+                        <div className="inline-flex items-center border border-divider rounded divide-x divide-divider bg-surface-paper shadow-2xs">
                           {/* Edit Button */}
                           <button
                             type="button"
@@ -746,8 +751,8 @@ export default function CompensatoryLeave() {
                             disabled={req.status === 'approved'}
                             className={`p-1.5 transition-colors ${
                               req.status === 'approved'
-                                ? 'text-gray-300 cursor-not-allowed'
-                                : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50 cursor-pointer'
+                                ? 'text-grey-300 cursor-not-allowed'
+                                : 'text-ink-secondary hover:text-primary-main hover:bg-primary-lighter cursor-pointer'
                             }`}
                             title={req.status === 'approved' ? 'Approved request cannot be edited' : 'Edit Request'}
                           >
@@ -763,8 +768,8 @@ export default function CompensatoryLeave() {
                             disabled={req.status === 'approved'}
                             className={`p-1.5 transition-colors ${
                               req.status === 'approved'
-                                ? 'text-gray-300 cursor-not-allowed'
-                                : 'text-gray-500 hover:text-red-600 hover:bg-red-50 cursor-pointer'
+                                ? 'text-grey-300 cursor-not-allowed'
+                                : 'text-ink-secondary hover:text-red-600 hover:bg-red-50 cursor-pointer'
                             }`}
                             title={req.status === 'approved' ? 'Approved request cannot be deleted' : 'Delete Request'}
                           >
@@ -797,21 +802,21 @@ export default function CompensatoryLeave() {
                               </button>
                             )}
                             {canReject && (
-                              <button
+                              <Button color="error" size="small"
                                 type="button"
                                 onClick={() => {
                                   setCommentModalReq(req);
                                   setConfirmAction('reject');
                                 }}
-                                className="w-7 h-7 rounded bg-red-500 hover:bg-red-600 text-white flex items-center justify-center font-bold text-xs shadow-xs transition-colors"
+                                className="w-7"
                                 title="Reject Request"
                               >
                                 ✕
-                              </button>
+                              </Button>
                             )}
                           </div>
                         ) : (
-                          <span className="text-gray-400 text-[11px]">—</span>
+                          <span className="text-ink-disabled text-[11px]">—</span>
                         )}
                       </td>
                     </tr>
@@ -823,7 +828,7 @@ export default function CompensatoryLeave() {
         )}
 
         {/* Bottom Pagination matching Screenshot 2 & 4 */}
-        <div className="bg-gray-50 border-t border-gray-200 px-4 py-3 flex items-center justify-between text-xs text-gray-700">
+        <div className="bg-surface-neutral border-t border-divider px-4 py-3 flex items-center justify-between text-xs text-ink-primary">
           <div>
             Page <span className="font-semibold">{data?.current_page || 1}</span> of{' '}
             <span className="font-semibold">{data?.total_pages || 1}</span>.
@@ -831,7 +836,7 @@ export default function CompensatoryLeave() {
 
           <div className="flex items-center gap-2">
             <span>Page</span>
-            <input
+            <Input
               type="number"
               min={1}
               max={data?.total_pages || 1}
@@ -842,28 +847,26 @@ export default function CompensatoryLeave() {
                   setPage(val);
                 }
               }}
-              className="w-12 text-center text-xs py-1 px-1.5 border border-gray-300 rounded bg-white font-medium focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-12 text-center font-medium"
             />
             <span>of {data?.total_pages || 1}</span>
 
             {/* Blue Navigation Buttons */}
             <div className="flex items-center gap-1 ml-2">
-              <button
+              <Button size="small"
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="px-2.5 py-1 text-xs font-semibold rounded bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 Prev
-              </button>
-              <button
+              </Button>
+              <Button size="small"
                 type="button"
                 onClick={() => setPage((p) => Math.min(data?.total_pages || 1, p + 1))}
                 disabled={page >= (data?.total_pages || 1)}
-                className="px-2.5 py-1 text-xs font-semibold rounded bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 Next
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -871,17 +874,17 @@ export default function CompensatoryLeave() {
 
       {/* Create Compensatory Leave Request Modal matching Screenshot 3 */}
       {isCreateOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-lg bg-white rounded-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+        <Modal open onClose={() => setIsCreateOpen(false)} labelledBy="CompensatoryLeave-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="min-h-0 flex-1 overflow-y-auto">
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-5 border-b border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900">
+            <div className="flex items-center justify-between p-5 border-b border-divider">
+              <h2 id="CompensatoryLeave-modal-title-1" className="text-lg font-bold text-ink-primary">
                 Create Compensatory Leave Request
               </h2>
               <button
                 type="button"
                 onClick={() => setIsCreateOpen(false)}
-                className="text-gray-400 hover:text-gray-600 text-lg font-bold p-1"
+                className="text-ink-disabled hover:text-ink-secondary text-lg font-bold p-1"
               >
                 ✕
               </button>
@@ -897,7 +900,7 @@ export default function CompensatoryLeave() {
 
               {/* Employee * */}
               <div>
-                <label className="block text-xs font-semibold text-gray-800 mb-1.5">
+                <label className="block text-xs font-semibold text-ink-primary mb-1.5">
                   Employee *
                 </label>
                 <select
@@ -907,8 +910,8 @@ export default function CompensatoryLeave() {
                     setSelectedEmployee(e.target.value);
                     setSelectedAttendance('');
                   }}
-                  className={`w-full text-xs px-3 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 ${
-                    !isApproverOrAdmin ? 'bg-gray-100 cursor-not-allowed opacity-90' : ''
+                  className={`w-full text-xs px-3 py-2 border border-divider rounded bg-surface-paper focus:outline-none focus:ring-1 focus:ring-primary-main ${
+                    !isApproverOrAdmin ? 'bg-surface-neutral cursor-not-allowed opacity-90' : ''
                   }`}
                 >
                   {!isApproverOrAdmin && currentEmployee ? (
@@ -927,7 +930,7 @@ export default function CompensatoryLeave() {
                   )}
                 </select>
                 {!isApproverOrAdmin && (
-                  <p className="text-[11px] text-gray-400 mt-1">
+                  <p className="text-[11px] text-ink-disabled mt-1">
                     Logged-in employee is automatically selected.
                   </p>
                 )}
@@ -935,13 +938,12 @@ export default function CompensatoryLeave() {
 
               {/* Attendance * Dropdown */}
               <div>
-                <label className="block text-xs font-semibold text-gray-800 mb-1.5">
+                <label className="block text-xs font-semibold text-ink-primary mb-1.5">
                   Attendance *
                 </label>
-                <select
+                <Select
                   value={selectedAttendance}
                   onChange={(e) => setSelectedAttendance(e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="">Select attendance date worked</option>
                   {attendanceOptions.map((att) => (
@@ -952,15 +954,14 @@ export default function CompensatoryLeave() {
                   {isApproverOrAdmin && (
                     <option value="custom">-- Custom Date (Enter Below) --</option>
                   )}
-                </select>
+                </Select>
                 {selectedAttendance === 'custom' && (
                   <div className="mt-2">
-                    <input
+                    <Input
                       type="date"
                       onChange={(e) => setSelectedAttendance(e.target.value)}
-                      className="w-full text-xs px-3 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
-                    <p className="text-[11px] text-gray-400 mt-1">
+                    <p className="text-[11px] text-ink-disabled mt-1">
                       Enter the rest day, weekend, or holiday date worked.
                     </p>
                   </div>
@@ -969,39 +970,40 @@ export default function CompensatoryLeave() {
 
               {/* Description * */}
               <div>
-                <label className="block text-xs font-semibold text-gray-800 mb-1.5">
+                <label className="block text-xs font-semibold text-ink-primary mb-1.5">
                   Description *
                 </label>
-                <textarea
+                <Textarea
                   rows={4}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Description"
-                  className="w-full text-xs px-3 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               {/* Modal Footer with Blue Save button matching requirement */}
               <div className="flex justify-end pt-3">
-                <button
+                <Button size="small"
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-6 py-2 rounded-md shadow-sm transition-colors disabled:opacity-50"
                 >
                   {createMutation.isPending ? 'Saving...' : 'Save'}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Edit Compensatory Leave Request Modal */}
       {isEditOpen && editReq && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-lg bg-white rounded-lg shadow-xl overflow-hidden">
-            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-gray-900">
+        <Modal open onClose={() => {
+                  setIsEditOpen(false);
+                  setEditReq(null);
+                }} labelledBy="CompensatoryLeave-modal-title-2" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <div className="p-4 border-b border-divider flex items-center justify-between">
+              <h3 id="CompensatoryLeave-modal-title-2" className="text-sm font-bold text-ink-primary">
                 Edit Compensatory Leave Request
               </h3>
               <button
@@ -1010,7 +1012,7 @@ export default function CompensatoryLeave() {
                   setIsEditOpen(false);
                   setEditReq(null);
                 }}
-                className="text-gray-400 hover:text-gray-600 text-sm font-bold cursor-pointer"
+                className="text-ink-disabled hover:text-ink-secondary text-sm font-bold cursor-pointer"
               >
                 ✕
               </button>
@@ -1025,65 +1027,65 @@ export default function CompensatoryLeave() {
 
               {/* Employee (Read-only) */}
               <div>
-                <label className="block text-xs font-semibold text-gray-800 mb-1.5">
+                <label className="block text-xs font-semibold text-ink-primary mb-1.5">
                   Employee
                 </label>
-                <input
+                <Input
                   type="text"
                   disabled
                   value={`${editReq.employee_name} ${editReq.employee_code ? `(${editReq.employee_code})` : ''}`}
-                  className="w-full text-xs px-3 py-2 border border-gray-200 rounded bg-gray-100 text-gray-700 cursor-not-allowed"
+                  className="cursor-not-allowed"
                 />
               </div>
 
               {/* Attendance Date * */}
               <div>
-                <label className="block text-xs font-semibold text-gray-800 mb-1.5">
+                <label className="block text-xs font-semibold text-ink-primary mb-1.5">
                   Attendance Date *
                 </label>
-                <input
+                <Input
                   type="date"
                   value={editAttendance}
                   onChange={(e) => setEditAttendance(e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               {/* Description * */}
               <div>
-                <label className="block text-xs font-semibold text-gray-800 mb-1.5">
+                <label className="block text-xs font-semibold text-ink-primary mb-1.5">
                   Description *
                 </label>
-                <textarea
+                <Textarea
                   rows={4}
                   value={editDescription}
                   onChange={(e) => setEditDescription(e.target.value)}
                   placeholder="Description"
-                  className="w-full text-xs px-3 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
 
               {/* Blue Save button */}
               <div className="flex justify-end pt-3">
-                <button
+                <Button size="small"
                   type="submit"
                   disabled={updateMutation.isPending}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-6 py-2 rounded-md shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   {updateMutation.isPending ? 'Saving...' : 'Save'}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Decision / Comment Modal */}
       {commentModalReq && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md bg-white rounded-lg shadow-xl overflow-hidden">
-            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-gray-900">
+        <Modal open onClose={() => {
+                  setCommentModalReq(null);
+                  setConfirmAction(null);
+                }} labelledBy="CompensatoryLeave-modal-title-3" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <div className="p-4 border-b border-divider flex items-center justify-between">
+              <h3 id="CompensatoryLeave-modal-title-3" className="text-sm font-bold text-ink-primary">
                 {confirmAction === 'approve'
                   ? 'Approve Compensatory Leave'
                   : confirmAction === 'reject'
@@ -1096,7 +1098,7 @@ export default function CompensatoryLeave() {
                   setCommentModalReq(null);
                   setConfirmAction(null);
                 }}
-                className="text-gray-400 hover:text-gray-600 text-sm font-bold"
+                className="text-ink-disabled hover:text-ink-secondary text-sm font-bold"
               >
                 ✕
               </button>
@@ -1104,60 +1106,57 @@ export default function CompensatoryLeave() {
 
             <div className="p-4 space-y-3 text-xs">
               <div>
-                <span className="font-semibold text-gray-600">Employee: </span>
-                <span className="text-gray-900">{commentModalReq.employee_name}</span>
+                <span className="font-semibold text-ink-secondary">Employee: </span>
+                <span className="text-ink-primary">{commentModalReq.employee_name}</span>
               </div>
               <div>
-                <span className="font-semibold text-gray-600">Attendance Date: </span>
-                <span className="text-gray-900">{commentModalReq.formatted_work_date}</span>
+                <span className="font-semibold text-ink-secondary">Attendance Date: </span>
+                <span className="text-ink-primary">{commentModalReq.formatted_work_date}</span>
               </div>
               <div>
-                <span className="font-semibold text-gray-600">Reason: </span>
-                <p className="mt-1 p-2 bg-gray-50 rounded text-gray-800 border border-gray-200">
+                <span className="font-semibold text-ink-secondary">Reason: </span>
+                <p className="mt-1 p-2 bg-surface-neutral rounded text-ink-primary border border-divider">
                   {commentModalReq.reason || 'No description provided.'}
                 </p>
               </div>
 
               {confirmAction && (
                 <div>
-                  <label className="block font-semibold text-gray-800 mb-1">
+                  <label className="block font-semibold text-ink-primary mb-1">
                     Approver Comment / Note
                   </label>
-                  <textarea
+                  <Textarea
                     rows={3}
                     value={approverComment}
                     onChange={(e) => setApproverComment(e.target.value)}
                     placeholder="Enter approval or rejection comments..."
-                    className="w-full px-2.5 py-1.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               )}
             </div>
 
-            <div className="p-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-2">
-              <button
+            <div className="p-4 bg-surface-neutral border-t border-divider flex justify-end gap-2">
+              <Button variant="outlined" color="inherit" size="small"
                 type="button"
                 onClick={() => {
                   setCommentModalReq(null);
                   setConfirmAction(null);
                 }}
-                className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-100"
               >
                 Close
-              </button>
+              </Button>
 
               {confirmAction && (
-                <button
+                <Button size="small"
                   type="button"
                   onClick={handleConfirmDecision}
-                  className="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded shadow-sm"
                 >
                   Confirm {confirmAction === 'approve' ? 'Approval' : 'Rejection'}
-                </button>
+                </Button>
               )}
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );
