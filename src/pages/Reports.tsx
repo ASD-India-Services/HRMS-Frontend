@@ -1,5 +1,6 @@
-/**
 import { Button } from '@/components/ui/Button';
+
+/**
  * Reports — Grid of available HR report cards.
  *
  * Static layout for now; each card shows the report name with a "Coming Soon" badge.
