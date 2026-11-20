@@ -32,6 +32,14 @@ const ROUTES: Array<[slug: string, path: string]> = [
   ['expenses', '/expenses'],
   ['settings-general', '/settings/general-settings'],
   ['settings-leave-types', '/settings/leave-types'],
+  ['meetings', '/meetings'],
+  ['employee-bonus-points', '/employee-bonus-points'],
+  ['work-records', '/work-records'],
+  ['shift-requests', '/shift-requests'],
+  ['company-leaves', '/company-leaves'],
+  ['policies', '/policies'],
+  ['helpdesk-faqs', '/helpdesk/faqs'],
+  ['holiday-lists', '/holiday-lists'],
 ]
 
 async function shot(page: import('@playwright/test').Page, slug: string) {

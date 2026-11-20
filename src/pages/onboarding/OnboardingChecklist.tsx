@@ -68,7 +68,7 @@ export function OnboardingChecklist({ employeeId }: OnboardingChecklistProps) {
             <div
               className="h-10 w-10 rounded-full border-4 border-green-500"
               style={{
-                background: `conic-gradient(#22c55e ${progressPercentage * 3.6}deg, #e5e7eb ${progressPercentage * 3.6}deg)`,
+                background: `conic-gradient(rgb(var(--success-main)) ${progressPercentage * 3.6}deg, rgb(var(--grey-300)) ${progressPercentage * 3.6}deg)`,
               }}
               role="progressbar"
               aria-valuenow={progressPercentage}

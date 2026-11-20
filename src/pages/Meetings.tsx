@@ -800,7 +800,7 @@ export default function Meetings() {
                   <button
                     type="button"
                     onClick={() => setIsDeptFilterOpen(!isDeptFilterOpen)}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#f95932] hover:text-[#d8431f] transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-error-main hover:text-error-dark transition-colors cursor-pointer"
                   >
                     <span className="text-sm leading-none font-bold">⊝</span>
                     <span>Filter</span>

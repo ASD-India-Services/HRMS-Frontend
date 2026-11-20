@@ -30,12 +30,12 @@ interface AttendanceItem {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  present: '#10b981',
-  late: '#f59e0b',
-  half_day: '#8b5cf6',
-  absent: '#ef4444',
-  on_leave: '#3b82f6',
-  holiday: '#6b7280',
+  present: 'rgb(var(--success-main))',
+  late: 'rgb(var(--warning-main))',
+  half_day: 'rgb(var(--secondary-main))',
+  absent: 'rgb(var(--error-main))',
+  on_leave: 'rgb(var(--info-main))',
+  holiday: 'rgb(var(--grey-500))',
 };
 
 export default function AttendanceDashboard() {
@@ -96,10 +96,10 @@ export default function AttendanceDashboard() {
 
   // Pie chart data
   const statusPieData = [
-    { name: 'Present On-Time', value: Math.max(0, presentCount - lateCount), color: '#10b981' },
-    { name: 'Late Check-in', value: lateCount, color: '#f59e0b' },
-    { name: 'On Leave', value: onLeaveCount, color: '#3b82f6' },
-    { name: 'Absent / Unlogged', value: absentCount, color: '#ef4444' },
+    { name: 'Present On-Time', value: Math.max(0, presentCount - lateCount), color: 'rgb(var(--success-main))' },
+    { name: 'Late Check-in', value: lateCount, color: 'rgb(var(--warning-main))' },
+    { name: 'On Leave', value: onLeaveCount, color: 'rgb(var(--info-main))' },
+    { name: 'Absent / Unlogged', value: absentCount, color: 'rgb(var(--error-main))' },
   ].filter((d) => d.value > 0);
 
   const chartTrend = trendData?.data ?? [];
@@ -244,18 +244,18 @@ export default function AttendanceDashboard() {
                 <AreaChart data={chartTrend} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
                   <defs>
                     <linearGradient id="attendGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                      <stop offset="5%" stopColor="rgb(var(--info-main))" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="rgb(var(--info-main))" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--grey-200))" />
                   <XAxis dataKey="label" tick={{ fontSize: 11 }} />
                   <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                   <Tooltip
                     formatter={(val: unknown) => [typeof val === 'number' ? val : 0, 'Employees']}
-                    contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                    contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
                   />
-                  <Area type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#attendGrad)" />
+                  <Area type="monotone" dataKey="value" stroke="rgb(var(--info-main))" strokeWidth={2} fillOpacity={1} fill="url(#attendGrad)" />
                 </AreaChart>
               </ResponsiveContainer>
             )}
@@ -291,7 +291,7 @@ export default function AttendanceDashboard() {
                   </Pie>
                   <Tooltip
                     formatter={(val: unknown) => [typeof val === 'number' ? val : 0, 'Employees']}
-                    contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                    contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -357,8 +357,8 @@ export default function AttendanceDashboard() {
                       <span
                         className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize"
                         style={{
-                          backgroundColor: `${STATUS_COLORS[rec.status || 'present'] || '#10b981'}15`,
-                          color: STATUS_COLORS[rec.status || 'present'] || '#10b981',
+                          backgroundColor: `color-mix(in srgb, ${STATUS_COLORS[rec.status || 'present'] || 'rgb(var(--success-main))'} 8%, transparent)`,
+                          color: STATUS_COLORS[rec.status || 'present'] || 'rgb(var(--success-main))',
                         }}
                       >
                         {rec.is_late ? 'Late' : rec.status || 'Present'}

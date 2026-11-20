@@ -48,7 +48,7 @@ interface SalaryStructure {
   is_active?: boolean;
 }
 
-const COST_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
+const COST_COLORS = ['rgb(var(--info-main))', 'rgb(var(--success-main))', 'rgb(var(--warning-main))', 'rgb(var(--secondary-main))'];
 
 export default function PayrollDashboard() {
   // Fetch salary slips
@@ -127,9 +127,9 @@ export default function PayrollDashboard() {
 
   // Breakdown chart
   const costBreakdownData = [
-    { name: 'Net Pay (Disbursed)', value: Math.max(1, Math.round(totalNetPay || 750000)), color: '#10b981' },
-    { name: 'Deductions (PF/Tax/ESI)', value: Math.max(1, Math.round(totalDeductions || 120000)), color: '#f59e0b' },
-    { name: 'Employer Contribution', value: Math.max(1, Math.round((totalGrossPay - totalNetPay) * 0.5 || 60000)), color: '#3b82f6' },
+    { name: 'Net Pay (Disbursed)', value: Math.max(1, Math.round(totalNetPay || 750000)), color: 'rgb(var(--success-main))' },
+    { name: 'Deductions (PF/Tax/ESI)', value: Math.max(1, Math.round(totalDeductions || 120000)), color: 'rgb(var(--warning-main))' },
+    { name: 'Employer Contribution', value: Math.max(1, Math.round((totalGrossPay - totalNetPay) * 0.5 || 60000)), color: 'rgb(var(--info-main))' },
   ];
 
   const chartTrend = trendData?.data ?? [];
@@ -281,11 +281,11 @@ export default function PayrollDashboard() {
               <AreaChart data={chartTrend} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
                 <defs>
                   <linearGradient id="payrollGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    <stop offset="5%" stopColor="rgb(var(--success-main))" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="rgb(var(--success-main))" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--grey-200))" />
                 <XAxis dataKey="label" tick={{ fontSize: 11 }} />
                 <YAxis
                   tick={{ fontSize: 11 }}
@@ -293,9 +293,9 @@ export default function PayrollDashboard() {
                 />
                 <Tooltip
                   formatter={(val: unknown) => [typeof val === 'number' ? formatCurrency(val) : '₹0', 'Net Disbursement']}
-                  contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                  contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
                 />
-                <Area type="monotone" dataKey="value" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#payrollGrad)" />
+                <Area type="monotone" dataKey="value" stroke="rgb(var(--success-main))" strokeWidth={2} fillOpacity={1} fill="url(#payrollGrad)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -330,7 +330,7 @@ export default function PayrollDashboard() {
                   </Pie>
                   <Tooltip
                     formatter={(val: unknown) => [typeof val === 'number' ? formatCurrency(val) : '₹0', 'Amount']}
-                    contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                    contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
                   />
                 </PieChart>
               </ResponsiveContainer>

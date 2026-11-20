@@ -26,8 +26,8 @@ interface RoleItem {
 }
 
 const MODULE_COLORS = [
-  '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4',
-  '#f97316', '#6366f1', '#14b8a6', '#84cc16', '#a855f7', '#64748b'
+  'rgb(var(--info-main))', 'rgb(var(--success-main))', 'rgb(var(--warning-main))', 'rgb(var(--secondary-main))', 'rgb(var(--error-light))', 'rgb(var(--info-dark))',
+  'rgb(var(--warning-dark))', 'rgb(var(--secondary-light))', 'rgb(var(--success-dark))', 'rgb(var(--success-light))', 'rgb(var(--secondary-dark))', 'rgb(var(--grey-600))'
 ];
 
 export default function PermissionDashboard() {
@@ -216,14 +216,14 @@ export default function PermissionDashboard() {
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={userPerRoleData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--grey-200))" />
                 <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
                 <Tooltip
                   formatter={(val: unknown) => [typeof val === 'number' ? val : 0, 'Users']}
-                  contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                  contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
                 />
-                <Bar dataKey="users" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="users" fill="rgb(var(--info-main))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -263,7 +263,7 @@ export default function PermissionDashboard() {
                     </Pie>
                     <Tooltip
                       formatter={(val: unknown) => [typeof val === 'number' ? val : 0, 'Permissions']}
-                      contentStyle={{ backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e5e7eb' }}
+                      contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
                     />
                   </PieChart>
                 </ResponsiveContainer>

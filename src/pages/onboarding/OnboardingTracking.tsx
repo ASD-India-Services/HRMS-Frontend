@@ -166,7 +166,7 @@ function OnboardingTrackingContent() {
             <div
               className="h-10 w-10 rounded-full"
               style={{
-                background: `conic-gradient(#22c55e ${progress * 3.6}deg, #e5e7eb ${progress * 3.6}deg)`,
+                background: `conic-gradient(rgb(var(--success-main)) ${progress * 3.6}deg, rgb(var(--grey-300)) ${progress * 3.6}deg)`,
               }}
               role="progressbar"
               aria-valuenow={progress}
