@@ -231,12 +231,12 @@ function GrievanceListContent() {
             onClick={() => { setFilter('status', 'open'); setPage(1); }}
             className={`flex flex-col rounded-xl border p-4 text-left transition-all ${
               filterValues.status === 'open'
-                ? 'border-amber-500 bg-amber-50/40 ring-1 ring-amber-500 shadow-sm'
+                ? 'border-warning-main bg-warning-lighter/40 ring-1 ring-warning-main shadow-sm'
                 : 'border-divider bg-surface-paper hover:border-divider hover:shadow-sm'
             }`}
           >
-            <span className="text-xs font-medium text-amber-700">Open</span>
-            <span className="mt-1 text-2xl font-bold text-amber-900">{summary.open}</span>
+            <span className="text-xs font-medium text-warning-dark">Open</span>
+            <span className="mt-1 text-2xl font-bold text-warning-darker">{summary.open}</span>
           </button>
 
           <button
@@ -257,12 +257,12 @@ function GrievanceListContent() {
             onClick={() => { setFilter('status', 'resolved'); setPage(1); }}
             className={`flex flex-col rounded-xl border p-4 text-left transition-all ${
               filterValues.status === 'resolved'
-                ? 'border-emerald-500 bg-emerald-50/40 ring-1 ring-emerald-500 shadow-sm'
+                ? 'border-success-main bg-success-lighter/40 ring-1 ring-success-main shadow-sm'
                 : 'border-divider bg-surface-paper hover:border-divider hover:shadow-sm'
             }`}
           >
-            <span className="text-xs font-medium text-emerald-700">Resolved</span>
-            <span className="mt-1 text-2xl font-bold text-emerald-900">{summary.resolved}</span>
+            <span className="text-xs font-medium text-success-dark">Resolved</span>
+            <span className="mt-1 text-2xl font-bold text-success-darker">{summary.resolved}</span>
           </button>
         </div>
       )}
@@ -274,11 +274,11 @@ function GrievanceListContent() {
             const currentStatus = filterValues.status;
             if (currentStatus === 'resolved') {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-green-50 border border-green-200 px-4 py-2">
-                  <svg className="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-success-lighter border border-success-light px-4 py-2">
+                  <svg className="h-4 w-4 text-success-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                   </svg>
-                  <span className="text-sm font-medium text-green-800">
+                  <span className="text-sm font-medium text-success-dark">
                     {queryResult.data.count} grievance{queryResult.data.count !== 1 ? 's' : ''} resolved
                   </span>
                 </div>
@@ -304,8 +304,8 @@ function GrievanceListContent() {
             }
             if (currentStatus === 'open') {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-yellow-50 border border-yellow-200 px-4 py-2">
-                  <span className="text-sm font-medium text-yellow-800">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-warning-lighter border border-warning-light px-4 py-2">
+                  <span className="text-sm font-medium text-warning-dark">
                     {queryResult.data.count} open grievance{queryResult.data.count !== 1 ? 's' : ''} pending review
                   </span>
                 </div>
@@ -316,22 +316,22 @@ function GrievanceListContent() {
             const pendingCount = summary?.pending ?? 0;
             if (pendingCount > 0) {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-yellow-50 border border-yellow-200 px-4 py-2">
-                  <span className="text-sm font-medium text-yellow-800">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-warning-lighter border border-warning-light px-4 py-2">
+                  <span className="text-sm font-medium text-warning-dark">
                     {pendingCount} grievance{pendingCount !== 1 ? 's' : ''} pending review
                   </span>
-                  <span className="text-xs text-yellow-600">({queryResult.data.count} total)</span>
+                  <span className="text-xs text-warning-main">({queryResult.data.count} total)</span>
                 </div>
               );
             }
 
             if (queryResult.data.count > 0) {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-green-50 border border-green-200 px-4 py-2">
-                  <svg className="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-success-lighter border border-success-light px-4 py-2">
+                  <svg className="h-4 w-4 text-success-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                   </svg>
-                  <span className="text-sm font-medium text-green-800">
+                  <span className="text-sm font-medium text-success-dark">
                     All grievances resolved ({queryResult.data.count} total)
                   </span>
                 </div>

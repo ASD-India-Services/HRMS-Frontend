@@ -75,7 +75,7 @@ function useTrainingColumns(): ColumnDef<TrainingEvent>[] {
         header: 'Type',
         sortable: true,
         render: (value: unknown) => (
-          <span className="inline-flex items-center rounded-full bg-purple-50 px-2 py-0.5 text-xs font-medium capitalize text-purple-700">
+          <span className="inline-flex items-center rounded-full bg-secondary-lighter px-2 py-0.5 text-xs font-medium capitalize text-secondary-dark">
             {String(value || '—')}
           </span>
         ),

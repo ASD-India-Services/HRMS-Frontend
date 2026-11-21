@@ -55,8 +55,8 @@ export default function RolesPage() {
   if (!hasPermission('roles.manage')) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">
+        <div className="rounded-md bg-error-lighter p-4">
+          <p className="text-sm text-error-dark">
             You do not have permission to access this page.
           </p>
         </div>
@@ -100,8 +100,8 @@ export default function RolesPage() {
 
       {/* Error State */}
       {isError && (
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">
+        <div className="rounded-md bg-error-lighter p-4">
+          <p className="text-sm text-error-dark">
             Failed to load roles.{' '}
             {error instanceof Error ? error.message : 'Please try again.'}
           </p>
@@ -201,18 +201,18 @@ export default function RolesPage() {
                         Self Only
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-xs font-medium text-purple-700">
+                      <span className="inline-flex items-center rounded-full bg-secondary-lighter border border-secondary-light px-2.5 py-0.5 text-xs font-medium text-secondary-dark">
                         Organisation-wide
                       </span>
                     )}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-sm">
                     {role.is_system ? (
-                      <span className="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800">
+                      <span className="inline-flex items-center rounded-full bg-secondary-lighter px-2.5 py-0.5 text-xs font-medium text-secondary-dark">
                         System
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                      <span className="inline-flex items-center rounded-full bg-success-lighter px-2.5 py-0.5 text-xs font-medium text-success-dark">
                         Custom
                       </span>
                     )}

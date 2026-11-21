@@ -109,7 +109,7 @@ function SelectTagInput({
       {/* Label matching screenshot */}
       <label className="block text-xs font-semibold text-ink-primary mb-1">
         {label}
-        {required && <span className="text-red-500 ml-0.5">*</span>}
+        {required && <span className="text-error-main ml-0.5">*</span>}
       </label>
 
       {/* Top box with scrollbar and cursor matching media_1794384923180_0cefc9d9.png */}
@@ -622,7 +622,7 @@ export default function Meetings() {
                       {/* Question Template */}
                       <td className="py-3 px-3 text-ink-primary">
                         {m.question_template_name ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[11px] font-medium">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary-lighter text-secondary-dark border border-secondary-light text-[11px] font-medium">
                             📝 {m.question_template_name}
                           </span>
                         ) : (
@@ -635,11 +635,11 @@ export default function Meetings() {
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                             isCompleted
-                              ? 'bg-green-100 text-green-700'
+                              ? 'bg-success-lighter text-success-dark'
                               : isCancelled
-                              ? 'bg-red-100 text-red-700'
+                              ? 'bg-error-lighter text-error-dark'
                               : isInProgress
-                              ? 'bg-yellow-100 text-yellow-800'
+                              ? 'bg-warning-lighter text-warning-dark'
                               : 'bg-primary-lighter text-primary-dark'
                           }`}
                         >
@@ -687,7 +687,7 @@ export default function Meetings() {
                             <button
                               type="button"
                               onClick={() => handleCompleteMeeting(m.id)}
-                              className="p-1.5 text-ink-secondary hover:text-green-600 hover:bg-green-50 transition-colors cursor-pointer"
+                              className="p-1.5 text-ink-secondary hover:text-success-main hover:bg-success-lighter transition-colors cursor-pointer"
                               title="Mark Completed"
                             >
                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -701,7 +701,7 @@ export default function Meetings() {
                             <button
                               type="button"
                               onClick={() => handleCancelMeeting(m.id)}
-                              className="p-1.5 text-ink-secondary hover:text-orange-600 hover:bg-orange-50 transition-colors cursor-pointer"
+                              className="p-1.5 text-ink-secondary hover:text-warning-main hover:bg-warning-lighter transition-colors cursor-pointer"
                               title="Cancel Meeting"
                             >
                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -715,7 +715,7 @@ export default function Meetings() {
                             <button
                               type="button"
                               onClick={() => handleDelete(m.id)}
-                              className="p-1.5 text-ink-secondary hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                              className="p-1.5 text-ink-secondary hover:text-error-main hover:bg-error-lighter transition-colors cursor-pointer"
                               title="Delete Meeting"
                             >
                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -753,7 +753,7 @@ export default function Meetings() {
             {/* Modal Form matching Screenshot 2 */}
             <form onSubmit={handleSubmit} className="p-6 space-y-3.5 overflow-y-auto grow">
               {formError && (
-                <div className="p-2.5 bg-red-50 border border-red-200 rounded text-xs text-red-700 font-medium">
+                <div className="p-2.5 bg-error-lighter border border-error-light rounded text-xs text-error-dark font-medium">
                   {formError}
                 </div>
               )}
@@ -810,9 +810,9 @@ export default function Meetings() {
 
               {/* Department quick filter dropdown */}
               {isDeptFilterOpen && (
-                <div className="p-2 bg-orange-50/80 border border-orange-200 rounded text-xs space-y-1.5 animate-in fade-in duration-100">
+                <div className="p-2 bg-warning-lighter/80 border border-warning-light rounded text-xs space-y-1.5 animate-in fade-in duration-100">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-orange-950 text-[11px]">Filter Employees by Department:</span>
+                    <span className="font-semibold text-warning-darker text-[11px]">Filter Employees by Department:</span>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
@@ -866,7 +866,7 @@ export default function Meetings() {
                   <span className="inline-flex items-center gap-1.5">
                     <span>Answerable Employees</span>
                     <span
-                      className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-grey-400 text-white text-[10px] font-bold cursor-help"
+                      className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-grey-400 text-primary-contrast text-[10px] font-bold cursor-help"
                       title="Employees who must prepare responses or reports for this meeting"
                     >
                       i
@@ -1007,7 +1007,7 @@ export default function Meetings() {
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {selectedMeeting.answerable_employees_details.map((e) => (
-                      <span key={e.id} className="bg-amber-50 text-amber-900 border border-amber-200 px-2 py-0.5 rounded text-xs">
+                      <span key={e.id} className="bg-warning-lighter text-warning-darker border border-warning-light px-2 py-0.5 rounded text-xs">
                         {e.full_name}
                       </span>
                     ))}
@@ -1020,7 +1020,7 @@ export default function Meetings() {
                   <span className="font-bold text-ink-primary block text-[11px] uppercase tracking-wider mb-0.5">
                     Question Template
                   </span>
-                  <span className="text-purple-700 font-medium">📝 {selectedMeeting.question_template_name}</span>
+                  <span className="text-secondary-dark font-medium">📝 {selectedMeeting.question_template_name}</span>
                 </div>
               )}
 

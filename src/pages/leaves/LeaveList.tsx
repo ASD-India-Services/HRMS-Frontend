@@ -28,9 +28,9 @@ const STATUS_TABS: { label: string; value: LeaveApplicationStatus | '' }[] = [
 ];
 
 const statusStyles: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  approved: 'bg-green-100 text-green-800',
-  rejected: 'bg-red-100 text-red-800',
+  pending: 'bg-warning-lighter text-warning-dark',
+  approved: 'bg-success-lighter text-success-dark',
+  rejected: 'bg-error-lighter text-error-dark',
   cancelled: 'bg-surface-neutral text-ink-primary',
   draft: 'bg-primary-lighter text-primary-dark',
 };
@@ -75,7 +75,7 @@ export function LeaveList() {
         </div>
         <Link
           to="/leaves/apply"
-          className="rounded-md bg-primary-main px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2"
+          className="rounded-md bg-primary-main px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2"
         >
           Apply for Leave
         </Link>
@@ -195,7 +195,7 @@ export function LeaveList() {
                                   cancelLeave.mutate(application.id);
                                 }
                               }}
-                              className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 border border-red-200"
+                              className="rounded px-2 py-1 text-xs font-medium text-error-main hover:bg-error-lighter border border-error-light"
                               disabled={cancelLeave.isPending}
                             >
                               Cancel

@@ -184,8 +184,8 @@ export function CandidateSelfTrackingTab() {
       </div>
 
       {saved && (
-        <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 flex items-center gap-2">
-          <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0" />
+        <div className="rounded-md border border-success-light bg-success-lighter px-4 py-3 text-sm text-success-dark flex items-center gap-2">
+          <CheckIcon className="h-4 w-4 text-success-main shrink-0" />
           <span>Candidate Self Tracking configuration saved successfully.</span>
         </div>
       )}

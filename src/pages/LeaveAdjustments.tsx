@@ -25,7 +25,7 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
   {
     key: 'adjustment_amount', header: 'Adjustment', sortable: true, render: (v: unknown) => {
       const num = Number(v);
-      return <span className={num > 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>{num > 0 ? `+${num}` : num}</span>;
+      return <span className={num > 0 ? 'text-success-main font-medium' : 'text-error-main font-medium'}>{num > 0 ? `+${num}` : num}</span>;
     }
   },
   { key: 'reason', header: 'Reason', sortable: false, render: (v: unknown) => v ? String(v) : '–' },
@@ -186,7 +186,7 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
         </div>
 
         {error && (
-          <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700 border border-red-200">
+          <div className="mb-4 rounded-md bg-error-lighter p-3 text-sm text-error-dark border border-error-light">
             {error}
           </div>
         )}

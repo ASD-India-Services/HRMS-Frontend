@@ -136,13 +136,13 @@ export function TransitionDialog({
     >
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[9999] bg-black/60"
+        className="fixed inset-0 z-[9999] bg-grey-900/60"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Dialog panel */}
-      <div className="relative z-[10000] mx-4 w-full max-w-lg rounded-lg bg-surface-paper p-6 shadow-2xl ring-1 ring-black/5">
+      <div className="relative z-[10000] mx-4 w-full max-w-lg rounded-lg bg-surface-paper p-6 shadow-2xl ring-1 ring-grey-900/5">
         <h2
           id="transition-dialog-title"
           className="text-lg font-semibold text-ink-primary"
@@ -162,7 +162,7 @@ export function TransitionDialog({
                 htmlFor="transition-reason"
                 className="block text-sm font-medium text-ink-primary"
               >
-                Reason <span className="text-red-500">*</span>
+                Reason <span className="text-error-main">*</span>
               </label>
               <Textarea
                 id="transition-reason"
@@ -184,7 +184,7 @@ export function TransitionDialog({
                 className="block text-sm font-medium text-ink-primary"
               >
                 {field.label}
-                {field.required && <span className="text-red-500"> *</span>}
+                {field.required && <span className="text-error-main"> *</span>}
               </label>
               <div className="mt-1">
                 {renderField(field, formData[field.name], (val) =>
@@ -209,9 +209,9 @@ export function TransitionDialog({
             <button
               type="submit"
               disabled={isSubmitting || isReasonEmpty}
-              className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+              className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-medium text-primary-contrast focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
                 transition.variant === 'destructive'
-                  ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
+                  ? 'bg-error-main hover:bg-error-dark focus:ring-error-main'
                   : 'bg-primary-main hover:bg-primary-dark focus:ring-primary-main'
               }`}
             >

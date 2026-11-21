@@ -154,7 +154,7 @@ function RuleFormModal({
                   <label className="block text-xs text-ink-secondary mb-0.5">Multiplier</label>
                   <Input type="number" step="0.0001" min="0" value={slab.multiplier} onChange={e => updateSlab(idx, 'multiplier', e.target.value)} placeholder="e.g., 0.5769"/>
                 </div>
-                <button type="button" onClick={() => removeSlab(idx)} className="mt-4 rounded p-1 text-red-500 hover:bg-red-50" aria-label="Remove slab">
+                <button type="button" onClick={() => removeSlab(idx)} className="mt-4 rounded p-1 text-error-main hover:bg-error-lighter" aria-label="Remove slab">
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                 </button>
               </div>
@@ -334,11 +334,11 @@ export default function Gratuity() {
           </div>
         </div>
 
-        {calcError && <div className="mt-4 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">{calcError}</div>}
+        {calcError && <div className="mt-4 rounded-md bg-error-lighter border border-error-light p-3 text-sm text-error-dark">{calcError}</div>}
 
         {calcResult && (
-          <div className="mt-6 rounded-lg border border-green-200 bg-green-50 p-5">
-            <h3 className="text-base font-semibold text-green-900 mb-3">Result</h3>
+          <div className="mt-6 rounded-lg border border-success-light bg-success-lighter p-5">
+            <h3 className="text-base font-semibold text-success-darker mb-3">Result</h3>
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4 text-sm">
               <div><p className="text-xs text-ink-secondary">Employee</p><p className="font-medium">{calcResult.employee_name}</p></div>
               <div><p className="text-xs text-ink-secondary">Joined</p><p className="font-medium">{calcResult.date_of_joining}</p></div>
@@ -349,10 +349,10 @@ export default function Gratuity() {
               <div><p className="text-xs text-ink-secondary">Slab Range</p><p className="font-medium">{calcResult.slab_from_years}–{parseFloat(calcResult.slab_to_years) === 0 ? '∞' : calcResult.slab_to_years} yrs</p></div>
               <div><p className="text-xs text-ink-secondary">Rule</p><p className="font-medium">{calcResult.rule_name}</p></div>
             </div>
-            <div className="mt-4 rounded-md bg-green-100 p-4 text-center">
-              <p className="text-sm text-green-700">Gratuity Payable</p>
-              <p className="text-2xl font-bold text-green-900">{formatCurrency(parseFloat(calcResult.gratuity_amount))}</p>
-              <p className="mt-1 text-xs text-green-600">= {formatCurrency(parseFloat(calcResult.base_salary))} × {calcResult.applicable_multiplier} × {calcResult.years_of_service}</p>
+            <div className="mt-4 rounded-md bg-success-lighter p-4 text-center">
+              <p className="text-sm text-success-dark">Gratuity Payable</p>
+              <p className="text-2xl font-bold text-success-darker">{formatCurrency(parseFloat(calcResult.gratuity_amount))}</p>
+              <p className="mt-1 text-xs text-success-main">= {formatCurrency(parseFloat(calcResult.base_salary))} × {calcResult.applicable_multiplier} × {calcResult.years_of_service}</p>
             </div>
           </div>
         )}

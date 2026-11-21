@@ -73,9 +73,9 @@ export function CompanyProfileTab() {
 
   if (isError) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-        <AlertCircleIcon className="mx-auto h-8 w-8 text-red-500" />
-        <p className="mt-2 text-sm text-red-700">Failed to load company profile: {(error as Error)?.message}</p>
+      <div className="rounded-xl border border-error-light bg-error-lighter p-6 text-center">
+        <AlertCircleIcon className="mx-auto h-8 w-8 text-error-main" />
+        <p className="mt-2 text-sm text-error-dark">Failed to load company profile: {(error as Error)?.message}</p>
       </div>
     );
   }
@@ -213,7 +213,7 @@ export function CompanyProfileTab() {
           </Button>
 
           {saved && (
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
               <CheckIcon className="h-4 w-4" /> Company profile updated
             </span>
           )}

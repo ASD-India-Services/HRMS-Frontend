@@ -445,7 +445,7 @@ export default function CompanyLeaves() {
                           type="button"
                           onClick={() => setDeletingLeave(item)}
                           title="Delete"
-                          className="text-red-500 hover:text-red-700 p-1 rounded-xs transition-colors cursor-pointer"
+                          className="text-error-main hover:text-error-dark p-1 rounded-xs transition-colors cursor-pointer"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
@@ -526,7 +526,7 @@ export default function CompanyLeaves() {
             <form onSubmit={handleSaveModal}>
               <div className="border border-divider rounded-xs p-5 space-y-4 bg-surface-paper">
                 {formError && (
-                  <div className="p-2.5 rounded-xs bg-red-50 border border-red-200 text-xs text-red-700">
+                  <div className="p-2.5 rounded-xs bg-error-lighter border border-error-light text-xs text-error-dark">
                     {formError}
                   </div>
                 )}

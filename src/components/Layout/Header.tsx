@@ -14,6 +14,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ProductSwitcher } from '@/components/ProductSwitcher';
 import { useNotifications } from '@/hooks/useNotifications';
 import { Iconify } from '@/components/Iconify';
+import { useThemeMode } from '@/hooks/useThemeMode';
 import api from '@/lib/api';
 
 interface HeaderProps {
@@ -24,6 +25,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
   const { logout } = useAuth();
   const { name, email, role } = useUser();
   const navigate = useNavigate();
+  const { mode, toggleMode } = useThemeMode();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
@@ -149,6 +151,16 @@ export function Header({ onMenuToggle }: HeaderProps) {
           )}
         </div>
 
+        {/* Colour mode toggle */}
+        <button
+          type="button"
+          onClick={toggleMode}
+          className="rounded-full p-2 text-ink-secondary hover:bg-grey-500/10 transition-colors"
+          title={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-label={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          <Iconify icon={mode === 'dark' ? 'sun' : 'moon'} width={24} />
+        </button>
         {/* Settings button */}
         <button
           type="button"

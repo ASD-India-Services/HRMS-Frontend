@@ -22,9 +22,9 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 
 const statusColors: Record<string, string> = {
-  active: 'bg-green-100 text-green-800',
-  on_notice: 'bg-yellow-100 text-yellow-800',
-  terminated: 'bg-red-100 text-red-800',
+  active: 'bg-success-lighter text-success-dark',
+  on_notice: 'bg-warning-lighter text-warning-dark',
+  terminated: 'bg-error-lighter text-error-dark',
   retired: 'bg-surface-neutral text-ink-primary',
 };
 
@@ -101,8 +101,8 @@ export function EmployeeDetail() {
   if (isError) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">
+        <div className="rounded-md bg-error-lighter p-4">
+          <p className="text-sm text-error-dark">
             Failed to load employee details.{' '}
             {error instanceof Error ? error.message : 'Please try again.'}
           </p>
@@ -369,8 +369,8 @@ export function EmployeeDetail() {
             {provisionResult ? (
               /* Success result view */
               <div className="mt-4">
-                <div className="rounded-md bg-green-50 p-4">
-                  <p className="text-sm font-medium text-green-800">
+                <div className="rounded-md bg-success-lighter p-4">
+                  <p className="text-sm font-medium text-success-dark">
                     {provisionResult.message}
                   </p>
                 </div>
@@ -380,7 +380,7 @@ export function EmployeeDetail() {
                     <dd className="font-medium text-ink-primary">{provisionResult.email}</dd>
                   </div>
                   {provisionResult.email_sent && (
-                    <p className="mt-2 text-xs text-green-600">
+                    <p className="mt-2 text-xs text-success-main">
                       A password setup link has been sent to the employee&apos;s email.
                     </p>
                   )}
@@ -416,8 +416,8 @@ export function EmployeeDetail() {
                 </p>
 
                 {provisionMutation.isError && (
-                  <div className="mt-3 rounded-md bg-red-50 p-3">
-                    <p className="text-sm text-red-800">
+                  <div className="mt-3 rounded-md bg-error-lighter p-3">
+                    <p className="text-sm text-error-dark">
                       {(provisionMutation.error as any)?.response?.data?.error ||
                         'Failed to provision account. Please try again.'}
                     </p>

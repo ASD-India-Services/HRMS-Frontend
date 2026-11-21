@@ -235,7 +235,7 @@ export function EmployeeLifecycle() {
   if (!employeeId) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-8">
-        <p className="text-sm text-red-600">Employee ID is required.</p>
+        <p className="text-sm text-error-main">Employee ID is required.</p>
       </div>
     );
   }
@@ -285,11 +285,11 @@ export function EmployeeLifecycle() {
           <span
             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
               employeeStatus === 'active'
-                ? 'bg-green-100 text-green-800'
+                ? 'bg-success-lighter text-success-dark'
                 : employeeStatus === 'on_notice'
-                  ? 'bg-yellow-100 text-yellow-800'
+                  ? 'bg-warning-lighter text-warning-dark'
                   : employeeStatus === 'terminated'
-                    ? 'bg-red-100 text-red-800'
+                    ? 'bg-error-lighter text-error-dark'
                     : 'bg-surface-neutral text-ink-primary'
             }`}
           >
@@ -300,10 +300,10 @@ export function EmployeeLifecycle() {
 
       {/* Success toast */}
       {successMessage && (
-        <div className="mb-4 rounded-md bg-green-50 p-3" role="status">
+        <div className="mb-4 rounded-md bg-success-lighter p-3" role="status">
           <div className="flex items-center">
             <svg
-              className="h-4 w-4 text-green-400"
+              className="h-4 w-4 text-success-light"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
@@ -315,7 +315,7 @@ export function EmployeeLifecycle() {
                 clipRule="evenodd"
               />
             </svg>
-            <p className="ml-2 text-sm font-medium text-green-800">{successMessage}</p>
+            <p className="ml-2 text-sm font-medium text-success-dark">{successMessage}</p>
           </div>
         </div>
       )}
@@ -329,7 +329,7 @@ export function EmployeeLifecycle() {
                 type="button"
                 onClick={() => setActiveAction('promote')}
                 disabled={isActionPending}
-                className="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center gap-2 rounded-md bg-secondary-main px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-secondary-main focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fillRule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clipRule="evenodd" />
@@ -359,7 +359,7 @@ export function EmployeeLifecycle() {
             </>
           )}
           {isOnNotice && (
-            <p className="text-sm text-yellow-700">
+            <p className="text-sm text-warning-dark">
               Employee is currently on notice period. Use the workflow transitions below to finalize separation.
             </p>
           )}
@@ -379,8 +379,8 @@ export function EmployeeLifecycle() {
 
           {/* Error messages from mutations */}
           {(promotionMutation.isError || transferMutation.isError || statusMutation.isError) && (
-            <div className="mt-4 rounded-md bg-red-50 p-3" role="alert">
-              <p className="text-sm text-red-700">
+            <div className="mt-4 rounded-md bg-error-lighter p-3" role="alert">
+              <p className="text-sm text-error-dark">
                 {activeAction === 'promote' && 'Failed to record promotion. Please try again.'}
                 {activeAction === 'transfer' && 'Failed to record transfer. Please try again.'}
                 {activeAction === 'separate' && 'Failed to initiate separation. Please try again.'}

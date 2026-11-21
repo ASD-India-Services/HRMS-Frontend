@@ -48,8 +48,8 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
             Today&apos;s Attendance
           </h2>
           {isCurrentlyIn && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-success-lighter text-success-dark border border-success-light">
+              <span className="h-1.5 w-1.5 rounded-full bg-success-main animate-pulse" />
               Active Session
             </span>
           )}
@@ -62,19 +62,19 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
           label="First Check In"
           value={checkInTime}
           icon={
-            <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-success-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
             </svg>
           }
           subtext={record?.is_late ? 'Late entry' : undefined}
-          subtextColor="text-amber-600"
+          subtextColor="text-warning-main"
         />
 
         <InfoCard
           label="Last Check Out"
           value={isCurrentlyIn ? 'Active Now' : checkOutTime}
           icon={
-            <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-error-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
           }
@@ -94,13 +94,13 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
           label="Location"
           value={record?.is_outside_geofence ? 'Outside fence' : record?.check_in ? 'Captured' : 'Not available'}
           icon={
-            <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-secondary-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           }
           subtext={record?.is_outside_geofence ? 'Outside geo-fence' : undefined}
-          subtextColor={record?.is_outside_geofence ? 'text-red-600' : 'text-ink-secondary'}
+          subtextColor={record?.is_outside_geofence ? 'text-error-main' : 'text-ink-secondary'}
         />
       </div>
 
@@ -124,7 +124,7 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
                   key={sess.id || idx}
                   className={`flex flex-col sm:flex-row sm:items-center justify-between p-2.5 rounded-md border text-sm transition-colors ${
                     active
-                      ? 'bg-emerald-50/50 border-emerald-200'
+                      ? 'bg-success-lighter/50 border-success-light'
                       : 'bg-surface-neutral border-divider hover:bg-surface-neutral/60'
                   }`}
                 >
@@ -136,14 +136,14 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
                       {formatTime(sess.check_in_time)} → {sess.check_out_time ? formatTime(sess.check_out_time) : 'Active Now'}
                     </span>
                     {active && (
-                      <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">
+                      <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-success-lighter text-success-dark">
                         In Progress
                       </span>
                     )}
                     {sess.is_auto_checkout && (
                       <span
                         title={sess.auto_checkout_reason || 'Auto checked out'}
-                        className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] font-semibold bg-amber-100 text-amber-800"
+                        className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] font-semibold bg-warning-lighter text-warning-dark"
                       >
                         ⚡ Auto-out
                       </span>
@@ -156,10 +156,10 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
                         {formatWorkingHours(sess.duration_hours)}
                       </span>
                     ) : (
-                      <span className="text-emerald-600 font-medium">Tracking...</span>
+                      <span className="text-success-main font-medium">Tracking...</span>
                     )}
                     {sess.auto_checkout_reason && (
-                      <span className="text-[11px] text-amber-600 italic">
+                      <span className="text-[11px] text-warning-main italic">
                         ({sess.auto_checkout_reason})
                       </span>
                     )}
@@ -176,9 +176,9 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
 
 function StatusBadge({ status }: { status: string }) {
   const config: Record<string, { bg: string; text: string; label: string }> = {
-    present: { bg: 'bg-green-100', text: 'text-green-800', label: 'Present' },
+    present: { bg: 'bg-success-lighter', text: 'text-success-dark', label: 'Present' },
     absent: { bg: 'bg-surface-neutral', text: 'text-ink-primary', label: 'Not Marked' },
-    half_day: { bg: 'bg-amber-100', text: 'text-amber-800', label: 'Half Day' },
+    half_day: { bg: 'bg-warning-lighter', text: 'text-warning-dark', label: 'Half Day' },
     on_leave: { bg: 'bg-primary-lighter', text: 'text-primary-dark', label: 'On Leave' },
   }
 

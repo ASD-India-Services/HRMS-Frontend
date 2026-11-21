@@ -11,9 +11,9 @@ interface EmployeeCardProps {
 }
 
 const statusColors: Record<string, string> = {
-  active: 'bg-green-100 text-green-800',
-  on_notice: 'bg-yellow-100 text-yellow-800',
-  terminated: 'bg-red-100 text-red-800',
+  active: 'bg-success-lighter text-success-dark',
+  on_notice: 'bg-warning-lighter text-warning-dark',
+  terminated: 'bg-error-lighter text-error-dark',
   retired: 'bg-surface-neutral text-ink-primary',
 };
 
@@ -33,7 +33,7 @@ const employmentTypeLabels: Record<string, string> = {
 };
 
 const onboardingStatusStyles: Record<string, { label: string; className: string }> = {
-  pending: { label: 'Onboarding Pending', className: 'bg-yellow-100 text-yellow-800' },
+  pending: { label: 'Onboarding Pending', className: 'bg-warning-lighter text-warning-dark' },
   in_progress: { label: 'Onboarding', className: 'bg-primary-lighter text-primary-dark' },
 };
 

@@ -149,11 +149,11 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
               <LeaveBalanceCard key={balance.leave_type_id ?? balance.id} balance={balance} />
             ))}
             {lopPolicy && (
-              <div className="rounded-lg border border-orange-200 bg-orange-50 p-4 shadow-sm">
-                <h4 className="text-sm font-semibold text-orange-900">Loss of Pay</h4>
+              <div className="rounded-lg border border-warning-light bg-warning-lighter p-4 shadow-sm">
+                <h4 className="text-sm font-semibold text-warning-darker">Loss of Pay</h4>
                 <div className="mt-3 flex items-end justify-between">
                   <div>
-                    <p className="text-2xl font-bold text-orange-600">
+                    <p className="text-2xl font-bold text-warning-main">
                       {lopPolicy.remaining_days !== null ? lopPolicy.remaining_days : '∞'}
                     </p>
                     <p className="text-xs text-ink-secondary">remaining</p>
@@ -163,7 +163,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
                     <p>{lopPolicy.max_days_per_year ?? '∞'} max/year</p>
                   </div>
                 </div>
-                <p className="mt-2 text-xs text-orange-700">
+                <p className="mt-2 text-xs text-warning-dark">
                   {formatCurrency(lopPolicy.deduction_per_day)} deducted per day
                 </p>
               </div>
@@ -180,7 +180,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
           {/* Leave Type */}
           <div className="sm:col-span-2">
             <label htmlFor="leave-type" className="block text-sm font-medium text-ink-primary">
-              Leave Type <span className="text-red-500">*</span>
+              Leave Type <span className="text-error-main">*</span>
             </label>
             <Select
               id="leave-type"
@@ -230,7 +230,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
           )}
 
           {policyError && (
-            <div className="sm:col-span-2 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700 shadow-2xs">
+            <div className="sm:col-span-2 rounded-lg border border-error-light bg-error-lighter p-3 text-xs text-error-dark shadow-2xs">
               {policyError}
             </div>
           )}
@@ -238,7 +238,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
           {/* From Date */}
           <div>
             <label htmlFor="from-date" className="block text-sm font-medium text-ink-primary">
-              From Date <span className="text-red-500">*</span>
+              From Date <span className="text-error-main">*</span>
             </label>
             <Input
               type="date"
@@ -258,7 +258,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
           {/* To Date */}
           <div>
             <label htmlFor="to-date" className="block text-sm font-medium text-ink-primary">
-              To Date <span className="text-red-500">*</span>
+              To Date <span className="text-error-main">*</span>
             </label>
             <Input
               type="date"
@@ -312,7 +312,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
                             className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium border ${
                               item.is_working_day
                                 ? 'bg-surface-paper border-primary-light text-primary-darker shadow-2xs'
-                                : 'bg-amber-100/90 border-amber-300 text-amber-900'
+                                : 'bg-warning-lighter/90 border-warning-light text-warning-darker'
                             }`}
                             title={item.reason || 'Working day'}
                           >
@@ -325,7 +325,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
                   )}
 
                   {calcResult.total_days === 0 && (
-                    <div className="rounded-lg bg-amber-50 border border-amber-300 p-2.5 text-xs text-amber-800">
+                    <div className="rounded-lg bg-warning-lighter border border-warning-light p-2.5 text-xs text-warning-dark">
                       ⚠️ The selected dates consist entirely of non-working days or company week-offs. No leave days will be deducted.
                     </div>
                   )}
@@ -337,7 +337,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
           {/* Reason */}
           <div className="sm:col-span-2">
             <label htmlFor="reason" className="block text-sm font-medium text-ink-primary">
-              Reason <span className="text-red-500">*</span>
+              Reason <span className="text-error-main">*</span>
             </label>
             <Textarea
               id="reason"
@@ -353,7 +353,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
 
         {/* Error message */}
         {applyLeave.isError && (
-          <div className="mt-4 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700" role="alert">
+          <div className="mt-4 rounded-md bg-error-lighter border border-error-light p-3 text-sm text-error-dark" role="alert">
             {(() => {
               const err = applyLeave.error as { response?: { data?: Record<string, unknown> } } | null;
               const data = err?.response?.data;

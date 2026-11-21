@@ -101,7 +101,7 @@ export function ExpenseSubmit() {
           {/* Expense Type */}
           <div className="sm:col-span-2">
             <label htmlFor="expense-type" className="block text-sm font-medium text-ink-primary">
-              Expense Type <span className="text-red-500">*</span>
+              Expense Type <span className="text-error-main">*</span>
             </label>
             <Select
               id="expense-type"
@@ -123,7 +123,7 @@ export function ExpenseSubmit() {
           {/* Amount */}
           <div>
             <label htmlFor="amount" className="block text-sm font-medium text-ink-primary">
-              Amount (₹) <span className="text-red-500">*</span>
+              Amount (₹) <span className="text-error-main">*</span>
             </label>
             <Input
               type="number"
@@ -141,7 +141,7 @@ export function ExpenseSubmit() {
           {/* Expense Date */}
           <div>
             <label htmlFor="expense-date" className="block text-sm font-medium text-ink-primary">
-              Expense Date <span className="text-red-500">*</span>
+              Expense Date <span className="text-error-main">*</span>
             </label>
             <Input
               type="date"
@@ -157,7 +157,7 @@ export function ExpenseSubmit() {
           {/* Description */}
           <div className="sm:col-span-2">
             <label htmlFor="description" className="block text-sm font-medium text-ink-primary">
-              Description <span className="text-red-500">*</span>
+              Description <span className="text-error-main">*</span>
             </label>
             <Textarea
               id="description"
@@ -219,7 +219,7 @@ export function ExpenseSubmit() {
 
             {/* Upload Error */}
             {uploadError && (
-              <p className="mt-2 text-sm text-red-600">{uploadError}</p>
+              <p className="mt-2 text-sm text-error-main">{uploadError}</p>
             )}
 
             {/* Selected Files List */}
@@ -239,7 +239,7 @@ export function ExpenseSubmit() {
                     <button
                       type="button"
                       onClick={() => removeFile(index)}
-                      className="text-sm font-medium text-red-600 hover:text-red-500"
+                      className="text-sm font-medium text-error-main hover:text-error-main"
                     >
                       Remove
                     </button>
@@ -252,7 +252,7 @@ export function ExpenseSubmit() {
 
         {/* Error message */}
         {submitClaim.isError && (
-          <div className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700" role="alert">
+          <div className="mt-4 rounded-md bg-error-lighter p-3 text-sm text-error-dark" role="alert">
             Failed to submit expense claim. Please try again.
           </div>
         )}

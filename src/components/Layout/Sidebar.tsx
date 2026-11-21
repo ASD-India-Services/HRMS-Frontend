@@ -51,7 +51,7 @@ const itemMini = `${itemBase} mx-auto h-11 w-11 justify-center rounded-lg`;
 /** Hover tooltip shown in mini mode. */
 function MiniTooltip({ label }: { label: string }) {
   return (
-    <span className="pointer-events-none absolute left-full z-50 ml-3 hidden items-center whitespace-nowrap rounded-lg bg-grey-800 px-2.5 py-1.5 text-xs font-medium text-white shadow-z8 group-hover:flex">
+    <span className="pointer-events-none absolute left-full z-50 ml-3 hidden items-center whitespace-nowrap rounded-lg bg-grey-800 px-2.5 py-1.5 text-xs font-medium text-primary-contrast shadow-z8 group-hover:flex">
       {label}
     </span>
   );

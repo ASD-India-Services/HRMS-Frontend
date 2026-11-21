@@ -81,11 +81,11 @@ export function LinkedinIntegrationTab() {
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
               isConnected
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                : 'bg-amber-50 text-amber-700 border border-amber-200'
+                ? 'bg-success-lighter text-success-dark border border-success-light'
+                : 'bg-warning-lighter text-warning-dark border border-warning-light'
             }`}
           >
-            <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+            <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-success-main' : 'bg-warning-main'}`} />
             {isConnected ? 'LinkedIn Connected' : 'Not Configured'}
           </span>
         </div>
@@ -191,8 +191,8 @@ export function LinkedinIntegrationTab() {
       </div>
 
       {saved && (
-        <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 flex items-center gap-2">
-          <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0" />
+        <div className="rounded-md border border-success-light bg-success-lighter px-4 py-3 text-sm text-success-dark flex items-center gap-2">
+          <CheckIcon className="h-4 w-4 text-success-main shrink-0" />
           <span>LinkedIn integration settings saved successfully.</span>
         </div>
       )}

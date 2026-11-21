@@ -29,9 +29,9 @@ const STATUS_TABS: { label: string; value: LeaveApplicationStatus | '' }[] = [
 ];
 
 const statusStyles: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  approved: 'bg-green-100 text-green-800',
-  rejected: 'bg-red-100 text-red-800',
+  pending: 'bg-warning-lighter text-warning-dark',
+  approved: 'bg-success-lighter text-success-dark',
+  rejected: 'bg-error-lighter text-error-dark',
   cancelled: 'bg-surface-neutral text-ink-primary',
   draft: 'bg-primary-lighter text-primary-dark',
 };
@@ -200,7 +200,7 @@ function MyLeavesContent() {
                           return (
                             <button
                               onClick={() => setCancelId(application.id)}
-                              className="rounded px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50 border border-red-200 transition-colors"
+                              className="rounded px-2.5 py-1 text-xs font-medium text-error-main hover:bg-error-lighter border border-error-light transition-colors"
                               disabled={cancelLeave.isPending}
                             >
                               Cancel

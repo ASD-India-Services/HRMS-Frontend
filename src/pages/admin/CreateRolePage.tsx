@@ -189,8 +189,8 @@ export default function CreateRolePage() {
           </svg>
           Back to Roles
         </Link>
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">Failed to load permissions. Please try again.</p>
+        <div className="rounded-md bg-error-lighter p-4">
+          <p className="text-sm text-error-dark">Failed to load permissions. Please try again.</p>
         </div>
       </div>
     );
@@ -221,11 +221,11 @@ export default function CreateRolePage() {
 
       {/* Error notification */}
       {submitError && (
-        <div className="mb-6 flex items-center gap-2 rounded-md border border-red-200 bg-red-50 p-4">
-          <svg className="h-5 w-5 flex-shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <div className="mb-6 flex items-center gap-2 rounded-md border border-error-light bg-error-lighter p-4">
+          <svg className="h-5 w-5 flex-shrink-0 text-error-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m9.303 3.376c-.866 1.5-.217 3.374-1.948 3.374H4.645c-1.73 0-2.813-1.874-1.948-3.374L10.051 3.378c.866-1.5 3.032-1.5 3.898 0l7.354 12.748ZM12 15.75h.007v.008H12v-.008Z" />
           </svg>
-          <p className="text-sm text-red-800">{submitError}</p>
+          <p className="text-sm text-error-dark">{submitError}</p>
         </div>
       )}
 
@@ -234,7 +234,7 @@ export default function CreateRolePage() {
         <div className="mb-6 space-y-4 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
           <div>
             <label htmlFor="role-name" className="block text-sm font-medium text-ink-primary">
-              Role Name <span className="text-red-500">*</span>
+              Role Name <span className="text-error-main">*</span>
             </label>
             <Input
               id="role-name"
@@ -275,7 +275,7 @@ export default function CreateRolePage() {
             <label
               className={`relative flex cursor-pointer flex-col rounded-lg border p-4 shadow-sm transition-all focus:outline-none ${
                 dataScope === 'organisation'
-                  ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-600'
+                  ? 'border-secondary-main bg-secondary-lighter/50 ring-2 ring-secondary-main'
                   : 'border-divider bg-surface-paper hover:border-divider hover:bg-surface-neutral'
               }`}
             >
@@ -289,14 +289,14 @@ export default function CreateRolePage() {
               />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-dark">
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
                     </svg>
                   </span>
                   <span className="font-semibold text-ink-primary">Organisation-wide</span>
                 </div>
-                <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${dataScope === 'organisation' ? 'border-indigo-600 bg-indigo-600' : 'border-divider'}`}>
+                <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${dataScope === 'organisation' ? 'border-secondary-main bg-secondary-main' : 'border-divider'}`}>
                   {dataScope === 'organisation' && <span className="h-1.5 w-1.5 rounded-full bg-surface-paper" />}
                 </span>
               </div>
@@ -309,7 +309,7 @@ export default function CreateRolePage() {
             <label
               className={`relative flex cursor-pointer flex-col rounded-lg border p-4 shadow-sm transition-all focus:outline-none ${
                 dataScope === 'department'
-                  ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-600'
+                  ? 'border-secondary-main bg-secondary-lighter/50 ring-2 ring-secondary-main'
                   : 'border-divider bg-surface-paper hover:border-divider hover:bg-surface-neutral'
               }`}
             >
@@ -323,14 +323,14 @@ export default function CreateRolePage() {
               />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-dark">
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   </span>
                   <span className="font-semibold text-ink-primary">Own Department Only</span>
                 </div>
-                <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${dataScope === 'department' ? 'border-indigo-600 bg-indigo-600' : 'border-divider'}`}>
+                <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${dataScope === 'department' ? 'border-secondary-main bg-secondary-main' : 'border-divider'}`}>
                   {dataScope === 'department' && <span className="h-1.5 w-1.5 rounded-full bg-surface-paper" />}
                 </span>
               </div>
@@ -343,7 +343,7 @@ export default function CreateRolePage() {
             <label
               className={`relative flex cursor-pointer flex-col rounded-lg border p-4 shadow-sm transition-all focus:outline-none ${
                 dataScope === 'self'
-                  ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-600'
+                  ? 'border-secondary-main bg-secondary-lighter/50 ring-2 ring-secondary-main'
                   : 'border-divider bg-surface-paper hover:border-divider hover:bg-surface-neutral'
               }`}
             >
@@ -357,14 +357,14 @@ export default function CreateRolePage() {
               />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-dark">
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </span>
                   <span className="font-semibold text-ink-primary">Normal Employee</span>
                 </div>
-                <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${dataScope === 'self' ? 'border-indigo-600 bg-indigo-600' : 'border-divider'}`}>
+                <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${dataScope === 'self' ? 'border-secondary-main bg-secondary-main' : 'border-divider'}`}>
                   {dataScope === 'self' && <span className="h-1.5 w-1.5 rounded-full bg-surface-paper" />}
                 </span>
               </div>
@@ -383,7 +383,7 @@ export default function CreateRolePage() {
             selectedIds={selectedIds}
             onTogglePermission={togglePermission}
             onToggleGroup={toggleModule}
-            accent="text-indigo-600 focus:ring-indigo-500"
+            accent="text-secondary-main focus:ring-secondary-main"
           />
         </div>
 
@@ -395,7 +395,7 @@ export default function CreateRolePage() {
           >
             {createMutation.isPending ? (
               <>
-                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-surface-paper border-t-transparent" />
                 Creating…
               </>
             ) : (

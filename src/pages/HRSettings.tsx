@@ -330,7 +330,7 @@ export default function HRSettings() {
           >
             {saving ? 'Saving...' : 'Save Settings'}
           </Button>
-          {saved && <span className="text-sm text-green-600">Settings saved successfully.</span>}
+          {saved && <span className="text-sm text-success-main">Settings saved successfully.</span>}
         </div>
       </div>
 
@@ -346,8 +346,8 @@ export default function HRSettings() {
           {emailConfig?.configured && (
             <span
               className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${emailConfig.is_verified
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-yellow-100 text-yellow-800'
+                  ? 'bg-success-lighter text-success-dark'
+                  : 'bg-warning-lighter text-warning-dark'
                 }`}
             >
               {emailConfig.is_verified ? '✓ Verified' : 'Not Verified'}
@@ -491,8 +491,8 @@ export default function HRSettings() {
 
         {/* Error / Success Messages */}
         {emailError && (
-          <div className="mt-4 rounded-md bg-red-50 p-3">
-            <p className="text-sm text-red-700">{emailError}</p>
+          <div className="mt-4 rounded-md bg-error-lighter p-3">
+            <p className="text-sm text-error-dark">{emailError}</p>
           </div>
         )}
 
@@ -512,7 +512,7 @@ export default function HRSettings() {
             Send Test Email
           </Button>
 
-          {emailSaved && <span className="text-sm text-green-600">Email settings saved successfully.</span>}
+          {emailSaved && <span className="text-sm text-success-main">Email settings saved successfully.</span>}
         </div>
 
         {emailConfig?.last_tested_at && (
@@ -549,8 +549,8 @@ export default function HRSettings() {
             </div>
 
             {testResult && (
-              <div className={`mt-4 rounded-md p-3 ${testResult.success ? 'bg-green-50' : 'bg-red-50'}`}>
-                <p className={`text-sm ${testResult.success ? 'text-green-700' : 'text-red-700'}`}>
+              <div className={`mt-4 rounded-md p-3 ${testResult.success ? 'bg-success-lighter' : 'bg-error-lighter'}`}>
+                <p className={`text-sm ${testResult.success ? 'text-success-dark' : 'text-error-dark'}`}>
                   {testResult.success ? testResult.message : testResult.error}
                 </p>
               </div>

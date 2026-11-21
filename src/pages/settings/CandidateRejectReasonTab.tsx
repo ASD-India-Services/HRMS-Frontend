@@ -237,7 +237,7 @@ export function CandidateRejectReasonTab() {
     <div className="space-y-6 py-2">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-success-main px-4 py-2.5 text-sm font-medium text-primary-contrast shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
           <CheckIcon className="h-4 w-4" />
           <span>{notification}</span>
         </div>
@@ -326,7 +326,7 @@ export function CandidateRejectReasonTab() {
                       onClick={() => handleToggleActive(reason.id)}
                       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
                         reason.isActive
-                          ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                          ? 'bg-success-lighter text-success-dark hover:bg-success-lighter'
                           : 'bg-surface-neutral text-ink-secondary hover:bg-grey-200'
                       }`}
                     >

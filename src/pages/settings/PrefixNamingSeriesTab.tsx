@@ -140,9 +140,9 @@ export function PrefixNamingSeriesTab() {
 
   if (isError) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-        <AlertCircleIcon className="mx-auto h-8 w-8 text-red-500" />
-        <p className="mt-2 text-sm text-red-700">Failed to load prefixes: {(error as Error)?.message}</p>
+      <div className="rounded-xl border border-error-light bg-error-lighter p-6 text-center">
+        <AlertCircleIcon className="mx-auto h-8 w-8 text-error-main" />
+        <p className="mt-2 text-sm text-error-dark">Failed to load prefixes: {(error as Error)?.message}</p>
       </div>
     );
   }
@@ -157,12 +157,12 @@ export function PrefixNamingSeriesTab() {
       </div>
 
       {/* Guide Banner */}
-      <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 p-4 text-xs text-amber-900 shadow-xs">
-        <SparklesIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+      <div className="flex items-start gap-3 rounded-xl border border-warning-light bg-warning-lighter/70 p-4 text-xs text-warning-darker shadow-xs">
+        <SparklesIcon className="mt-0.5 h-4 w-4 shrink-0 text-warning-main" />
         <div>
           <span className="font-semibold">How placeholder formatting works:</span>
-          <p className="mt-0.5 text-amber-800">
-            Use <code className="font-mono font-bold bg-amber-100 px-1 py-0.5 rounded text-amber-950">{'{####}'}</code> for zero-padded sequential numbers.
+          <p className="mt-0.5 text-warning-dark">
+            Use <code className="font-mono font-bold bg-warning-lighter px-1 py-0.5 rounded text-warning-darker">{'{####}'}</code> for zero-padded sequential numbers.
             For example, <code className="font-mono">EMP-{'{####}'}</code> generates <strong className="font-mono">EMP-0001</strong>, <strong className="font-mono">EMP-0002</strong>.
             Adding more hashes increases the padding width: <code className="font-mono">ORG-{'{######}'}</code> generates <strong className="font-mono">ORG-000001</strong>.
           </p>
@@ -214,7 +214,7 @@ export function PrefixNamingSeriesTab() {
       </div>
 
       {formError && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+        <div className="rounded-lg bg-error-lighter p-3 text-sm text-error-dark">
           {formError}
         </div>
       )}
@@ -236,7 +236,7 @@ export function PrefixNamingSeriesTab() {
         </Button>
 
         {saved && (
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
             <CheckIcon className="h-4 w-4" /> Prefix configurations saved successfully
           </span>
         )}

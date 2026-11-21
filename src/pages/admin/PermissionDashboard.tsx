@@ -101,7 +101,7 @@ export default function PermissionDashboard() {
           </Link>
           <Link
             to="/admin/roles"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-primary-contrast bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
@@ -140,7 +140,7 @@ export default function PermissionDashboard() {
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Assigned Users
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
@@ -148,7 +148,7 @@ export default function PermissionDashboard() {
           </div>
           <div className="mt-3">
             <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : totalAssignedUsers}</span>
-            <span className="ml-2 text-xs text-indigo-600 font-medium">Authorised accounts</span>
+            <span className="ml-2 text-xs text-secondary-main font-medium">Authorised accounts</span>
           </div>
           <div className="mt-2 text-xs text-ink-secondary">
             <span>Members bound to security roles</span>
@@ -161,7 +161,7 @@ export default function PermissionDashboard() {
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Security Modules
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
@@ -171,7 +171,7 @@ export default function PermissionDashboard() {
             <span className="text-2xl font-bold text-ink-primary">
               {isLoading ? '...' : Object.keys(modulePermCounts).length || 12}
             </span>
-            <span className="ml-2 text-xs text-purple-600 font-semibold">Protected Modules</span>
+            <span className="ml-2 text-xs text-secondary-main font-semibold">Protected Modules</span>
           </div>
           <div className="mt-2 text-xs text-ink-secondary">
             <span>Granular RBAC boundaries</span>
@@ -184,17 +184,17 @@ export default function PermissionDashboard() {
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Audit Trail
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success-lighter text-success-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-emerald-600">Active</span>
-            <span className="ml-2 text-xs text-emerald-700 font-medium">Immutable Logging</span>
+            <span className="text-2xl font-bold text-success-main">Active</span>
+            <span className="ml-2 text-xs text-success-dark font-medium">Immutable Logging</span>
           </div>
-          <div className="mt-2 text-xs text-emerald-600 font-medium">
+          <div className="mt-2 text-xs text-success-main font-medium">
             <Link to="/audit-logs" className="hover:underline">View audit logs →</Link>
           </div>
         </div>
@@ -322,7 +322,7 @@ export default function PermissionDashboard() {
                         className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
                           role.is_system
                             ? 'bg-primary-lighter text-primary-dark border border-primary-light'
-                            : 'bg-purple-50 text-purple-700 border border-purple-200'
+                            : 'bg-secondary-lighter text-secondary-dark border border-secondary-light'
                         }`}
                       >
                         {role.is_system ? 'System' : 'Custom'}

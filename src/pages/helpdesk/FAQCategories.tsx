@@ -156,7 +156,7 @@ export default function FAQCategories() {
       )}
 
       {isError && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-xs text-red-700">
+        <div className="rounded-xl border border-error-light bg-error-lighter p-4 text-xs text-error-dark">
           Failed to load FAQ categories. {error instanceof Error ? error.message : 'Please try again.'}
         </div>
       )}
@@ -239,9 +239,9 @@ export default function FAQCategories() {
                                 setActiveMenuId(null);
                                 setDeletingCategory(cat);
                               }}
-                              className="w-full text-left px-3 py-1.5 text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2"
+                              className="w-full text-left px-3 py-1.5 text-xs text-error-main hover:bg-error-lighter flex items-center gap-2"
                             >
-                              <svg className="h-3.5 w-3.5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg className="h-3.5 w-3.5 text-error-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                               </svg>
                               <span>Delete</span>
@@ -293,7 +293,7 @@ export default function FAQCategories() {
             </div>
 
             {formError && (
-              <div className="mt-3 rounded-md bg-red-50 p-2.5 text-xs text-red-700 border border-red-200">
+              <div className="mt-3 rounded-md bg-error-lighter p-2.5 text-xs text-error-dark border border-error-light">
                 {formError}
               </div>
             )}
@@ -302,7 +302,7 @@ export default function FAQCategories() {
               {/* Title */}
               <div>
                 <label className="block text-sm font-medium text-ink-primary mb-1">
-                  Title: <span className="text-red-500">*</span>
+                  Title: <span className="text-error-main">*</span>
                 </label>
                 <Input
                   type="text"
@@ -359,7 +359,7 @@ export default function FAQCategories() {
                 type="button"
                 onClick={handleDeleteConfirm}
                 disabled={deleteMutation.isPending}
-                className="rounded bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-rose-700 disabled:opacity-50"
+                className="rounded bg-error-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-error-dark disabled:opacity-50"
               >
                 {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
               </button>

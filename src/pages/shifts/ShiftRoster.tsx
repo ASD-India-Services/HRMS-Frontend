@@ -151,7 +151,7 @@ export function ShiftRoster() {
             You don&apos;t have permission to view the team roster.
           </div>
         ) : isError ? (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-sm text-red-700">
+          <div className="rounded-lg border border-error-light bg-error-lighter p-4 text-center text-sm text-error-dark">
             Failed to load roster data. Please try again later.
           </div>
         ) : employees.length === 0 ? (

@@ -156,7 +156,7 @@ export default function LeaveDashboard() {
           </Link>
           <Link
             to="/leaves/approvals"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-primary-contrast bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -195,17 +195,17 @@ export default function LeaveDashboard() {
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Pending Approvals
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-lighter text-warning-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
           <div className="mt-3">
-            <span className="text-2xl font-bold text-amber-600">{isLoading ? '...' : pendingApps.length}</span>
-            <span className="ml-2 text-xs text-amber-700 font-medium">requests awaiting action</span>
+            <span className="text-2xl font-bold text-warning-main">{isLoading ? '...' : pendingApps.length}</span>
+            <span className="ml-2 text-xs text-warning-dark font-medium">requests awaiting action</span>
           </div>
-          <div className="mt-2 text-xs text-amber-600 font-medium">
+          <div className="mt-2 text-xs text-warning-main font-medium">
             <Link to="/leaves/approvals" className="hover:underline">Review pending requests →</Link>
           </div>
         </div>
@@ -216,7 +216,7 @@ export default function LeaveDashboard() {
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Approved Requests
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success-lighter text-success-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
               </svg>
@@ -224,7 +224,7 @@ export default function LeaveDashboard() {
           </div>
           <div className="mt-3">
             <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : approvedApps.length}</span>
-            <span className="ml-2 text-xs text-emerald-600 font-semibold">Total Approved</span>
+            <span className="ml-2 text-xs text-success-main font-semibold">Total Approved</span>
           </div>
           <div className="mt-2 text-xs text-ink-secondary">
             <span>Successful leave periods</span>
@@ -237,7 +237,7 @@ export default function LeaveDashboard() {
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Leave Policies
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
@@ -245,9 +245,9 @@ export default function LeaveDashboard() {
           </div>
           <div className="mt-3">
             <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : leaveTypes.length}</span>
-            <span className="ml-2 text-xs text-purple-600 font-medium">Types Configured</span>
+            <span className="ml-2 text-xs text-secondary-main font-medium">Types Configured</span>
           </div>
-          <div className="mt-2 text-xs text-purple-600 font-medium">
+          <div className="mt-2 text-xs text-secondary-main font-medium">
             <Link to="/leave-policies" className="hover:underline">Manage policies →</Link>
           </div>
         </div>

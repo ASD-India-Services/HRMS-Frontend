@@ -213,22 +213,22 @@ export function UserPermissionsPanel({
 
       {/* Success Toast */}
       {successMessage && (
-        <div className="mb-4 rounded-md bg-green-50 p-3">
-          <p className="text-sm font-medium text-green-800">{successMessage}</p>
+        <div className="mb-4 rounded-md bg-success-lighter p-3">
+          <p className="text-sm font-medium text-success-dark">{successMessage}</p>
         </div>
       )}
 
       {/* Error Messages */}
       {roleAssignMutation.isError && (
-        <div className="mb-4 rounded-md bg-red-50 p-3">
-          <p className="text-sm text-red-800">
+        <div className="mb-4 rounded-md bg-error-lighter p-3">
+          <p className="text-sm text-error-dark">
             Failed to update role. Please try again.
           </p>
         </div>
       )}
       {overridesMutation.isError && (
-        <div className="mb-4 rounded-md bg-red-50 p-3">
-          <p className="text-sm text-red-800">
+        <div className="mb-4 rounded-md bg-error-lighter p-3">
+          <p className="text-sm text-error-dark">
             Failed to save overrides. Please try again.
           </p>
         </div>

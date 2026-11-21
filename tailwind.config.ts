@@ -11,8 +11,6 @@ import type { Config } from 'tailwindcss'
  *  - divider           : divider (border-divider), already 20% alpha
  *  - shadows           : shadow-{z1..z24|card|dropdown|dialog|primary|...}
  *  - sizes             : nav 300px, nav-mini 88px, header 72px (w-nav, w-nav-mini, h-header, ...)
- *
- * Compatibility aliases (removed in FEAT-006): primary-50..950 and gray-50..900.
  */
 const channel = (name: string) => `rgb(var(--${name}) / <alpha-value>)`
 
@@ -40,18 +38,6 @@ export default {
       colors: {
         primary: {
           ...palette('primary'),
-          // compat aliases for unmigrated pages
-          50: channel('primary-lighter'),
-          100: channel('primary-lighter'),
-          200: channel('primary-light'),
-          300: channel('primary-light'),
-          400: channel('primary-light'),
-          500: channel('primary-main'),
-          600: channel('primary-main'),
-          700: channel('primary-dark'),
-          800: channel('primary-dark'),
-          900: channel('primary-darker'),
-          950: channel('primary-darker'),
         },
         secondary: palette('secondary'),
         info: palette('info'),
@@ -59,8 +45,6 @@ export default {
         warning: palette('warning'),
         error: palette('error'),
         grey: greyScale,
-        // compat alias for unmigrated pages
-        gray: { ...greyScale, 950: channel('grey-900') },
         ink: {
           primary: channel('ink-primary'),
           secondary: channel('ink-secondary'),

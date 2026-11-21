@@ -61,6 +61,7 @@ import refreshCircleDuotone from '@iconify-icons/solar/refresh-circle-bold-duoto
 import restartDuotone from '@iconify-icons/solar/restart-bold-duotone';
 import settingsDuotone from '@iconify-icons/solar/settings-bold-duotone';
 import settingsMinimalisticDuotone from '@iconify-icons/solar/settings-minimalistic-bold-duotone';
+import moonLinear from '@iconify-icons/solar/moon-linear';
 import shieldCheckDuotone from '@iconify-icons/solar/shield-check-bold-duotone';
 import squareAcademicCapDuotone from '@iconify-icons/solar/square-academic-cap-bold-duotone';
 import starDuotone from '@iconify-icons/solar/star-bold-duotone';
@@ -76,6 +77,7 @@ import uploadDuotone from '@iconify-icons/solar/upload-bold-duotone';
 import userCircleDuotone from '@iconify-icons/solar/user-circle-bold-duotone';
 import userIdDuotone from '@iconify-icons/solar/user-id-bold-duotone';
 import userPlusDuotone from '@iconify-icons/solar/user-plus-bold-duotone';
+import sunLinear from '@iconify-icons/solar/sun-linear';
 import userRoundedLinear from '@iconify-icons/solar/user-rounded-linear';
 import usersGroupRoundedDuotone from '@iconify-icons/solar/users-group-rounded-bold-duotone';
 import usersGroupTwoRoundedDuotone from '@iconify-icons/solar/users-group-two-rounded-bold-duotone';
@@ -161,6 +163,8 @@ const ICONS = {
   profile: userCircleDuotone,
   bell: bellBingLinear,
   menu: hamburgerMenuLinear,
+  moon: moonLinear,
+  sun: sunLinear,
   'chevron-down': altArrowDownLinear,
   'chevron-right': altArrowRightLinear,
   collapse: doubleAltArrowLeftLinear,

@@ -407,7 +407,7 @@ export default function CompensatoryLeave() {
                       <button
                         type="button"
                         onClick={() => handleDeleteComment(c.id)}
-                        className="text-ink-disabled hover:text-red-600 transition-colors p-1"
+                        className="text-ink-disabled hover:text-error-main transition-colors p-1"
                         title="Delete comment"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -506,7 +506,7 @@ export default function CompensatoryLeave() {
                       }}
                       className={`w-full text-left text-xs px-2 py-1.5 rounded transition-colors ${
                         statusFilter === s
-                          ? 'bg-primary-main text-white font-bold'
+                          ? 'bg-primary-main text-primary-contrast font-bold'
                           : 'hover:bg-surface-neutral text-ink-primary'
                       }`}
                     >
@@ -543,7 +543,7 @@ export default function CompensatoryLeave() {
       {/* Status Indicators Legend matching Screenshots 1, 2, 4 */}
       <div className="flex justify-end items-center gap-4 py-2 text-xs font-medium text-ink-primary">
         <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
+          <span className="w-2.5 h-2.5 rounded-full bg-success-main inline-block"></span>
           <span>Approved</span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -551,7 +551,7 @@ export default function CompensatoryLeave() {
           <span>Requested</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+          <span className="w-2.5 h-2.5 rounded-full bg-error-main inline-block"></span>
           <span>Rejected</span>
         </div>
       </div>
@@ -655,9 +655,9 @@ export default function CompensatoryLeave() {
                         <span
                           className={`absolute left-0 top-1 bottom-1 w-1 rounded-r ${
                             isApproved
-                              ? 'bg-green-500'
+                              ? 'bg-success-main'
                               : isRejected
-                              ? 'bg-red-500'
+                              ? 'bg-error-main'
                               : 'bg-primary-main'
                           }`}
                         />
@@ -703,9 +703,9 @@ export default function CompensatoryLeave() {
                         <span
                           className={`font-semibold text-xs ${
                             isApproved
-                              ? 'text-green-600'
+                              ? 'text-success-main'
                               : isRejected
-                              ? 'text-red-600'
+                              ? 'text-error-main'
                               : 'text-primary-main'
                           }`}
                         >
@@ -726,7 +726,7 @@ export default function CompensatoryLeave() {
                             setCommentsViewReq(req);
                             setNewCommentText('');
                           }}
-                          className="p-1.5 rounded text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors cursor-pointer"
+                          className="p-1.5 rounded text-error-main hover:text-error-dark hover:bg-error-lighter transition-colors cursor-pointer"
                           title="View / Add Comments"
                         >
                           <svg className="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -769,7 +769,7 @@ export default function CompensatoryLeave() {
                             className={`p-1.5 transition-colors ${
                               req.status === 'approved'
                                 ? 'text-grey-300 cursor-not-allowed'
-                                : 'text-ink-secondary hover:text-red-600 hover:bg-red-50 cursor-pointer'
+                                : 'text-ink-secondary hover:text-error-main hover:bg-error-lighter cursor-pointer'
                             }`}
                             title={req.status === 'approved' ? 'Approved request cannot be deleted' : 'Delete Request'}
                           >
@@ -795,7 +795,7 @@ export default function CompensatoryLeave() {
                                   setCommentModalReq(req);
                                   setConfirmAction('approve');
                                 }}
-                                className="w-7 h-7 rounded bg-green-500 hover:bg-green-600 text-white flex items-center justify-center font-bold text-xs shadow-xs transition-colors"
+                                className="w-7 h-7 rounded bg-success-main hover:bg-success-main text-primary-contrast flex items-center justify-center font-bold text-xs shadow-xs transition-colors"
                                 title="Approve Request"
                               >
                                 ✓
@@ -893,7 +893,7 @@ export default function CompensatoryLeave() {
             {/* Modal Form */}
             <form onSubmit={handleCreateSubmit} className="p-5 space-y-4">
               {formError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700 font-medium">
+                <div className="p-3 bg-error-lighter border border-error-light rounded text-xs text-error-dark font-medium">
                   {formError}
                 </div>
               )}
@@ -1020,7 +1020,7 @@ export default function CompensatoryLeave() {
 
             <form onSubmit={handleEditSubmit} className="p-5 space-y-4">
               {editFormError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700 font-medium">
+                <div className="p-3 bg-error-lighter border border-error-light rounded text-xs text-error-dark font-medium">
                   {editFormError}
                 </div>
               )}

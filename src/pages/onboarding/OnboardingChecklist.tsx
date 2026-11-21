@@ -12,8 +12,8 @@ import { Select } from '@/components/ui/Select';
 const STATUS_STYLES: Record<OnboardingTaskStatus, { label: string; className: string; icon: string }> = {
   pending: { label: 'Pending', className: 'bg-surface-neutral text-ink-primary', icon: '○' },
   in_progress: { label: 'In Progress', className: 'bg-primary-lighter text-primary-dark', icon: '◐' },
-  completed: { label: 'Completed', className: 'bg-green-100 text-green-800', icon: '✓' },
-  skipped: { label: 'Skipped', className: 'bg-yellow-100 text-yellow-700', icon: '—' },
+  completed: { label: 'Completed', className: 'bg-success-lighter text-success-dark', icon: '✓' },
+  skipped: { label: 'Skipped', className: 'bg-warning-lighter text-warning-dark', icon: '—' },
 };
 
 interface OnboardingChecklistProps {
@@ -66,7 +66,7 @@ export function OnboardingChecklist({ employeeId }: OnboardingChecklistProps) {
               <p className="text-xs text-ink-disabled">Complete</p>
             </div>
             <div
-              className="h-10 w-10 rounded-full border-4 border-green-500"
+              className="h-10 w-10 rounded-full border-4 border-success-main"
               style={{
                 background: `conic-gradient(rgb(var(--success-main)) ${progressPercentage * 3.6}deg, rgb(var(--grey-300)) ${progressPercentage * 3.6}deg)`,
               }}
@@ -105,8 +105,8 @@ export function OnboardingChecklist({ employeeId }: OnboardingChecklistProps) {
 
       {/* Error */}
       {isError && (
-        <div className="rounded-md bg-red-50 p-4" role="alert">
-          <p className="text-sm text-red-800">
+        <div className="rounded-md bg-error-lighter p-4" role="alert">
+          <p className="text-sm text-error-dark">
             Failed to load onboarding tasks. {error instanceof Error ? error.message : 'Please try again.'}
           </p>
         </div>
@@ -142,8 +142,8 @@ export function OnboardingChecklist({ employeeId }: OnboardingChecklistProps) {
                     disabled={updateTask.isPending}
                     className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold transition-colors ${
                       task.status === 'completed'
-                        ? 'border-green-500 bg-green-500 text-white'
-                        : 'border-divider text-ink-disabled hover:border-green-400'
+                        ? 'border-success-main bg-success-main text-primary-contrast'
+                        : 'border-divider text-ink-disabled hover:border-success-main'
                     }`}
                     aria-label={`Mark "${task.title}" as ${task.status === 'completed' ? 'pending' : 'completed'}`}
                   >

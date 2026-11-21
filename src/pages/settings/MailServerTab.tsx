@@ -149,17 +149,17 @@ export function MailServerTab() {
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
               emailConfig.is_verified
-                ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                : 'bg-amber-100 text-amber-800 border border-amber-200'
+                ? 'bg-success-lighter text-success-dark border border-success-light'
+                : 'bg-warning-lighter text-warning-dark border border-warning-light'
             }`}
           >
             {emailConfig.is_verified ? (
               <>
-                <ShieldCheckIcon className="h-3.5 w-3.5 text-emerald-600" /> Verified & Active
+                <ShieldCheckIcon className="h-3.5 w-3.5 text-success-main" /> Verified & Active
               </>
             ) : (
               <>
-                <ShieldAlertIcon className="h-3.5 w-3.5 text-amber-600" /> Not Tested
+                <ShieldAlertIcon className="h-3.5 w-3.5 text-warning-main" /> Not Tested
               </>
             )}
           </span>
@@ -299,7 +299,7 @@ export function MailServerTab() {
         </div>
 
         {errorMsg && (
-          <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+          <div className="rounded-lg bg-error-lighter p-3 text-sm text-error-dark">
             {errorMsg}
           </div>
         )}
@@ -329,7 +329,7 @@ export function MailServerTab() {
           </Button>
 
           {saved && (
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
               <CheckIcon className="h-4 w-4" /> Mail server updated successfully
             </span>
           )}
@@ -373,7 +373,7 @@ export function MailServerTab() {
             {testResult && (
               <div
                 className={`mt-4 rounded-lg p-3 text-sm ${
-                  testResult.success ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-800 border border-red-200'
+                  testResult.success ? 'bg-success-lighter text-success-dark border border-success-light' : 'bg-error-lighter text-error-dark border border-error-light'
                 }`}
               >
                 {testResult.success ? testResult.message : testResult.error}

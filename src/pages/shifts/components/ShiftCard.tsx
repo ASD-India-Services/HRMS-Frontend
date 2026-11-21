@@ -33,8 +33,8 @@ export function ShiftCard({ shiftType, compact = false }: ShiftCardProps) {
       <div
         className={`rounded-md px-2 py-1 text-xs font-medium ${
           is_night_shift
-            ? 'bg-indigo-50 text-indigo-700'
-            : 'bg-emerald-50 text-emerald-700'
+            ? 'bg-secondary-lighter text-secondary-dark'
+            : 'bg-success-lighter text-success-dark'
         }`}
         title={`${name}: ${formatTime(start_time)} – ${formatTime(end_time)}`}
       >
@@ -51,13 +51,13 @@ export function ShiftCard({ shiftType, compact = false }: ShiftCardProps) {
       <div className="flex items-center gap-2">
         <div
           className={`h-3 w-3 rounded-full ${
-            is_night_shift ? 'bg-indigo-500' : 'bg-emerald-500'
+            is_night_shift ? 'bg-secondary-main' : 'bg-success-main'
           }`}
           aria-hidden="true"
         />
         <h4 className="text-sm font-semibold text-ink-primary">{name}</h4>
         {is_night_shift && (
-          <span className="ml-auto rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700">
+          <span className="ml-auto rounded-full bg-secondary-lighter px-2 py-0.5 text-xs font-medium text-secondary-dark">
             Night
           </span>
         )}

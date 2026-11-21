@@ -14,9 +14,9 @@ interface PayslipCardProps {
 
 const statusStyles: Record<string, string> = {
   draft: 'bg-surface-neutral text-ink-primary',
-  submitted: 'bg-yellow-100 text-yellow-800',
-  paid: 'bg-green-100 text-green-800',
-  cancelled: 'bg-red-100 text-red-800',
+  submitted: 'bg-warning-lighter text-warning-dark',
+  paid: 'bg-success-lighter text-success-dark',
+  cancelled: 'bg-error-lighter text-error-dark',
 };
 
 export function PayslipCard({ slip, isSelected, onSelect }: PayslipCardProps) {
@@ -56,7 +56,7 @@ export function PayslipCard({ slip, isSelected, onSelect }: PayslipCardProps) {
         </div>
         <div>
           <p className="text-xs text-ink-secondary">Deductions</p>
-          <p className="text-sm font-medium text-red-600">{formatCurrency(slip.total_deductions)}</p>
+          <p className="text-sm font-medium text-error-main">{formatCurrency(slip.total_deductions)}</p>
         </div>
         <div>
           <p className="text-xs text-ink-secondary">Net Pay</p>

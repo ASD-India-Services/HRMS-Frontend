@@ -316,13 +316,13 @@ export default function SelfOnboarding() {
 
         {/* Global error message */}
         {errors.non_field_errors && (
-          <div className="mt-4 rounded-md bg-red-50 p-3">
-            <p className="text-sm text-red-800">{errors.non_field_errors.join(', ')}</p>
+          <div className="mt-4 rounded-md bg-error-lighter p-3">
+            <p className="text-sm text-error-dark">{errors.non_field_errors.join(', ')}</p>
           </div>
         )}
         {errors.detail && (
-          <div className="mt-4 rounded-md bg-red-50 p-3">
-            <p className="text-sm text-red-800">
+          <div className="mt-4 rounded-md bg-error-lighter p-3">
+            <p className="text-sm text-error-dark">
               {Array.isArray(errors.detail) ? errors.detail.join(', ') : String(errors.detail)}
             </p>
           </div>
@@ -352,7 +352,7 @@ export default function SelfOnboarding() {
             type="button"
             onClick={handleComplete}
             disabled={saveStepMutation.isPending || completeMutation.isPending}
-            className="rounded-md bg-green-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
+            className="rounded-md bg-success-main px-6 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-success-dark disabled:opacity-50"
           >
             {completeMutation.isPending ? 'Completing...' : 'Complete Onboarding'}
           </button>
@@ -384,9 +384,9 @@ function StepIndicator({
                 <div
                   className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition-colors ${
                     isCompleted
-                      ? 'bg-green-500 text-white'
+                      ? 'bg-success-main text-primary-contrast'
                       : isActive
-                        ? 'bg-primary-main text-white'
+                        ? 'bg-primary-main text-primary-contrast'
                         : 'bg-grey-200 text-ink-secondary'
                   }`}
                 >
@@ -413,7 +413,7 @@ function StepIndicator({
 function FieldError({ errors, field }: { errors: ValidationErrors; field: string }) {
   if (!errors[field]) return null;
   return (
-    <p className="mt-1 text-xs text-red-600">
+    <p className="mt-1 text-xs text-error-main">
       {errors[field].join(', ')}
     </p>
   );
@@ -432,26 +432,26 @@ function PersonalDetailsForm({
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div>
         <label htmlFor="date_of_birth" className="block text-sm font-medium text-ink-primary">
-          Date of Birth<span className="text-red-500 ml-0.5">*</span>
+          Date of Birth<span className="text-error-main ml-0.5">*</span>
         </label>
         <input
           id="date_of_birth"
           type="date"
           value={data.date_of_birth}
           onChange={(e) => onChange({ ...data, date_of_birth: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.date_of_birth ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.date_of_birth ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         />
         <FieldError errors={errors} field="date_of_birth" />
       </div>
       <div>
         <label htmlFor="gender" className="block text-sm font-medium text-ink-primary">
-          Gender<span className="text-red-500 ml-0.5">*</span>
+          Gender<span className="text-error-main ml-0.5">*</span>
         </label>
         <select
           id="gender"
           value={data.gender}
           onChange={(e) => onChange({ ...data, gender: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.gender ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.gender ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         >
           <option value="">Select Gender</option>
           <option value="male">Male</option>
@@ -463,7 +463,7 @@ function PersonalDetailsForm({
       </div>
       <div className="sm:col-span-2">
         <label htmlFor="phone" className="block text-sm font-medium text-ink-primary">
-          Phone Number<span className="text-red-500 ml-0.5">*</span>
+          Phone Number<span className="text-error-main ml-0.5">*</span>
         </label>
         <input
           id="phone"
@@ -471,7 +471,7 @@ function PersonalDetailsForm({
           value={data.phone}
           onChange={(e) => onChange({ ...data, phone: e.target.value })}
           placeholder="+91 98765 43210"
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.phone ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         />
         <FieldError errors={errors} field="phone" />
       </div>
@@ -492,59 +492,59 @@ function AddressForm({
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="sm:col-span-2">
         <label htmlFor="address_line_1" className="block text-sm font-medium text-ink-primary">
-          Address Line 1<span className="text-red-500 ml-0.5">*</span>
+          Address Line 1<span className="text-error-main ml-0.5">*</span>
         </label>
         <input
           id="address_line_1"
           type="text"
           value={data.address_line_1}
           onChange={(e) => onChange({ ...data, address_line_1: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.address_line_1 ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.address_line_1 ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         />
         <FieldError errors={errors} field="address_line_1" />
       </div>
       <div>
         <label htmlFor="city" className="block text-sm font-medium text-ink-primary">
-          City<span className="text-red-500 ml-0.5">*</span>
+          City<span className="text-error-main ml-0.5">*</span>
         </label>
         <input
           id="city"
           type="text"
           value={data.city}
           onChange={(e) => onChange({ ...data, city: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.city ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.city ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         />
         <FieldError errors={errors} field="city" />
       </div>
       <div>
         <label htmlFor="state" className="block text-sm font-medium text-ink-primary">
-          State<span className="text-red-500 ml-0.5">*</span>
+          State<span className="text-error-main ml-0.5">*</span>
         </label>
         <input
           id="state"
           type="text"
           value={data.state}
           onChange={(e) => onChange({ ...data, state: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.state ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.state ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         />
         <FieldError errors={errors} field="state" />
       </div>
       <div>
         <label htmlFor="postal_code" className="block text-sm font-medium text-ink-primary">
-          Postal Code<span className="text-red-500 ml-0.5">*</span>
+          Postal Code<span className="text-error-main ml-0.5">*</span>
         </label>
         <input
           id="postal_code"
           type="text"
           value={data.postal_code}
           onChange={(e) => onChange({ ...data, postal_code: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.postal_code ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.postal_code ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         />
         <FieldError errors={errors} field="postal_code" />
       </div>
       <div>
         <label htmlFor="country" className="block text-sm font-medium text-ink-primary">
-          Country<span className="text-red-500 ml-0.5">*</span>
+          Country<span className="text-error-main ml-0.5">*</span>
         </label>
         <input
           id="country"
@@ -552,7 +552,7 @@ function AddressForm({
           value={data.country}
           onChange={(e) => onChange({ ...data, country: e.target.value })}
           placeholder="India"
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.country ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.country ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         />
         <FieldError errors={errors} field="country" />
       </div>
@@ -573,39 +573,39 @@ function EmergencyContactForm({
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div>
         <label htmlFor="emergency_contact_name" className="block text-sm font-medium text-ink-primary">
-          Contact Name<span className="text-red-500 ml-0.5">*</span>
+          Contact Name<span className="text-error-main ml-0.5">*</span>
         </label>
         <input
           id="emergency_contact_name"
           type="text"
           value={data.emergency_contact_name}
           onChange={(e) => onChange({ ...data, emergency_contact_name: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.emergency_contact_name ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.emergency_contact_name ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         />
         <FieldError errors={errors} field="emergency_contact_name" />
       </div>
       <div>
         <label htmlFor="emergency_contact_phone" className="block text-sm font-medium text-ink-primary">
-          Contact Phone<span className="text-red-500 ml-0.5">*</span>
+          Contact Phone<span className="text-error-main ml-0.5">*</span>
         </label>
         <input
           id="emergency_contact_phone"
           type="tel"
           value={data.emergency_contact_phone}
           onChange={(e) => onChange({ ...data, emergency_contact_phone: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.emergency_contact_phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.emergency_contact_phone ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         />
         <FieldError errors={errors} field="emergency_contact_phone" />
       </div>
       <div className="sm:col-span-2">
         <label htmlFor="emergency_contact_relationship" className="block text-sm font-medium text-ink-primary">
-          Relationship<span className="text-red-500 ml-0.5">*</span>
+          Relationship<span className="text-error-main ml-0.5">*</span>
         </label>
         <select
           id="emergency_contact_relationship"
           value={data.emergency_contact_relationship}
           onChange={(e) => onChange({ ...data, emergency_contact_relationship: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.emergency_contact_relationship ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.emergency_contact_relationship ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         >
           <option value="">Select Relationship</option>
           <option value="spouse">Spouse</option>
@@ -633,33 +633,33 @@ function BankDetailsForm({
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="sm:col-span-2">
         <label htmlFor="bank_name" className="block text-sm font-medium text-ink-primary">
-          Bank Name<span className="text-red-500 ml-0.5">*</span>
+          Bank Name<span className="text-error-main ml-0.5">*</span>
         </label>
         <input
           id="bank_name"
           type="text"
           value={data.bank_name}
           onChange={(e) => onChange({ ...data, bank_name: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.bank_name ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.bank_name ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         />
         <FieldError errors={errors} field="bank_name" />
       </div>
       <div>
         <label htmlFor="account_number" className="block text-sm font-medium text-ink-primary">
-          Account Number<span className="text-red-500 ml-0.5">*</span>
+          Account Number<span className="text-error-main ml-0.5">*</span>
         </label>
         <input
           id="account_number"
           type="text"
           value={data.account_number}
           onChange={(e) => onChange({ ...data, account_number: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.account_number ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.account_number ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         />
         <FieldError errors={errors} field="account_number" />
       </div>
       <div>
         <label htmlFor="ifsc_code" className="block text-sm font-medium text-ink-primary">
-          IFSC Code<span className="text-red-500 ml-0.5">*</span>
+          IFSC Code<span className="text-error-main ml-0.5">*</span>
         </label>
         <input
           id="ifsc_code"
@@ -667,7 +667,7 @@ function BankDetailsForm({
           value={data.ifsc_code}
           onChange={(e) => onChange({ ...data, ifsc_code: e.target.value.toUpperCase() })}
           placeholder="e.g. SBIN0001234"
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.ifsc_code ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-divider focus:border-primary-main'}`}
+          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.ifsc_code ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
         />
         <FieldError errors={errors} field="ifsc_code" />
       </div>
@@ -687,7 +687,7 @@ function DocumentUploadForm({
   return (
     <div>
       <label htmlFor="id_proof" className="block text-sm font-medium text-ink-primary">
-        ID Proof (Aadhaar, PAN, Passport, etc.)<span className="text-red-500 ml-0.5">*</span>
+        ID Proof (Aadhaar, PAN, Passport, etc.)<span className="text-error-main ml-0.5">*</span>
       </label>
       <div className="mt-2">
         <input

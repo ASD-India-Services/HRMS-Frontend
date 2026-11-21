@@ -28,8 +28,8 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
       const status = value as string;
       const colors: Record<string, string> = {
         draft: 'bg-surface-neutral text-ink-primary',
-        submitted: 'bg-yellow-100 text-yellow-800',
-        applied: 'bg-green-100 text-green-800',
+        submitted: 'bg-warning-lighter text-warning-dark',
+        applied: 'bg-success-lighter text-success-dark',
       };
       return (
         <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${colors[status] || 'bg-surface-neutral text-ink-primary'}`}>
@@ -94,7 +94,7 @@ export default function PayrollCorrections() {
             <button
               type="button"
               onClick={() => setApplyId(row.id as string)}
-              className="inline-flex items-center rounded-md bg-green-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-700"
+              className="inline-flex items-center rounded-md bg-success-main px-2.5 py-1 text-xs font-medium text-primary-contrast hover:bg-success-dark"
             >
               Apply
             </button>

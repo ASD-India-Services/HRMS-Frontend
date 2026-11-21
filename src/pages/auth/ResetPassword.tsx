@@ -29,11 +29,11 @@ function getPasswordStrength(password: string): PasswordStrength {
   if (/\d/.test(password)) score++;
 
   const levels: PasswordStrength[] = [
-    { score: 0, label: 'Too Weak', color: 'bg-red-500' },
-    { score: 1, label: 'Weak', color: 'bg-orange-500' },
-    { score: 2, label: 'Fair', color: 'bg-yellow-500' },
+    { score: 0, label: 'Too Weak', color: 'bg-error-main' },
+    { score: 1, label: 'Weak', color: 'bg-warning-main' },
+    { score: 2, label: 'Fair', color: 'bg-warning-main' },
     { score: 3, label: 'Good', color: 'bg-primary-main' },
-    { score: 4, label: 'Strong', color: 'bg-green-500' },
+    { score: 4, label: 'Strong', color: 'bg-success-main' },
   ];
 
   return levels[score];
@@ -127,12 +127,12 @@ export default function ResetPassword() {
   if (tokenValid === false) {
     return (
       <PageWrapper>
-        <div className="rounded-md bg-red-50 p-6 text-center">
-          <svg className="mx-auto h-12 w-12 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="rounded-md bg-error-lighter p-6 text-center">
+          <svg className="mx-auto h-12 w-12 text-error-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
           </svg>
-          <h2 className="mt-4 text-lg font-semibold text-red-800">Invalid Reset Link</h2>
-          <p className="mt-2 text-sm text-red-700">{tokenError}</p>
+          <h2 className="mt-4 text-lg font-semibold text-error-dark">Invalid Reset Link</h2>
+          <p className="mt-2 text-sm text-error-dark">{tokenError}</p>
           <Link
             to="/auth/forgot-password"
             className="mt-4 inline-block text-sm font-medium text-primary-main hover:text-primary-dark"
@@ -147,12 +147,12 @@ export default function ResetPassword() {
   if (success) {
     return (
       <PageWrapper>
-        <div className="rounded-md bg-green-50 p-6 text-center">
-          <svg className="mx-auto h-12 w-12 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="rounded-md bg-success-lighter p-6 text-center">
+          <svg className="mx-auto h-12 w-12 text-success-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <h2 className="mt-4 text-lg font-semibold text-green-800">Password Reset Successfully!</h2>
-          <p className="mt-2 text-sm text-green-700">
+          <h2 className="mt-4 text-lg font-semibold text-success-dark">Password Reset Successfully!</h2>
+          <p className="mt-2 text-sm text-success-dark">
             Redirecting to login...
           </p>
         </div>
@@ -198,7 +198,7 @@ export default function ResetPassword() {
                   />
                 ))}
               </div>
-              <p className={`mt-1 text-xs ${strength.score >= 3 ? 'text-green-600' : 'text-ink-secondary'}`}>
+              <p className={`mt-1 text-xs ${strength.score >= 3 ? 'text-success-main' : 'text-ink-secondary'}`}>
                 {strength.label}
               </p>
             </div>
@@ -207,7 +207,7 @@ export default function ResetPassword() {
           {password.length > 0 && passwordErrors.length > 0 && (
             <ul className="mt-2 space-y-0.5">
               {passwordErrors.map((err) => (
-                <li key={err} className="text-xs text-red-600">• {err}</li>
+                <li key={err} className="text-xs text-error-main">• {err}</li>
               ))}
             </ul>
           )}
@@ -226,13 +226,13 @@ export default function ResetPassword() {
             className="mt-1"
           />
           {confirmPassword.length > 0 && !passwordsMatch && (
-            <p className="mt-1 text-xs text-red-600">Passwords do not match</p>
+            <p className="mt-1 text-xs text-error-main">Passwords do not match</p>
           )}
         </div>
 
         {submitError && (
-          <div className="rounded-md bg-red-50 p-3">
-            <p className="text-sm text-red-800">{submitError}</p>
+          <div className="rounded-md bg-error-lighter p-3">
+            <p className="text-sm text-error-dark">{submitError}</p>
           </div>
         )}
 

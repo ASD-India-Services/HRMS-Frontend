@@ -114,7 +114,7 @@ export function CompensatoryLeaveSettingsTab() {
     <div className="space-y-8 py-2">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-success-main px-4 py-2.5 text-sm font-medium text-primary-contrast shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
           <CheckIcon className="h-4 w-4" />
           <span>{notification}</span>
         </div>
@@ -135,7 +135,7 @@ export function CompensatoryLeaveSettingsTab() {
           <span className="text-base font-bold text-ink-primary">Compensatory Leave Request</span>
           <div className="group relative cursor-pointer text-ink-disabled hover:text-ink-secondary">
             <InfoIcon className="h-4 w-4" />
-            <div className="absolute left-1/2 -top-8 -translate-x-1/2 hidden group-hover:block rounded bg-grey-900 px-2 py-1 text-[11px] text-white whitespace-nowrap shadow-md z-10">
+            <div className="absolute left-1/2 -top-8 -translate-x-1/2 hidden group-hover:block rounded bg-grey-900 px-2 py-1 text-[11px] text-primary-contrast whitespace-nowrap shadow-md z-10">
               Allow employees to request compensatory leave for overtime or off-day work
             </div>
           </div>
@@ -172,7 +172,7 @@ export function CompensatoryLeaveSettingsTab() {
           <span className="text-base font-bold text-ink-primary">Compensatory Leave Type</span>
           <div className="group relative cursor-pointer text-ink-disabled hover:text-ink-secondary">
             <InfoIcon className="h-4 w-4" />
-            <div className="absolute left-1/2 -top-8 -translate-x-1/2 hidden group-hover:block rounded bg-grey-900 px-2 py-1 text-[11px] text-white whitespace-nowrap shadow-md z-10">
+            <div className="absolute left-1/2 -top-8 -translate-x-1/2 hidden group-hover:block rounded bg-grey-900 px-2 py-1 text-[11px] text-primary-contrast whitespace-nowrap shadow-md z-10">
               Configuration details for standard compensatory leave allocations
             </div>
           </div>
@@ -183,7 +183,7 @@ export function CompensatoryLeaveSettingsTab() {
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-4">
               {/* Teal Avatar with "CT" */}
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary-main text-white font-bold text-lg shadow-xs">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary-main text-primary-contrast font-bold text-lg shadow-xs">
                 CT
               </div>
 
@@ -219,7 +219,7 @@ export function CompensatoryLeaveSettingsTab() {
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 mt-1 w-32 rounded-md bg-surface-paper py-1 shadow-lg ring-1 ring-black/5 z-20">
+                <div className="absolute right-0 mt-1 w-32 rounded-md bg-surface-paper py-1 shadow-lg ring-1 ring-grey-900/5 z-20">
                   <button
                     type="button"
                     onClick={handleOpenEdit}

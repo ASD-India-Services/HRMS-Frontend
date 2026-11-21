@@ -273,7 +273,7 @@ export default function Policies() {
       )}
 
       {isError && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-xs text-red-700">
+        <div className="rounded-xl border border-error-light bg-error-lighter p-4 text-xs text-error-dark">
           Failed to load policies. {error instanceof Error ? error.message : 'Please try again.'}
         </div>
       )}
@@ -318,7 +318,7 @@ export default function Policies() {
                   {/* Card Top: Indicator + Title + Edit/Delete Icons */}
                   <div className="flex items-center justify-between pb-3 border-b border-divider">
                     <div className="flex items-center gap-2 truncate pr-2">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500 flex-shrink-0" />
+                      <span className="h-2 w-2 rounded-full bg-success-main flex-shrink-0" />
                       <span className="font-bold text-sm text-ink-primary truncate" title={policy.title || 'Untitled'}>
                         {policy.title || 'Untitled Policy'}
                       </span>
@@ -344,7 +344,7 @@ export default function Policies() {
                             e.stopPropagation();
                             setDeletingPolicy(policy);
                           }}
-                          className="p-1 text-ink-disabled hover:text-rose-600 transition"
+                          className="p-1 text-ink-disabled hover:text-error-main transition"
                           title="Delete Policy"
                         >
                           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -397,7 +397,7 @@ export default function Policies() {
             </div>
 
             {formError && (
-              <div className="mt-3 rounded-md bg-red-50 p-2.5 text-xs text-red-700 border border-red-200">
+              <div className="mt-3 rounded-md bg-error-lighter p-2.5 text-xs text-error-dark border border-error-light">
                 {formError}
               </div>
             )}
@@ -406,7 +406,7 @@ export default function Policies() {
               {/* Title */}
               <div>
                 <label className="block text-sm font-medium text-ink-primary mb-1">
-                  Title: <span className="text-red-500">*</span>
+                  Title: <span className="text-error-main">*</span>
                 </label>
                 <Input
                   type="text"
@@ -420,7 +420,7 @@ export default function Policies() {
               {/* Body */}
               <div>
                 <label className="block text-sm font-medium text-ink-primary mb-1">
-                  Body: <span className="text-red-500">*</span>
+                  Body: <span className="text-error-main">*</span>
                 </label>
                 <RichTextEditor
                   value={formBody}
@@ -595,13 +595,13 @@ export default function Policies() {
             <div className="flex items-start justify-between pb-4 border-b border-divider">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 inline-block" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-success-main inline-block" />
                   <h2 id="Policies-modal-title-2" className="text-xl font-bold text-ink-primary">{viewingPolicy.title || 'Policy Details'}</h2>
                 </div>
                 <p className="text-xs text-ink-secondary mt-1">
                   Company: <span className="font-semibold text-ink-primary">{viewingPolicy.company || hrSettings?.company_name || 'All Companies'}</span>
                   {viewingPolicy.is_visible_to_all && (
-                    <span className="ml-2 inline-flex items-center rounded bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200">
+                    <span className="ml-2 inline-flex items-center rounded bg-success-lighter px-2 py-0.5 text-[10px] font-semibold text-success-dark border border-success-light">
                       Visible to all
                     </span>
                   )}
@@ -635,7 +635,7 @@ export default function Policies() {
                   href={viewingPolicy.attachment}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-md bg-primary-main px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-primary-dark transition"
+                  className="rounded-md bg-primary-main px-3.5 py-1.5 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-primary-dark transition"
                 >
                   Download File
                 </a>
@@ -674,7 +674,7 @@ export default function Policies() {
                 type="button"
                 onClick={handleDeleteConfirm}
                 disabled={deleteMutation.isPending}
-                className="rounded bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-rose-700 disabled:opacity-50"
+                className="rounded bg-error-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-error-dark disabled:opacity-50"
               >
                 {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
               </button>

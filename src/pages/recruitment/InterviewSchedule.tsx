@@ -34,7 +34,7 @@ const INTERVIEW_FIELDS: FieldConfig[] = [
 
 const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   scheduled: { label: 'Scheduled', className: 'bg-primary-lighter text-primary-dark' },
-  completed: { label: 'Completed', className: 'bg-green-100 text-green-800' },
+  completed: { label: 'Completed', className: 'bg-success-lighter text-success-dark' },
   cancelled: { label: 'Cancelled', className: 'bg-surface-neutral text-ink-primary' },
 };
 
@@ -97,8 +97,8 @@ export function InterviewSchedule() {
 
       {/* Error */}
       {isError && (
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">
+        <div className="rounded-md bg-error-lighter p-4">
+          <p className="text-sm text-error-dark">
             Failed to load interviews. {error instanceof Error ? error.message : 'Please try again.'}
           </p>
         </div>
@@ -170,7 +170,7 @@ export function InterviewSchedule() {
                       {[1, 2, 3, 4, 5].map((star) => (
                         <svg
                           key={star}
-                          className={`h-3.5 w-3.5 ${star <= (interview.rating ?? 0) ? 'text-yellow-400' : 'text-grey-200'}`}
+                          className={`h-3.5 w-3.5 ${star <= (interview.rating ?? 0) ? 'text-warning-light' : 'text-grey-200'}`}
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >

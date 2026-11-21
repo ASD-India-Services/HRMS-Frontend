@@ -177,7 +177,7 @@ export function RotatingWorkTypeTab() {
                     onClick={() => handleToggleActive(item.id)}
                     className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
                       item.isActive
-                        ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                        ? 'bg-success-lighter text-success-dark hover:bg-success-lighter'
                         : 'bg-surface-neutral text-ink-secondary hover:bg-grey-200'
                     }`}
                   >
@@ -198,7 +198,7 @@ export function RotatingWorkTypeTab() {
                     <button
                       type="button"
                       onClick={() => handleDelete(item.id)}
-                      className="rounded p-1.5 text-ink-secondary hover:bg-surface-neutral hover:text-red-600 transition-colors"
+                      className="rounded p-1.5 text-ink-secondary hover:bg-surface-neutral hover:text-error-main transition-colors"
                       title="Delete policy"
                     >
                       <TrashIcon className="h-4 w-4" />

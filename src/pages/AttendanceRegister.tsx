@@ -27,11 +27,11 @@ const crud = createCrudHooks<Record<string, unknown>>({
 
 const statusBadge = (status: string) => {
   const styles: Record<string, string> = {
-    present: 'bg-green-100 text-green-800',
-    absent: 'bg-red-100 text-red-800',
-    half_day: 'bg-yellow-100 text-yellow-800',
+    present: 'bg-success-lighter text-success-dark',
+    absent: 'bg-error-lighter text-error-dark',
+    half_day: 'bg-warning-lighter text-warning-dark',
     on_leave: 'bg-primary-lighter text-primary-dark',
-    holiday: 'bg-purple-100 text-purple-800',
+    holiday: 'bg-secondary-lighter text-secondary-dark',
   };
   const labels: Record<string, string> = {
     present: 'Present',
@@ -73,7 +73,7 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     key: 'is_late',
     header: 'Late',
     sortable: true,
-    render: (v: unknown) => (v ? <span className="text-red-600 font-medium text-xs">Late</span> : ''),
+    render: (v: unknown) => (v ? <span className="text-error-main font-medium text-xs">Late</span> : ''),
   },
 ];
 
@@ -136,17 +136,17 @@ export default function AttendanceRegister() {
           <p className="text-xs font-medium text-ink-secondary">Total</p>
           <p className="mt-1 text-xl font-bold text-ink-primary">{totalEmployees}</p>
         </div>
-        <div className="rounded-lg border border-green-200 bg-green-50 p-3 shadow-sm">
-          <p className="text-xs font-medium text-green-600">Present</p>
-          <p className="mt-1 text-xl font-bold text-green-700">{presentCount}</p>
+        <div className="rounded-lg border border-success-light bg-success-lighter p-3 shadow-sm">
+          <p className="text-xs font-medium text-success-main">Present</p>
+          <p className="mt-1 text-xl font-bold text-success-dark">{presentCount}</p>
         </div>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-3 shadow-sm">
-          <p className="text-xs font-medium text-red-600">Absent</p>
-          <p className="mt-1 text-xl font-bold text-red-700">{absentCount}</p>
+        <div className="rounded-lg border border-error-light bg-error-lighter p-3 shadow-sm">
+          <p className="text-xs font-medium text-error-main">Absent</p>
+          <p className="mt-1 text-xl font-bold text-error-dark">{absentCount}</p>
         </div>
-        <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 shadow-sm">
-          <p className="text-xs font-medium text-yellow-600">Half Day / Leave</p>
-          <p className="mt-1 text-xl font-bold text-yellow-700">{halfDayCount + onLeaveCount}</p>
+        <div className="rounded-lg border border-warning-light bg-warning-lighter p-3 shadow-sm">
+          <p className="text-xs font-medium text-warning-main">Half Day / Leave</p>
+          <p className="mt-1 text-xl font-bold text-warning-dark">{halfDayCount + onLeaveCount}</p>
         </div>
       </div>
 

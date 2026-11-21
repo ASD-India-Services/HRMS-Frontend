@@ -58,12 +58,12 @@ const STATUS_LABELS: Record<EmployeeStatus, string> = {
 // ─── Status color classes ───────────────────────────────────────────────────────
 
 const STATUS_COLORS: Record<EmployeeStatus, string> = {
-  active: 'bg-green-100 text-green-800',
-  probation: 'bg-amber-100 text-amber-800',
-  suspended: 'bg-orange-100 text-orange-800',
-  terminated: 'bg-red-100 text-red-800',
+  active: 'bg-success-lighter text-success-dark',
+  probation: 'bg-warning-lighter text-warning-dark',
+  suspended: 'bg-warning-lighter text-warning-dark',
+  terminated: 'bg-error-lighter text-error-dark',
   resigned: 'bg-surface-neutral text-ink-primary',
-  on_notice: 'bg-purple-100 text-purple-800',
+  on_notice: 'bg-secondary-lighter text-secondary-dark',
 };
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
@@ -220,10 +220,10 @@ export function EmployeeStatusChange({
 
         {/* Success message */}
         {successMessage && (
-          <div className="mt-3 rounded-md bg-green-50 p-3" role="status">
+          <div className="mt-3 rounded-md bg-success-lighter p-3" role="status">
             <div className="flex items-center">
               <svg
-                className="h-4 w-4 text-green-400"
+                className="h-4 w-4 text-success-light"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
@@ -235,7 +235,7 @@ export function EmployeeStatusChange({
                   clipRule="evenodd"
                 />
               </svg>
-              <p className="ml-2 text-sm font-medium text-green-800">{successMessage}</p>
+              <p className="ml-2 text-sm font-medium text-success-dark">{successMessage}</p>
             </div>
           </div>
         )}
@@ -256,7 +256,7 @@ export function EmployeeStatusChange({
                 htmlFor="status-reason"
                 className="block text-sm font-medium text-ink-primary"
               >
-                Reason <span className="text-red-500">*</span>
+                Reason <span className="text-error-main">*</span>
               </label>
               <textarea
                 id="status-reason"
@@ -276,14 +276,14 @@ export function EmployeeStatusChange({
                 disabled={statusMutation.isPending}
                 className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 ${
                   validationErrors.reason
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                    ? 'border-error-light focus:border-error-main focus:ring-error-main'
                     : 'border-divider focus:border-primary-main focus:ring-primary-main'
                 }`}
                 aria-invalid={!!validationErrors.reason}
                 aria-describedby={validationErrors.reason ? 'reason-error' : undefined}
               />
               {validationErrors.reason && (
-                <p id="reason-error" className="mt-1 text-xs text-red-600">
+                <p id="reason-error" className="mt-1 text-xs text-error-main">
                   {validationErrors.reason}
                 </p>
               )}
@@ -295,7 +295,7 @@ export function EmployeeStatusChange({
                 htmlFor="status-effective-date"
                 className="block text-sm font-medium text-ink-primary"
               >
-                Effective Date <span className="text-red-500">*</span>
+                Effective Date <span className="text-error-main">*</span>
               </label>
               <input
                 type="date"
@@ -314,7 +314,7 @@ export function EmployeeStatusChange({
                 disabled={statusMutation.isPending}
                 className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 ${
                   validationErrors.effectiveDate
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                    ? 'border-error-light focus:border-error-main focus:ring-error-main'
                     : 'border-divider focus:border-primary-main focus:ring-primary-main'
                 }`}
                 aria-invalid={!!validationErrors.effectiveDate}
@@ -323,7 +323,7 @@ export function EmployeeStatusChange({
                 }
               />
               {validationErrors.effectiveDate && (
-                <p id="effective-date-error" className="mt-1 text-xs text-red-600">
+                <p id="effective-date-error" className="mt-1 text-xs text-error-main">
                   {validationErrors.effectiveDate}
                 </p>
               )}
@@ -331,8 +331,8 @@ export function EmployeeStatusChange({
 
             {/* Backend error */}
             {backendError && (
-              <div className="rounded-md bg-red-50 p-3" role="alert">
-                <p className="text-sm text-red-700">{backendError}</p>
+              <div className="rounded-md bg-error-lighter p-3" role="alert">
+                <p className="text-sm text-error-dark">{backendError}</p>
               </div>
             )}
 

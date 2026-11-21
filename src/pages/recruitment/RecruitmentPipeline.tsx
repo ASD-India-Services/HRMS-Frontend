@@ -129,7 +129,7 @@ export function RecruitmentPipeline() {
                 {String(value || '—')}
               </span>
               {row.is_referral && (
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-800" title={`Referred by ${row.referred_by_name || 'Staff'}`}>
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-warning-lighter text-warning-dark" title={`Referred by ${row.referred_by_name || 'Staff'}`}>
                   Referral
                 </span>
               )}

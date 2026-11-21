@@ -40,7 +40,7 @@ export function EmployeeDashboard() {
         <Can permissions={['leaves.view']}>
           <Link
             to="/my-leaves/apply"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary-main px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-dark transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary-main px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-primary-dark transition-colors"
           >
             ✈️ Apply for Leave
           </Link>
@@ -86,8 +86,8 @@ export function EmployeeDashboard() {
                   isCheckedOut
                     ? 'bg-surface-neutral text-ink-primary'
                     : isCheckedIn
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-amber-100 text-amber-800'
+                    ? 'bg-success-lighter text-success-dark'
+                    : 'bg-warning-lighter text-warning-dark'
                 }`}
               >
                 {isCheckedOut ? 'Checked Out' : isCheckedIn ? 'Checked In' : 'Not Clocked In'}
@@ -181,10 +181,10 @@ export function EmployeeDashboard() {
                     <span
                       className={`rounded-full px-2 py-0.5 font-medium capitalize ${
                         app.status === 'approved'
-                          ? 'bg-green-100 text-green-800'
+                          ? 'bg-success-lighter text-success-dark'
                           : app.status === 'rejected'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-amber-100 text-amber-800'
+                          ? 'bg-error-lighter text-error-dark'
+                          : 'bg-warning-lighter text-warning-dark'
                       }`}
                     >
                       {app.status}
@@ -224,12 +224,12 @@ export function EmployeeDashboard() {
                     <span
                       className={`rounded-full px-2 py-0.5 font-medium capitalize ${
                         exp.status === 'approved'
-                          ? 'bg-green-100 text-green-800'
+                          ? 'bg-success-lighter text-success-dark'
                           : exp.status === 'rejected'
-                          ? 'bg-red-100 text-red-800'
+                          ? 'bg-error-lighter text-error-dark'
                           : exp.status === 'paid'
                           ? 'bg-primary-lighter text-primary-dark'
-                          : 'bg-amber-100 text-amber-800'
+                          : 'bg-warning-lighter text-warning-dark'
                       }`}
                     >
                       {exp.status}

@@ -30,11 +30,11 @@ const APPLICANT_FIELDS: FieldConfig[] = [
 
 const PIPELINE_STAGES: { key: ApplicantStatus; label: string; color: string }[] = [
   { key: 'applied', label: 'Applied', color: 'border-primary-light bg-primary-lighter' },
-  { key: 'screening', label: 'Screening', color: 'border-yellow-400 bg-yellow-50' },
-  { key: 'interview', label: 'Interview', color: 'border-purple-400 bg-purple-50' },
-  { key: 'selected', label: 'Selected', color: 'border-green-400 bg-green-50' },
-  { key: 'onboarded', label: 'Onboarded', color: 'border-emerald-500 bg-emerald-50' },
-  { key: 'rejected', label: 'Rejected', color: 'border-red-400 bg-red-50' },
+  { key: 'screening', label: 'Screening', color: 'border-warning-main bg-warning-lighter' },
+  { key: 'interview', label: 'Interview', color: 'border-secondary-main bg-secondary-lighter' },
+  { key: 'selected', label: 'Selected', color: 'border-success-main bg-success-lighter' },
+  { key: 'onboarded', label: 'Onboarded', color: 'border-success-main bg-success-lighter' },
+  { key: 'rejected', label: 'Rejected', color: 'border-error-main bg-error-lighter' },
 ];
 
 interface ApplicantPipelineProps {
@@ -173,7 +173,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
     return PIPELINE_STAGES.map((s) => ({
       ...s,
       border: s.color.split(' ')[0],
-      dot: 'bg-indigo-500',
+      dot: 'bg-secondary-main',
       badge: s.color,
     }));
   }, [dbStages]);
@@ -262,16 +262,16 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
     <div>
       {/* Onboard Success Notification */}
       {onboardSuccessMessage && (
-        <div className="mb-4 flex items-center justify-between rounded-lg bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-800 shadow-xs animate-in fade-in">
+        <div className="mb-4 flex items-center justify-between rounded-lg bg-success-lighter border border-success-light p-4 text-sm text-success-dark shadow-xs animate-in fade-in">
           <div className="flex items-center gap-2">
-            <svg className="h-5 w-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-5 w-5 text-success-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
             <span className="font-semibold">{onboardSuccessMessage}</span>
           </div>
           <button
             onClick={() => setOnboardSuccessMessage(null)}
-            className="text-emerald-600 hover:text-emerald-800"
+            className="text-success-main hover:text-success-dark"
           >
             &times;
           </button>
@@ -280,16 +280,16 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
 
       {/* Revoke/Cancel Success Notification */}
       {cancelSuccessMessage && (
-        <div className="mb-4 flex items-center justify-between rounded-lg bg-rose-50 border border-rose-200 p-4 text-sm text-rose-800 shadow-xs animate-in fade-in">
+        <div className="mb-4 flex items-center justify-between rounded-lg bg-error-lighter border border-error-light p-4 text-sm text-error-dark shadow-xs animate-in fade-in">
           <div className="flex items-center gap-2">
-            <svg className="h-5 w-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-5 w-5 text-error-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
             <span className="font-semibold">{cancelSuccessMessage}</span>
           </div>
           <button
             onClick={() => setCancelSuccessMessage(null)}
-            className="text-rose-600 hover:text-rose-800"
+            className="text-error-main hover:text-error-dark"
           >
             &times;
           </button>
@@ -298,9 +298,9 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
 
       {/* Stage Change Error Notification */}
       {changeStatus.isError && (
-        <div className="mb-4 flex items-center justify-between rounded-lg bg-red-50 border border-red-200 p-4 text-sm text-red-800 shadow-xs animate-in fade-in">
+        <div className="mb-4 flex items-center justify-between rounded-lg bg-error-lighter border border-error-light p-4 text-sm text-error-dark shadow-xs animate-in fade-in">
           <div className="flex items-center gap-2">
-            <svg className="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-5 w-5 text-error-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <span>
@@ -311,7 +311,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
           </div>
           <button
             onClick={() => changeStatus.reset()}
-            className="text-red-600 hover:text-red-800"
+            className="text-error-main hover:text-error-dark"
           >
             &times;
           </button>
@@ -346,7 +346,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
             to="/recruitment/stages"
             className="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-surface-paper px-3 py-2 text-xs font-semibold text-ink-primary shadow-xs hover:bg-surface-neutral transition"
           >
-            <svg className="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <svg className="h-4 w-4 text-secondary-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
             </svg>
             Configure Stages
@@ -377,8 +377,8 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
 
       {/* Error */}
       {isError && (
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">
+        <div className="rounded-md bg-error-lighter p-4">
+          <p className="text-sm text-error-dark">
             Failed to load applicants. {error instanceof Error ? error.message : 'Please try again.'}
           </p>
         </div>
@@ -455,7 +455,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
         <Modal open onClose={() => setOnboardingApplicant(null)} labelledBy="ApplicantPipeline-modal-title-1" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-success-lighter text-success-main">
                 <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
@@ -482,7 +482,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                 <span className="font-medium text-ink-primary">{onboardingApplicant.job_opening?.title || '—'}</span>
               </div>
               {onboardingApplicant.referred_by_name && (
-                <div className="flex justify-between text-amber-700">
+                <div className="flex justify-between text-warning-dark">
                   <span>Referral By:</span>
                   <span className="font-semibold">{onboardingApplicant.referred_by_name}</span>
                 </div>
@@ -493,11 +493,11 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
               <li>Creates new employee profile in the employee directory</li>
               <li>Sets employee onboarding status to <strong className="text-ink-primary">Pending</strong></li>
               <li>Sends an account setup invitation to the candidate's email</li>
-              <li>Transitions recruitment pipeline status to <strong className="text-emerald-700">Onboarded</strong></li>
+              <li>Transitions recruitment pipeline status to <strong className="text-success-dark">Onboarded</strong></li>
             </ul>
 
             {onboardErrorMessage && (
-              <div className="mt-3 rounded-lg bg-red-50 p-2.5 text-xs text-red-700 border border-red-200">
+              <div className="mt-3 rounded-lg bg-error-lighter p-2.5 text-xs text-error-dark border border-error-light">
                 {onboardErrorMessage}
               </div>
             )}
@@ -514,11 +514,11 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                 type="button"
                 onClick={handleConfirmOnboarding}
                 disabled={onboardMutation.isPending}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-success-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-success-dark disabled:opacity-50"
               >
                 {onboardMutation.isPending ? (
                   <>
-                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-surface-paper border-t-transparent" />
                     <span>Processing...</span>
                   </>
                 ) : (
@@ -540,7 +540,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
         <Modal open onClose={() => setCancellingApplicant(null)} labelledBy="ApplicantPipeline-modal-title-2" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-error-lighter text-error-main">
                 <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
@@ -568,12 +568,12 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
               </div>
             </div>
 
-            <div className="mt-3.5 space-y-1 text-[11px] text-ink-secondary rounded-lg bg-amber-50/70 p-3 border border-amber-200/80">
-              <p className="font-semibold text-amber-900">Confirming this action will:</p>
-              <ul className="list-disc list-inside space-y-0.5 text-amber-800">
+            <div className="mt-3.5 space-y-1 text-[11px] text-ink-secondary rounded-lg bg-warning-lighter/70 p-3 border border-warning-light/80">
+              <p className="font-semibold text-warning-darker">Confirming this action will:</p>
+              <ul className="list-disc list-inside space-y-0.5 text-warning-dark">
                 <li>Remove the employee profile from the Employee Directory</li>
                 <li>Deactivate their login account in Identity Center</li>
-                <li>Move recruitment status to <strong className="text-rose-700">Rejected</strong></li>
+                <li>Move recruitment status to <strong className="text-error-dark">Rejected</strong></li>
               </ul>
             </div>
 
@@ -605,7 +605,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
             </div>
 
             {cancelErrorMessage && (
-              <div className="mt-3 rounded-lg bg-red-50 p-2.5 text-xs text-red-700 border border-red-200">
+              <div className="mt-3 rounded-lg bg-error-lighter p-2.5 text-xs text-error-dark border border-error-light">
                 {cancelErrorMessage}
               </div>
             )}
@@ -626,11 +626,11 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                 type="button"
                 onClick={handleConfirmCancelOnboarding}
                 disabled={cancelOnboardMutation.isPending}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-rose-700 disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-error-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-error-dark disabled:opacity-50"
               >
                 {cancelOnboardMutation.isPending ? (
                   <>
-                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-surface-paper border-t-transparent" />
                     <span>Processing...</span>
                   </>
                 ) : (
@@ -652,7 +652,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
         <Modal open onClose={() => setRejectingApplicant(null)} labelledBy="ApplicantPipeline-modal-title-3" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-error-lighter text-error-main">
                 <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -685,7 +685,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
             <div className="mt-4 space-y-3">
               <div>
                 <label className="block text-xs font-semibold text-ink-primary mb-1">
-                  Rejection Reason <span className="text-red-500">*</span>
+                  Rejection Reason <span className="text-error-main">*</span>
                 </label>
                 <Select
                   value={selectedRejectReason}
@@ -736,7 +736,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
               >
                 {changeStatus.isPending ? (
                   <>
-                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-surface-paper border-t-transparent" />
                     <span>Saving...</span>
                   </>
                 ) : (
@@ -789,8 +789,8 @@ function ApplicantCard({
 
           {/* Employee Referral Badge */}
           {applicant.referred_by_name && (
-            <div className="mt-1.5 inline-flex items-center gap-1 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 border border-amber-200/80">
-              <svg className="h-3 w-3 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+            <div className="mt-1.5 inline-flex items-center gap-1 rounded bg-warning-lighter px-1.5 py-0.5 text-[10px] font-semibold text-warning-dark border border-warning-light/80">
+              <svg className="h-3 w-3 text-warning-main" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
               <span>Referred by {applicant.referred_by_name}</span>
@@ -799,7 +799,7 @@ function ApplicantCard({
         </div>
         {applicant.rating !== null && (
           <div className="ml-2 flex items-center gap-0.5">
-            <svg className="h-3.5 w-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="h-3.5 w-3.5 text-warning-light" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
             <span className="text-xs text-ink-secondary">{applicant.rating}</span>
@@ -814,7 +814,7 @@ function ApplicantCard({
             type="button"
             onClick={() => onInitiateOnboarding(applicant)}
             disabled={isMoving}
-            className="w-full inline-flex items-center justify-center gap-1.5 rounded-md bg-emerald-600 px-2.5 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 transition-colors disabled:opacity-50"
+            className="w-full inline-flex items-center justify-center gap-1.5 rounded-md bg-success-main px-2.5 py-1.5 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-success-dark transition-colors disabled:opacity-50"
             title="Complete hiring and move to onboarding"
           >
             <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -828,14 +828,14 @@ function ApplicantCard({
       {/* Onboarded Stage: Guardrail Locked State & Explicit Revoke Offer Action */}
       {currentStage === 'onboarded' ? (
         <div className="mt-2.5 space-y-2">
-          <div className="flex items-center justify-between rounded-md bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-800 border border-emerald-200">
+          <div className="flex items-center justify-between rounded-md bg-success-lighter px-2 py-1 text-xs font-medium text-success-dark border border-success-light">
             <div className="flex items-center gap-1">
-              <svg className="h-3.5 w-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-3.5 w-3.5 text-success-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               <span className="font-semibold">Onboarded</span>
             </div>
-            <span className="text-[10px] text-emerald-600 font-mono">Employee Created</span>
+            <span className="text-[10px] text-success-main font-mono">Employee Created</span>
           </div>
 
           <div className="flex items-center justify-between pt-1 border-t border-divider">
@@ -853,10 +853,10 @@ function ApplicantCard({
               type="button"
               onClick={() => onCancelOnboarding(applicant)}
               disabled={isMoving}
-              className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-semibold text-error-dark bg-error-lighter hover:bg-error-lighter border border-error-light transition-colors disabled:opacity-50"
               title="Revoke offer or cancel onboarding if candidate backs out"
             >
-              <svg className="h-3 w-3 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-3 w-3 text-error-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
               <span>Revoke Offer</span>

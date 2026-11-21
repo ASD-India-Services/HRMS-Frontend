@@ -91,10 +91,10 @@ function ApprovalModal({ claim, action, onClose, onConfirm, isPending }: Approva
             type="button"
             onClick={() => onConfirm(comments)}
             disabled={isPending}
-            className={`rounded-md px-4 py-2 text-sm font-medium text-white shadow-sm disabled:opacity-50 ${
+            className={`rounded-md px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm disabled:opacity-50 ${
               action === 'approve'
-                ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500'
-                : 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
+                ? 'bg-success-main hover:bg-success-dark focus:ring-success-main'
+                : 'bg-error-main hover:bg-error-dark focus:ring-error-main'
             } focus:outline-none focus:ring-2 focus:ring-offset-2`}
           >
             {isPending ? 'Processing...' : action === 'approve' ? 'Approve' : 'Reject'}
@@ -146,7 +146,7 @@ export function ExpenseApproval() {
           ))}
         </div>
       ) : isError ? (
-        <div className="rounded-md bg-red-50 p-4 text-sm text-red-700" role="alert">
+        <div className="rounded-md bg-error-lighter p-4 text-sm text-error-dark" role="alert">
           Failed to load pending expense claims. Please try again.
         </div>
       ) : data && data.results.length > 0 ? (
@@ -193,7 +193,7 @@ export function ExpenseApproval() {
                     <div className="flex shrink-0 gap-2">
                       <button
                         onClick={() => openModal(claim, 'approve')}
-                        className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                        className="rounded-md bg-success-main px-3 py-1.5 text-sm font-medium text-primary-contrast shadow-sm hover:bg-success-dark focus:outline-none focus:ring-2 focus:ring-success-main focus:ring-offset-2"
                       >
                         Approve
                       </button>

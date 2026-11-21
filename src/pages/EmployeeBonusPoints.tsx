@@ -391,7 +391,7 @@ export default function EmployeeBonusPoints() {
       )}
 
       {savedNotification && (
-        <div className="text-right text-xs text-emerald-600 font-medium">
+        <div className="text-right text-xs text-success-main font-medium">
           {savedNotification}
         </div>
       )}
@@ -452,7 +452,7 @@ export default function EmployeeBonusPoints() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-warning-lighter text-warning-dark border border-warning-light">
                     ⭐ Total: {group.totalPoints} pts
                   </span>
                 </div>
@@ -517,7 +517,7 @@ export default function EmployeeBonusPoints() {
                                 <button
                                   type="button"
                                   onClick={() => setDeleteConfirmId(item.id)}
-                                  className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                                  className="p-1 text-error-main hover:text-error-dark hover:bg-error-lighter rounded transition-colors"
                                   title="Delete Bonus Point"
                                 >
                                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -600,7 +600,7 @@ export default function EmployeeBonusPoints() {
                             <button
                               type="button"
                               onClick={() => setDeleteConfirmId(item.id)}
-                              className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                              className="p-1 text-error-main hover:text-error-dark hover:bg-error-lighter rounded transition-colors"
                               title="Delete"
                             >
                               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -646,7 +646,7 @@ export default function EmployeeBonusPoints() {
             {/* Modal Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {formError && (
-                <div className="p-2.5 rounded bg-red-50 border border-red-200 text-xs text-red-700">
+                <div className="p-2.5 rounded bg-error-lighter border border-error-light text-xs text-error-dark">
                   {formError}
                 </div>
               )}

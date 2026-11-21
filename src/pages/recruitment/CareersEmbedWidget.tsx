@@ -230,8 +230,8 @@ export default function CareersEmbedWidget() {
             ))}
           </div>
         ) : isError ? (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-            <p className="text-sm font-medium text-red-800">Unable to load job postings right now.</p>
+          <div className="rounded-xl border border-error-light bg-error-lighter p-6 text-center">
+            <p className="text-sm font-medium text-error-dark">Unable to load job postings right now.</p>
             <Button type="submit" color="error" size="small"
               onClick={() => refetch()}
               className="mt-3"
@@ -358,20 +358,20 @@ export default function CareersEmbedWidget() {
                 </h3>
 
                 {formSubmitted ? (
-                  <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-6 text-center space-y-3">
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                  <div className="rounded-xl bg-success-lighter border border-success-light p-6 text-center space-y-3">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success-lighter text-success-main">
                       <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <h4 className="text-base font-bold text-emerald-900">Application Submitted!</h4>
-                    <p className="text-xs text-emerald-700 max-w-md mx-auto">
+                    <h4 className="text-base font-bold text-success-darker">Application Submitted!</h4>
+                    <p className="text-xs text-success-dark max-w-md mx-auto">
                       Thank you, <strong className="font-semibold">{form.name}</strong>! Your application has been directly sent to our hiring team. We will review your profile and reach out via email.
                     </p>
                     <button
                       type="button"
                       onClick={handleCloseModal}
-                      className="mt-2 inline-flex items-center rounded-lg bg-emerald-600 px-5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700"
+                      className="mt-2 inline-flex items-center rounded-lg bg-success-main px-5 py-2 text-xs font-semibold text-primary-contrast shadow-sm hover:bg-success-dark"
                     >
                       Done
                     </button>
@@ -379,7 +379,7 @@ export default function CareersEmbedWidget() {
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-4">
                     {formError && (
-                      <div className="rounded-lg bg-red-50 p-3 text-xs text-red-700 border border-red-200">
+                      <div className="rounded-lg bg-error-lighter p-3 text-xs text-error-dark border border-error-light">
                         {formError}
                       </div>
                     )}
@@ -387,7 +387,7 @@ export default function CareersEmbedWidget() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1">
-                          Full Name <span className="text-red-500">*</span>
+                          Full Name <span className="text-error-main">*</span>
                         </label>
                         <Input
                           type="text"
@@ -400,7 +400,7 @@ export default function CareersEmbedWidget() {
 
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1">
-                          Email Address <span className="text-red-500">*</span>
+                          Email Address <span className="text-error-main">*</span>
                         </label>
                         <Input
                           type="email"
@@ -415,7 +415,7 @@ export default function CareersEmbedWidget() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1">
-                          Phone Number <span className="text-red-500">*</span>
+                          Phone Number <span className="text-error-main">*</span>
                         </label>
                         <Input
                           type="tel"
@@ -428,7 +428,7 @@ export default function CareersEmbedWidget() {
 
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1">
-                          Resume / Portfolio Link <span className="text-red-500">*</span>
+                          Resume / Portfolio Link <span className="text-error-main">*</span>
                         </label>
                         <Input
                           type="url"

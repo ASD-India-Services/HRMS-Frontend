@@ -366,9 +366,9 @@ export function GeneralSettingsTab() {
 
   if (isError) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-        <AlertCircleIcon className="mx-auto h-8 w-8 text-red-500" />
-        <p className="mt-2 text-sm text-red-700">Failed to load general settings: {(error as Error)?.message}</p>
+      <div className="rounded-xl border border-error-light bg-error-lighter p-6 text-center">
+        <AlertCircleIcon className="mx-auto h-8 w-8 text-error-main" />
+        <p className="mt-2 text-sm text-error-dark">Failed to load general settings: {(error as Error)?.message}</p>
       </div>
     );
   }
@@ -418,7 +418,7 @@ export function GeneralSettingsTab() {
             </Button>
 
             {expireSaved && (
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
                 <CheckIcon className="h-4 w-4" /> Saved successfully
               </span>
             )}
@@ -468,7 +468,7 @@ export function GeneralSettingsTab() {
             </Button>
 
             {paginationSaved && (
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
                 <CheckIcon className="h-4 w-4" /> Saved successfully
               </span>
             )}
@@ -540,7 +540,7 @@ export function GeneralSettingsTab() {
         </div>
 
         {restrictionsSaved && (
-          <p className="text-xs font-medium text-emerald-600 flex items-center gap-1">
+          <p className="text-xs font-medium text-success-main flex items-center gap-1">
             <CheckIcon className="h-3.5 w-3.5" /> Restrictions updated
           </p>
         )}
@@ -569,7 +569,7 @@ export function GeneralSettingsTab() {
               disabled={resignationSaving}
             />
             {resignationSaved && (
-              <span className="text-xs font-medium text-emerald-600 flex items-center gap-1">
+              <span className="text-xs font-medium text-success-main flex items-center gap-1">
                 <CheckIcon className="h-3.5 w-3.5" /> Saved
               </span>
             )}
@@ -600,7 +600,7 @@ export function GeneralSettingsTab() {
               disabled={timeRunnerSaving}
             />
             {timeRunnerSaved && (
-              <span className="text-xs font-medium text-emerald-600 flex items-center gap-1">
+              <span className="text-xs font-medium text-success-main flex items-center gap-1">
                 <CheckIcon className="h-3.5 w-3.5" /> Saved
               </span>
             )}
@@ -649,7 +649,7 @@ export function GeneralSettingsTab() {
             </Button>
 
             {noticeSaved && (
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
                 <CheckIcon className="h-4 w-4" /> Saved successfully
               </span>
             )}
@@ -723,7 +723,7 @@ export function GeneralSettingsTab() {
           </Button>
 
           {badgeSaved && (
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
               <CheckIcon className="h-4 w-4" /> Saved successfully
             </span>
           )}
@@ -794,7 +794,7 @@ export function GeneralSettingsTab() {
           </Button>
 
           {encashmentSaved && (
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
               <CheckIcon className="h-4 w-4" /> Saved successfully
             </span>
           )}
@@ -902,7 +902,7 @@ export function GeneralSettingsTab() {
             </Button>
 
             {historySaved && (
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 self-center">
+              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main self-center">
                 <CheckIcon className="h-4 w-4" /> Saved successfully
               </span>
             )}
@@ -1016,7 +1016,7 @@ export function GeneralSettingsTab() {
           </Button>
 
           {currencySaved && (
-            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+            <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
               <CheckIcon className="h-4 w-4" /> Saved successfully
             </span>
           )}

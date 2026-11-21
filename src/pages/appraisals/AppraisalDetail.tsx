@@ -9,9 +9,9 @@ import type { AppraisalStatus } from '@/types/appraisal';
 
 const statusStyles: Record<AppraisalStatus, string> = {
   draft: 'bg-surface-neutral text-ink-primary',
-  self_review: 'bg-yellow-100 text-yellow-800',
-  manager_review: 'bg-orange-100 text-orange-800',
-  completed: 'bg-green-100 text-green-800',
+  self_review: 'bg-warning-lighter text-warning-dark',
+  manager_review: 'bg-warning-lighter text-warning-dark',
+  completed: 'bg-success-lighter text-success-dark',
 };
 
 const statusLabels: Record<AppraisalStatus, string> = {
@@ -48,7 +48,7 @@ export function AppraisalDetail() {
   if (isError || !appraisal) {
     return (
       <div className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-md bg-red-50 p-4 text-sm text-red-700" role="alert">
+        <div className="rounded-md bg-error-lighter p-4 text-sm text-error-dark" role="alert">
           Failed to load appraisal details. Please try again.
         </div>
         <Link

@@ -43,8 +43,8 @@ function ComponentTable({ title, components, variant }: {
     const amt = typeof c.amount === 'string' ? parseFloat(c.amount) : c.amount;
     return sum + (isNaN(amt) ? 0 : amt);
   }, 0);
-  const textColor = variant === 'earnings' ? 'text-green-700' : 'text-red-700';
-  const headerBg = variant === 'earnings' ? 'bg-green-50' : 'bg-red-50';
+  const textColor = variant === 'earnings' ? 'text-success-dark' : 'text-error-dark';
+  const headerBg = variant === 'earnings' ? 'bg-success-lighter' : 'bg-error-lighter';
 
   return (
     <div className="overflow-hidden rounded-lg border border-divider">
@@ -158,7 +158,7 @@ export function PayslipViewer() {
               ))}
             </div>
           ) : isError ? (
-            <div className="rounded-md bg-red-50 p-4 text-sm text-red-700" role="alert">
+            <div className="rounded-md bg-error-lighter p-4 text-sm text-error-dark" role="alert">
               Failed to load salary slips. Please try again.
             </div>
           ) : slipsData && slipsData.results.length > 0 ? (
@@ -194,18 +194,18 @@ export function PayslipViewer() {
                           onClick={() => setSelectedSlipId(cs.id)}
                           className={`w-full ml-4 rounded-lg border p-3 text-left transition-all hover:shadow-sm ${
                             selectedSlipId === cs.id
-                              ? 'border-orange-400 bg-orange-50 ring-1 ring-orange-400'
-                              : 'border-orange-200 bg-orange-50/50 hover:border-orange-300'
+                              ? 'border-warning-main bg-warning-lighter ring-1 ring-warning-main'
+                              : 'border-warning-light bg-warning-lighter/50 hover:border-warning-light'
                           }`}
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-medium text-orange-700">↳ Correction Slip</span>
-                            <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-800">
+                            <span className="text-xs font-medium text-warning-dark">↳ Correction Slip</span>
+                            <span className="inline-flex items-center rounded-full bg-warning-lighter px-2 py-0.5 text-xs font-medium text-warning-dark">
                               Supplementary
                             </span>
                           </div>
                           <div className="mt-1 flex gap-4 text-xs">
-                            <span className="text-ink-secondary">Net: <span className="font-semibold text-orange-700">{formatCurrency(cs.net_pay)}</span></span>
+                            <span className="text-ink-secondary">Net: <span className="font-semibold text-warning-dark">{formatCurrency(cs.net_pay)}</span></span>
                           </div>
                         </button>
                       ))}
@@ -280,7 +280,7 @@ export function PayslipViewer() {
                       {slipDetail.salary_structure && ` • ${slipDetail.salary_structure.name}`}
                     </p>
                     {isCorrectionSlip && (
-                      <span className="mt-1 inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-800">
+                      <span className="mt-1 inline-flex items-center rounded-full bg-warning-lighter px-2.5 py-0.5 text-xs font-medium text-warning-dark">
                         Correction Slip (Supplementary)
                       </span>
                     )}
@@ -303,13 +303,13 @@ export function PayslipViewer() {
                   <>
                     {/* Final combined totals */}
                     <div className="mt-4 grid grid-cols-3 gap-4">
-                      <div className="rounded-lg bg-green-50 p-3 text-center">
-                        <p className="text-xs font-medium text-green-600">Total Gross Pay</p>
-                        <p className="mt-1 text-lg font-bold text-green-800">{formatCurrency(combinedGross)}</p>
+                      <div className="rounded-lg bg-success-lighter p-3 text-center">
+                        <p className="text-xs font-medium text-success-main">Total Gross Pay</p>
+                        <p className="mt-1 text-lg font-bold text-success-dark">{formatCurrency(combinedGross)}</p>
                       </div>
-                      <div className="rounded-lg bg-red-50 p-3 text-center">
-                        <p className="text-xs font-medium text-red-600">Total Deductions</p>
-                        <p className="mt-1 text-lg font-bold text-red-800">{formatCurrency(combinedDeductions)}</p>
+                      <div className="rounded-lg bg-error-lighter p-3 text-center">
+                        <p className="text-xs font-medium text-error-main">Total Deductions</p>
+                        <p className="mt-1 text-lg font-bold text-error-dark">{formatCurrency(combinedDeductions)}</p>
                       </div>
                       <div className="rounded-lg bg-primary-lighter p-3 text-center">
                         <p className="text-xs font-medium text-primary-main">Final Net Pay</p>
@@ -322,18 +322,18 @@ export function PayslipViewer() {
                       <h4 className="text-sm font-semibold text-ink-primary mb-3">Original Salary Slip</h4>
                       <div className="grid grid-cols-3 gap-3 text-center text-sm">
                         <div><span className="text-ink-secondary">Gross</span> <span className="font-medium">{formatCurrency(originalSlip.gross_pay)}</span></div>
-                        <div><span className="text-ink-secondary">Deductions</span> <span className="font-medium text-red-600">{formatCurrency(originalSlip.total_deductions)}</span></div>
+                        <div><span className="text-ink-secondary">Deductions</span> <span className="font-medium text-error-main">{formatCurrency(originalSlip.total_deductions)}</span></div>
                         <div><span className="text-ink-secondary">Net</span> <span className="font-bold">{formatCurrency(originalSlip.net_pay)}</span></div>
                       </div>
                     </div>
 
                     {/* Correction adjustment */}
-                    <div className="mt-3 rounded-lg border border-orange-200 bg-orange-50 p-4">
-                      <h4 className="text-sm font-semibold text-orange-700 mb-3">Correction Adjustment</h4>
+                    <div className="mt-3 rounded-lg border border-warning-light bg-warning-lighter p-4">
+                      <h4 className="text-sm font-semibold text-warning-dark mb-3">Correction Adjustment</h4>
                       <div className="grid grid-cols-3 gap-3 text-center text-sm">
-                        <div><span className="text-ink-secondary">Added</span> <span className="font-medium text-green-700">+{formatCurrency(slipDetail.gross_pay)}</span></div>
-                        <div><span className="text-ink-secondary">Deducted</span> <span className="font-medium text-red-600">{formatCurrency(slipDetail.total_deductions)}</span></div>
-                        <div><span className="text-ink-secondary">Net Adj</span> <span className="font-bold text-orange-700">{formatCurrency(slipDetail.net_pay)}</span></div>
+                        <div><span className="text-ink-secondary">Added</span> <span className="font-medium text-success-dark">+{formatCurrency(slipDetail.gross_pay)}</span></div>
+                        <div><span className="text-ink-secondary">Deducted</span> <span className="font-medium text-error-main">{formatCurrency(slipDetail.total_deductions)}</span></div>
+                        <div><span className="text-ink-secondary">Net Adj</span> <span className="font-bold text-warning-dark">{formatCurrency(slipDetail.net_pay)}</span></div>
                       </div>
                     </div>
 
@@ -359,13 +359,13 @@ export function PayslipViewer() {
                   <>
                     {/* Normal slip display */}
                     <div className="mt-4 grid grid-cols-3 gap-4">
-                      <div className="rounded-lg bg-green-50 p-3 text-center">
-                        <p className="text-xs font-medium text-green-600">Gross Pay</p>
-                        <p className="mt-1 text-lg font-bold text-green-800">{formatCurrency(slipDetail.gross_pay)}</p>
+                      <div className="rounded-lg bg-success-lighter p-3 text-center">
+                        <p className="text-xs font-medium text-success-main">Gross Pay</p>
+                        <p className="mt-1 text-lg font-bold text-success-dark">{formatCurrency(slipDetail.gross_pay)}</p>
                       </div>
-                      <div className="rounded-lg bg-red-50 p-3 text-center">
-                        <p className="text-xs font-medium text-red-600">Deductions</p>
-                        <p className="mt-1 text-lg font-bold text-red-800">{formatCurrency(slipDetail.total_deductions)}</p>
+                      <div className="rounded-lg bg-error-lighter p-3 text-center">
+                        <p className="text-xs font-medium text-error-main">Deductions</p>
+                        <p className="mt-1 text-lg font-bold text-error-dark">{formatCurrency(slipDetail.total_deductions)}</p>
                       </div>
                       <div className="rounded-lg bg-primary-lighter p-3 text-center">
                         <p className="text-xs font-medium text-primary-main">Net Pay</p>

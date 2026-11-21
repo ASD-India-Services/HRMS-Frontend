@@ -211,17 +211,17 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
 
         {/* Alerts */}
         {errorMsg && (
-          <div className="mx-6 mt-4 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700 flex items-center justify-between">
+          <div className="mx-6 mt-4 p-3 rounded-lg bg-error-lighter border border-error-light text-sm text-error-dark flex items-center justify-between">
             <span>{errorMsg}</span>
-            <button onClick={() => setErrorMsg(null)} className="text-red-500 hover:text-red-700 ml-2 font-bold">
+            <button onClick={() => setErrorMsg(null)} className="text-error-main hover:text-error-dark ml-2 font-bold">
               ✕
             </button>
           </div>
         )}
         {successMsg && (
-          <div className="mx-6 mt-4 p-3 rounded-lg bg-green-50 border border-green-200 text-sm text-green-700 flex items-center justify-between">
+          <div className="mx-6 mt-4 p-3 rounded-lg bg-success-lighter border border-success-light text-sm text-success-dark flex items-center justify-between">
             <span>{successMsg}</span>
-            <button onClick={() => setSuccessMsg(null)} className="text-green-500 hover:text-green-700 ml-2 font-bold">
+            <button onClick={() => setSuccessMsg(null)} className="text-success-main hover:text-success-dark ml-2 font-bold">
               ✕
             </button>
           </div>
@@ -248,7 +248,7 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
               <form onSubmit={handleSave} className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-ink-primary mb-1">
-                    Leave Type Name <span className="text-red-500">*</span>
+                    Leave Type Name <span className="text-error-main">*</span>
                   </label>
                   <Input
                     type="text"
@@ -338,7 +338,7 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
                     disabled={saving}
                   >
                     {saving && (
-                      <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+                      <svg className="animate-spin h-4 w-4 text-primary-contrast" viewBox="0 0 24 24" fill="none">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                       </svg>
@@ -429,14 +429,14 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
                           <span
                             className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium w-fit ${
                               item.is_paid
-                                ? 'bg-green-100 text-green-800'
+                                ? 'bg-success-lighter text-success-dark'
                                 : 'bg-surface-neutral text-ink-primary'
                             }`}
                           >
                             {item.is_paid ? 'Paid' : 'Unpaid'}
                           </span>
                           {item.is_encashable && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-purple-100 text-purple-800 w-fit">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-secondary-lighter text-secondary-dark w-fit">
                               Encashable {Number(item.max_encashable_days) > 0 ? `(Max ${item.max_encashable_days}d)` : ''}
                             </span>
                           )}
@@ -453,7 +453,7 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
                       </td>
                       <td className="px-4 py-3 text-xs">
                         {item.requires_approval ? (
-                          <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
+                          <span className="text-warning-dark bg-warning-lighter px-2 py-0.5 rounded">
                             Required
                           </span>
                         ) : (
@@ -476,7 +476,7 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
                               type="button"
                               disabled={deletingId === item.id}
                               onClick={() => handleDelete(item)}
-                              className="px-2 py-1 text-xs font-medium rounded text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
+                              className="px-2 py-1 text-xs font-medium rounded text-error-main hover:bg-error-lighter disabled:opacity-50 transition-colors"
                             >
                               {deletingId === item.id ? 'Deleting...' : 'Delete'}
                             </button>

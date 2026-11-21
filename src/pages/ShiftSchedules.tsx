@@ -62,7 +62,7 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     render: (v: unknown, row: Record<string, unknown>) => {
       // Location was assigned but has since been deleted → flag it.
       if (!v && row.geofence_required) {
-        return <span className="text-red-600">Location deleted</span>;
+        return <span className="text-error-main">Location deleted</span>;
       }
       if (!v) return <span className="text-ink-disabled">—</span>;
       const mode = row.geofence_location_mode as string | undefined;
@@ -336,7 +336,7 @@ export default function ShiftSchedules() {
             </div>
 
             {formError && (
-              <div className="mb-4 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              <div className="mb-4 rounded border border-error-light bg-error-lighter px-3 py-2 text-sm text-error-dark">
                 {formError}
               </div>
             )}
@@ -345,7 +345,7 @@ export default function ShiftSchedules() {
               {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-ink-primary">
-                  Name <span className="text-red-500">*</span>
+                  Name <span className="text-error-main">*</span>
                 </label>
                 <Input
                   type="text"
@@ -359,7 +359,7 @@ export default function ShiftSchedules() {
               {/* Shift Type */}
               <div>
                 <label className="block text-sm font-medium text-ink-primary">
-                  Shift Type <span className="text-red-500">*</span>
+                  Shift Type <span className="text-error-main">*</span>
                 </label>
                 <Select
                   className="mt-1"
@@ -450,7 +450,7 @@ export default function ShiftSchedules() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-ink-primary">
-                    Start Date <span className="text-red-500">*</span>
+                    Start Date <span className="text-error-main">*</span>
                   </label>
                   <Input
                     type="date"
@@ -461,7 +461,7 @@ export default function ShiftSchedules() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-ink-primary">
-                    End Date <span className="text-red-500">*</span>
+                    End Date <span className="text-error-main">*</span>
                   </label>
                   <Input
                     type="date"
@@ -475,7 +475,7 @@ export default function ShiftSchedules() {
               {/* Repeat On (day checkboxes) */}
               <div>
                 <label className="block text-sm font-medium text-ink-primary">
-                  Repeat On <span className="text-red-500">*</span>
+                  Repeat On <span className="text-error-main">*</span>
                 </label>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {DAY_LABELS.map((label, idx) => (

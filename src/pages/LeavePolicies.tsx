@@ -262,7 +262,7 @@ export default function LeavePolicies() {
                     );
                   })()}
                   <button
-                    className="text-red-500 hover:text-red-700 text-sm px-1"
+                    className="text-error-main hover:text-error-dark text-sm px-1"
                     onClick={() => setAllocations(allocations.filter((_, i) => i !== idx))}
                   >
                     ✕

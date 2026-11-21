@@ -141,10 +141,10 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
 
       {/* Success toast */}
       {successMessage && (
-        <div className="mb-4 rounded-md bg-green-50 p-3" role="status">
+        <div className="mb-4 rounded-md bg-success-lighter p-3" role="status">
           <div className="flex items-center">
             <svg
-              className="h-4 w-4 text-green-400"
+              className="h-4 w-4 text-success-light"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
@@ -156,7 +156,7 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
                 clipRule="evenodd"
               />
             </svg>
-            <p className="ml-2 text-sm font-medium text-green-800">{successMessage}</p>
+            <p className="ml-2 text-sm font-medium text-success-dark">{successMessage}</p>
           </div>
         </div>
       )}

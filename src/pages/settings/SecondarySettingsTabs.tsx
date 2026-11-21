@@ -33,7 +33,7 @@ export function UserGroupTab() {
         <div>
           <Link
             to="/roles"
-            className="inline-flex items-center gap-2 rounded-md bg-primary-main px-5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-primary-dark transition-colors"
+            className="inline-flex items-center gap-2 rounded-md bg-primary-main px-5 py-2.5 text-sm font-semibold text-primary-contrast shadow-xs hover:bg-primary-dark transition-colors"
           >
             <span>View User Groups in Roles</span>
             <ExternalLinkIcon className="h-4 w-4" />
@@ -127,12 +127,12 @@ export function AttendanceBreakpointsTab() {
           <p className="text-xs text-ink-secondary">Working hours required to mark complete presence.</p>
         </div>
         <div className="rounded-xl border border-divider bg-surface-paper p-5 space-y-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-amber-600">Half Day Minimum</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-warning-main">Half Day Minimum</span>
           <div className="text-2xl font-extrabold text-ink-primary">4.0 hrs</div>
           <p className="text-xs text-ink-secondary">Working hours between 4.0 and 8.0 marked as Half Day.</p>
         </div>
         <div className="rounded-xl border border-divider bg-surface-paper p-5 space-y-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-red-600">Absent Cutoff</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-error-main">Absent Cutoff</span>
           <div className="text-2xl font-extrabold text-ink-primary">&lt; 4.0 hrs</div>
           <p className="text-xs text-ink-secondary">Work logged under 4 hours marked as Absent/LOP.</p>
         </div>
@@ -157,7 +157,7 @@ export function IpRestrictionsTab() {
           {['10.0.0.0/8 (Corporate Internal LAN)', '192.168.1.0/24 (HQ Facility Wi-Fi)', '203.0.113.45 (Gateway Public IP)'].map((ip) => (
             <div key={ip} className="flex items-center justify-between rounded-lg border border-divider bg-surface-neutral px-4 py-2 text-xs font-mono text-ink-primary">
               <span>{ip}</span>
-              <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">Whitelisted</span>
+              <span className="rounded bg-success-lighter px-2 py-0.5 text-[10px] font-bold text-success-dark">Whitelisted</span>
             </div>
           ))}
         </div>

@@ -167,7 +167,7 @@ export default function PayrollDashboard() {
           </Link>
           <Link
             to="/payroll/runs"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-primary-contrast bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -185,7 +185,7 @@ export default function PayrollDashboard() {
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Disbursed Net Pay
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success-lighter text-success-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -196,7 +196,7 @@ export default function PayrollDashboard() {
               {isLoading ? '...' : formatCurrency(totalNetPay || 0)}
             </span>
           </div>
-          <div className="mt-2 text-xs text-emerald-600 font-medium">
+          <div className="mt-2 text-xs text-success-main font-medium">
             <span>Current period total</span>
           </div>
         </div>
@@ -228,7 +228,7 @@ export default function PayrollDashboard() {
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Payroll Cycles
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -238,7 +238,7 @@ export default function PayrollDashboard() {
             <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : totalRunsCount}</span>
             <span className="ml-2 text-xs text-ink-secondary">total runs</span>
           </div>
-          <div className="mt-2 text-xs text-indigo-600 font-medium">
+          <div className="mt-2 text-xs text-secondary-main font-medium">
             <Link to="/payroll/runs" className="hover:underline">Manage payroll runs →</Link>
           </div>
         </div>
@@ -249,7 +249,7 @@ export default function PayrollDashboard() {
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Salary Structures
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 text-purple-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
@@ -257,9 +257,9 @@ export default function PayrollDashboard() {
           </div>
           <div className="mt-3">
             <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : activeStructuresCount}</span>
-            <span className="ml-2 text-xs text-purple-600 font-medium">Active Plans</span>
+            <span className="ml-2 text-xs text-secondary-main font-medium">Active Plans</span>
           </div>
-          <div className="mt-2 text-xs text-purple-600 font-medium">
+          <div className="mt-2 text-xs text-secondary-main font-medium">
             <Link to="/salary-structures" className="hover:underline">Configure structures →</Link>
           </div>
         </div>
@@ -388,7 +388,7 @@ export default function PayrollDashboard() {
                       {run.posting_date || run.start_date || '—'}
                     </td>
                     <td className="px-4 py-3">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-50 text-emerald-700 capitalize">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-success-lighter text-success-dark capitalize">
                         {run.status || 'Completed'}
                       </span>
                     </td>

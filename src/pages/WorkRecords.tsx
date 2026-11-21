@@ -399,7 +399,7 @@ export default function WorkRecords() {
           {/* Month Selector dropdown */}
           <div className="relative" ref={monthPickerRef}>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-rose-500">Month</span>
+              <span className="text-sm font-medium text-error-main">Month</span>
               <Button variant="outlined" color="inherit"
                 type="button"
                 onClick={() => setIsMonthPickerOpen(!isMonthPickerOpen)}
@@ -452,7 +452,7 @@ export default function WorkRecords() {
                         }}
                         className={`text-xs font-medium py-1.5 px-2 rounded-md transition-colors ${
                           isSelected
-                            ? 'bg-primary-main text-white font-bold'
+                            ? 'bg-primary-main text-primary-contrast font-bold'
                             : 'hover:bg-primary-lighter text-ink-primary'
                         }`}
                       >
@@ -862,15 +862,15 @@ export default function WorkRecords() {
         {/* Right Status Indicators Legend matching Screenshot 1 */}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-ink-primary">
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-success-main inline-block"></span>
             <span>Present</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-warning-light inline-block"></span>
             <span>Half Day Present</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-warning-main inline-block"></span>
             <span>On leave, But attendance exist</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -878,7 +878,7 @@ export default function WorkRecords() {
             <span>Leave</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-indigo-300 inline-block"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-secondary-light inline-block"></span>
             <span>Absent</span>
           </div>
         </div>
@@ -893,7 +893,7 @@ export default function WorkRecords() {
               <p className="text-sm font-medium">Loading work records for {monthName}...</p>
             </div>
           ) : isError ? (
-            <div className="flex flex-col items-center justify-center py-20 text-red-600">
+            <div className="flex flex-col items-center justify-center py-20 text-error-main">
               <p className="text-sm font-semibold mb-2">Failed to load work records</p>
               <Button size="small"
                 type="button"
@@ -973,7 +973,7 @@ export default function WorkRecords() {
                           <div className="flex items-center justify-center min-h-[30px]">
                             {badge === 'P' && (
                               <div
-                                className="w-6 h-6 rounded bg-green-500 text-white font-bold text-[11px] flex items-center justify-center shadow-xs"
+                                className="w-6 h-6 rounded bg-success-main text-primary-contrast font-bold text-[11px] flex items-center justify-center shadow-xs"
                                 title={`Present (${record?.working_hours || '00:00'} hrs)`}
                               >
                                 P
@@ -982,7 +982,7 @@ export default function WorkRecords() {
 
                             {badge === 'HP' && (
                               <div
-                                className="w-6 h-6 rounded bg-amber-400 text-ink-primary font-bold text-[10px] flex items-center justify-center shadow-xs"
+                                className="w-6 h-6 rounded bg-warning-light text-ink-primary font-bold text-[10px] flex items-center justify-center shadow-xs"
                                 title={`Half Day (${record?.working_hours || '00:00'} hrs)`}
                               >
                                 HP
@@ -991,7 +991,7 @@ export default function WorkRecords() {
 
                             {badge === 'OL' && (
                               <div
-                                className="w-6 h-6 rounded bg-orange-500 text-white font-bold text-[10px] flex items-center justify-center shadow-xs"
+                                className="w-6 h-6 rounded bg-warning-main text-primary-contrast font-bold text-[10px] flex items-center justify-center shadow-xs"
                                 title={`On leave, but attended (${record?.working_hours || '00:00'} hrs)`}
                               >
                                 OL
@@ -1000,7 +1000,7 @@ export default function WorkRecords() {
 
                             {badge === 'L' && (
                               <div
-                                className="w-6 h-6 rounded bg-grey-600 text-white font-bold text-[11px] flex items-center justify-center shadow-xs"
+                                className="w-6 h-6 rounded bg-grey-600 text-primary-contrast font-bold text-[11px] flex items-center justify-center shadow-xs"
                                 title="Leave"
                               >
                                 L
@@ -1009,7 +1009,7 @@ export default function WorkRecords() {
 
                             {badge === 'A' && (
                               <div
-                                className="w-6 h-6 rounded bg-indigo-300 text-white font-bold text-[11px] flex items-center justify-center shadow-xs"
+                                className="w-6 h-6 rounded bg-secondary-light text-primary-contrast font-bold text-[11px] flex items-center justify-center shadow-xs"
                                 title="Absent"
                               >
                                 A
@@ -1029,7 +1029,7 @@ export default function WorkRecords() {
         {/* Hover Popover Tooltip for Cells */}
         {hoveredCell && hoveredCell.record && (
           <div
-            className="fixed z-50 pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2 bg-grey-900/95 text-white rounded-lg shadow-xl px-3 py-2 text-xs backdrop-blur-sm border border-grey-700 min-w-[170px]"
+            className="fixed z-50 pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2 bg-grey-900/95 text-primary-contrast rounded-lg shadow-xl px-3 py-2 text-xs backdrop-blur-sm border border-grey-700 min-w-[170px]"
             style={{
               left: `${hoveredCell.x}px`,
               top: `${hoveredCell.y - 8}px`,
@@ -1047,18 +1047,18 @@ export default function WorkRecords() {
               <span
                 className={`font-semibold ${
                   hoveredCell.record.badge === 'P'
-                    ? 'text-green-400'
+                    ? 'text-success-light'
                     : hoveredCell.record.badge === 'HP'
-                    ? 'text-yellow-400'
+                    ? 'text-warning-light'
                     : hoveredCell.record.badge === 'L'
                     ? 'text-grey-300'
                     : hoveredCell.record.badge === 'A'
-                    ? 'text-indigo-300'
+                    ? 'text-secondary-light'
                     : hoveredCell.record.status === 'week_off' || hoveredCell.record.is_week_off
-                    ? 'text-sky-300'
+                    ? 'text-info-light'
                     : hoveredCell.record.status === 'holiday' || hoveredCell.record.is_holiday
-                    ? 'text-emerald-300'
-                    : 'text-orange-400'
+                    ? 'text-success-light'
+                    : 'text-warning-light'
                 }`}
               >
                 {hoveredCell.record.badge === 'P'
@@ -1080,7 +1080,7 @@ export default function WorkRecords() {
             </div>
             <div className="text-[11px] text-grey-300">
               <span className="font-medium text-ink-disabled">Worked Hours: </span>
-              <span className="font-mono font-bold text-white">
+              <span className="font-mono font-bold text-primary-contrast">
                 {hoveredCell.record.working_hours || '00:00'} hrs
               </span>
             </div>

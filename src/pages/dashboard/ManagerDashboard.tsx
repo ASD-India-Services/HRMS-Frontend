@@ -27,7 +27,7 @@ export function ManagerDashboard({ dateRange }: ManagerDashboardProps) {
         <Can permissions={['leaves.approve']}>
           <Link
             to="/leaves/approvals"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary-main px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-dark transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary-main px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-primary-dark transition-colors"
           >
             ⏳ Review Leave Approvals
           </Link>

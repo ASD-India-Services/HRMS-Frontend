@@ -201,7 +201,7 @@ export function BulkActions({
 
         {/* Export Error */}
         {exportError && (
-          <span className="text-sm text-red-600">{exportError}</span>
+          <span className="text-sm text-error-main">{exportError}</span>
         )}
       </div>
 
@@ -228,7 +228,7 @@ export function BulkActions({
 
           {/* Import Error */}
           {importMutation.isError && (
-            <p className="mt-2 text-sm text-red-600">
+            <p className="mt-2 text-sm text-error-main">
               Upload failed. Please check your file format and try again.
             </p>
           )}
@@ -237,33 +237,33 @@ export function BulkActions({
           {importResult && (
             <div className="mt-3">
               <div className="flex flex-wrap gap-3">
-                <span className="inline-flex items-center rounded-md bg-green-50 px-2.5 py-1 text-xs font-medium text-green-800">
+                <span className="inline-flex items-center rounded-md bg-success-lighter px-2.5 py-1 text-xs font-medium text-success-dark">
                   Created: {importResult.created}
                 </span>
                 <span className="inline-flex items-center rounded-md bg-primary-lighter px-2.5 py-1 text-xs font-medium text-primary-dark">
                   Updated: {importResult.updated}
                 </span>
                 {importResult.errors.length > 0 && (
-                  <span className="inline-flex items-center rounded-md bg-red-50 px-2.5 py-1 text-xs font-medium text-red-800">
+                  <span className="inline-flex items-center rounded-md bg-error-lighter px-2.5 py-1 text-xs font-medium text-error-dark">
                     Errors: {importResult.errors.length}
                   </span>
                 )}
               </div>
 
               {importResult.errors.length > 0 && (
-                <div className="mt-2 max-h-40 overflow-auto rounded-md border border-red-200">
-                  <table className="min-w-full divide-y divide-red-200 text-xs">
-                    <thead className="bg-red-50">
+                <div className="mt-2 max-h-40 overflow-auto rounded-md border border-error-light">
+                  <table className="min-w-full divide-y divide-error-light text-xs">
+                    <thead className="bg-error-lighter">
                       <tr>
-                        <th className="px-3 py-1.5 text-left font-medium text-red-800">Row</th>
-                        <th className="px-3 py-1.5 text-left font-medium text-red-800">Error</th>
+                        <th className="px-3 py-1.5 text-left font-medium text-error-dark">Row</th>
+                        <th className="px-3 py-1.5 text-left font-medium text-error-dark">Error</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-red-100">
+                    <tbody className="divide-y divide-error-lighter">
                       {importResult.errors.map((err, idx) => (
                         <tr key={idx}>
-                          <td className="px-3 py-1.5 text-red-700">{err.row}</td>
-                          <td className="px-3 py-1.5 text-red-700">{err.message}</td>
+                          <td className="px-3 py-1.5 text-error-dark">{err.row}</td>
+                          <td className="px-3 py-1.5 text-error-dark">{err.message}</td>
                         </tr>
                       ))}
                     </tbody>

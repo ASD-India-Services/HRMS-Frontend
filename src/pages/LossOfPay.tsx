@@ -246,10 +246,10 @@ export default function LossOfPay() {
       </div>
 
       {error && (
-        <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>
+        <div className="mb-4 rounded-md border border-error-light bg-error-lighter p-3 text-sm text-error-dark">{error}</div>
       )}
       {success && (
-        <div className="mb-4 rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">{success}</div>
+        <div className="mb-4 rounded-md border border-success-light bg-success-lighter p-3 text-sm text-success-dark">{success}</div>
       )}
 
       {/* ─── Single Card with all settings ───────────────────── */}
@@ -272,7 +272,7 @@ export default function LossOfPay() {
 <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
   <div>
     <label className="block text-sm font-medium text-ink-primary mb-1">
-      Default Deduction Per Day (₹) <span className="text-red-500">*</span>
+      Default Deduction Per Day (₹) <span className="text-error-main">*</span>
     </label>
     <Input
       type="number"
@@ -353,7 +353,7 @@ export default function LossOfPay() {
                   )}
 
                   <div>
-                    <label className="block text-xs font-medium text-ink-primary mb-1">Deduction/Day (₹) <span className="text-red-500">*</span></label>
+                    <label className="block text-xs font-medium text-ink-primary mb-1">Deduction/Day (₹) <span className="text-error-main">*</span></label>
                     <Input type="number" value={rateDeduction} onChange={(e) => setRateDeduction(e.target.value)}
                       min="1" step="0.01" placeholder="e.g. 500" />
                   </div>
@@ -399,7 +399,7 @@ export default function LossOfPay() {
                         <td className="px-4 py-2">
                           {canDelete ? (
                             <button type="button" onClick={() => setDeleteRateId(rate.id)}
-                              className="rounded px-2 py-0.5 text-xs font-medium text-red-600 hover:bg-red-50 border border-red-200">
+                              className="rounded px-2 py-0.5 text-xs font-medium text-error-main hover:bg-error-lighter border border-error-light">
                               Remove
                             </button>
                           ) : (

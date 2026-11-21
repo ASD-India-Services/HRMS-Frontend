@@ -471,7 +471,7 @@ export function EmployeePermissionTab() {
       <div className="space-y-6 py-2">
         {/* Toast */}
         {toastMessage && (
-          <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-success-main px-4 py-2.5 text-sm font-medium text-primary-contrast shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
             <CheckIcon className="h-4 w-4" />
             <span>{toastMessage}</span>
           </div>
@@ -691,7 +691,7 @@ export function EmployeePermissionTab() {
     <div className="space-y-6 py-2">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-success-main px-4 py-2.5 text-sm font-medium text-primary-contrast shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
           <CheckIcon className="h-4 w-4" />
           <span>{toastMessage}</span>
         </div>
@@ -789,7 +789,7 @@ export function EmployeePermissionTab() {
 
                 const scopeBadgeClass =
                   cfg.dataScope === 'organisation'
-                    ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                    ? 'bg-secondary-lighter text-secondary-dark border border-secondary-light'
                     : cfg.dataScope === 'department'
                     ? 'bg-primary-lighter text-primary-dark border border-primary-light'
                     : 'bg-surface-neutral text-ink-primary border border-divider';

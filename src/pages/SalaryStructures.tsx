@@ -132,7 +132,7 @@ function ComponentRowEditor({
           <button
             type="button"
             onClick={() => removeRow(index)}
-            className="rounded p-1 text-red-500 hover:bg-red-50"
+            className="rounded p-1 text-error-main hover:bg-error-lighter"
             aria-label="Remove row"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

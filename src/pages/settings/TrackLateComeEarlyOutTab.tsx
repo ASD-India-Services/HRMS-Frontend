@@ -62,7 +62,7 @@ export function TrackLateComeEarlyOutTab() {
     <div className="space-y-6 py-2">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-success-main px-4 py-2.5 text-sm font-medium text-primary-contrast shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
           <CheckIcon className="h-4 w-4" />
           <span>{notification}</span>
         </div>
@@ -91,7 +91,7 @@ export function TrackLateComeEarlyOutTab() {
               <span
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                   enabled
-                    ? 'bg-emerald-100 text-emerald-800'
+                    ? 'bg-success-lighter text-success-dark'
                     : 'bg-surface-neutral text-ink-secondary'
                 }`}
               >

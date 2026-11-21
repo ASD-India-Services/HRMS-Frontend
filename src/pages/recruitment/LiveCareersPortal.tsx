@@ -107,8 +107,8 @@ export function LiveCareersPortal() {
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-lg font-bold text-ink-primary">Careers Integration: Embed into Existing Website (Method 1)</h2>
-              <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
-                <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="inline-flex items-center rounded-full bg-success-lighter px-2.5 py-0.5 text-xs font-semibold text-success-dark border border-success-light">
+                <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-success-main animate-pulse"></span>
                 Active & Ready
               </span>
             </div>
@@ -158,7 +158,7 @@ export function LiveCareersPortal() {
         <div className="rounded-xl border border-divider bg-surface-paper p-4 shadow-sm">
           <div className="text-xs font-medium text-ink-secondary">Live Active Positions</div>
           <div className="mt-1 text-2xl font-bold text-ink-primary">{publicJobs?.total_openings ?? 0}</div>
-          <div className="mt-1 text-xs text-emerald-600 font-medium">Visible to candidates online</div>
+          <div className="mt-1 text-xs text-success-main font-medium">Visible to candidates online</div>
         </div>
 
         <div className="rounded-xl border border-divider bg-surface-paper p-4 shadow-sm">
@@ -169,7 +169,7 @@ export function LiveCareersPortal() {
 
         <div className="rounded-xl border border-divider bg-surface-paper p-4 shadow-sm">
           <div className="text-xs font-medium text-ink-secondary">Candidate Pipeline Intake</div>
-          <div className="mt-1 text-base font-semibold text-emerald-600">Instant Sync</div>
+          <div className="mt-1 text-base font-semibold text-success-main">Instant Sync</div>
           <div className="mt-1 text-xs text-ink-secondary">Directly routes to Applicant Pipeline</div>
         </div>
       </div>
@@ -273,7 +273,7 @@ export function LiveCareersPortal() {
           <div>
             <div className="bg-surface-neutral border-b border-divider px-4 py-2 text-xs text-ink-secondary flex items-center justify-between">
               <span className="flex items-center gap-2">
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+                <span className="h-2.5 w-2.5 rounded-full bg-success-main"></span>
                 <span>Interactive Embed Container (Simulates how it renders inside your existing website)</span>
               </span>
               <a
@@ -320,7 +320,7 @@ export function LiveCareersPortal() {
                   onClick={() => setSelectedGuidePlatform(p.id as any)}
                   className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
                     selectedGuidePlatform === p.id
-                      ? 'bg-primary-main text-white shadow-xs'
+                      ? 'bg-primary-main text-primary-contrast shadow-xs'
                       : 'bg-surface-neutral text-ink-primary hover:bg-grey-200'
                   }`}
                 >
@@ -387,13 +387,13 @@ export function LiveCareersPortal() {
         {/* Tab 3: External Company Website */}
         {activeTab === 'external' && formattedWebsite && (
           <div className="relative min-h-[650px] w-full bg-surface-neutral">
-            <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-xs text-amber-800 flex items-center justify-between">
+            <div className="bg-warning-lighter border-b border-warning-light px-4 py-2 text-xs text-warning-dark flex items-center justify-between">
               <span>Showing your configured company website: <strong>{formattedWebsite}</strong></span>
               <a
                 href={formattedWebsite}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-semibold text-amber-900 underline"
+                className="font-semibold text-warning-darker underline"
               >
                 Open in Full Tab &rarr;
               </a>

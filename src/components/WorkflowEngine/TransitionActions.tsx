@@ -31,9 +31,9 @@ interface TransitionActionsProps {
 
 const VARIANT_CLASSES: Record<string, string> = {
   primary:
-    'bg-primary-main text-white hover:bg-primary-dark focus:ring-primary-main',
+    'bg-primary-main text-primary-contrast hover:bg-primary-dark focus:ring-primary-main',
   destructive:
-    'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+    'bg-error-main text-primary-contrast hover:bg-error-dark focus:ring-error-main',
   secondary:
     'bg-surface-paper text-ink-primary border border-divider hover:bg-surface-neutral focus:ring-primary-main',
 };

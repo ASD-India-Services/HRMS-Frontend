@@ -380,9 +380,9 @@ export function AccessibilityTab() {
 
   if (isError) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-        <AlertCircleIcon className="mx-auto h-8 w-8 text-red-500" />
-        <p className="mt-2 text-sm text-red-700">
+      <div className="rounded-xl border border-error-light bg-error-lighter p-6 text-center">
+        <AlertCircleIcon className="mx-auto h-8 w-8 text-error-main" />
+        <p className="mt-2 text-sm text-error-dark">
           Failed to load accessibility settings: {(error as Error)?.message}
         </p>
       </div>
@@ -393,15 +393,15 @@ export function AccessibilityTab() {
     <div className="space-y-8">
       {/* Toast Notice */}
       {bannerNotice && (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 flex items-center justify-between shadow-xs">
+        <div className="rounded-xl border border-success-light bg-success-lighter px-4 py-3 text-sm text-success-dark flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2">
-            <CheckIcon className="h-4 w-4 text-emerald-600" />
+            <CheckIcon className="h-4 w-4 text-success-main" />
             <span>{bannerNotice}</span>
           </div>
           <button
             type="button"
             onClick={() => setBannerNotice(null)}
-            className="text-xs font-semibold text-emerald-700 hover:text-emerald-900"
+            className="text-xs font-semibold text-success-dark hover:text-success-darker"
           >
             ✕
           </button>
@@ -452,13 +452,13 @@ export function AccessibilityTab() {
                   {isMenuOpen && (
                     <div
                       ref={actionsMenuRef}
-                      className="absolute right-0 z-30 mt-1 w-44 rounded-xl border border-divider bg-surface-paper py-1 shadow-lg ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-100"
+                      className="absolute right-0 z-30 mt-1 w-44 rounded-xl border border-divider bg-surface-paper py-1 shadow-lg ring-1 ring-grey-900/5 animate-in fade-in zoom-in-95 duration-100"
                     >
                       {/* Clear Filter option with confirmation */}
                       <button
                         type="button"
                         onClick={() => handleOpenClearFilter(item)}
-                        className="flex w-full items-center justify-between px-3.5 py-2 text-xs font-medium text-ink-primary hover:bg-surface-neutral hover:text-red-600 transition-colors text-left"
+                        className="flex w-full items-center justify-between px-3.5 py-2 text-xs font-medium text-ink-primary hover:bg-surface-neutral hover:text-error-main transition-colors text-left"
                       >
                         <span>Clear Filter</span>
                       </button>
@@ -511,11 +511,11 @@ export function AccessibilityTab() {
                   {!item.restrict_all && (
                     <div className="space-y-6 animate-in fade-in duration-150">
                       {/* Light-blue Banner matching the screenshot */}
-                      <div className="rounded-xl border border-sky-200 bg-sky-50/70 p-4 text-xs text-sky-950 leading-relaxed shadow-2xs">
-                        <p className="font-medium text-sky-900">
+                      <div className="rounded-xl border border-info-light bg-info-lighter/70 p-4 text-xs text-info-darker leading-relaxed shadow-2xs">
+                        <p className="font-medium text-info-darker">
                           Only those normal users/employees with any category mentioned in the form can access the <strong>'{item.label}'</strong> feature
                         </p>
-                        <p className="mt-1 text-sky-800">
+                        <p className="mt-1 text-info-dark">
                           If skip all the category fields in the form, then all normal users/employees can access the feature
                         </p>
                       </div>
@@ -748,7 +748,7 @@ export function AccessibilityTab() {
                         </Button>
 
                         {savedFeatureId === item.id && (
-                          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+                          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
                             <CheckIcon className="h-4 w-4" /> Saved successfully
                           </span>
                         )}
@@ -866,7 +866,7 @@ export function AccessibilityTab() {
             </Button>
 
             {savedLocation && (
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
                 <CheckIcon className="h-4 w-4" /> Saved successfully
               </span>
             )}

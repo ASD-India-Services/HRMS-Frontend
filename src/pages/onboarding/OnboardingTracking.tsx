@@ -83,7 +83,7 @@ function useTrackingColumns(): ColumnDef<OnboardingTask>[] {
           const colors: Record<string, string> = {
             pending: 'bg-surface-neutral text-ink-primary',
             in_progress: 'bg-primary-lighter text-primary-dark',
-            completed: 'bg-green-100 text-green-700',
+            completed: 'bg-success-lighter text-success-dark',
           };
           return (
             <span

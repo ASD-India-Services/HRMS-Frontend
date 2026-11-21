@@ -85,13 +85,13 @@ const columns: ColumnDef<AuditLogEntry>[] = [
     render: (value: unknown) => {
       const action = value as string;
       const colorMap: Record<string, string> = {
-        create: 'bg-green-100 text-green-800',
+        create: 'bg-success-lighter text-success-dark',
         update: 'bg-primary-lighter text-primary-dark',
-        delete: 'bg-red-100 text-red-800',
-        approve: 'bg-emerald-100 text-emerald-800',
-        reject: 'bg-orange-100 text-orange-800',
+        delete: 'bg-error-lighter text-error-dark',
+        approve: 'bg-success-lighter text-success-dark',
+        reject: 'bg-warning-lighter text-warning-dark',
         login: 'bg-surface-neutral text-ink-primary',
-        status_change: 'bg-purple-100 text-purple-800',
+        status_change: 'bg-secondary-lighter text-secondary-dark',
       };
       return (
         <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${colorMap[action] || 'bg-surface-neutral text-ink-primary'}`}>

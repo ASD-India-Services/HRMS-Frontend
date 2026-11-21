@@ -41,10 +41,10 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     render: (val) => {
       const status = String(val || '').toLowerCase();
       const colors: Record<string, string> = {
-        pending: 'bg-yellow-100 text-yellow-800',
+        pending: 'bg-warning-lighter text-warning-dark',
         in_progress: 'bg-primary-lighter text-primary-dark',
-        accepted: 'bg-green-100 text-green-800',
-        rejected: 'bg-red-100 text-red-800',
+        accepted: 'bg-success-lighter text-success-dark',
+        rejected: 'bg-error-lighter text-error-dark',
       };
       const badgeClass = colors[status] || 'bg-surface-neutral text-ink-primary';
       return (

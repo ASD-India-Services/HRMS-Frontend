@@ -31,9 +31,9 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     render: (value: unknown) => {
       const status = value as string;
       const config: Record<string, { bg: string; text: string; label: string }> = {
-        pending: { bg: 'bg-amber-100', text: 'text-amber-800', label: 'Pending' },
-        approved: { bg: 'bg-green-100', text: 'text-green-800', label: 'Approved' },
-        rejected: { bg: 'bg-red-100', text: 'text-red-800', label: 'Rejected' },
+        pending: { bg: 'bg-warning-lighter', text: 'text-warning-dark', label: 'Pending' },
+        approved: { bg: 'bg-success-lighter', text: 'text-success-dark', label: 'Approved' },
+        rejected: { bg: 'bg-error-lighter', text: 'text-error-dark', label: 'Rejected' },
       };
       const { bg, text, label } = config[status] ?? { bg: 'bg-surface-neutral', text: 'text-ink-primary', label: status };
       return (
@@ -147,7 +147,7 @@ export default function ShiftRequests() {
                   <button
                     type="button"
                     onClick={() => setApproveId(row.id as string)}
-                    className="inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 hover:bg-green-100 transition-colors"
+                    className="inline-flex items-center gap-1 rounded-md bg-success-lighter px-2 py-1 text-xs font-medium text-success-dark ring-1 ring-inset ring-success-main/20 hover:bg-success-lighter transition-colors"
                   >
                     Approve
                   </button>
@@ -156,7 +156,7 @@ export default function ShiftRequests() {
                   <button
                     type="button"
                     onClick={() => setRejectId(row.id as string)}
-                    className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20 hover:bg-red-100 transition-colors"
+                    className="inline-flex items-center gap-1 rounded-md bg-error-lighter px-2 py-1 text-xs font-medium text-error-dark ring-1 ring-inset ring-error-main/20 hover:bg-error-lighter transition-colors"
                   >
                     Reject
                   </button>

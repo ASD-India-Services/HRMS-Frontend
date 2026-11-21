@@ -88,11 +88,11 @@ export default function MyAttendanceHistory() {
       {/* Stats Cards */}
       <div className="grid grid-cols-5 gap-4 mb-6">
         <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
-          <p className="text-2xl font-bold text-indigo-600">{presentDays}</p>
+          <p className="text-2xl font-bold text-secondary-main">{presentDays}</p>
           <p className="text-xs text-ink-secondary mt-1">Present</p>
         </div>
         <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
-          <p className="text-2xl font-bold text-red-600">{absentDays}</p>
+          <p className="text-2xl font-bold text-error-main">{absentDays}</p>
           <p className="text-xs text-ink-secondary mt-1">Absent</p>
         </div>
         <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
@@ -100,11 +100,11 @@ export default function MyAttendanceHistory() {
           <p className="text-xs text-ink-secondary mt-1">On Leave</p>
         </div>
         <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
-          <p className="text-2xl font-bold text-amber-600">{lateDays}</p>
+          <p className="text-2xl font-bold text-warning-main">{lateDays}</p>
           <p className="text-xs text-ink-secondary mt-1">Late</p>
         </div>
         <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
-          <p className="text-2xl font-bold text-green-600">{totalHours.toFixed(1)}h</p>
+          <p className="text-2xl font-bold text-success-main">{totalHours.toFixed(1)}h</p>
           <p className="text-xs text-ink-secondary mt-1">Hours</p>
         </div>
       </div>
@@ -112,7 +112,7 @@ export default function MyAttendanceHistory() {
       {/* Table */}
       {isLoading ? (
         <div className="flex justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-secondary-light border-t-indigo-600" />
         </div>
       ) : records.length === 0 ? (
         <div className="text-center py-12">
@@ -148,14 +148,14 @@ export default function MyAttendanceHistory() {
                       <div className="flex items-center gap-1.5">
                         <span>{formatHours(r.working_hours, r.check_in, r.check_out)}</span>
                         {sessionCount > 1 && (
-                          <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                          <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-secondary-lighter text-secondary-dark border border-secondary-lighter">
                             {sessionCount} sessions
                           </span>
                         )}
                         {hasAuto && (
                           <span
                             title="Contains auto check-out session"
-                            className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200"
+                            className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-warning-lighter text-warning-dark border border-warning-light"
                           >
                             ⚡ Auto
                           </span>
@@ -164,11 +164,11 @@ export default function MyAttendanceHistory() {
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                        r.status === 'present' ? 'bg-green-100 text-green-700' :
-                        r.status === 'absent' ? 'bg-red-100 text-red-700' :
-                        r.status === 'half_day' ? 'bg-amber-100 text-amber-700' :
+                        r.status === 'present' ? 'bg-success-lighter text-success-dark' :
+                        r.status === 'absent' ? 'bg-error-lighter text-error-dark' :
+                        r.status === 'half_day' ? 'bg-warning-lighter text-warning-dark' :
                         r.status === 'on_leave' ? 'bg-primary-lighter text-primary-dark' :
-                        r.status === 'holiday' ? 'bg-purple-100 text-purple-700' :
+                        r.status === 'holiday' ? 'bg-secondary-lighter text-secondary-dark' :
                         'bg-surface-neutral text-ink-primary'
                       }`}>
                         {r.status === 'on_leave' ? 'On Leave' : r.status === 'half_day' ? 'Half Day' : r.status}

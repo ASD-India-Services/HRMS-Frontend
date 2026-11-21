@@ -169,7 +169,7 @@ export function HelpdeskTagsTab() {
     <div className="space-y-6 py-2">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-success-main px-4 py-2.5 text-sm font-medium text-primary-contrast shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
           <CheckIcon className="h-4 w-4" />
           <span>{notification}</span>
         </div>
@@ -245,7 +245,7 @@ export function HelpdeskTagsTab() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2.5">
                       <span
-                        className="inline-block h-6 w-6 rounded-full shadow-xs border border-black/10 shrink-0"
+                        className="inline-block h-6 w-6 rounded-full shadow-xs border border-grey-900/10 shrink-0"
                         style={{ backgroundColor: tag.color }}
                       />
                       <span className="text-xs font-mono text-ink-secondary uppercase">{tag.color}</span>
@@ -301,7 +301,7 @@ export function HelpdeskTagsTab() {
 
             <form onSubmit={handleSaveModal} className="space-y-6 pt-4">
               {formError && (
-                <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
+                <div className="rounded-md bg-error-lighter p-3 text-sm text-error-main">
                   {formError}
                 </div>
               )}
@@ -331,7 +331,7 @@ export function HelpdeskTagsTab() {
                     <div className="rounded-md bg-surface-neutral p-3 flex flex-col gap-2">
                       {/* Color Preview Bar matching screenshot */}
                       <div
-                        className="w-full h-8 rounded shadow-inner border border-black/10 transition-colors cursor-pointer"
+                        className="w-full h-8 rounded shadow-inner border border-grey-900/10 transition-colors cursor-pointer"
                         style={{ backgroundColor: formColor }}
                         title="Click to choose color"
                         onClick={() => document.getElementById('native-color-picker')?.click()}
@@ -361,7 +361,7 @@ export function HelpdeskTagsTab() {
                             key={c}
                             type="button"
                             onClick={() => setFormColor(c)}
-                            className={`h-5 w-5 rounded-full border border-black/15 transition-transform hover:scale-110 shrink-0 ${
+                            className={`h-5 w-5 rounded-full border border-grey-900/15 transition-transform hover:scale-110 shrink-0 ${
                               formColor.toLowerCase() === c.toLowerCase()
                                 ? 'ring-2 ring-primary-main ring-offset-1 scale-110'
                                 : ''

@@ -128,7 +128,7 @@ export default function AttendanceDashboard() {
           </Link>
           <Link
             to="/attendance/work-records"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-white bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-primary-contrast bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -146,7 +146,7 @@ export default function AttendanceDashboard() {
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Attendance Rate
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success-lighter text-success-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -154,7 +154,7 @@ export default function AttendanceDashboard() {
           </div>
           <div className="mt-3">
             <span className="text-2xl font-bold text-ink-primary">{todayLoading ? '...' : `${attendanceRate}%`}</span>
-            <span className="ml-2 text-xs text-emerald-600 font-medium">overall workforce</span>
+            <span className="ml-2 text-xs text-success-main font-medium">overall workforce</span>
           </div>
           <div className="mt-2 text-xs text-ink-secondary">
             {presentCount} of {totalEmployees} employees present
@@ -188,7 +188,7 @@ export default function AttendanceDashboard() {
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Late Arrivals
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-lighter text-warning-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -196,7 +196,7 @@ export default function AttendanceDashboard() {
           </div>
           <div className="mt-3">
             <span className="text-2xl font-bold text-ink-primary">{todayLoading ? '...' : lateCount}</span>
-            <span className="ml-2 text-xs text-amber-600 font-medium">after grace period</span>
+            <span className="ml-2 text-xs text-warning-main font-medium">after grace period</span>
           </div>
           <div className="mt-2 text-xs text-ink-secondary">
             <span>Punctuality check</span>
@@ -209,7 +209,7 @@ export default function AttendanceDashboard() {
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               On Leave / Absent
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-rose-50 text-rose-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-error-lighter text-error-main">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
@@ -219,7 +219,7 @@ export default function AttendanceDashboard() {
             <span className="text-2xl font-bold text-ink-primary">{todayLoading ? '...' : onLeaveCount + absentCount}</span>
             <span className="ml-2 text-xs text-ink-secondary">({onLeaveCount} on approved leave)</span>
           </div>
-          <div className="mt-2 text-xs text-rose-600 font-medium">
+          <div className="mt-2 text-xs text-error-main font-medium">
             <Link to="/leaves/approvals" className="hover:underline">Check leave records →</Link>
           </div>
         </div>

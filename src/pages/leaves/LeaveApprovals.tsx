@@ -240,7 +240,7 @@ function LeaveApprovalsContent() {
         render: (_value: unknown, row: LeaveApplication) => {
           if (isOwnApplication(row)) {
             return (
-              <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 border border-amber-200">
+              <span className="inline-flex items-center rounded-full bg-warning-lighter px-2.5 py-0.5 text-xs font-medium text-warning-dark border border-warning-light">
                 Self-request (Approval disabled)
               </span>
             );
@@ -343,7 +343,7 @@ function LeaveApprovalsContent() {
 
             {/* Applicant Profile Card */}
             <div className="mt-4 flex items-center gap-4 rounded-lg bg-surface-neutral p-4 border border-divider">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-main font-bold text-white text-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-main font-bold text-primary-contrast text-lg">
                 {selectedApplicant.employee.first_name?.[0] || 'E'}{selectedApplicant.employee.last_name?.[0] || ''}
               </div>
               <div>
@@ -378,7 +378,7 @@ function LeaveApprovalsContent() {
               <div>
                 <span className="text-xs font-medium text-ink-secondary uppercase">Current Status</span>
                 <p className="mt-0.5">
-                  <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium capitalize text-yellow-800">
+                  <span className="inline-flex items-center rounded-full bg-warning-lighter px-2.5 py-0.5 text-xs font-medium capitalize text-warning-dark">
                     {selectedApplicant.status}
                   </span>
                 </p>
@@ -399,14 +399,14 @@ function LeaveApprovalsContent() {
 
             {/* Action Section for Pending Applications */}
             {selectedApplicant.status === 'pending' && isOwnApplication(selectedApplicant) && (
-              <div className="mt-5 rounded-lg bg-amber-50 p-4 border border-amber-200">
-                <div className="flex items-center gap-2 text-sm font-semibold text-amber-800">
-                  <svg className="h-5 w-5 text-amber-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <div className="mt-5 rounded-lg bg-warning-lighter p-4 border border-warning-light">
+                <div className="flex items-center gap-2 text-sm font-semibold text-warning-dark">
+                  <svg className="h-5 w-5 text-warning-main shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
                   Self-Approval Not Allowed
                 </div>
-                <p className="mt-1 text-xs text-amber-700">
+                <p className="mt-1 text-xs text-warning-dark">
                   This is your own leave application. As per company segregation of duties policy, you cannot approve or reject your own leave. It must be reviewed and approved by your reporting manager or an administrator.
                 </p>
               </div>
@@ -458,7 +458,7 @@ function LeaveApprovalsContent() {
                         }
                       );
                     }}
-                    className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
+                    className="rounded-md bg-success-main px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-success-dark disabled:opacity-50"
                   >
                     {approveMutation.isPending ? 'Approving...' : 'Approve Leave'}
                   </button>

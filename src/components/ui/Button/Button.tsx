@@ -18,7 +18,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const COLOR_CLASSES: Record<ButtonColor, Record<ButtonVariant, string>> = {
   inherit: {
-    contained: 'bg-grey-800 text-white hover:bg-grey-700 focus-visible:ring-grey-500',
+    contained: 'bg-grey-800 text-primary-contrast hover:bg-grey-700 focus-visible:ring-grey-500',
     outlined: 'border border-grey-500/30 text-ink-primary hover:bg-grey-500/10 focus-visible:ring-grey-500',
     soft: 'bg-grey-500/10 text-ink-primary hover:bg-grey-500/20 focus-visible:ring-grey-500',
     text: 'text-ink-secondary hover:bg-grey-500/10 hover:text-ink-primary focus-visible:ring-grey-500',
@@ -48,7 +48,7 @@ const COLOR_CLASSES: Record<ButtonColor, Record<ButtonVariant, string>> = {
     text: 'text-success-main hover:bg-success-main/10 focus-visible:ring-success-main',
   },
   warning: {
-    contained: 'bg-warning-main text-warning-contrast hover:bg-warning-dark hover:text-white focus-visible:ring-warning-main',
+    contained: 'bg-warning-main text-warning-contrast hover:bg-warning-dark hover:text-primary-contrast focus-visible:ring-warning-main',
     outlined: 'border border-warning-main/50 text-warning-dark hover:bg-warning-main/10 focus-visible:ring-warning-main',
     soft: 'bg-warning-main/10 text-warning-dark hover:bg-warning-main/20 focus-visible:ring-warning-main',
     text: 'text-warning-dark hover:bg-warning-main/10 focus-visible:ring-warning-main',

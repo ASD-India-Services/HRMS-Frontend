@@ -43,10 +43,10 @@ const JOB_OPENING_FIELDS: FieldConfig[] = [
 const PAGE_SIZE = 10;
 
 const STATUS_BADGES: Record<JobOpeningStatus, { label: string; className: string }> = {
-  open: { label: 'Open', className: 'bg-green-100 text-green-800' },
+  open: { label: 'Open', className: 'bg-success-lighter text-success-dark' },
   closed: { label: 'Closed', className: 'bg-surface-neutral text-ink-primary' },
-  on_hold: { label: 'On Hold', className: 'bg-yellow-100 text-yellow-800' },
-  cancelled: { label: 'Cancelled', className: 'bg-red-100 text-red-800' },
+  on_hold: { label: 'On Hold', className: 'bg-warning-lighter text-warning-dark' },
+  cancelled: { label: 'Cancelled', className: 'bg-error-lighter text-error-dark' },
 };
 
 interface JobOpeningsProps {
@@ -210,9 +210,9 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
 
       {/* Action Error Alert */}
       {actionError && !deletingOpening && !editingOpening && (
-        <div className="mb-4 flex items-center justify-between rounded-lg bg-red-50 p-3 text-sm text-red-700 border border-red-200">
+        <div className="mb-4 flex items-center justify-between rounded-lg bg-error-lighter p-3 text-sm text-error-dark border border-error-light">
           <span>{actionError}</span>
-          <button onClick={() => setActionError(null)} className="text-red-500 hover:text-red-700 font-bold ml-2">
+          <button onClick={() => setActionError(null)} className="text-error-main hover:text-error-dark font-bold ml-2">
             ✕
           </button>
         </div>
@@ -290,10 +290,10 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
                         >
                           {copiedJobId === opening.id ? (
                             <>
-                              <svg className="h-3.5 w-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="h-3.5 w-3.5 text-success-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>
-                              <span className="text-green-700 font-semibold">Copied!</span>
+                              <span className="text-success-dark font-semibold">Copied!</span>
                             </>
                           ) : (
                             <>
@@ -311,7 +311,7 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
                         <Link
                           to={`/recruitment/stages?job=${opening.id}`}
                           onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center justify-center p-1.5 rounded-md text-ink-secondary hover:text-indigo-600 hover:bg-indigo-50 border border-divider shadow-xs transition-colors cursor-pointer"
+                          className="inline-flex items-center justify-center p-1.5 rounded-md text-ink-secondary hover:text-secondary-main hover:bg-secondary-lighter border border-divider shadow-xs transition-colors cursor-pointer"
                           title="Configure Hiring Stages"
                           aria-label={`Configure stages for ${opening.title}`}
                         >
@@ -341,7 +341,7 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
                             setActionError(null);
                             setDeletingOpening(opening);
                           }}
-                          className="inline-flex items-center justify-center p-1.5 rounded-md text-ink-secondary hover:text-rose-600 hover:bg-rose-50 border border-divider shadow-xs transition-colors cursor-pointer"
+                          className="inline-flex items-center justify-center p-1.5 rounded-md text-ink-secondary hover:text-error-main hover:bg-error-lighter border border-divider shadow-xs transition-colors cursor-pointer"
                           title="Delete Job Opening"
                           aria-label={`Delete ${opening.title}`}
                         >

@@ -257,7 +257,7 @@ export default function FAQs() {
       )}
 
       {isError && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-xs text-red-700">
+        <div className="rounded-xl border border-error-light bg-error-lighter p-4 text-xs text-error-dark">
           Failed to load FAQs. {error instanceof Error ? error.message : 'Please try again.'}
         </div>
       )}
@@ -335,7 +335,7 @@ export default function FAQs() {
                           e.stopPropagation();
                           setDeletingFaq(faq);
                         }}
-                        className="p-1 text-ink-disabled hover:text-rose-600 transition"
+                        className="p-1 text-ink-disabled hover:text-error-main transition"
                         title="Delete FAQ"
                       >
                         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -394,7 +394,7 @@ export default function FAQs() {
             </div>
 
             {formError && (
-              <div className="mt-3 rounded-md bg-red-50 p-2.5 text-xs text-red-700 border border-red-200">
+              <div className="mt-3 rounded-md bg-error-lighter p-2.5 text-xs text-error-dark border border-error-light">
                 {formError}
               </div>
             )}
@@ -421,7 +421,7 @@ export default function FAQs() {
               {/* Question */}
               <div>
                 <label className="block text-sm font-medium text-ink-primary mb-1">
-                  Question: <span className="text-red-500">*</span>
+                  Question: <span className="text-error-main">*</span>
                 </label>
                 <Input
                   type="text"
@@ -435,7 +435,7 @@ export default function FAQs() {
               {/* Answer */}
               <div>
                 <label className="block text-sm font-medium text-ink-primary mb-1">
-                  Answer: <span className="text-red-500">*</span>
+                  Answer: <span className="text-error-main">*</span>
                 </label>
                 <Textarea
                   rows={4}
@@ -492,7 +492,7 @@ export default function FAQs() {
                 type="button"
                 onClick={handleDeleteConfirm}
                 disabled={deleteMutation.isPending}
-                className="rounded bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-rose-700 disabled:opacity-50"
+                className="rounded bg-error-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-error-dark disabled:opacity-50"
               >
                 {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
               </button>

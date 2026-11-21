@@ -39,15 +39,15 @@ export const STAGE_COLOR_PRESETS: {
   border: string;
   previewClass: string;
 }[] = [
-  { key: 'blue', label: 'Blue', bg: 'bg-primary-main', dot: 'bg-primary-main', badge: 'bg-primary-lighter text-primary-dark border-primary-light', border: 'border-primary-light', previewClass: 'from-primary-main to-indigo-600' },
-  { key: 'amber', label: 'Amber / Gold', bg: 'bg-amber-500', dot: 'bg-amber-500', badge: 'bg-amber-50 text-amber-700 border-amber-200', border: 'border-amber-400', previewClass: 'from-amber-500 to-orange-500' },
-  { key: 'purple', label: 'Purple / Violet', bg: 'bg-purple-500', dot: 'bg-purple-500', badge: 'bg-purple-50 text-purple-700 border-purple-200', border: 'border-purple-400', previewClass: 'from-purple-500 to-indigo-600' },
-  { key: 'emerald', label: 'Emerald / Green', bg: 'bg-emerald-500', dot: 'bg-emerald-500', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200', border: 'border-emerald-400', previewClass: 'from-emerald-500 to-teal-600' },
-  { key: 'teal', label: 'Teal / Cyan', bg: 'bg-teal-500', dot: 'bg-teal-500', badge: 'bg-teal-50 text-teal-700 border-teal-200', border: 'border-teal-400', previewClass: 'from-teal-500 to-emerald-600' },
-  { key: 'rose', label: 'Rose / Red', bg: 'bg-rose-500', dot: 'bg-rose-500', badge: 'bg-rose-50 text-rose-700 border-rose-200', border: 'border-rose-400', previewClass: 'from-rose-500 to-red-600' },
-  { key: 'indigo', label: 'Indigo', bg: 'bg-indigo-500', dot: 'bg-indigo-500', badge: 'bg-indigo-50 text-indigo-700 border-indigo-200', border: 'border-indigo-400', previewClass: 'from-indigo-500 to-purple-600' },
-  { key: 'cyan', label: 'Sky Cyan', bg: 'bg-cyan-500', dot: 'bg-cyan-500', badge: 'bg-cyan-50 text-cyan-700 border-cyan-200', border: 'border-cyan-400', previewClass: 'from-cyan-500 to-primary-main' },
-  { key: 'pink', label: 'Pink', bg: 'bg-pink-500', dot: 'bg-pink-500', badge: 'bg-pink-50 text-pink-700 border-pink-200', border: 'border-pink-400', previewClass: 'from-pink-500 to-rose-500' },
+  { key: 'blue', label: 'Blue', bg: 'bg-primary-main', dot: 'bg-primary-main', badge: 'bg-primary-lighter text-primary-dark border-primary-light', border: 'border-primary-light', previewClass: 'from-primary-main to-secondary-main' },
+  { key: 'amber', label: 'Amber / Gold', bg: 'bg-warning-main', dot: 'bg-warning-main', badge: 'bg-warning-lighter text-warning-dark border-warning-light', border: 'border-warning-main', previewClass: 'from-warning-main to-warning-main' },
+  { key: 'purple', label: 'Purple / Violet', bg: 'bg-secondary-main', dot: 'bg-secondary-main', badge: 'bg-secondary-lighter text-secondary-dark border-secondary-light', border: 'border-secondary-main', previewClass: 'from-secondary-main to-secondary-main' },
+  { key: 'emerald', label: 'Emerald / Green', bg: 'bg-success-main', dot: 'bg-success-main', badge: 'bg-success-lighter text-success-dark border-success-light', border: 'border-success-main', previewClass: 'from-success-main to-success-main' },
+  { key: 'teal', label: 'Teal / Cyan', bg: 'bg-success-main', dot: 'bg-success-main', badge: 'bg-success-lighter text-success-dark border-success-light', border: 'border-success-main', previewClass: 'from-success-main to-success-main' },
+  { key: 'rose', label: 'Rose / Red', bg: 'bg-error-main', dot: 'bg-error-main', badge: 'bg-error-lighter text-error-dark border-error-light', border: 'border-error-main', previewClass: 'from-error-main to-error-main' },
+  { key: 'indigo', label: 'Indigo', bg: 'bg-secondary-main', dot: 'bg-secondary-main', badge: 'bg-secondary-lighter text-secondary-dark border-secondary-light', border: 'border-secondary-main', previewClass: 'from-secondary-main to-secondary-main' },
+  { key: 'cyan', label: 'Sky Cyan', bg: 'bg-info-main', dot: 'bg-info-main', badge: 'bg-info-lighter text-info-dark border-info-light', border: 'border-info-main', previewClass: 'from-info-main to-primary-main' },
+  { key: 'pink', label: 'Pink', bg: 'bg-pink-500', dot: 'bg-pink-500', badge: 'bg-pink-50 text-pink-700 border-pink-200', border: 'border-pink-400', previewClass: 'from-pink-500 to-error-main' },
   { key: 'slate', label: 'Slate Gray', bg: 'bg-grey-500', dot: 'bg-grey-500', badge: 'bg-surface-neutral text-ink-primary border-divider', border: 'border-grey-400', previewClass: 'from-grey-600 to-grey-700' },
 ];
 
@@ -60,10 +60,10 @@ export function getStagePreset(colorKey: string) {
 }
 
 const STATUS_BADGES: Record<JobOpeningStatus, { label: string; badge: string; dot: string }> = {
-  open: { label: 'Open', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500' },
+  open: { label: 'Open', badge: 'bg-success-lighter text-success-dark border-success-light', dot: 'bg-success-main' },
   closed: { label: 'Closed', badge: 'bg-surface-neutral text-ink-primary border-divider', dot: 'bg-grey-400' },
-  on_hold: { label: 'On Hold', badge: 'bg-amber-50 text-amber-700 border-amber-200', dot: 'bg-amber-500' },
-  cancelled: { label: 'Cancelled', badge: 'bg-rose-50 text-rose-700 border-rose-200', dot: 'bg-rose-500' },
+  on_hold: { label: 'On Hold', badge: 'bg-warning-lighter text-warning-dark border-warning-light', dot: 'bg-warning-main' },
+  cancelled: { label: 'Cancelled', badge: 'bg-error-lighter text-error-dark border-error-light', dot: 'bg-error-main' },
 };
 
 export function RecruitmentStages() {
@@ -297,7 +297,7 @@ export function RecruitmentStages() {
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-sm">
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-main text-primary-contrast shadow-sm">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
                 </svg>
@@ -312,7 +312,7 @@ export function RecruitmentStages() {
           <div className="flex items-center gap-3">
             <Link
               to="/recruitment/pipeline"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-surface-paper px-3.5 py-2 text-sm font-medium text-ink-primary shadow-sm transition hover:bg-surface-neutral focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-surface-paper px-3.5 py-2 text-sm font-medium text-ink-primary shadow-sm transition hover:bg-surface-neutral focus:outline-none focus:ring-2 focus:ring-secondary-main"
             >
               <svg className="h-4 w-4 text-ink-secondary" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z" />
@@ -323,10 +323,10 @@ export function RecruitmentStages() {
         </div>
 
         {/* Global Default Stages Highlight Card */}
-        <div className="mb-8 overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-50/70 via-white to-purple-50/50 p-5 shadow-sm">
+        <div className="mb-8 overflow-hidden rounded-2xl border border-secondary-lighter bg-gradient-to-r from-secondary-lighter/70 via-surface-paper to-secondary-lighter/50 p-5 shadow-sm">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-3.5">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary-main text-primary-contrast shadow-sm">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.27-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -335,7 +335,7 @@ export function RecruitmentStages() {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-base font-bold text-ink-primary">Organization Default Stages</h3>
-                  <span className="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
+                  <span className="inline-flex items-center rounded-full bg-secondary-lighter px-2.5 py-0.5 text-xs font-semibold text-secondary-dark">
                     {defaultStages.length} Stages Configured
                   </span>
                 </div>
@@ -386,7 +386,7 @@ export function RecruitmentStages() {
                   onClick={() => setStatusFilter(st)}
                   className={`rounded-md px-3 py-1 text-xs font-medium capitalize transition ${
                     statusFilter === st
-                      ? 'bg-indigo-600 text-white shadow-xs'
+                      ? 'bg-secondary-main text-primary-contrast shadow-xs'
                       : 'text-ink-secondary hover:text-ink-primary'
                   }`}
                 >
@@ -400,7 +400,7 @@ export function RecruitmentStages() {
         {/* Loading State */}
         {isLoadingOpenings && (
           <div className="rounded-2xl border border-divider bg-surface-paper p-12 text-center shadow-sm">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-r-transparent"></div>
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-secondary-main border-r-transparent"></div>
             <p className="mt-3 text-sm font-medium text-ink-secondary">Loading job openings...</p>
           </div>
         )}
@@ -408,7 +408,7 @@ export function RecruitmentStages() {
         {/* Empty State */}
         {!isLoadingOpenings && filteredOpenings.length === 0 && (
           <div className="rounded-2xl border border-dashed border-divider bg-surface-paper p-12 text-center shadow-xs">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-secondary-lighter text-secondary-main">
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0" />
               </svg>
@@ -419,7 +419,7 @@ export function RecruitmentStages() {
             </p>
             <Link
               to="/recruitment"
-              className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-indigo-700"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-secondary-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-secondary-dark"
             >
               Go to Job Openings
             </Link>
@@ -437,7 +437,7 @@ export function RecruitmentStages() {
               return (
                 <div
                   key={job.id}
-                  className="group relative flex flex-col justify-between rounded-2xl border border-grey-300/90 bg-surface-paper p-5 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-md"
+                  className="group relative flex flex-col justify-between rounded-2xl border border-grey-300/90 bg-surface-paper p-5 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-secondary-light hover:shadow-md"
                 >
                   <div>
                     {/* Header: Status & Vacancies */}
@@ -452,7 +452,7 @@ export function RecruitmentStages() {
                     </div>
 
                     {/* Job Title */}
-                    <h3 className="text-lg font-bold text-ink-primary group-hover:text-indigo-600 transition-colors">
+                    <h3 className="text-lg font-bold text-ink-primary group-hover:text-secondary-main transition-colors">
                       {job.title}
                     </h3>
 
@@ -478,7 +478,7 @@ export function RecruitmentStages() {
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-ink-secondary">Hiring Pipeline:</span>
                         {hasCustom ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-semibold text-purple-700">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-secondary-lighter px-2.5 py-0.5 text-xs font-semibold text-secondary-dark">
                             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
                             </svg>
@@ -504,7 +504,7 @@ export function RecruitmentStages() {
                   <div className="mt-5 pt-3 border-t border-divider">
                     <button
                       onClick={() => setSearchParams({ job: job.id })}
-                      className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-indigo-50 py-2.5 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-600 hover:text-white"
+                      className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-secondary-lighter py-2.5 text-xs font-semibold text-secondary-dark transition hover:bg-secondary-main hover:text-primary-contrast"
                     >
                       <span>Configure Stages</span>
                       <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
@@ -536,7 +536,7 @@ export function RecruitmentStages() {
       <div className="mb-4 flex items-center justify-between">
         <button
           onClick={() => setSearchParams({})}
-          className="inline-flex items-center gap-2 text-xs font-semibold text-ink-secondary hover:text-indigo-600 transition"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-ink-secondary hover:text-secondary-main transition"
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
@@ -566,7 +566,7 @@ export function RecruitmentStages() {
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-secondary-main text-primary-contrast shadow-sm">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
               </svg>
@@ -599,7 +599,7 @@ export function RecruitmentStages() {
         <div className="flex items-center gap-3">
           <Link
             to="/recruitment/pipeline"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-surface-paper px-3.5 py-2 text-sm font-medium text-ink-primary shadow-sm transition hover:bg-surface-neutral focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-surface-paper px-3.5 py-2 text-sm font-medium text-ink-primary shadow-sm transition hover:bg-surface-neutral focus:outline-none focus:ring-2 focus:ring-secondary-main"
           >
             <svg className="h-4 w-4 text-ink-secondary" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z" />
@@ -612,9 +612,9 @@ export function RecruitmentStages() {
             <button
               onClick={handleInitializeDefaults}
               disabled={initializeMutation.isPending}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-300 bg-indigo-50 px-3.5 py-2 text-sm font-semibold text-indigo-700 shadow-sm transition hover:bg-indigo-100 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-secondary-light bg-secondary-lighter px-3.5 py-2 text-sm font-semibold text-secondary-dark shadow-sm transition hover:bg-secondary-lighter disabled:opacity-50"
             >
-              <svg className="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <svg className="h-4 w-4 text-secondary-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
               </svg>
               {initializeMutation.isPending ? 'Copying...' : 'Copy Default Stages'}
@@ -623,7 +623,7 @@ export function RecruitmentStages() {
 
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-secondary-main px-4 py-2 text-sm font-semibold text-primary-contrast shadow-sm transition hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-secondary-main"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -635,14 +635,14 @@ export function RecruitmentStages() {
 
       {/* Success Notification */}
       {successBanner && (
-        <div className="mb-6 flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm transition-all animate-fadeIn">
+        <div className="mb-6 flex items-center justify-between rounded-xl border border-success-light bg-success-lighter px-4 py-3 text-sm text-success-dark shadow-sm transition-all animate-fadeIn">
           <div className="flex items-center gap-2">
-            <svg className="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <svg className="h-5 w-5 text-success-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span className="font-medium">{successBanner}</span>
           </div>
-          <button onClick={() => setSuccessBanner(null)} className="text-emerald-600 hover:text-emerald-800">
+          <button onClick={() => setSuccessBanner(null)} className="text-success-main hover:text-success-dark">
             ✕
           </button>
         </div>
@@ -650,19 +650,19 @@ export function RecruitmentStages() {
 
       {/* Notice banner if this job opening has no custom stages configured yet */}
       {selectedOpening && sortedStages.length === 0 && !isLoadingStages && (
-        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50/80 p-5 shadow-xs">
+        <div className="mb-6 rounded-2xl border border-warning-light bg-warning-lighter/80 p-5 shadow-xs">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-3">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-warning-lighter text-warning-dark">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
                 </svg>
               </span>
               <div>
-                <h4 className="text-sm font-bold text-amber-900">
+                <h4 className="text-sm font-bold text-warning-darker">
                   Using Organization Default Pipeline ({defaultStages.length} Stages)
                 </h4>
-                <p className="mt-0.5 text-xs text-amber-700">
+                <p className="mt-0.5 text-xs text-warning-dark">
                   This job opening does not have a custom stage flow yet. It currently uses the standard default stages.
                   You can copy the default stages to customize them for this position, or add custom stages directly.
                 </p>
@@ -672,7 +672,7 @@ export function RecruitmentStages() {
               <button
                 onClick={handleInitializeDefaults}
                 disabled={initializeMutation.isPending}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:bg-amber-700 disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-warning-main px-3.5 py-2 text-xs font-bold text-primary-contrast shadow-xs hover:bg-warning-dark disabled:opacity-50"
               >
                 ⚡ Copy Organization Defaults
               </button>
@@ -688,7 +688,7 @@ export function RecruitmentStages() {
 
       {/* Pipeline Visual Stepper Preview */}
       {sortedStages.length > 0 && (
-        <div className="mb-8 rounded-2xl border border-grey-300/80 bg-gradient-to-b from-white to-grey-50/50 p-5 shadow-sm">
+        <div className="mb-8 rounded-2xl border border-grey-300/80 bg-gradient-to-b from-surface-paper to-grey-50/50 p-5 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               Hiring Pipeline Flow ({sortedStages.length} Stages)
@@ -727,15 +727,15 @@ export function RecruitmentStages() {
       {/* Loading & Error States */}
       {isLoadingStages && (
         <div className="rounded-2xl border border-divider bg-surface-paper p-12 text-center shadow-sm">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-indigo-600 border-r-transparent"></div>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-secondary-main border-r-transparent"></div>
           <p className="mt-3 text-sm font-medium text-ink-secondary">Loading stages...</p>
         </div>
       )}
 
       {isStageError && (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center text-rose-800 shadow-sm">
+        <div className="rounded-2xl border border-error-light bg-error-lighter p-6 text-center text-error-dark shadow-sm">
           <p className="font-semibold">Unable to load recruitment stages</p>
-          <p className="mt-1 text-sm text-rose-600">
+          <p className="mt-1 text-sm text-error-main">
             {(stageError as any)?.message || 'Please check your connection and try again.'}
           </p>
         </div>
@@ -819,8 +819,8 @@ export function RecruitmentStages() {
                         System Default
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
-                        <svg className="h-3 w-3 text-indigo-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <span className="inline-flex items-center gap-1 rounded-md bg-secondary-lighter px-2 py-1 text-xs font-medium text-secondary-dark">
+                        <svg className="h-3 w-3 text-secondary-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63" />
                         </svg>
                         Custom Stage
@@ -848,10 +848,10 @@ export function RecruitmentStages() {
                     </button>
                     <button
                       onClick={() => setDeleteStageTarget(stage)}
-                      className="inline-flex items-center gap-1 rounded-lg border border-rose-200 px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 hover:border-rose-300 transition shadow-2xs"
+                      className="inline-flex items-center gap-1 rounded-lg border border-error-light px-2.5 py-1.5 text-xs font-semibold text-error-main hover:bg-error-lighter hover:border-error-light transition shadow-2xs"
                       title={`Delete stage ${stage.name}`}
                     >
-                      <svg className="h-3.5 w-3.5 text-rose-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <svg className="h-3.5 w-3.5 text-error-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                       </svg>
                       Delete
@@ -886,7 +886,7 @@ export function RecruitmentStages() {
             </div>
 
             {formError && (
-              <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
+              <div className="mt-4 rounded-xl border border-error-light bg-error-lighter p-3 text-xs text-error-dark">
                 {formError}
               </div>
             )}
@@ -895,7 +895,7 @@ export function RecruitmentStages() {
               {/* Stage Name */}
               <div>
                 <label className="block text-xs font-medium text-ink-primary">
-                  Stage Name <span className="text-rose-500">*</span>
+                  Stage Name <span className="text-error-main">*</span>
                 </label>
                 <Input
                   type="text"
@@ -960,13 +960,13 @@ export function RecruitmentStages() {
                       onClick={() => setFormColor(preset.key)}
                       className={`flex flex-col items-center gap-1 rounded-xl border p-2 text-center transition ${
                         formColor === preset.key
-                          ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-500/30'
+                          ? 'border-secondary-main bg-secondary-lighter/50 ring-2 ring-secondary-main/30'
                           : 'border-divider hover:border-divider hover:bg-surface-neutral'
                       }`}
                     >
                       <span className={`h-5 w-5 rounded-full ${preset.bg} shadow-xs flex items-center justify-center`}>
                         {formColor === preset.key && (
-                          <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+                          <svg className="h-3 w-3 text-primary-contrast" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                           </svg>
                         )}
@@ -1007,7 +1007,7 @@ export function RecruitmentStages() {
                         setDeleteStageTarget(target);
                       }}
                     >
-                      <svg className="h-4 w-4 text-rose-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <svg className="h-4 w-4 text-error-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                       </svg>
                       Delete Stage
@@ -1025,7 +1025,7 @@ export function RecruitmentStages() {
                   <button
                     type="submit"
                     disabled={createMutation.isPending || updateMutation.isPending}
-                    className="rounded-xl bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50"
+                    className="rounded-xl bg-secondary-main px-5 py-2 text-sm font-semibold text-primary-contrast shadow-sm hover:bg-secondary-dark disabled:opacity-50"
                   >
                     {createMutation.isPending || updateMutation.isPending ? 'Saving...' : editingStage ? 'Update Stage' : 'Create Stage'}
                   </button>
@@ -1041,7 +1041,7 @@ export function RecruitmentStages() {
         <Modal open onClose={() => setDeleteStageTarget(null)} labelledBy="RecruitmentStages-modal-title-2" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-error-lighter text-error-main">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
                 </svg>
@@ -1055,7 +1055,7 @@ export function RecruitmentStages() {
             <div className="mt-4 rounded-xl border border-divider bg-surface-neutral p-3.5 text-xs text-ink-primary">
               Are you sure you want to delete stage <span className="font-semibold text-ink-primary">"{deleteStageTarget.name}"</span>?
               {getStageApplicantCount(deleteStageTarget) > 0 && (
-                <p className="mt-2 text-rose-600 font-semibold">
+                <p className="mt-2 text-error-main font-semibold">
                   ⚠️ Note: There are currently {getStageApplicantCount(deleteStageTarget)} candidate(s) in this stage. You must move them to another stage before deleting.
                 </p>
               )}
@@ -1072,7 +1072,7 @@ export function RecruitmentStages() {
                 type="button"
                 disabled={deleteMutation.isPending || getStageApplicantCount(deleteStageTarget) > 0}
                 onClick={() => handleDelete(deleteStageTarget)}
-                className="rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-rose-700 disabled:opacity-50"
+                className="rounded-xl bg-error-main px-4 py-2 text-sm font-semibold text-primary-contrast shadow-sm hover:bg-error-dark disabled:opacity-50"
               >
                 {deleteMutation.isPending ? 'Deleting...' : 'Confirm Delete'}
               </button>

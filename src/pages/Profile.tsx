@@ -95,14 +95,14 @@ export default function Profile() {
               />
             ) : (
               <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary-light to-primary-main ring-4 ring-primary-lighter">
-                <span className="text-2xl font-bold text-white">
+                <span className="text-2xl font-bold text-primary-contrast">
                   {name ? name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : '??'}
                 </span>
               </div>
             )}
             {/* Upload overlay hint */}
-            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-grey-900/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+              <svg className="h-6 w-6 text-primary-contrast" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z" />
               </svg>
@@ -116,7 +116,7 @@ export default function Profile() {
             <p className="mt-1 text-sm text-ink-secondary">{email ?? '--'}</p>
             {employee && (
               <div className="mt-2 flex flex-wrap gap-2">
-                <span className="inline-flex items-center rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-700">
+                <span className="inline-flex items-center rounded-full bg-success-lighter px-2.5 py-0.5 text-xs font-medium text-success-dark">
                   {employee.status === 'active' ? 'Active' : employee.status}
                 </span>
                 {employee.designation && (
@@ -125,7 +125,7 @@ export default function Profile() {
                   </span>
                 )}
                 {employee.department && (
-                  <span className="inline-flex items-center rounded-full bg-purple-50 px-2.5 py-0.5 text-xs font-medium text-purple-700">
+                  <span className="inline-flex items-center rounded-full bg-secondary-lighter px-2.5 py-0.5 text-xs font-medium text-secondary-dark">
                     {employee.department.name}
                   </span>
                 )}
@@ -323,8 +323,8 @@ export default function Profile() {
           </div>
 
           {updateMutation.isError && (
-            <div className="rounded-md bg-red-50 p-3">
-              <p className="text-sm text-red-800">
+            <div className="rounded-md bg-error-lighter p-3">
+              <p className="text-sm text-error-dark">
                 Failed to update profile. Please try again.
               </p>
             </div>

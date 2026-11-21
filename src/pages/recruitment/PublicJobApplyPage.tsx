@@ -88,7 +88,7 @@ export default function PublicJobApplyPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-surface-neutral p-4">
         <div className="w-full max-w-md rounded-2xl bg-surface-paper p-8 text-center shadow-lg">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-error-lighter text-error-main">
             <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -106,7 +106,7 @@ export default function PublicJobApplyPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-surface-neutral p-4">
         <div className="w-full max-w-lg rounded-2xl bg-surface-paper p-8 text-center shadow-xl">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success-lighter text-success-main">
             <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
@@ -120,7 +120,7 @@ export default function PublicJobApplyPage() {
             {job.company_website && (
               <a
                 href={job.company_website.startsWith('http') ? job.company_website : `https://${job.company_website}`}
-                className="inline-flex items-center gap-2 rounded-lg bg-primary-main px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark transition-colors"
+                className="inline-flex items-center gap-2 rounded-lg bg-primary-main px-5 py-2.5 text-sm font-semibold text-primary-contrast shadow-sm hover:bg-primary-dark transition-colors"
               >
                 Back to Company Website &rarr;
               </a>
@@ -132,12 +132,12 @@ export default function PublicJobApplyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-grey-50 to-indigo-50/40 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-grey-50 to-secondary-lighter/40 py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
         {/* Header Branding */}
         <div className="mb-6 flex items-center justify-between">
           <span className="inline-flex items-center gap-2 rounded-full bg-primary-lighter px-3 py-1 text-xs font-semibold text-primary-dark">
-            <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
+            <span className="h-2 w-2 rounded-full bg-success-main"></span>
             Accepting Applications
           </span>
           {job.company_website && (
@@ -174,7 +174,7 @@ export default function PublicJobApplyPage() {
                 </div>
               )}
               {job.vacancies && (
-                <div className="flex items-center gap-1.5 text-emerald-600 font-medium">
+                <div className="flex items-center gap-1.5 text-success-main font-medium">
                   <span>{job.vacancies} open position{job.vacancies > 1 ? 's' : ''}</span>
                 </div>
               )}
@@ -192,7 +192,7 @@ export default function PublicJobApplyPage() {
             <h2 className="text-lg font-bold text-ink-primary">Apply for this Role</h2>
 
             {errorMessage && (
-              <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700 border border-red-200">
+              <div className="rounded-lg bg-error-lighter p-4 text-sm text-error-dark border border-error-light">
                 {errorMessage}
               </div>
             )}
@@ -200,7 +200,7 @@ export default function PublicJobApplyPage() {
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
                 <label className="block text-xs font-semibold text-ink-primary uppercase tracking-wider">
-                  Full Name <span className="text-red-500">*</span>
+                  Full Name <span className="text-error-main">*</span>
                 </label>
                 <Input
                   type="text"
@@ -214,7 +214,7 @@ export default function PublicJobApplyPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-ink-primary uppercase tracking-wider">
-                  Email Address <span className="text-red-500">*</span>
+                  Email Address <span className="text-error-main">*</span>
                 </label>
                 <Input
                   type="email"

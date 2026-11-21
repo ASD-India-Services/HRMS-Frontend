@@ -19,10 +19,10 @@ interface StatusBadgeProps {
 
 const COLOR_CLASSES: Record<string, string> = {
   gray: 'bg-surface-neutral text-ink-primary',
-  yellow: 'bg-yellow-100 text-yellow-800',
+  yellow: 'bg-warning-lighter text-warning-dark',
   blue: 'bg-primary-lighter text-primary-dark',
-  green: 'bg-green-100 text-green-800',
-  red: 'bg-red-100 text-red-700',
+  green: 'bg-success-lighter text-success-dark',
+  red: 'bg-error-lighter text-error-dark',
 };
 
 export function StatusBadge({ status, config }: StatusBadgeProps) {

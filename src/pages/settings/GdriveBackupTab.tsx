@@ -179,9 +179,9 @@ export function GdriveBackupTab() {
 
   if (isError) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-        <AlertCircleIcon className="mx-auto h-8 w-8 text-red-500" />
-        <p className="mt-2 text-sm text-red-700">Failed to load Gdrive settings: {(error as Error)?.message}</p>
+      <div className="rounded-xl border border-error-light bg-error-lighter p-6 text-center">
+        <AlertCircleIcon className="mx-auto h-8 w-8 text-error-main" />
+        <p className="mt-2 text-sm text-error-dark">Failed to load Gdrive settings: {(error as Error)?.message}</p>
       </div>
     );
   }
@@ -227,7 +227,7 @@ export function GdriveBackupTab() {
                 <button
                   type="button"
                   onClick={handleRemoveFile}
-                  className="text-red-500 hover:text-red-700 font-semibold ml-2"
+                  className="text-error-main hover:text-error-dark font-semibold ml-2"
                   title="Remove file"
                 >
                   ✕
@@ -363,15 +363,15 @@ export function GdriveBackupTab() {
 
       {/* ─── Status Feedback Banners ───────────────────────────────────────── */}
       {saved && (
-        <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 flex items-center gap-2">
-          <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0" />
+        <div className="rounded-md border border-success-light bg-success-lighter px-4 py-3 text-sm text-success-dark flex items-center gap-2">
+          <CheckIcon className="h-4 w-4 text-success-main shrink-0" />
           <span>Gdrive Backup settings saved successfully.</span>
         </div>
       )}
 
       {errorMessage && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 flex items-center gap-2">
-          <AlertCircleIcon className="h-4 w-4 text-red-600 shrink-0" />
+        <div className="rounded-md border border-error-light bg-error-lighter px-4 py-3 text-sm text-error-dark flex items-center gap-2">
+          <AlertCircleIcon className="h-4 w-4 text-error-main shrink-0" />
           <span>{errorMessage}</span>
         </div>
       )}
@@ -380,14 +380,14 @@ export function GdriveBackupTab() {
         <div
           className={`rounded-md border px-4 py-3 text-sm flex items-center gap-2 ${
             testResult.status === 'success'
-              ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
-              : 'border-amber-200 bg-amber-50 text-amber-800'
+              ? 'border-success-light bg-success-lighter text-success-dark'
+              : 'border-warning-light bg-warning-lighter text-warning-dark'
           }`}
         >
           {testResult.status === 'success' ? (
-            <CheckIcon className="h-4 w-4 text-emerald-600 shrink-0" />
+            <CheckIcon className="h-4 w-4 text-success-main shrink-0" />
           ) : (
-            <AlertCircleIcon className="h-4 w-4 text-amber-600 shrink-0" />
+            <AlertCircleIcon className="h-4 w-4 text-warning-main shrink-0" />
           )}
           <span>{testResult.message}</span>
         </div>

@@ -101,7 +101,7 @@ function usePayrollRunColumns(): ColumnDef<PayrollEntry>[] {
         header: 'Total Amount',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm font-medium text-green-700">
+          <span className="text-sm font-medium text-success-dark">
             {formatCurrency(value as number)}
           </span>
         ),
@@ -271,15 +271,15 @@ function PayrollRunsContent() {
 
       {/* Active Auto-Payslip Generation Rules from Settings */}
       {activeAutoRules.length > 0 && (
-        <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50/80 p-3.5 shadow-2xs">
+        <div className="mb-6 rounded-lg border border-success-light bg-success-lighter/80 p-3.5 shadow-2xs">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-900">
+              <span className="flex h-2.5 w-2.5 rounded-full bg-success-main animate-pulse" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-success-darker">
                 Active Auto-Payslip Schedule (Linked to Settings)
               </span>
             </div>
-            <span className="text-[11px] font-medium text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded">
+            <span className="text-[11px] font-medium text-success-dark bg-success-lighter/70 px-2 py-0.5 rounded">
               Rule Active
             </span>
           </div>
@@ -287,7 +287,7 @@ function PayrollRunsContent() {
             {activeAutoRules.map((rule: any) => (
               <span
                 key={rule.id}
-                className="inline-flex items-center gap-1.5 rounded-md border border-emerald-300 bg-surface-paper px-2.5 py-1 text-xs font-medium text-emerald-900 shadow-2xs"
+                className="inline-flex items-center gap-1.5 rounded-md border border-success-light bg-surface-paper px-2.5 py-1 text-xs font-medium text-success-darker shadow-2xs"
               >
                 <span>🏢 {rule.company}</span>
                 <span className="text-grey-300">|</span>
@@ -363,8 +363,8 @@ function PayrollRunsContent() {
           <div className="mx-4 p-6 min-h-0 flex-1 overflow-y-auto">
             <h2 id="PayrollRuns-modal-title-1" className="mb-4 text-lg font-semibold text-ink-primary">Create Payroll Run</h2>
             {createError && (
-              <div className="mb-4 rounded-md bg-red-50 border border-red-200 p-3">
-                <p className="text-sm text-red-700">{createError}</p>
+              <div className="mb-4 rounded-md bg-error-lighter border border-error-light p-3">
+                <p className="text-sm text-error-dark">{createError}</p>
               </div>
             )}
             <FormBuilder

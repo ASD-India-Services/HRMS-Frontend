@@ -114,7 +114,7 @@ export default function BulkImportExport() {
               {exporting ? 'Exporting...' : 'Download CSV'}
             </Button>
             {exportError && (
-              <p className="mt-2 text-sm text-red-600">{exportError}</p>
+              <p className="mt-2 text-sm text-error-main">{exportError}</p>
             )}
           </div>
         </div>
@@ -153,7 +153,7 @@ export default function BulkImportExport() {
             </div>
 
             {importMutation.isError && (
-              <p className="text-sm text-red-600">
+              <p className="text-sm text-error-main">
                 Upload failed. Please check your file and try again.
               </p>
             )}
@@ -168,8 +168,8 @@ export default function BulkImportExport() {
             Import Results
           </h3>
           <div className="mt-3 flex gap-6">
-            <div className="rounded-md bg-green-50 px-4 py-2">
-              <span className="text-sm font-medium text-green-800">
+            <div className="rounded-md bg-success-lighter px-4 py-2">
+              <span className="text-sm font-medium text-success-dark">
                 Created: {importResult.created}
               </span>
             </div>
@@ -179,8 +179,8 @@ export default function BulkImportExport() {
               </span>
             </div>
             {importResult.errors.length > 0 && (
-              <div className="rounded-md bg-red-50 px-4 py-2">
-                <span className="text-sm font-medium text-red-800">
+              <div className="rounded-md bg-error-lighter px-4 py-2">
+                <span className="text-sm font-medium text-error-dark">
                   Errors: {importResult.errors.length}
                 </span>
               </div>
@@ -192,23 +192,23 @@ export default function BulkImportExport() {
               <h4 className="text-sm font-medium text-ink-primary">
                 Error Details
               </h4>
-              <div className="mt-2 overflow-auto rounded-md border border-red-200">
-                <table className="min-w-full divide-y divide-red-200 text-sm">
-                  <thead className="bg-red-50">
+              <div className="mt-2 overflow-auto rounded-md border border-error-light">
+                <table className="min-w-full divide-y divide-error-light text-sm">
+                  <thead className="bg-error-lighter">
                     <tr>
-                      <th className="px-4 py-2 text-left font-medium text-red-800">
+                      <th className="px-4 py-2 text-left font-medium text-error-dark">
                         Row
                       </th>
-                      <th className="px-4 py-2 text-left font-medium text-red-800">
+                      <th className="px-4 py-2 text-left font-medium text-error-dark">
                         Error
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-red-100">
+                  <tbody className="divide-y divide-error-lighter">
                     {importResult.errors.map((err, idx) => (
                       <tr key={idx}>
-                        <td className="px-4 py-2 text-red-700">{err.row}</td>
-                        <td className="px-4 py-2 text-red-700">
+                        <td className="px-4 py-2 text-error-dark">{err.row}</td>
+                        <td className="px-4 py-2 text-error-dark">
                           {err.message}
                         </td>
                       </tr>

@@ -93,9 +93,9 @@ export default function OvertimeTypes() {
       />
 
       {deleteError && (
-        <div className="fixed bottom-4 right-4 z-50 max-w-sm rounded-lg border border-red-200 bg-surface-paper px-4 py-3 shadow-lg">
+        <div className="fixed bottom-4 right-4 z-50 max-w-sm rounded-lg border border-error-light bg-surface-paper px-4 py-3 shadow-lg">
           <div className="flex items-start gap-3">
-            <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-error-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
             </svg>
             <p className="text-sm text-ink-primary">{deleteError}</p>

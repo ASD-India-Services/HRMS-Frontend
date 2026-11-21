@@ -116,9 +116,9 @@ export function ExpenseApprovals() {
       permissions={['expenses.view']}
       fallback={
         <div className="mx-auto max-w-5xl px-4 py-8">
-          <div className="rounded-lg border border-red-200 bg-red-50 p-8 text-center">
-            <h2 className="text-lg font-semibold text-red-800">Access Denied</h2>
-            <p className="mt-2 text-sm text-red-600">
+          <div className="rounded-lg border border-error-light bg-error-lighter p-8 text-center">
+            <h2 className="text-lg font-semibold text-error-dark">Access Denied</h2>
+            <p className="mt-2 text-sm text-error-main">
               You do not have permission to view expense approvals.
             </p>
           </div>
@@ -188,7 +188,7 @@ function ExpandedClaimDetail({ claimId, claims, onCollapse }: ExpandedClaimDetai
   const formattedDate = formatDate(claim.expense_date);
 
   return (
-    <div className="mt-4 rounded-lg border border-indigo-200 bg-indigo-50/30 p-5 shadow-sm">
+    <div className="mt-4 rounded-lg border border-secondary-light bg-secondary-lighter/30 p-5 shadow-sm">
       <div className="flex items-start justify-between">
         <div>
           <h3 className="text-sm font-semibold text-ink-primary">
@@ -227,7 +227,7 @@ function ExpandedClaimDetail({ claimId, claims, onCollapse }: ExpandedClaimDetai
       </div>
 
       {/* Workflow actions */}
-      <div className="mt-4 border-t border-indigo-100 pt-4">
+      <div className="mt-4 border-t border-secondary-lighter pt-4">
         <WorkflowEngine<ExpenseClaimRecord>
           config={expenseApprovalWorkflow}
           record={claim}

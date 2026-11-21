@@ -71,8 +71,8 @@ export function WorkflowTimeline({ recordId, endpoint, config }: WorkflowTimelin
 
   if (isError) {
     return (
-      <div className="rounded-md bg-red-50 p-3" role="alert">
-        <p className="text-sm text-red-700">Failed to load timeline. Please try again.</p>
+      <div className="rounded-md bg-error-lighter p-3" role="alert">
+        <p className="text-sm text-error-dark">Failed to load timeline. Please try again.</p>
       </div>
     );
   }
@@ -109,7 +109,7 @@ export function WorkflowTimeline({ recordId, endpoint, config }: WorkflowTimelin
               <div className="relative flex items-start gap-3">
                 {/* Timeline dot */}
                 <div className="flex h-3 w-3 items-center justify-center mt-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-grey-400 ring-2 ring-white" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-grey-400 ring-2 ring-surface-paper" />
                 </div>
 
                 {/* Entry content */}

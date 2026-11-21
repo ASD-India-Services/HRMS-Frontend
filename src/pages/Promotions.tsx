@@ -79,13 +79,13 @@ export default function Promotions() {
             <button
               onClick={() => handleApproveRow(row.id as string)}
               disabled={approvingId === row.id}
-              className="inline-flex items-center rounded bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+              className="inline-flex items-center rounded bg-success-main px-2 py-1 text-xs font-medium text-primary-contrast hover:bg-success-dark disabled:opacity-50"
             >
               {approvingId === row.id ? '...' : 'Approve'}
             </button>
           )}
           {row.status === 'completed' && (
-            <span className="inline-flex items-center rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+            <span className="inline-flex items-center rounded bg-success-lighter px-2 py-1 text-xs font-medium text-success-dark">
               ✓ Done
             </span>
           )}

@@ -12,16 +12,16 @@ import { Textarea } from '@/components/ui/Textarea';
 const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   draft: { label: 'Draft', className: 'bg-surface-neutral text-ink-primary' },
   scheduled: { label: 'Scheduled', className: 'bg-primary-lighter text-primary-dark' },
-  in_progress: { label: 'In Progress', className: 'bg-yellow-100 text-yellow-800' },
-  completed: { label: 'Completed', className: 'bg-green-100 text-green-800' },
-  cancelled: { label: 'Cancelled', className: 'bg-red-100 text-red-800' },
+  in_progress: { label: 'In Progress', className: 'bg-warning-lighter text-warning-dark' },
+  completed: { label: 'Completed', className: 'bg-success-lighter text-success-dark' },
+  cancelled: { label: 'Cancelled', className: 'bg-error-lighter text-error-dark' },
 };
 
 const ENROLLMENT_BADGES: Record<string, { label: string; className: string }> = {
   enrolled: { label: 'Enrolled', className: 'bg-primary-lighter text-primary-dark' },
-  completed: { label: 'Completed', className: 'bg-green-100 text-green-800' },
-  cancelled: { label: 'Cancelled', className: 'bg-red-100 text-red-800' },
-  waitlisted: { label: 'Waitlisted', className: 'bg-yellow-100 text-yellow-800' },
+  completed: { label: 'Completed', className: 'bg-success-lighter text-success-dark' },
+  cancelled: { label: 'Cancelled', className: 'bg-error-lighter text-error-dark' },
+  waitlisted: { label: 'Waitlisted', className: 'bg-warning-lighter text-warning-dark' },
   no_show: { label: 'No Show', className: 'bg-surface-neutral text-ink-primary' },
 };
 
@@ -93,8 +93,8 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
 
   if (isError) {
     return (
-      <div className="rounded-md bg-red-50 p-4" role="alert">
-        <p className="text-sm text-red-800">
+      <div className="rounded-md bg-error-lighter p-4" role="alert">
+        <p className="text-sm text-error-dark">
           Failed to load event. {error instanceof Error ? error.message : 'Please try again.'}
         </p>
       </div>
@@ -157,7 +157,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
             <dt className="text-xs font-medium uppercase tracking-wider text-ink-secondary">Seats</dt>
             <dd className="mt-1 text-sm text-ink-primary">
               {enrolledCount} / {maxSeats} enrolled
-              <span className={`ml-2 text-xs ${availableSeats > 0 ? 'text-green-600' : 'text-red-500'}`}>
+              <span className={`ml-2 text-xs ${availableSeats > 0 ? 'text-success-main' : 'text-error-main'}`}>
                 ({availableSeats} available)
               </span>
             </dd>
@@ -215,12 +215,12 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
 
             {/* Completed feedback display */}
             {myEnrollment.status === 'completed' && myEnrollment.feedback_score !== null && (
-              <div className="rounded-md bg-green-50 p-3">
-                <p className="text-sm text-green-800">
+              <div className="rounded-md bg-success-lighter p-3">
+                <p className="text-sm text-success-dark">
                   <span className="font-medium">Rating:</span> {myEnrollment.feedback_score}/5
                 </p>
                 {myEnrollment.feedback_comments && (
-                  <p className="mt-1 text-sm text-green-700">{myEnrollment.feedback_comments}</p>
+                  <p className="mt-1 text-sm text-success-dark">{myEnrollment.feedback_comments}</p>
                 )}
               </div>
             )}
@@ -229,7 +229,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
             {canComplete && !showFeedbackForm && (
               <button
                 onClick={() => setShowFeedbackForm(true)}
-                className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1"
+                className="rounded-md bg-success-main px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-success-dark focus:outline-none focus:ring-2 focus:ring-success-main focus:ring-offset-1"
               >
                 Mark as Completed
               </button>
@@ -277,7 +277,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
                   <button
                     onClick={handleComplete}
                     disabled={completeMutation.isPending}
-                    className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1 disabled:opacity-50"
+                    className="rounded-md bg-success-main px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-success-dark focus:outline-none focus:ring-2 focus:ring-success-main focus:ring-offset-1 disabled:opacity-50"
                   >
                     {completeMutation.isPending ? 'Submitting...' : 'Submit & Complete'}
                   </button>
@@ -303,7 +303,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
               </Button>
             )}
             {!canEnroll && availableSeats === 0 && (
-              <span className="text-xs text-red-500">No seats available</span>
+              <span className="text-xs text-error-main">No seats available</span>
             )}
           </div>
         )}

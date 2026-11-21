@@ -32,7 +32,7 @@ export default function Reports() {
             className="relative rounded-xl border border-divider bg-surface-paper p-5 shadow-sm transition-shadow hover:shadow-md"
           >
             {/* Coming Soon badge */}
-            <span className="absolute right-3 top-3 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+            <span className="absolute right-3 top-3 rounded-full bg-warning-lighter px-2 py-0.5 text-xs font-medium text-warning-dark">
               Coming Soon
             </span>
 
