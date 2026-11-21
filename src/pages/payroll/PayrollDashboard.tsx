@@ -129,10 +129,11 @@ export default function PayrollDashboard() {
 
   // Breakdown chart
   const costBreakdownData = [
-    { name: 'Net Pay (Disbursed)', value: Math.max(1, Math.round(totalNetPay || 750000)), color: 'rgb(var(--success-main))' },
-    { name: 'Deductions (PF/Tax/ESI)', value: Math.max(1, Math.round(totalDeductions || 120000)), color: 'rgb(var(--warning-main))' },
-    { name: 'Employer Contribution', value: Math.max(1, Math.round((totalGrossPay - totalNetPay) * 0.5 || 60000)), color: 'rgb(var(--info-main))' },
+    { name: 'Net Pay (Disbursed)', value: Math.round(totalNetPay), color: 'rgb(var(--success-main))' },
+    { name: 'Deductions (PF/Tax/ESI)', value: Math.round(totalDeductions), color: 'rgb(var(--warning-main))' },
+    { name: 'Employer Contribution', value: Math.max(0, Math.round((totalGrossPay - totalNetPay) * 0.5)), color: 'rgb(var(--info-main))' },
   ];
+  const costBreakdownEmpty = costBreakdownData.every((d) => d.value === 0);
 
   const chartTrend = trendData?.data ?? [];
   const recentRuns = runs.slice(0, 5);
@@ -234,6 +235,8 @@ export default function PayrollDashboard() {
           <ChartCard
             title="Compensation Cost Breakdown"
             subtitle="Net pay vs statutory deductions and benefits"
+            isLoading={slipsLoading}
+            isEmpty={costBreakdownEmpty}
           >
             <DonutChart
               data={costBreakdownData}
