@@ -169,7 +169,8 @@ export default function HRSettings() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await api.put(ENDPOINT, form);
+      // Django's DateField rejects "", so an unset date must go as null.
+      await api.put(ENDPOINT, { ...form, fiscal_year_start: form.fiscal_year_start || null });
       setSaved(true);
     } catch {
       // Handle error silently or add error state if needed

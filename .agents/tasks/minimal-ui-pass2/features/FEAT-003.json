@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-003",
+  "type": "refactor",
+  "description": "Migrate the 86 top-level src/pages/*.tsx (mostly DataTable CRUD pages, ~168 raw buttons, 16 raw selects, emoji in Reports, Meetings, WorkRecords, CompensatoryLeave) onto PageContainer, PageHeader, Card, EmptyState, Button/IconButton/ButtonLink and ui/Select, with the same pattern as FEAT-002.",
+  "status": "completed",
+  "steps": [
+    "Mechanical pass over all top-level pages: wrapper -> PageContainer, title block -> PageHeader (CreateButton etc. go into PageHeader actions), card boxes -> Card/CardHeader/CardContent, inline empty text -> EmptyState, raw buttons/links -> Button/IconButton/ButtonLink, raw select (CompensatoryLeave, HourAccount, others) -> ui/Select, emoji -> Iconify, palette/hex -> tokens. A small codemod script may be used for the wrapper/title swap but every file must be reviewed and compiled; delete the script afterwards (not committed).",
+    "Pages with their own bespoke layouts (Reports, Meetings, Policies, HRSettings, Fleet, Staffing, Profile, Compliance, HourAccount, WorkRecords, Login if inside the scope) get the same shared pieces; Login stays outside AppShell and only has its buttons migrated.",
+    "Run the gate."
+  ],
+  "acceptance_criteria": [
+    "Every top-level page renders content at the same x/y offset (PageContainer) with a PageHeader",
+    "0 raw <button>/<select>, 0 emoji icons and no palette/hex in src/pages/*.tsx outside documented exceptions"
+  ],
+  "verification": [
+    "npx tsc -b 2>&1 | grep -c 'error TS'  -> <=131 and no error in files this FEAT touched that was not there before",
+    "npx oxlint -> warnings <=294",
+    "npx vitest run -> all pass",
+    "npx vite build -> succeeds",
+    "npx playwright test e2e/primitives.spec.ts -> passes",
+    "grep -nE '<button\\b|<select\\b' src/pages/*.tsx -> 0 lines"
+  ],
+  "blocked_reason": null,
+  "findings": "Verified on branch minimal-ui-pass2: tsc 125 errors (<=131; 0 new vs FEAT-002 baseline, compared by error text), oxlint 230 warnings (<=294), vitest 19 pass, vite build ok, full playwright 34 pass (incl. primitives), grep '<button|<select' over src/pages/*.tsx = 0 lines.\nAll 86 top-level pages: CRUD pages use PageContainer+PageHeader (actions in PageHeader), bespoke pages (Reports, Meetings, Policies, Profile, Compliance, HourAccount, WorkRecords, CompensatoryLeave, DocumentRequests, EmployeeBonusPoints, HRSettings, Gratuity, LossOfPay, Shifts, HolidayLists detail) use PageContainer/PageHeader/Card/StateView/StatCard/Tabs/Iconify/Button/IconButton/ButtonLink. Tab strips (Recruitment, TaxBenefits, OnboardingTemplates, AttendanceRequests, ShiftRequests, Shifts, CompensatoryLeave) now use ui/Tabs (role=tab/aria-selected; Recruitment lost aria-current=page, Shifts nav tabs gained role=tab). Card = ui/Card with p-N classes kept on Card.\nFiles without PageContainer/PageHeader (justified): one-line wrappers rendering a subdir page (Appraisals, Attendance, Employees, Expenses, Grievances, Leaves, Overtime, Payroll, Settlements, Travel, Training), Login and AuthCallback (outside AppShell, spinner only, no buttons).\nBehaviour notes (no functional change): raw buttons became Button/IconButton with the same onClick/disabled/aria; aria-label taken from former title/text (new labels where none existed: Close, Delete comment, Remove leave type, Clear search, Previous/Next year, Close filters, Clear filters, Remove filter); type=button dropped (Button default), submit kept. CompensatoryLeave comments view lost its duplicate '> Comments' text button (Back to Requests remains). Employee Bonus Points active-filter chip is a plain span with IconButton instead of a Card. DocumentRequests and AttendanceRegister KPI tiles now StatCard (no per-status tinting). Branches table render '⭐ Yes' is now 'Yes'. Reports and Meetings emoji replaced by Iconify registry names (attendance, leaves, payroll, chart, kras, employees, holidayLists, expenses, user, policies, leaveBlock, feedback, geoLocations, healthInsurance, expenseTaxes, bonusPoints).\nGrep exceptions: no raw hex or Tailwind palette classes in src/pages/*.tsx. Remaining non-icon glyphs are text separators (bullet, middle dot, en/em dash), password mask dots in HRSettings placeholder, currency symbols. Bordered inset panels/alerts (error/success banners, tinted info boxes, form fieldsets in modals, absolute dropdown popovers) were intentionally left as plain token divs since there is no Alert/Popover primitive yet. Raw <input>/<textarea> in HourAccount, Policies, DocumentRequests, Meetings remain (not in scope).\nPre-existing tsc errors still present in touched files (unused vars etc., in baseline): CompensatoryLeave canDelete, Meetings, WorkRecords, HourAccount syncMutation.\nFor later steps: Iconify registry names are camelCase nav names plus generic names; no new icons were added in FEAT-003."
+}

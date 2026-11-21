@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-004",
+  "type": "refactor",
+  "description": "Migrate batch A onto shared components: settings, leaves, recruitment, DocumentRequests, Gratuity, CompensatoryLeave. Depends on FEAT-003. One module at a time, one commit per module, build + vitest + smoke + screenshot review after each.",
+  "status": "completed",
+  "steps": [
+    "For each module in order (src/pages/settings/*Tab.tsx and SettingsLayout; src/pages/leaves/* and src/components/leaves/*; src/pages/recruitment/* including RecruitmentStages; DocumentRequests; Gratuity; CompensatoryLeave): swap hand-built fixed inset-0 modals for Modal, CrudModal or ConfirmDialog; raw <table> for DataTable where it supports the same columns and actions (otherwise keep the markup and apply shared table token classes); raw button/input/select/textarea for the ui primitives; alert() for useToast.",
+    "JSX swap only: do not touch state, handlers, API hooks, props, routes or permission checks. Where a swap would change behaviour (overlay click not closing, controlled value quirks), preserve it through primitive props or leave that spot and note it in findings.",
+    "Replace bg-blue-*, primary-NNN, gray-NNN colour classes and raw hex with semantic tokens in each file touched.",
+    "After each module run build, vitest, playwright, capture SHOT_NAME=after, add the module's key route to e2e/smoke.spec.ts if missing, then commit `refactor(ui): migrate <module> to shared components`."
+  ],
+  "acceptance_criteria": [
+    "Migrated files contain no fixed inset-0 modal, raw <table>, alert( , bg-blue-* or primary-NNN (grep count recorded in findings)",
+    "Smoke specs pass on every migrated route",
+    "git diff per module shows no handler, prop or API change"
+  ],
+  "verification": [
+    "Run `npm run build` and confirm exit 0",
+    "Run `npm run lint` and confirm no new findings versus the FEAT-001 baseline",
+    "Run `npx vitest run` and confirm the 5 existing test files pass",
+    "Run `npx playwright test` and confirm all specs pass"
+  ],
+  "blocked_reason": null,
+  "findings": "Commits on minimal-restyle: 4b89fe8 settings, a2b053e leaves, ed05de0 leaves chart tokens, 0d4ac95 recruitment, 963da67 DocumentRequests, fdf7ee8 Gratuity, 4f011b1 CompensatoryLeave. Per module: tsc -b 131 errors (=baseline), vite build exit 0, lint 294 warnings (=baseline), vitest 5 files/16 tests pass, playwright 26 passed (SHOT_NAME=after, screenshots in screens/after). GREP COUNTS after migration (all batch-A files): fixed inset-0 1 (ApplicantDetailDrawer backdrop, a drawer not a modal); <table 21 (kept; DataTable needs a react-query result + server pagination, these are local-state lists, so token classes applied instead); alert( 0; bg/text/border-blue-* 0; primary-NNN 0; gray/slate-NNN 0; raw hex 25, all in HelpdeskTagsTab (user-selectable tag colour data and default values, kept as functional data); remaining raw <button> 172 (icon/toggle/tab buttons), <input> 19 (checkbox/radio/file/colour), <select> 1. Other palette classes (indigo, emerald, red, amber) were out of the stated scope and are untouched. CODEMOD NOTES: modals converted to <Modal open ... closeOnEscape={false} closeOnOverlayClick={false}> to keep old behaviour (old overlays never closed on click/Escape); Gratuity's overlay did close on click so it keeps overlay click and only disables Escape. onClose is the cancel handler (unused while both flags are false). Raw buttons without type got explicit type=\"submit\" so Button's default type='button' does not change form behaviour. Primary/cancel/delete buttons -> Button; text-like inputs/selects/textareas -> Input/Select/Textarea (height now h-10, uniform). alert() -> useToast (RecruitmentStages, CompensatoryLeave); DocumentRequests already had a local showToast, reused. Chart hex in LeaveDashboard/RecruitmentDashboard now 'rgb(var(--token))' strings; RecruitmentDashboard badge alpha uses color-mix. BUG FIXED: malformed cog SVG path in RecruitmentStages (console error 'Expected number') which made the /recruitment/stages smoke test fail even on the baseline commit. E2E: smoke.spec.ts gained /leaves/dashboard, /recruitment/stages, /document-requests, /gratuity, /compensatory-leave, /settings/leave-types (26 tests). screens/baseline was overwritten once by an accidental run, then regenerated from commit 2755019 (temp worktree, now removed) with the new routes, so baseline is the original look. For later steps: /tmp/codemod.py, /tmp/prims.py style approach (colour map, indentation-matched modal swap, Button/Input/Select/Textarea swap) worked well; ensure SHOT_NAME=after when running playwright."
+}

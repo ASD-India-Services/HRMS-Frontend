@@ -1,0 +1,14 @@
+{
+  "task_id": "task-hrms-minimal-restyle",
+  "task_description": "Restyle HRMS frontend to the Minimal v7.7.0 design language using Tailwind only (semantic tokens, Public Sans, darkMode class, @iconify/react), no functional change, shared primitives, Playwright safety net first.",
+  "status": "pending",
+  "feature_order": [
+    "FEAT-001",
+    "FEAT-002",
+    "FEAT-003",
+    "FEAT-004",
+    "FEAT-005",
+    "FEAT-006"
+  ],
+  "blocked_reason": null
+}

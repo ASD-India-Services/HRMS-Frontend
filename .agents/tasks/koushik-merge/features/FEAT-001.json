@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-001",
+  "type": "chore",
+  "description": "Real merge of origin/koushik into koushik-merge; resolve shell, config, routes and all small conflicts; take-theirs for big reworks (restyled in FEAT-002..004). See plan.md item 1 for exact per-file rules. Must run first; FEAT-002/003/004 depend on it.",
+  "status": "completed",
+  "steps": [
+    "ln -s the main repo node_modules into the worktree; git merge --no-ff --no-commit origin/koushik",
+    "package.json: ours + his @iconify/react, keep @platform/auth-sdk file path",
+    "Sidebar.tsx, NavIcon.tsx: --ours",
+    "navigation.ts: --ours then add Performance>Dashboard (/performance/dashboard), Help Desk>FAQs (/helpdesk/faq-categories, ICONS.faqs) beside Helpdesk Tags, Admin>HR Settings (/hr-settings, ICONS.hrSettings); keep Permissions group and Admin Dashboard; no iconName/solar group icons",
+    "PermissionDashboard.tsx: keep ours (git add); restore its lazy import and routes permissions/dashboard and admin/permissions/dashboard in src/router/index.tsx alongside PerformanceDashboard routes performance/dashboard and pms/dashboard-view",
+    "DataTable.tsx: ours + re-apply his logic from git diff 793be09 origin/koushik",
+    "Small pages: ours + re-apply his formatDate/formatDateTime/import/logic hunks (list in plan.md item 1); HRSettings: ours + his +66 logic",
+    "Take THEIRS for LeaveDashboard, AttendanceDashboard, AttendanceUpload, RecruitmentDashboard, RecruitmentStages, ApplicantPipeline, CareersEmbedWidget, GraceTimeTab, CandidateRejectReasonTab, SettingsLayout",
+    "git commit (merge commit, default message); check git log --graph shows parents incl. 9f8ccdf"
+  ],
+  "acceptance_criteria": [
+    "git diff --check is clean and no conflict markers remain",
+    "HEAD is a merge commit with parent origin/koushik (9f8ccdf) and git log shows Koushik's a50e925",
+    "PermissionDashboard page and both routes exist; Performance, HR Settings, FAQs nav items and routes exist",
+    "tsc error count <= 119"
+  ],
+  "verification": [
+    "cd worktree: npx tsc -b 2>&1 | grep -c 'error TS' is <= 119",
+    "npm run lint 2>&1 | grep -c ': warning' is <= 226",
+    "npx vitest run passes",
+    "npx vite build exits 0",
+    "git -C worktree log --graph --oneline -5 shows the merge",
+    "git -C worktree diff --check"
+  ],
+  "blocked_reason": null,
+  "findings": "Merge commit b6edf56 (parents 30e0f1e + 9f8ccdf); Koushik's a50e925 in history. Gate at b6edf56: tsc 117 (<=119); vitest 19/19 pass; vite build exit 0; lint 248 (gate 226, OVER by 22). LINT OVERAGE, all in Koushik code: LeaveDashboard 8 (exhaustive-deps on useMemo: isRecordInSelectedMonth, getLeaveTypeName, selectedMonth/selectedYear) -> FEAT-002; RecruitmentDashboard 7 (useMemo deps on un-memoized openings/applicants/employees) -> FEAT-003; CandidateRejectReasonTab 1 (useEffect missing 'reasons') -> FEAT-004; public/careers-widget.js, public/embed/careers.js, public/widget/careers.js 2 each (unused catch 'e', unused 'resData') = 6 that cannot be fixed without editing public/*.js, needs a decision (oxlint ignore public/, or accept 232 baseline); router/index.tsx +1 net (3 new lazy consts trigger only-export-components, 2 FAQ unused-var warnings gone). TSC errors from theirs files left for restyle FEATs: LeaveDashboard.tsx ~line 429 lt.name.toLowerCase vs record.leave_type typed string|{id,name} (FEAT-002); ApplicantPipeline.tsx ~line 949 'isReject' not on stage type (FEAT-003). Removed unused default React imports in 5 theirs files, unused setSelectedYear setter in LeaveDashboard, unused type import in PerformanceDashboard. Staged diff --check hits came only from Koushik's own content (trailing whitespace in public/test-widget.html and RecruitmentDashboard.tsx:67, EOF blank lines in usePerformance.ts and CareersWidgetTab.tsx); working-tree git diff --check is clean. Judgement calls: both Help Desk items kept (FAQs + Helpdesk Tags); PayrollDashboard header Salary Slips/Payroll Runs buttons kept (he deleted them); PermissionDashboard page, both routes, Permissions nav group and Admin>Dashboard kept; Admin>Audit Logs takes his any-of [roles.manage, audit_logs.view]; HRSettings = our markup + his embedMode widget/iframe snippets (Button soft/text toggle, Textarea, Demo link to /test-widget.html) + formatDateTime. Settings tabs AutoPayslip/BonusPoint/HistoryTags/HelpdeskTags/MailServer/EmployeeType/WorkType: our markup kept (his hunks were raw button/switch markup); button label '+ Create' changed to his 'Create'. Auto-merged files with possible old markup for the grep gate: TrainingEvents, DateTimeFormatTab, LeaveTypeTab, GeneralSettingsTab, WorkRecords, Profile, OvertimeApprovals, TravelApprovals, AppraisalCycles, LeaveApply, AppointmentLetters, WorkflowTimeline, ShiftRoster. ENV: the main repo node_modules lacks @iconify/react, @iconify/types and @fontsource-variable/public-sans. The worktree node_modules is now a real (gitignored) directory of per-package symlinks into the main repo node_modules plus those 3 packages unpacked from npm pack. Do not replace it with a plain symlink or tsc/vitest/build will fail."
+}

@@ -1,0 +1,13 @@
+{
+  "task_id": "task-koushik-merge",
+  "task_description": "Merge origin/koushik (a50e925, 9f8ccdf) into naveen via a real merge commit in the koushik-merge worktree, keeping all Koushik features/logic but restyling his UI with the shared design system; keep PermissionDashboard; add Performance, Careers widget, HR Settings, FAQs nav/routes; ff-merge into local naveen, no push.",
+  "status": "pending",
+  "feature_order": [
+    "FEAT-001",
+    "FEAT-002",
+    "FEAT-003",
+    "FEAT-004",
+    "FEAT-005"
+  ],
+  "blocked_reason": null
+}

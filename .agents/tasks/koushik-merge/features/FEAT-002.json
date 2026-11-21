@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Restyle Leave and Attendance pages (LeaveDashboard, AttendanceDashboard, AttendanceUpload, plus any old-style leftovers in leaves/, attendance/, payroll/, dashboard/) with shared components; keep all logic and no_overtime_clock.png. Depends on FEAT-001; independent of FEAT-003/004.",
+  "status": "completed",
+  "steps": [
+    "Read plan.md item 2 and context.json",
+    "Rebuild LeaveDashboard.tsx with PageContainer/PageHeader, Card, StatCard, ChartCard/DonutChart, Tabs, Button/ButtonLink/IconButton, Select/Input/Checkbox, Modal, StateView, Iconify; keep every hook/query/handler/derived value",
+    "Same for AttendanceDashboard.tsx and AttendanceUpload.tsx",
+    "Add any missing Solar icons to src/components/Iconify",
+    "Run grep gate (plan.md item 6) on leaves/, attendance/, payroll/, dashboard/ and fix hits",
+    "Commit locally"
+  ],
+  "acceptance_criteria": [
+    "No palette classes, raw hex (except data-driven colours), raw button/select or emoji in the files above",
+    "All Koushik functionality (tabs, filters, charts, upload flow, handlers, API calls) still present",
+    "Pages render in the existing smoke routes"
+  ],
+  "verification": [
+    "cd worktree: npx tsc -b 2>&1 | grep -c 'error TS' is <= 119",
+    "npm run lint 2>&1 | grep -c ': warning' is <= 226",
+    "npx vitest run passes",
+    "npx vite build exits 0",
+    "npx playwright test -g 'leaves|attendance' passes"
+  ],
+  "blocked_reason": null,
+  "findings": "Restyled LeaveDashboard, AttendanceDashboard, AttendanceUpload with shared ui components (Tabs for admin/personal view, ChartCard/DonutChart, StatCard, StateView, Select/Input, IconButton). All hooks/queries/derived values kept. no_overtime_clock.png kept. No new icons needed. payroll/ and dashboard/ had no gate hits. Changes: leave/attendance dept+type colours now come from chart theme tokens (were hex); breadcrumb replaced by PageHeader; Attendance header links Hour Account/Work Records re-added from our version; Leave 'Next Holiday' is now a StatCard; Leave admin/personal switch button became Tabs; refresh arrow became IconButton in header; shared ChartTooltip drops recharts formatter text, units kept via wrapper only in Attendance (Leave donuts show units in legend). Gates: tsc 116 (<=119), vitest 19 pass, vite build ok, playwright leaves|attendance 9 pass. LINT: 248 warnings (>226) BEFORE and after this FEAT (same on stash baseline), from FEAT-001 merged Koushik code (8 in LeaveDashboard exhaustive-deps, rest elsewhere): later steps must resolve. Leave tab has pre-existing TS error at LeaveDashboard ~334 (his code). Remaining grep hits in leaves/, attendance/: none (arrow chars only in CheckInButton comments)."
+}

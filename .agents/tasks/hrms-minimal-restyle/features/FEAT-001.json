@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-001",
+  "type": "test",
+  "description": "Safety net on the UNMODIFIED UI (must run first; every later FEAT depends on it). Adds Playwright config, auth and API mock fixtures, smoke specs for about 18 key routes, and captures BASELINE screenshots.",
+  "status": "completed",
+  "steps": [
+    "Create the symlink described in context.json, run `npm install` in the worktree, then run build, lint and vitest once and record the pass counts and lint findings in findings.",
+    "Add playwright.config.ts: testDir e2e, chromium only, viewport 1440x900, webServer `npm run dev` on a fixed free local port with the VITE_* env vars, reuseExistingServer false.",
+    "Add e2e/fixtures.ts: seed platform_auth_* localStorage with an unsigned JWT (exp in the future); page.route over the API base URL returning permissive data (the permissions endpoint read by src/contexts/HrmsPermissionsContext.tsx grants everything; list endpoints return the paginated shape DataTable expects: read src/lib/endpoints.ts and one createCrudHooks list hook); freeze time and disable animations; fail the test on console errors and pageerrors.",
+    "Add e2e/smoke.spec.ts looping over: /dashboard, /profile, /employees, /employees/new, /org-chart, /departments, /leaves, /my-leaves/apply, /leaves/approvals, /attendance, /attendance/hour-account, /payroll, /payroll/runs, /recruitment/job-openings, /recruitment/pipeline, /appraisals, /expenses, one /settings child route (read the router for the path), plus the create modal opened on /departments. Each case asserts main content visible, no error boundary text, then saves page.screenshot to ${SHOT_DIR}/${SHOT_NAME}/<slug>.png (SHOT_NAME baseline|after; SHOT_DIR default /Users/admin/Documents/GitHub/Leadspoint CRM/hrms-frontend/.agents/tasks/hrms-minimal-restyle/screens). Do not use toHaveScreenshot, the design will change on purpose.",
+    "Run with SHOT_NAME=baseline. Commit config and specs only."
+  ],
+  "acceptance_criteria": [
+    "`npx playwright test` passes on the unmodified UI",
+    "At least 18 baseline PNGs exist in /Users/admin/Documents/GitHub/Leadspoint CRM/hrms-frontend/.agents/tasks/hrms-minimal-restyle/screens/baseline",
+    "No file under src/ changed"
+  ],
+  "verification": [
+    "Run `SHOT_NAME=baseline npx playwright test` and confirm all specs pass",
+    "Run `ls /Users/admin/Documents/GitHub/Leadspoint CRM/hrms-frontend/.agents/tasks/hrms-minimal-restyle/screens/baseline | wc -l` and confirm at least 18",
+    "Run `npm run build` and `npx vitest run` and confirm they match the recorded baseline"
+  ],
+  "blocked_reason": null,
+  "findings": "Commit 2755019 on minimal-restyle (playwright.config.ts, e2e/fixtures.ts, e2e/smoke.spec.ts); no src/ change. BASELINE: `npm run build` FAILS on unmodified code (tsc -b: 131 errors, mostly TS6133 unused declarations in router/index.tsx, utils/formatters.ts etc.); `npx vite build` succeeds, so later steps should compare tsc error count (131) not expect green. Lint: exit 0, warnings only (e.g. HourAccount.tsx exhaustive-deps, ApplicantPipeline.tsx memoization). Vitest: 5 files/16 tests pass. Playwright: 19 passed (18 routes + departments create modal), 19 PNGs in screens/baseline. SETUP: symlink worktrees/packages -> ../packages created; `npm install` crashes (arborist edgesOut) so use `npm install --legacy-peer-deps` then `npm install --no-save --legacy-peer-deps react-is` (recharts needs it, else /dashboard 500s). `npx playwright install chromium` was needed (installed PW wants chromium 1255). HARNESS: port 5199, API mock host 127.0.0.1:59002 (all GET list -> empty paginated, so screenshots show empty tables/empty states; permissions = every 'x.y' literal found in src, feature_flags all true, onboarding completed). JWT exp = frozen time (2025-01-15) + 12h; a far-future exp makes AuthProvider's setTimeout overflow and trigger refresh. Fixture fails tests on any console error/pageerror. Run after with SHOT_NAME=after. /leaves redirects to /my-leaves. Settings route used: /settings/general-settings. Selectors rely on 'main' element and button 'Add Department' (src labels)."
+}

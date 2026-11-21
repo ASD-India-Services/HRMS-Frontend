@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Shared primitives and re-skin of existing shared components, props unchanged. Depends on FEAT-002. Decision for the open point: hand-build Select, Modal and Popover with Tailwind and add no Radix. Reason: Select can stay a styled native <select> (127 usages, identical behaviour), Modal needs only portal, Escape, scroll lock and focus trap, and the existing dropdowns in DataTable and Header already work.",
+  "status": "completed",
+  "steps": [
+    "Create src/components/ui/{Button,Input,Select,Textarea,Checkbox,Modal,Toast}/ with index.ts barrels. Button: variants contained/outlined/soft/text, colours primary|secondary|info|success|warning|error, sizes, loading. All forwardRef and extending native element props so existing handlers and attributes pass through. Modal: portal, overlay, Escape and overlay click matching existing modals, body scroll lock, focus trap, sizes, header/body/footer slots, role=dialog aria-modal. Toast: provider plus useToast to replace alert(); mount in src/App.tsx. Only export what FEAT-004..006 need.",
+    "Re-skin with tokens, props and exports identical: CrudModal (on Modal, Input, Select), ConfirmDialog (Modal, Button), ActionButton, the DataTable family (DataTable, FilterBar, Pagination, ColumnVisibilityMenu, BulkActionToolbar, DataTableEmpty/Error/Skeleton; Minimal table style with neutral header and divider tokens), MetricCard and its skeleton, EmptyState, Skeleton, LoadingSpinner, FormBuilder, ChartWidget (chart colours read from tokens), UpgradePrompt, AccessDenied, OfflineIndicator, ErrorBoundary, ProductSwitcher. Remove raw hex, bg-blue-*, primary-NNN from these files.",
+    "Add e2e/primitives.spec.ts: open the /departments create modal and a ConfirmDialog; assert Escape closes, focus stays inside, and submit still calls the mocked API with the same payload.",
+    "Capture SHOT_NAME=after and compare dashboard, employees and departments with baseline."
+  ],
+  "acceptance_criteria": [
+    "Props of CrudModal, ConfirmDialog, ActionButton, DataTable, MetricCard, EmptyState unchanged (tsc passes with no edits in page files)",
+    "Shared components free of raw hex and blue classes",
+    "Smoke and primitives specs pass"
+  ],
+  "verification": [
+    "Run `npm run build` and confirm exit 0",
+    "Run `npm run lint` and confirm no new findings versus the FEAT-001 baseline",
+    "Run `npx vitest run` and confirm the 5 existing test files pass",
+    "Run `npx playwright test` and confirm all specs pass"
+  ],
+  "blocked_reason": null,
+  "findings": "UI primitives in src/components/ui/{Button,Input,Select,Textarea,Checkbox,Modal,Toast} (+ cx.ts, fieldClasses.ts), import via '@/components/ui/<Name>'. Button: variant contained|outlined|soft|text, color inherit|primary|secondary|info|success|warning|error (inherit added for neutral), size small|medium|large, loading. Modal({open,onClose,labelledBy,size sm|md|lg,closeOnEscape,closeOnOverlayClick}) + ModalHeader/Body/Footer; portal, scroll lock, focus trap + restore. Escape now also closes CrudModal and the BulkActionToolbar confirm (previously only ConfirmDialog). Toast: ToastProvider mounted in App.tsx; const {showToast}=useToast(); showToast(msg,'success'|'info'|'warning'|'error'). Not yet used to replace alert() in pages (FEAT-004..006). Re-skinned: CrudModal, ConfirmDialog, ActionButton (all on Button/Modal), DataTable family (BulkActionToolbar confirm now uses Modal), MetricCard, EmptyState, Skeleton, LoadingSpinner, FormBuilder, ChartWidget (colours read from CSS vars via getChartColors()), UpgradePrompt, AccessDenied, OfflineIndicator, ErrorBoundary, ProductSwitcher; class mapping done with a token map, no raw hex/blue/indigo/primary-NNN/gray-* left there. Not touched: components/BulkActions, RichTextEditor, leaves/, WorkflowEngine, Layout (FEAT-002). Added e2e/primitives.spec.ts (overrides departments route with one record); vitest.config.ts now excludes e2e/**, so vitest runs 5 files/16 tests clean. RESULTS: tsc errors 131 (=baseline), vite build ok, lint 294 warnings (=baseline), vitest 5/16 pass, playwright 20 passed, screenshots in screens/after."
+}

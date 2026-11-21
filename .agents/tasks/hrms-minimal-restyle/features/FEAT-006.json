@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-006",
+  "type": "refactor",
+  "description": "Last: HourAccount.tsx (2737 lines), components/RichTextEditor.tsx (1958), pages/employees/OrgChart.tsx (1596), then cleanup and dark mode exposure. Depends on FEAT-005.",
+  "status": "completed",
+  "steps": [
+    "Re-skin each big file in place (tokens, ui primitives, Iconify) without splitting or logic changes; build, smoke, screenshot and commit per file.",
+    "Remove the compatibility aliases in tailwind.config.ts (primary-50..950, gray override) once `grep -rE 'bg-blue-|text-blue-|border-blue-|primary-[0-9]' src` is empty; delete components and classes that are now unreferenced (check imports first, then build).",
+    "Expose dark mode: persist 'theme-mode' in localStorage, toggle the `dark` class on <html>, add a toggle in Header; run smoke in both modes and fix unreadable spots through tokens, not per-page overrides.",
+    "Final SHOT_NAME=after capture; write /Users/admin/Documents/GitHub/Leadspoint CRM/hrms-frontend/.agents/tasks/hrms-minimal-restyle/screens/README.md (before/after index) and /Users/admin/Documents/GitHub/Leadspoint CRM/hrms-frontend/.agents/tasks/hrms-minimal-restyle/report.md (license note, Select/Modal decision, deviations)."
+  ],
+  "acceptance_criteria": [
+    "Build, vitest and playwright all pass",
+    "grep for raw hex and bg-blue-/text-blue-/primary-[0-9] in src is empty except token definitions in index.css",
+    "Dark mode toggles without breaking key routes"
+  ],
+  "verification": [
+    "Run `npm run build` and confirm exit 0",
+    "Run `npm run lint` and confirm no new findings versus the FEAT-001 baseline",
+    "Run `npx vitest run` and confirm the 5 existing test files pass",
+    "Run `npx playwright test` and confirm all specs pass"
+  ],
+  "blocked_reason": null,
+  "findings": "Commits on minimal-restyle: first commit re-skins HourAccount/RichTextEditor/OrgChart (tokens only, no Iconify swap, not split), second does cleanup + dark mode. Codemod /tmp/big.py mapped all gray/slate/blue/red/rose/amber/yellow/emerald/green/teal/indigo/purple/sky/white/black classes across src to tokens. Grep: bg/text/border-blue and primary-NNN 0; gray/slate 0; remaining hex = 25 in RichTextEditor (persisted HTML content) + HelpdeskTagsTab (tag colour data). Aliases removed from tailwind.config.ts. Deleted components/LoadingSpinner and src/assets. Dark mode: src/hooks/useThemeMode.ts, Header toggle, inline script in index.html, e2e/dark-mode.spec.ts (9 tests, shots in screens/after-dark). Results: tsc 131 (=baseline), vite build ok, lint 294 (=baseline), vitest 5/16, playwright 43 passed. screens/README.md and report.md written. Raw <table> (43) accepted, see report."
+}

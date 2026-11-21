@@ -1,0 +1,13 @@
+{
+  "task_id": "task-minimal-ui-pass2",
+  "task_description": "Second pass of the Minimal-style restyle of the HRMS frontend: shared PageContainer/PageHeader/Card/StatCard/ChartCard/EmptyState/Button/IconButton/Select components, migrate all 186 pages onto them with no functional change, expand screenshot coverage, enforce grep gate.",
+  "status": "pending",
+  "feature_order": [
+    "FEAT-001",
+    "FEAT-002",
+    "FEAT-003",
+    "FEAT-004",
+    "FEAT-005"
+  ],
+  "blocked_reason": null
+}

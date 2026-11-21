@@ -1,0 +1,27 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Foundation: semantic tokens, Public Sans, darkMode class, Iconify, and the Minimal-style layout shell. Depends on FEAT-001. The dark-mode toggle is NOT exposed yet because unmigrated pages would stay light.",
+  "status": "completed",
+  "steps": [
+    "`npm i @iconify/react @fontsource-variable/public-sans`. Bundle icons offline (no runtime calls to the Iconify API): check `npm view @iconify-icons/solar` and `@iconify-json/solar`, pick the one that works with @iconify/react offline mode, and create src/components/Iconify/Iconify.tsx wrapping it with a registry of only the icons used. Record the choice in findings.",
+    "Define tokens once in src/index.css as RGB-channel CSS variables under :root and .dark: primary/secondary/info/success/warning/error x lighter/light/main/dark/darker/contrast, grey 50-900, text primary/secondary/disabled, background paper/default/neutral, divider, and shadows (z1..z24, card, dropdown, dialog, per-colour; values from custom-shadows.js). Import '@fontsource-variable/public-sans' in src/main.tsx and use it as the body font.",
+    "tailwind.config.ts: darkMode 'class'; map every token to its variable with <alpha-value> support, with one documented naming scheme; fontFamily.sans; borderRadius (8px base, 16px card); boxShadow tokens; size tokens for nav 300px, mini 88px, header 72px. Compatibility: keep primary-50..950 mapped onto the new primary and map `gray` onto Minimal grey so unmigrated pages stay coherent. FEAT-006 removes these aliases. Replace bg-gray-50/text-gray-900 in index.css with tokens; update theme_color in vite.config.ts (and index.html if present).",
+    "Rebuild src/components/Layout/{AppShell,Sidebar,Header,NavIcon}.tsx in Minimal style with identical exports and props (Sidebar isOpen,isCollapsed,onClose,onToggleCollapse; Header onMenuToggle), same nav items, permission and feature checks, links, logout and ProductSwitcher behaviour. Style: 300px vertical nav, 88px mini state, 72px sticky blurred header, active item = primary tinted background with primary text, group captions, Minimal content padding. NavIcon moves to Iconify keeping its `name` prop mapping. Read all four files fully before editing.",
+    "Run verification, then capture SHOT_NAME=after and check the shell."
+  ],
+  "acceptance_criteria": [
+    "tailwind.config.ts has darkMode 'class' and the Minimal tokens defined once; no raw hex in Layout files",
+    "Sidebar, Header and AppShell props and nav behaviour unchanged",
+    "Public Sans bundled, no CDN",
+    "Icons use @iconify/react with no runtime API calls"
+  ],
+  "verification": [
+    "Run `npm run build` and confirm exit 0",
+    "Run `npm run lint` and confirm no new findings versus the FEAT-001 baseline",
+    "Run `npx vitest run` and confirm the 5 existing test files pass",
+    "Run `npx playwright test` and confirm all specs pass"
+  ],
+  "blocked_reason": null,
+  "findings": "ICONS: @iconify-icons/solar (per-icon ES modules, e.g. '@iconify-icons/solar/widget-5-bold-duotone') passed as icon objects to @iconify/react = offline, no API calls; chosen over @iconify-json/solar (whole JSON would be bundled). Registry in src/components/Iconify/Iconify.tsx (ICONS map, exports Iconify, isIconName, IconName); add an entry there for any new icon. Nav: config/navigation.ts `icon` is now a registry name (was SVG path data); NavIcon(name) resolves it, fallback 'dashboard'; Sidebar now uses NavIcon (its local path NavIcon removed). Tokens: RGB channels in src/index.css (:root/.dark); tailwind names: primary|secondary|info|success|warning|error-{lighter,light,main,dark,darker,contrast}, grey-50..900, ink-{primary,secondary,disabled} (text), surface-{paper,default,neutral} (bg), divider (20% alpha), shadow-{z1..z24,card,dropdown,dialog,primary..}, spacing w-nav/w-nav-mini/h-header, rounded (8px) and rounded-card (16px). Aliases primary-50..950 and gray-* kept (FEAT-006 removes). Opacity modifiers must be Tailwind scale values (e.g. /10, /20). Body bg is now white (surface-default), not gray-50. Dark toggle not exposed. theme_color #00A76F in vite.config.ts and index.html. RESULTS: tsc errors 131 (= baseline); vite build ok; lint 294 warnings (= baseline); vitest: 5 test files/16 tests pass, but `npx vitest run` also picks up e2e/smoke.spec.ts and reports it as a failed suite (pre-existing since FEAT-001, needs exclude e2e in vitest.config.ts); playwright 19 passed, 19 PNGs in screens/after. Note: after `npm i` re-run `npm i --no-save --legacy-peer-deps react-is`."
+}

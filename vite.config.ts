@@ -13,12 +13,12 @@ export default defineConfig({
       devOptions: {
         enabled: false,
       },
-      includeAssets: ['favicon.svg', 'icons.svg'],
+      includeAssets: ['favicon.svg', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png', 'brand/*.svg', 'icons.svg'],
       manifest: {
         name: 'DigiHRMS',
         short_name: 'DigiHRMS',
         description: 'Human Resource Management System',
-        theme_color: '#00A76F',
+        theme_color: '#0F766E',
         background_color: '#ffffff',
         display: 'standalone',
         scope: '/',
@@ -35,10 +35,10 @@ export default defineConfig({
             type: 'image/png',
           },
           {
-            src: '/icons/pwa-512x512.png',
+            src: '/icons/pwa-maskable-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable',
+            purpose: 'maskable',
           },
         ],
       },

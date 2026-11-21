@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Restyle PerformanceDashboard (+usePerformance data flow unchanged) and Recruitment pages (RecruitmentDashboard, RecruitmentStages with email_enabled/email_subject/email_body, ApplicantPipeline, CareersEmbedWidget, drawer/interview/job openings). Depends on FEAT-001; independent of FEAT-002/004.",
+  "status": "completed",
+  "steps": [
+    "Read plan.md item 3 and context.json",
+    "Rebuild src/pages/performance/PerformanceDashboard.tsx with PageContainer/PageHeader, StatCard, ChartCard/DonutChart/chartTheme, StateView, ButtonLink, Iconify in place of hand-drawn SVG illustrations; keep usePerformanceData goals/KRA/feedback/appraisal flow and links",
+    "Rebuild RecruitmentDashboard, RecruitmentStages (31 raw buttons/selects), ApplicantPipeline (17), CareersEmbedWidget with shared components; use git show origin/naveen:<path> as style reference",
+    "Add missing Solar icons",
+    "Grep gate on src/pages/performance and src/pages/recruitment; fix hits",
+    "Commit locally"
+  ],
+  "acceptance_criteria": [
+    "Zero gate hits in performance/ and recruitment/",
+    "Stage email fields, pipeline actions, performance data and links all preserved",
+    "vite build ok"
+  ],
+  "verification": [
+    "cd worktree: npx tsc -b 2>&1 | grep -c 'error TS' is <= 119",
+    "npm run lint 2>&1 | grep -c ': warning' is <= 226",
+    "npx vitest run passes",
+    "npx vite build exits 0",
+    "npx playwright test -g 'recruitment' passes"
+  ],
+  "blocked_reason": null,
+  "findings": "Restyled PerformanceDashboard (StatCard/ChartCard/DonutChart/StateView/ButtonLink; usePerformanceData flow + links kept; breadcrumb and FAB replaced by PageHeader + 'Add Objective' ButtonLink to /goals; rating labels now '5 stars'). RecruitmentDashboard rebuilt on shared components (logic unchanged). ApplicantPipeline/CareersEmbedWidget/RecruitmentStages: 3-way merged (ours=30e0f1e restyle, base=793be09, theirs=origin/koushik) so his logic (actionStages next/reject, isIframe footer hiding, email_enabled/subject/body modal) is kept on our Button/Modal/Switch/Tabs/Input/Textarea. Grep gate clean in performance/ and recruitment/. No new Solar icons were needed. GATE NOTE for later steps: lint is 248 warnings at the pre-FEAT-003 HEAD already (>226); 152 are in src/router/index.tsx (unused lazy vars etc. from FEAT-001 merge); FEAT-003 added 0. tsc=115 (<=119), vitest 19 pass, vite build ok, playwright -g recruitment 5 pass. Remaining tsc errors in recruitment/ are Koushik's own type mismatches (Interview.applicant_name/scheduled_at, JobApplicant.job_opening_title), left as is. Performance route smoke test is added in FEAT-005."
+}

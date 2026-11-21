@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-005",
+  "type": "test",
+  "description": "Add smoke routes, run the full grep gate across src/pages and src/components, fix remaining hits (incl. Koushik's auto-merged files), run the full gate with screenshots, and write report.md with per-file survival notes. Depends on FEAT-001..004.",
+  "status": "completed",
+  "steps": [
+    "In e2e/smoke.spec.ts ROUTES add performance-dashboard /performance/dashboard, settings-careers-widget /settings/careers-widget, hr-settings /hr-settings, permissions-dashboard /permissions/dashboard, settings-grace-time /settings/grace-time, attendance-upload /attendance-upload, faq-categories /helpdesk/faq-categories; add fixtures only if a page crashes on empty data",
+    "Run grep gate (plan.md item 6) on src/pages and src/components and fix every non-exempt hit",
+    "Run full gate with SHOT_DIR='/Users/admin/Documents/GitHub/Leadspoint CRM/hrms-frontend/.agents/tasks/koushik-merge/screens' SHOT_NAME=after",
+    "View screenshots for Leave, Attendance, Performance, Recruitment (dashboard/stages/pipeline), Settings, Careers widget tab and fix visible inconsistencies",
+    "Write /Users/admin/Documents/GitHub/Leadspoint CRM/hrms-frontend/.agents/tasks/koushik-merge/report.md: per-file table of Koushik's functional changes with survived status and how checked, judgement-call flags (PermissionDashboard kept, Helpdesk Tags + FAQs both kept, PayrollDashboard header links kept, 12h/DD/MM/YYYY defaults, vite proxy 8002), public widget styling note, screenshots reviewed",
+    "Commit locally"
+  ],
+  "acceptance_criteria": [
+    "Playwright passes with 74 existing + new routes",
+    "Grep gate prints nothing besides allowed data-driven colours",
+    "report.md exists and covers every file in git diff 793be09 origin/koushik --stat"
+  ],
+  "verification": [
+    "cd worktree: npx tsc -b 2>&1 | grep -c 'error TS' is <= 119",
+    "npm run lint 2>&1 | grep -c ': warning' is <= 226",
+    "npx vitest run passes",
+    "npx vite build exits 0",
+    "Full playwright passes",
+    "grep gate commands from plan.md item 6"
+  ],
+  "blocked_reason": null,
+  "findings": "6 smoke routes added (permissions-dashboard already existed). Grep gate clean (hex only data). Gate: tsc 111, lint 225 (6 are unfixable public/*.js), vitest 19, vite build ok, playwright 80 passed. Lint fixed via useMemo/useCallback deps + removed 4 unused imports. report.md written."
+}

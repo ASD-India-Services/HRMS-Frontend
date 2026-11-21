@@ -1,0 +1,27 @@
+{
+  "id": "FEAT-005",
+  "type": "test",
+  "description": "Screenshot coverage for every module, final repo-wide grep gate, and the side-by-side visual review inputs.",
+  "status": "completed",
+  "steps": [
+    "Generate the full route list from src/router/index.tsx (about 204 path entries) and extend ROUTES in e2e/smoke.spec.ts to cover at least one route of EVERY module and every distinct page type (list, form, detail, dashboard with charts, settings tab, empty state, modal, public page). Skip dynamic ':id' routes by using mock ids already supported by e2e/fixtures.ts, or add a fixture mock. Keep assertHealthy. Add Button/IconButton and Select element states (hover, disabled) shots only if cheap.",
+    "Run `SHOT_DIR='/Users/admin/Documents/GitHub/Leadspoint CRM/hrms-frontend/.agents/tasks/minimal-ui-pass2/screens' SHOT_NAME=after2 npx playwright test e2e/smoke.spec.ts` and the full suite. Screens are NOT committed.",
+    "Write scripts/ nothing; run the final grep gate commands and record the output plus a list of justified exceptions in the FEAT findings: `grep -rnE '<button\\b' src --include=*.tsx | grep -v ui/Button`, `grep -rnE '<select\\b' src | grep -v ui/Select`, emoji regex over src, `grep -rnE '(bg|text|border|ring|from|to|divide)-(red|green|blue|orange|purple|amber|yellow|gray|slate|zinc|emerald|indigo|pink|teal|cyan|sky|violet|rose)-[0-9]+|#[0-9a-fA-F]{3,8}\\b' src/pages`.",
+    "Record the final gate numbers (tsc, oxlint, vitest, vite build, playwright count)."
+  ],
+  "acceptance_criteria": [
+    "Playwright screenshot spec covers every module (list in findings), all passing",
+    "Final grep gate shows 0 raw button/select/emoji/palette/hex in src/pages except listed exceptions",
+    "tsc <=131, oxlint <=294, vitest pass, vite build ok, playwright all pass"
+  ],
+  "verification": [
+    "npx tsc -b 2>&1 | grep -c 'error TS'  -> <=131 and no error in files this FEAT touched that was not there before",
+    "npx oxlint -> warnings <=294",
+    "npx vitest run -> all pass",
+    "npx vite build -> succeeds",
+    "npx playwright test e2e/primitives.spec.ts -> passes",
+    "npx playwright test -> all pass"
+  ],
+  "blocked_reason": null,
+  "findings": "Gate (branch minimal-ui-pass2): tsc 119 errors (<=131), oxlint 226 warnings (<=294), vitest 19 pass, vite build ok, full playwright 75 pass (incl. primitives; 32 original routes + 40 new module routes + departments modal + public /login and /careers). Screens written to screens/after2 (not committed).\nSmoke ROUTES now cover every module: dashboard, profile, employees(+new, org-chart), departments/designations/branches, leaves(+apply, approvals, dashboard, company-leaves, compensatory), attendance(+dashboard, hour-account, work-records, my-attendance), shifts, payroll(+dashboard, runs), salary-components, recruitment(dashboard, job-openings, candidates, pipeline, stages), appraisals, kras, goals, expenses(+new, approvals), onboarding(+templates), training, grievances, travel, overtime, settlements, tax-benefits, fleet, reports, compliance, staffing, leave-policies, loss-of-pay, transfers, promotions, health-insurance, document-types, hr-settings, helpdesk, permissions/dashboard, admin/roles(+create), audit-logs, skills, settings (general-settings, leave-types, mail-server), meetings, policies, holiday-lists, public login/careers. Public pages use a separate test (no <main>). /settings/company-profile and /settings/prefixes are not routable (RouteErrorBoundary) so were not included.\nGrep gate: raw <button> outside ui/Button = 0; raw <select> outside ui/Select = 0; palette classes/hex in src/pages = only src/pages/settings/HelpdeskTagsTab.tsx (user-pickable tag colour data, default #000000 and swatch list: justified data-driven exception). Emoji/glyph scan: fixed the last UI glyph (warning sign in RecruitmentStages delete note -> Iconify warning). Remaining arrows are justified: '->' in RotatingShiftTab/RotatingWorkTypeTab are stored sequence data strings/placeholders; DataTable 'A->Z' sort label; arrows inside code comments.\nLater steps: e2e/smoke.spec.ts also needs SHOT_DIR/SHOT_NAME env as above."
+}

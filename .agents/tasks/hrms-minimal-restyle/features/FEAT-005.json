@@ -1,0 +1,23 @@
+{
+  "id": "FEAT-005",
+  "type": "refactor",
+  "description": "Migrate batch B: employees (except OrgChart), attendance (except HourAccount), payroll, appraisals, expenses, dashboard, profile, meetings, shifts, bonus points and every other remaining page. Depends on FEAT-004, same rules.",
+  "status": "completed",
+  "steps": [
+    "List remaining files with `grep -rlE 'fixed inset-0|<table|alert\\(|bg-blue-|primary-[0-9]' src` excluding HourAccount.tsx, RichTextEditor.tsx and OrgChart.tsx; work module by module under the FEAT-004 rules.",
+    "After each module: build, vitest, playwright, after-screenshots, commit.",
+    "Convert remaining separate toast/notify patterns to useToast with the same message and trigger."
+  ],
+  "acceptance_criteria": [
+    "Only HourAccount.tsx, RichTextEditor.tsx and OrgChart.tsx still hold legacy patterns",
+    "Smoke specs pass on all key routes"
+  ],
+  "verification": [
+    "Run `npm run build` and confirm exit 0",
+    "Run `npm run lint` and confirm no new findings versus the FEAT-001 baseline",
+    "Run `npx vitest run` and confirm the 5 existing test files pass",
+    "Run `npx playwright test` and confirm all specs pass"
+  ],
+  "blocked_reason": null,
+  "findings": "Commits on minimal-restyle after 4f011b1: shared feature components (BulkActions, WorkflowEngine, leaves/ManageLeaveTypesModal), employees, attendance+shifts, payroll, appraisals/expenses/dashboard/profile/meetings/training, Reports Button-import fix, auth+admin+router+types, remaining pages + useToast, chart/progress colours from tokens + 8 new smoke routes. Every module: tsc -b 131 errors (=baseline), vite build exit 0, lint 294 warnings (=baseline), vitest 5 files/16 tests pass, playwright 26 passed (34 after the final commit, 8 routes added: /meetings, /employee-bonus-points, /work-records, /shift-requests, /company-leaves, /policies, /helpdesk/faqs, /holiday-lists). GREP after (outside HourAccount/RichTextEditor/OrgChart): bg-blue-* 0, primary-NNN 0, gray/slate-NNN 0, raw hex 0 in pages except HelpdeskTagsTab (user-selectable tag colour data); alert( 0 (one hit is the doc comment in ui/Toast); fixed inset-0 6 = ui/Modal (2, the primitive itself), Layout/Sidebar mobile backdrop, WorkflowEngine/TransitionDialog (z-9999 portal kept, sits above other modals), ApplicantDetailDrawer (drawer); <table 43 kept as local-state markup with token classes (DataTable needs react-query result + server pagination) plus DataTable/skeletons. So the literal acceptance 'only 3 files hold legacy patterns' is met for hand-rolled modals/alerts/colours but not for raw <table>; FEAT-006 should decide whether to accept or convert. CODEMOD NOTES: alert() -> useToast (WorkRecords 'warning', Policies, CompanyLeaves, FAQs, FAQCategories 'error', same messages). Modals converted with closeOnEscape={false} and closeOnOverlayClick={false} unless the old overlay closed on click (AttendanceRequests, ShiftRequests, SalaryStructures keep overlay click); EmployeeDetail provision modal keeps its isPending guard inside onClose. Codemod pitfalls fixed by hand: import inserted inside a leading /** comment (Reports, Compliance; tsc caught them, they are not in smoke routes), '<Selectvalue=' glued tag in LeaveAdjustments, separate backdrop div mistaken for panel (AttendanceRequests, ShiftRequests, SalaryStructures). Always gate on tsc error count 131 (diff by message, not line) because the playwright smoke does not cover every page. Hover text-primary-main duplicates were set to hover:text-primary-dark. Chart hex -> 'rgb(var(--token))'; attendance badge alpha uses color-mix. Screenshots: SHOT_NAME=after in screens/after (all 34 routes)."
+}

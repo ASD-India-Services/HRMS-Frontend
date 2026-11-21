@@ -7,17 +7,18 @@
  * Mapped in tailwind.config.ts; do not use raw values in components.
  */
 :root {
-  --primary-lighter: 200 250 214;
-  --primary-light: 91 228 155;
-  --primary-main: 0 167 111;
-  --primary-dark: 0 120 103;
-  --primary-darker: 0 75 80;
+  /* DigiHRMS brand: primary = teal (#0F766E), secondary = orange (#F97316) */
+  --primary-lighter: 204 251 241;
+  --primary-light: 94 234 212;
+  --primary-main: 15 118 110;
+  --primary-dark: 17 94 89;
+  --primary-darker: 19 78 74;
   --primary-contrast: 255 255 255;
-  --secondary-lighter: 239 214 255;
-  --secondary-light: 198 132 255;
-  --secondary-main: 142 51 255;
-  --secondary-dark: 81 25 183;
-  --secondary-darker: 39 9 122;
+  --secondary-lighter: 255 237 213;
+  --secondary-light: 253 186 116;
+  --secondary-main: 249 115 22;
+  --secondary-dark: 194 65 12;
+  --secondary-darker: 124 45 18;
   --secondary-contrast: 255 255 255;
   --info-lighter: 202 253 245;
   --info-light: 97 243 243;

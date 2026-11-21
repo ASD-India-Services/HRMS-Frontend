@@ -114,9 +114,11 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
         {/* Logo area */}
         <div className={`flex h-header shrink-0 items-center ${isCollapsed ? 'justify-center px-2' : 'justify-between px-5'}`}>
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary-main shadow-primary">
-              <span className="text-sm font-bold text-primary-contrast">D</span>
-            </div>
+            <img
+              src="/brand/digihrms-mark.svg"
+              alt="DigiHRMS"
+              className="h-9 w-9 flex-shrink-0"
+            />
             {!isCollapsed && (
               <span className="text-lg font-bold tracking-tight text-ink-primary">DigiHRMS</span>
             )}

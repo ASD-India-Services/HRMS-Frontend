@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Restyle Settings: SettingsLayout (his expandedGroup accordion with route auto-expand, careers-widget and leave-types entries), CareersWidgetTab, GraceTimeTab, CandidateRejectReasonTab, HRSettings and his changed tabs, TrainingEvents; check public careers widget scripts without editing. Depends on FEAT-001; independent of FEAT-002/003.",
+  "status": "completed",
+  "steps": [
+    "Read plan.md item 4 and context.json",
+    "Rebuild SettingsLayout.tsx on Card/PageContainer/PageHeader/Iconify keeping his accordion logic and nav items",
+    "Rebuild CareersWidgetTab.tsx with Card, Tabs, Button, Input (user colour hex allowed as data), keep snippet strings, useHRSettings and clipboard copy",
+    "Restyle GraceTimeTab, CandidateRejectReasonTab, HRSettings, AutoPayslip/BonusPoint/EmployeeType/WorkType/MailServer/HistoryTags/HelpdeskTags/DateTimeFormat/LeaveType/GeneralSettings tabs, TrainingEvents where the gate finds old markup",
+    "Do NOT edit public/careers-widget.js, public/embed/careers.js, public/widget/careers.js, public/test-widget.html; record in findings whether their fonts/default colours need alignment with Public Sans / primary token",
+    "Grep gate on src/pages/settings, HRSettings.tsx, training/; fix hits; commit locally"
+  ],
+  "acceptance_criteria": [
+    "Zero gate hits in settings files",
+    "/settings/careers-widget route renders with nav entry; accordion auto-expands for current route",
+    "public/*.js untouched (git diff shows no change vs origin/koushik)"
+  ],
+  "verification": [
+    "cd worktree: npx tsc -b 2>&1 | grep -c 'error TS' is <= 119",
+    "npm run lint 2>&1 | grep -c ': warning' is <= 226",
+    "npx vitest run passes",
+    "npx vite build exits 0",
+    "npx playwright test -g 'settings' passes"
+  ],
+  "blocked_reason": null,
+  "findings": "SettingsLayout: his expandedGroup accordion + route auto-expand + careers-widget/leave-types items kept, rebuilt on PageContainer/PageHeader/Card/Button/Iconify wrappers (SettingsIcons.tsx kept, other tabs use it). CareersWidgetTab: Card/Tabs/Button/ButtonLink; snippets, useHRSettings, clipboard kept; #2563eb default is data. GraceTimeTab: his diff vs base was formatting-only (+ 'Create' label), so took our restyled file and applied 'Create'. CandidateRejectReasonTab: 3-way merge (base 793be09, ours naveen, his) kept all his logic (DigiHRMS company, legacy-company sync effect, 'Company / Branch', branch list) with token markup. HRSettings, TrainingEvents and the other tabs had zero gate hits; untouched. Remaining hex in settings = HelpdeskTagsTab tag colours (data) and snippet data-primary-color default (HRSettings.tsx). Emoji grep hits only the arrow glyph in RotatingShift/RotatingWorkType sample data (pre-existing text, not icons). Public widget scripts untouched (git diff origin/koushik -- public empty). Alignment note only: public/careers-widget.js font stack is -apple-system/Segoe UI/Roboto (line 82), not Public Sans; primary colour comes from data-primary-color attr with a fallback default in the script, so no token alignment needed beyond what the settings tab emits (#2563eb default, not our primary token). Gate: tsc 115 (<=119), vitest 19 pass, vite build ok, playwright -g settings 3 pass. LINT: 248 warnings > 226 baseline, but HEAD before this FEAT is already 248 (152 from src/router/index.tsx unused lazy imports, from FEAT-001 merge); this FEAT adds 0 net. Later step should decide/handle router warnings. "
+}

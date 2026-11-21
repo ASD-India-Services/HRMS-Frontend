@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-004",
+  "type": "refactor",
+  "description": "Migrate src/pages/recruitment (10 files, 38 raw buttons, RecruitmentDashboard recharts, ApplicantDetailDrawer, pipeline boards, public careers pages) and src/pages/settings (29 tab files, 88 raw buttons, SettingsLayout, SettingsIcons) onto the shared components.",
+  "status": "completed",
+  "steps": [
+    "Settings: SettingsLayout tab/nav and SettingsIcons use Iconify + IconButton; every tab uses Card/CardHeader, PageHeader once in SettingsLayout, Button for Save/Cancel/Add, IconButton for row edit/delete, ui/Select/Input/Checkbox for fields; no per-tab custom button classes.",
+    "Recruitment: pipeline columns/cards use Card; stage chips/badges use semantic tokens; RecruitmentDashboard moves to ChartCard + chartTheme; public pages (PublicJobApplyPage, LiveCareersPortal, CareersEmbedWidget) keep their standalone layout but use Button/ButtonLink and semantic tokens.",
+    "Replace raw hex/palette (data-driven pipeline colours may stay only if they come from API data), emoji, and unicode glyphs; run the gate."
+  ],
+  "acceptance_criteria": [
+    "0 raw <button>/<select> in src/pages/recruitment and src/pages/settings",
+    "RecruitmentDashboard uses ChartCard",
+    "Settings tabs share one header and one card style"
+  ],
+  "verification": [
+    "npx tsc -b 2>&1 | grep -c 'error TS'  -> <=131 and no error in files this FEAT touched that was not there before",
+    "npx oxlint -> warnings <=294",
+    "npx vitest run -> all pass",
+    "npx vite build -> succeeds",
+    "npx playwright test e2e/primitives.spec.ts -> passes"
+  ],
+  "blocked_reason": null,
+  "findings": "Verified on branch minimal-ui-pass2 (commit 39f6d9a): tsc 119 errors (<=131; 0 new vs FEAT-003 by error text), oxlint ~226 warnings (<=294), vitest 19 pass, vite build ok, full playwright 34 pass (incl. primitives), grep '<button|<select' over src/pages/settings + src/pages/recruitment = 0.\nSettings: SettingsIcons.tsx keeps the same exported names but each is a thin wrapper over Iconify (className sizing preserved; mapped to registry names, e.g. Loader->refresh, Mail->send, Hash->code, Cloud->upload, Layers->departments). SettingsLayout uses PageContainer+PageHeader (breadcrumb) once, Card for sidebar and content, group toggles are Button text. All tab toggles are ui Switch; row edit/delete are IconButton (size small, aria-label from former title); modal/banner close are IconButton icon=close (aria-label Close/Dismiss); Active/Inactive chips are Button soft; menu items are Button text with !w-full !justify-start !rounded-none. Tab h2/modal h3 unified to text-lg font-semibold. Tabs are NOT wrapped in Card each (the layout Card is the one surface); tab internals (tables, bordered fieldsets in modals, inline notification toasts) remain token divs.\nRecruitment: RecruitmentDashboard now PageContainer/PageHeader/StatCard/ChartCard/getChartTheme/ChartTooltip/Card+CardHeader (loading shows ChartCard skeleton, empty dept chart uses ChartCard empty state). RecruitmentPipeline and RecruitmentStages (both views) use PageContainer/PageHeader. JobOpenings, ApplicantPipeline, InterviewSchedule are tab bodies of pages/Recruitment.tsx and keep their own section heading (no PageHeader). Kanban column and applicant card, drawer panels, LiveCareersPortal panels, stage cards are Card. Public pages (PublicJobApplyPage, CareersEmbedWidget, LiveCareersPortal) keep standalone layout and use Button/ButtonLink. JobOpenings 'configure stages' row link is a Link with buttonClasses (icon-only).\nGrep exceptions / data-driven values: settings/HelpdeskTagsTab hex tag colours (user-chosen tag colours stored in data, plus swatch palette and default '#000000'); RotatingShiftTab/RotatingWorkTypeTab '➔' inside user-editable sequence strings (data); recruitment STAGE_COLOR_PRESETS map API colour keys to token classes (pink preset now error-light tokens); RecruitmentDashboard STAGE_COLORS use rgb(var(--token)) CSS vars. Remaining inline <svg> in recruitment (alert/notice icons, Live portal guide tiles, interview empty icon) were left; they are not buttons.\nBehaviour notes: raw buttons became Button/IconButton with same handlers/disabled/aria; type=button default; submit kept (RecruitmentStages Save). Onboarding confirm buttons in ApplicantPipeline use Button loading (disabled while pending, spinner) instead of a custom spinner. 'Copy Code' now shows 'Copied' (glyph removed); '+ Add Notes' -> 'Add Notes'; stage move up/down IconButtons gained aria-labels. Emoji/glyphs removed (star, check, x, arrows, lightning, clipboard, warning). Row action groups now plain gap-1 (no bordered pill). Pre-existing tsc errors remain in touched files (RecruitmentDashboard index type/job_opening_title/applicant_name, InterviewSchedule fields, RecruitmentPipeline ReactNode, CompensatoryLeave/GraceTime unused vars, EmployeePermissionTab unused imports)."
+}
