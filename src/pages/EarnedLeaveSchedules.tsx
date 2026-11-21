@@ -125,7 +125,7 @@ export default function EarnedLeaveSchedules() {
 
             <div className="flex justify-end gap-2">
               <button className="px-4 py-2 text-sm rounded border border-divider hover:bg-surface-neutral" onClick={() => setEditRecord(null)}>Cancel</button>
-              <Button type="submit"
+              <Button type="button"
                 disabled={editLoading || !editDaysEarned || Number(editDaysEarned) === 0}
                 onClick={async () => {
                   if (!editRecord) return;

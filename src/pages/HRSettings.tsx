@@ -324,7 +324,7 @@ export default function HRSettings() {
         </div>
 
         <div className="mt-6 flex items-center gap-4">
-          <Button type="submit"
+          <Button type="button"
             onClick={handleSave}
             disabled={saving}
           >
@@ -498,14 +498,14 @@ export default function HRSettings() {
 
         {/* Action Buttons */}
         <div className="mt-6 flex flex-wrap items-center gap-4">
-          <Button type="submit"
+          <Button type="button"
             onClick={handleEmailSave}
             disabled={emailSaving}
           >
             {emailSaving ? 'Saving...' : 'Save SMTP Settings'}
           </Button>
 
-          <Button type="submit" variant="outlined" color="inherit"
+          <Button type="button" variant="outlined" color="inherit"
             onClick={() => setShowTestModal(true)}
             disabled={!emailConfig?.configured}
           >
@@ -557,7 +557,7 @@ export default function HRSettings() {
             )}
 
             <div className="mt-6 flex justify-end gap-3">
-              <Button type="submit" variant="outlined" color="inherit"
+              <Button type="button" variant="outlined" color="inherit"
                 onClick={() => {
                   setShowTestModal(false);
                   setTestResult(null);
@@ -566,7 +566,7 @@ export default function HRSettings() {
               >
                 Close
               </Button>
-              <Button type="submit"
+              <Button type="button"
                 onClick={handleSendTestEmail}
                 disabled={testingEmail || !testEmailAddress}
               >

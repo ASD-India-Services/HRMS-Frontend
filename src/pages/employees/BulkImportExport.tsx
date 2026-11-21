@@ -107,7 +107,7 @@ export default function BulkImportExport() {
             used as a backup or to edit records in bulk.
           </p>
           <div className="mt-4">
-            <Button type="submit"
+            <Button type="button"
               onClick={handleExport}
               disabled={exporting}
             >
@@ -144,7 +144,7 @@ export default function BulkImportExport() {
                 onChange={handleFileChange}
                 className="block text-sm text-ink-secondary file:mr-4 file:rounded file:border-0 file:bg-primary-lighter file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-dark hover:file:bg-primary-lighter"
               />
-              <Button type="submit"
+              <Button type="button"
                 onClick={handleUpload}
                 disabled={!file || importMutation.isPending}
               >

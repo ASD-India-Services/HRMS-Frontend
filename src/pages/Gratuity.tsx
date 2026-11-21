@@ -328,7 +328,7 @@ export default function Gratuity() {
             </Select>
           </div>
           <div className="flex items-end">
-            <Button type="submit" onClick={handleCalculate} disabled={calculating || !selectedEmployee || !selectedRule} className="w-full">
+            <Button type="button" onClick={handleCalculate} disabled={calculating || !selectedEmployee || !selectedRule} className="w-full">
               {calculating ? 'Calculating...' : 'Calculate'}
             </Button>
           </div>

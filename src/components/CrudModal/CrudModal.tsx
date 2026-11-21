@@ -135,7 +135,7 @@ export function CrudModal({
   };
 
   return (
-    <Modal open={isOpen} onClose={onClose} labelledBy="crud-modal-title" size="md">
+    <Modal open={isOpen} onClose={onClose} labelledBy="crud-modal-title" size="md" closeOnEscape={false}>
       <ModalHeader>
         <h2 id="crud-modal-title" className="text-lg font-bold text-ink-primary">{title}</h2>
         <button

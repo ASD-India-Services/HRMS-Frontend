@@ -205,13 +205,13 @@ export function InterviewSchedule() {
             Page {page} of {totalPages}
           </p>
           <div className="flex gap-2">
-            <Button type="submit" variant="outlined" color="inherit"
+            <Button type="button" variant="outlined" color="inherit"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
             >
               Previous
             </Button>
-            <Button type="submit" variant="outlined" color="inherit"
+            <Button type="button" variant="outlined" color="inherit"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >

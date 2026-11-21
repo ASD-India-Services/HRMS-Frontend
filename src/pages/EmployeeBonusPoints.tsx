@@ -423,7 +423,7 @@ export default function EmployeeBonusPoints() {
           </p>
 
           {canCreate && (
-            <Button type="submit" size="small"
+            <Button type="button" size="small"
               onClick={handleOpenCreate}
               className="mt-4"
             >

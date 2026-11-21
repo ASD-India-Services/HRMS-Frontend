@@ -131,13 +131,13 @@ export function ExpenseList() {
               Showing {data.results.length} of {data.count} claims
             </p>
             <div className="flex gap-2">
-              <Button type="submit" variant="outlined" color="inherit"
+              <Button type="button" variant="outlined" color="inherit"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!data.previous}
               >
                 Previous
               </Button>
-              <Button type="submit" variant="outlined" color="inherit"
+              <Button type="button" variant="outlined" color="inherit"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data.next}
               >

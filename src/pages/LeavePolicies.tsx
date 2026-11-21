@@ -285,7 +285,7 @@ export default function LeavePolicies() {
               >
                 Cancel
               </button>
-              <Button type="submit"
+              <Button type="button"
                 disabled={allocLoading}
                 onClick={handleSaveAllocations}
               >

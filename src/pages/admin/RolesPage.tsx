@@ -74,7 +74,7 @@ export default function RolesPage() {
             Manage roles, data access scopes, and their permission assignments
           </p>
         </div>
-        <Button type="submit"
+        <Button type="button"
           onClick={() => navigate('/admin/roles/create')}
         >
           <svg
@@ -129,7 +129,7 @@ export default function RolesPage() {
           <p className="mt-1 text-sm text-ink-secondary">
             Get started by creating a new role for your organization.
           </p>
-          <Button type="submit"
+          <Button type="button"
             onClick={() => navigate('/admin/roles/create')}
             className="mt-4"
           >

@@ -281,7 +281,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
                   >
                     {completeMutation.isPending ? 'Submitting...' : 'Submit & Complete'}
                   </button>
-                  <Button type="submit" variant="outlined" color="inherit"
+                  <Button type="button" variant="outlined" color="inherit"
                     onClick={() => setShowFeedbackForm(false)}
                   >
                     Cancel
@@ -294,7 +294,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
           <div className="flex items-center gap-3">
             <p className="text-sm text-ink-secondary">You are not enrolled in this event.</p>
             {canEnroll && (
-              <Button type="submit"
+              <Button type="button"
                 onClick={handleEnroll}
                 disabled={enrollMutation.isPending}
                 aria-label={`Enroll in ${event.name}`}

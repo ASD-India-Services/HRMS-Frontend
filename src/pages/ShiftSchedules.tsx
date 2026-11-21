@@ -506,7 +506,7 @@ export default function ShiftSchedules() {
               >
                 Cancel
               </button>
-              <Button type="submit"
+              <Button type="button"
                 disabled={submitting}
                 onClick={handleSubmit}
               >

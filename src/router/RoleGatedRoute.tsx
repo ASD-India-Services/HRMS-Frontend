@@ -52,7 +52,7 @@ export function RoleGatedRoute({
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <p className="text-sm text-ink-secondary mb-4">Failed to load permissions. Please try again.</p>
-        <Button type="submit"
+        <Button type="button"
           onClick={() => refetch()}
         >
           Retry

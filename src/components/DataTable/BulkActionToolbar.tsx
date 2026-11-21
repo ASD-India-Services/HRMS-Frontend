@@ -149,7 +149,7 @@ export function BulkActionToolbar({
 
       {/* Confirmation Dialog */}
       {confirmState.isOpen && confirmState.action?.confirm && (
-        <Modal open onClose={handleCancelConfirm} labelledBy="confirm-dialog-title" size="sm">
+        <Modal open onClose={handleCancelConfirm} labelledBy="confirm-dialog-title" size="sm" closeOnEscape={false}>
           <ModalHeader>
             <h3 id="confirm-dialog-title" className="text-lg font-bold text-ink-primary">
               {confirmState.action.confirm.title}

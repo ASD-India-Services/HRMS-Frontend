@@ -232,7 +232,7 @@ export default function CareersEmbedWidget() {
         ) : isError ? (
           <div className="rounded-xl border border-error-light bg-error-lighter p-6 text-center">
             <p className="text-sm font-medium text-error-dark">Unable to load job postings right now.</p>
-            <Button type="submit" color="error" size="small"
+            <Button type="button" color="error" size="small"
               onClick={() => refetch()}
               className="mt-3"
             >

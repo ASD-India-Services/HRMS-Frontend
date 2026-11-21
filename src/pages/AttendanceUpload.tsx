@@ -33,7 +33,7 @@ export default function AttendanceUpload() {
       <div className="rounded-lg border border-divider bg-surface-paper p-6">
         <div className="flex items-center gap-4">
           <input type="file" accept=".csv" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="block text-sm text-ink-secondary file:mr-4 file:rounded file:border-0 file:bg-primary-lighter file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-dark hover:file:bg-primary-lighter" />
-          <Button type="submit" onClick={handleUpload} disabled={!file || uploading}>{uploading ? 'Uploading...' : 'Upload'}</Button>
+          <Button type="button" onClick={handleUpload} disabled={!file || uploading}>{uploading ? 'Uploading...' : 'Upload'}</Button>
         </div>
         {error && <p className="mt-4 text-sm text-error-main">{error}</p>}
         {result && <pre className="mt-4 rounded bg-surface-neutral p-4 text-xs text-ink-primary overflow-auto">{JSON.stringify(result, null, 2)}</pre>}

@@ -31,16 +31,13 @@ test('departments: create modal and confirm dialog primitives', async ({ app: pa
   await expect(page.getByText('Engineering')).toBeVisible()
   await freezeAnimations(page)
 
-  // CrudModal: Escape closes, focus stays inside, submit sends the same payload
+  // CrudModal: Escape is ignored (as before the restyle), focus stays inside, submit sends the same payload
   const addButton = page.getByRole('button', { name: 'Add Department' })
   await addButton.click()
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
   await expect(dialog).toHaveAttribute('aria-modal', 'true')
   await page.keyboard.press('Escape')
-  await expect(dialog).toHaveCount(0)
-
-  await addButton.click()
   await expect(dialog).toBeVisible()
   for (let i = 0; i < 12; i++) {
     await page.keyboard.press('Tab')

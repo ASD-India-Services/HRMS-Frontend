@@ -306,7 +306,7 @@ export default function RoleDetailPage() {
               )}
             </div>
             {hasChanges && <span className="hidden text-sm font-medium text-warning-main sm:inline">Unsaved changes</span>}
-            <Button type="submit"
+            <Button type="button"
               onClick={() => saveMutation.mutate()}
               disabled={!hasChanges || saveMutation.isPending}
             >

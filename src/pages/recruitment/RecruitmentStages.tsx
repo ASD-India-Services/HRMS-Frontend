@@ -345,7 +345,7 @@ export function RecruitmentStages() {
               </div>
             </div>
 
-            <Button type="submit" variant="outlined" color="inherit" size="small"
+            <Button type="button" variant="outlined" color="inherit" size="small"
               onClick={() => setSearchParams({ job: 'default' })}
             >
               Configure Default Template
@@ -676,7 +676,7 @@ export function RecruitmentStages() {
               >
                 ⚡ Copy Organization Defaults
               </button>
-              <Button type="submit" variant="outlined" color="inherit" size="small"
+              <Button type="button" variant="outlined" color="inherit" size="small"
                 onClick={openCreateModal}
               >
                 + Add Stage From Scratch

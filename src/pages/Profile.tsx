@@ -168,7 +168,7 @@ export default function Profile() {
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-ink-primary">Contact Information</h2>
               {isAdmin && (
-                <Button type="submit"
+                <Button type="button"
                   onClick={startEditing}
                 >
                   Edit
@@ -196,7 +196,7 @@ export default function Profile() {
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-ink-primary">Emergency Contact</h2>
               {!isEditing && (
-                <Button type="submit"
+                <Button type="button"
                   onClick={startEditing}
                 >
                   Edit

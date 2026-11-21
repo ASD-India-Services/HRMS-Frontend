@@ -65,7 +65,7 @@ export default function MyAttendanceHistory() {
 
       {/* Month Navigation */}
       <div className="flex items-center justify-between mb-6">
-        <Button type="submit" variant="outlined" color="inherit"
+        <Button type="button" variant="outlined" color="inherit"
           onClick={() => setMonthOffset(o => o - 1)}
         >
           <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -74,7 +74,7 @@ export default function MyAttendanceHistory() {
           Prev
         </Button>
         <h2 className="text-lg font-semibold text-ink-primary">{monthLabel}</h2>
-        <Button type="submit" variant="outlined" color="inherit"
+        <Button type="button" variant="outlined" color="inherit"
           onClick={() => setMonthOffset(o => o + 1)}
           disabled={monthOffset >= 0}
         >

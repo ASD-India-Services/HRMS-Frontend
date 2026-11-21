@@ -290,7 +290,7 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
 
         <div className="mt-5 flex justify-end gap-2">
           <button className="px-4 py-2 text-sm rounded border border-divider hover:bg-surface-neutral" onClick={onClose}>Cancel</button>
-          <Button type="submit"
+          <Button type="button"
             disabled={submitting || !selectedEmployee || !selectedLeaveType || !days || !reason.trim()}
             onClick={handleSubmit}
           >
