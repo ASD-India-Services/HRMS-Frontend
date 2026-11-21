@@ -3,7 +3,7 @@ import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
 import type { CompensatoryLeaveSettingsConfig } from '@/hooks/useHRSettings';
 import { InfoIcon, CheckIcon, LoaderIcon, PencilIcon } from './SettingsIcons';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton, Switch } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 
@@ -122,7 +122,7 @@ export function CompensatoryLeaveSettingsTab() {
 
       {/* Main Header matching screenshot */}
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Compensatory Leave</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">Compensatory Leave</h2>
       </div>
 
       <hr className="border-divider" />
@@ -142,23 +142,7 @@ export function CompensatoryLeaveSettingsTab() {
         </div>
 
         <div className="pt-1">
-          <button
-            type="button"
-            role="switch"
-            aria-checked={config.request_enabled}
-            disabled={isLoading || updateSettings.isPending}
-            onClick={handleToggleRequest}
-            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 disabled:opacity-50 ${
-              config.request_enabled ? 'bg-primary-main' : 'bg-grey-300'
-            }`}
-          >
-            <span
-              aria-hidden="true"
-              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                config.request_enabled ? 'translate-x-5' : 'translate-x-0'
-              }`}
-            />
-          </button>
+          <Switch checked={!!config.request_enabled} disabled={isLoading || updateSettings.isPending} onClick={handleToggleRequest} />
         </div>
       </div>
 
@@ -207,27 +191,13 @@ export function CompensatoryLeaveSettingsTab() {
 
             {/* Three dots menu */}
             <div className="relative" ref={menuRef}>
-              <button
-                type="button"
-                onClick={() => setMenuOpen((prev) => !prev)}
-                className="rounded p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
-                title="Options"
-              >
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                </svg>
-              </button>
+              <IconButton icon="more-vertical" size="small" aria-label="Options" title="Options" onClick={() => setMenuOpen((prev) => !prev)} />
 
               {menuOpen && (
                 <div className="absolute right-0 mt-1 w-32 rounded-md bg-surface-paper py-1 shadow-lg ring-1 ring-grey-900/5 z-20">
-                  <button
-                    type="button"
-                    onClick={handleOpenEdit}
-                    className="flex w-full items-center gap-2 px-4 py-2 text-xs font-medium text-ink-primary hover:bg-surface-neutral"
-                  >
-                    <PencilIcon className="h-3.5 w-3.5" />
-                    <span>Edit</span>
-                  </button>
+                  <Button variant="text" color="inherit" size="small" startIcon={<PencilIcon />} onClick={handleOpenEdit} className="!w-full !justify-start !rounded-none">
+                    Edit
+                  </Button>
                 </div>
               )}
             </div>
@@ -242,14 +212,8 @@ export function CompensatoryLeaveSettingsTab() {
         <Modal open onClose={() => setModalOpen(false)} labelledBy="CompensatoryLeaveSettingsTab-modal-title-1" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center justify-between pb-4">
-              <h3 id="CompensatoryLeaveSettingsTab-modal-title-1" className="text-xl font-bold text-ink-primary">Edit Compensatory Leave Type</h3>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
-              >
-                <span className="text-xl font-light leading-none">&times;</span>
-              </button>
+              <h3 id="CompensatoryLeaveSettingsTab-modal-title-1" className="text-lg font-semibold text-ink-primary">Edit Compensatory Leave Type</h3>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setModalOpen(false)} />
             </div>
 
             <form onSubmit={handleSaveModal} className="space-y-4">

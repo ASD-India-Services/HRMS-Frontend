@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
 import type { DefaultGraceTimeConfig, GraceTimeRecordItem } from '@/hooks/useHRSettings';
-import { PlusIcon, PencilIcon, TrashIcon, CheckIcon, LoaderIcon } from './SettingsIcons';
+import { PlusIcon, CheckIcon, LoaderIcon } from './SettingsIcons';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton, Switch } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 
@@ -243,7 +243,7 @@ export function GraceTimeTab() {
          ─────────────────────────────────────────────────────────── */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Default Grace Time</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Default Grace Time</h2>
         </div>
 
         <hr className="border-divider" />
@@ -277,83 +277,30 @@ export function GraceTimeTab() {
                   {defaultGraceTime.allowed_time || '00:10:00 Hours'}
                 </td>
                 <td className="px-6 py-4">
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={defaultGraceTime.is_active}
-                    onClick={() => handleToggleDefault('is_active')}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                      defaultGraceTime.is_active ? 'bg-primary-main' : 'bg-grey-300'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                        defaultGraceTime.is_active ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
+                  <Switch checked={!!defaultGraceTime.is_active} onClick={() => handleToggleDefault('is_active')} />
                 </td>
                 <td className="px-6 py-4">
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={defaultGraceTime.applicable_clock_in}
-                    onClick={() => handleToggleDefault('applicable_clock_in')}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                      defaultGraceTime.applicable_clock_in ? 'bg-primary-main' : 'bg-grey-300'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                        defaultGraceTime.applicable_clock_in ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
+                  <Switch checked={!!defaultGraceTime.applicable_clock_in} onClick={() => handleToggleDefault('applicable_clock_in')} />
                 </td>
                 <td className="px-6 py-4">
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={defaultGraceTime.applicable_clock_out}
-                    onClick={() => handleToggleDefault('applicable_clock_out')}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                      defaultGraceTime.applicable_clock_out ? 'bg-primary-main' : 'bg-grey-300'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                        defaultGraceTime.applicable_clock_out ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
+                  <Switch checked={!!defaultGraceTime.applicable_clock_out} onClick={() => handleToggleDefault('applicable_clock_out')} />
                 </td>
                 <td className="px-6 py-4">
-                  <div className="inline-flex items-center rounded-md border border-divider bg-surface-neutral/50 p-0.5">
-                    <button
-                      type="button"
-                      onClick={handleOpenEditDefault}
-                      title="Edit Default Grace Time"
-                      className="rounded p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
-                    >
-                      <PencilIcon className="h-4 w-4" />
-                    </button>
-                    <div className="h-4 w-px bg-grey-200 my-auto" />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        saveDefaultGraceTime(
+                  <div className="inline-flex items-center gap-1">
+                    <IconButton icon="pencil" size="small" aria-label="Edit Default Grace Time" title="Edit Default Grace Time" onClick={handleOpenEditDefault} />
+                    <IconButton
+ icon="trash"
+ size="small"
+ color="error"
+ aria-label="Reset / Deactivate"
+ title="Reset / Deactivate"
+ onClick={() => {
+ saveDefaultGraceTime(
                           { ...defaultGraceTime, is_active: false },
                           'Default grace time deactivated'
                         );
-                      }}
-                      title="Reset / Deactivate"
-                      className="rounded p-1.5 text-error-main hover:bg-surface-paper hover:text-error-dark hover:shadow-xs transition-colors"
-                    >
-                      <TrashIcon className="h-4 w-4" />
-                    </button>
+ }}
+ />
                   </div>
                 </td>
               </tr>
@@ -368,7 +315,7 @@ export function GraceTimeTab() {
       <div className="space-y-4 pt-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Grace Time</h2>
+            <h2 className="text-lg font-semibold text-ink-primary">Grace Time</h2>
           </div>
           <Button
             type="button"
@@ -422,81 +369,21 @@ export function GraceTimeTab() {
                       {record.allowed_time}
                     </td>
                     <td className="px-6 py-4">
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={record.is_active}
-                        onClick={() => handleToggleRecord(record.id, 'is_active')}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                          record.is_active ? 'bg-primary-main' : 'bg-grey-300'
-                        }`}
-                      >
-                        <span
-                          aria-hidden="true"
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                            record.is_active ? 'translate-x-5' : 'translate-x-0'
-                          }`}
-                        />
-                      </button>
+                      <Switch checked={!!record.is_active} onClick={() => handleToggleRecord(record.id, 'is_active')} />
                     </td>
                     <td className="px-6 py-4">
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={record.applicable_clock_in}
-                        onClick={() => handleToggleRecord(record.id, 'applicable_clock_in')}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                          record.applicable_clock_in ? 'bg-primary-main' : 'bg-grey-300'
-                        }`}
-                      >
-                        <span
-                          aria-hidden="true"
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                            record.applicable_clock_in ? 'translate-x-5' : 'translate-x-0'
-                          }`}
-                        />
-                      </button>
+                      <Switch checked={!!record.applicable_clock_in} onClick={() => handleToggleRecord(record.id, 'applicable_clock_in')} />
                     </td>
                     <td className="px-6 py-4">
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={record.applicable_clock_out}
-                        onClick={() => handleToggleRecord(record.id, 'applicable_clock_out')}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                          record.applicable_clock_out ? 'bg-primary-main' : 'bg-grey-300'
-                        }`}
-                      >
-                        <span
-                          aria-hidden="true"
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                            record.applicable_clock_out ? 'translate-x-5' : 'translate-x-0'
-                          }`}
-                        />
-                      </button>
+                      <Switch checked={!!record.applicable_clock_out} onClick={() => handleToggleRecord(record.id, 'applicable_clock_out')} />
                     </td>
                     <td className="px-6 py-4 font-medium text-ink-primary whitespace-nowrap">
                       {record.assigned_shifts || 'General shift'}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="inline-flex items-center rounded-md border border-divider bg-surface-neutral/50 p-0.5">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenEditRecord(record)}
-                          title="Edit Grace Time"
-                          className="rounded p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
-                        >
-                          <PencilIcon className="h-4 w-4" />
-                        </button>
-                        <div className="h-4 w-px bg-grey-200 my-auto" />
-                        <button
-                          type="button"
-                          onClick={() => setDeleteId(record.id)}
-                          title="Delete Grace Time"
-                          className="rounded p-1.5 text-error-main hover:bg-surface-paper hover:text-error-dark hover:shadow-xs transition-colors"
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </button>
+                      <div className="inline-flex items-center gap-1">
+                        <IconButton icon="pencil" size="small" aria-label="Edit Grace Time" title="Edit Grace Time" onClick={() => handleOpenEditRecord(record)} />
+                        <IconButton icon="trash" size="small" color="error" aria-label="Delete Grace Time" title="Delete Grace Time" onClick={() => setDeleteId(record.id)} />
                       </div>
                     </td>
                   </tr>
@@ -514,14 +401,8 @@ export function GraceTimeTab() {
         <Modal open onClose={() => setEditDefaultModalOpen(false)} labelledBy="GraceTimeTab-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center justify-between pb-4">
-              <h3 id="GraceTimeTab-modal-title-1" className="text-xl font-bold text-ink-primary">Edit Default Grace Time</h3>
-              <button
-                type="button"
-                onClick={() => setEditDefaultModalOpen(false)}
-                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
-              >
-                <span className="text-xl font-light leading-none">&times;</span>
-              </button>
+              <h3 id="GraceTimeTab-modal-title-1" className="text-lg font-semibold text-ink-primary">Edit Default Grace Time</h3>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setEditDefaultModalOpen(false)} />
             </div>
 
             <form onSubmit={handleSaveDefault} className="space-y-5">
@@ -542,62 +423,17 @@ export function GraceTimeTab() {
 
                 <div className="flex items-center justify-between py-1">
                   <span className="text-sm font-semibold text-ink-primary">Is active</span>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={formDefaultIsActive}
-                    onClick={() => setFormDefaultIsActive((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                      formDefaultIsActive ? 'bg-primary-main' : 'bg-grey-300'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formDefaultIsActive ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
+                  <Switch checked={formDefaultIsActive} onClick={() => setFormDefaultIsActive((prev) => !prev)} />
                 </div>
 
                 <div className="flex items-center justify-between py-1">
                   <span className="text-sm font-semibold text-ink-primary">Applicable on clock-in</span>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={formDefaultClockIn}
-                    onClick={() => setFormDefaultClockIn((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                      formDefaultClockIn ? 'bg-primary-main' : 'bg-grey-300'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formDefaultClockIn ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
+                  <Switch checked={formDefaultClockIn} onClick={() => setFormDefaultClockIn((prev) => !prev)} />
                 </div>
 
                 <div className="flex items-center justify-between py-1">
                   <span className="text-sm font-semibold text-ink-primary">Applicable on clock-out</span>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={formDefaultClockOut}
-                    onClick={() => setFormDefaultClockOut((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                      formDefaultClockOut ? 'bg-primary-main' : 'bg-grey-300'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formDefaultClockOut ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
+                  <Switch checked={formDefaultClockOut} onClick={() => setFormDefaultClockOut((prev) => !prev)} />
                 </div>
               </div>
 
@@ -634,16 +470,10 @@ export function GraceTimeTab() {
         <Modal open onClose={() => setRecordModalOpen(false)} labelledBy="GraceTimeTab-modal-title-2" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center justify-between pb-4">
-              <h3 id="GraceTimeTab-modal-title-2" className="text-xl font-bold text-ink-primary">
+              <h3 id="GraceTimeTab-modal-title-2" className="text-lg font-semibold text-ink-primary">
                 {editingRecord ? 'Edit Grace Time' : 'Create Grace Time'}
               </h3>
-              <button
-                type="button"
-                onClick={() => setRecordModalOpen(false)}
-                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
-              >
-                <span className="text-xl font-light leading-none">&times;</span>
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setRecordModalOpen(false)} />
             </div>
 
             <form onSubmit={handleSaveRecord} className="space-y-5">
@@ -680,62 +510,17 @@ export function GraceTimeTab() {
 
                 <div className="flex items-center justify-between py-1">
                   <span className="text-sm font-semibold text-ink-primary">Is active</span>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={formRecordIsActive}
-                    onClick={() => setFormRecordIsActive((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                      formRecordIsActive ? 'bg-primary-main' : 'bg-grey-300'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formRecordIsActive ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
+                  <Switch checked={formRecordIsActive} onClick={() => setFormRecordIsActive((prev) => !prev)} />
                 </div>
 
                 <div className="flex items-center justify-between py-1">
                   <span className="text-sm font-semibold text-ink-primary">Applicable on clock-in</span>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={formRecordClockIn}
-                    onClick={() => setFormRecordClockIn((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                      formRecordClockIn ? 'bg-primary-main' : 'bg-grey-300'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formRecordClockIn ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
+                  <Switch checked={formRecordClockIn} onClick={() => setFormRecordClockIn((prev) => !prev)} />
                 </div>
 
                 <div className="flex items-center justify-between py-1">
                   <span className="text-sm font-semibold text-ink-primary">Applicable on clock-out</span>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={formRecordClockOut}
-                    onClick={() => setFormRecordClockOut((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                      formRecordClockOut ? 'bg-primary-main' : 'bg-grey-300'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formRecordClockOut ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
+                  <Switch checked={formRecordClockOut} onClick={() => setFormRecordClockOut((prev) => !prev)} />
                 </div>
               </div>
 
@@ -769,7 +554,7 @@ export function GraceTimeTab() {
       {deleteId && (
         <Modal open onClose={() => setDeleteId(null)} labelledBy="GraceTimeTab-modal-title-3" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
-            <h3 id="GraceTimeTab-modal-title-3" className="text-lg font-bold text-ink-primary">Delete Grace Time Rule</h3>
+            <h3 id="GraceTimeTab-modal-title-3" className="text-lg font-semibold text-ink-primary">Delete Grace Time Rule</h3>
             <p className="mt-2 text-sm text-ink-secondary">
               Are you sure you want to delete this grace time rule? This action cannot be undone.
             </p>

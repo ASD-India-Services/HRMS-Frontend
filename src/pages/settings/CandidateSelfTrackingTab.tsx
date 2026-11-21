@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { InfoIcon, CheckIcon, LoaderIcon, CopyIcon } from './SettingsIcons';
-import { Button } from '@/components/ui/Button';
+import { Button, Switch } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
 function SwitchToggle({
@@ -13,23 +13,7 @@ function SwitchToggle({
   disabled?: boolean;
 }) {
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      disabled={disabled}
-      onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main/30 ${
-        checked ? 'bg-primary-main' : 'bg-grey-200'
-      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-    >
-      <span
-        aria-hidden="true"
-        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-          checked ? 'translate-x-5' : 'translate-x-0'
-        }`}
-      />
-    </button>
+    <Switch checked={checked} disabled={disabled} onClick={() => onChange(!checked)} />
   );
 }
 
@@ -65,7 +49,7 @@ export function CandidateSelfTrackingTab() {
   return (
     <div className="space-y-6 py-2">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Candidate Self Tracking</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">Candidate Self Tracking</h2>
         <p className="mt-1 text-sm text-ink-secondary">
           Configure the public candidate self-service portal where applicants can track their job application progression.
         </p>

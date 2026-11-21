@@ -146,7 +146,7 @@ export function DateTimeFormatTab() {
       {/* ─── 1. Date Format Section ────────────────────────────────────────── */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Date Format</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Date Format</h2>
         </div>
 
         <div>
@@ -203,7 +203,7 @@ export function DateTimeFormatTab() {
       {/* ─── 2. Time Format Section ────────────────────────────────────────── */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Time Format</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Time Format</h2>
         </div>
 
         <div>

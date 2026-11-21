@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useHRSettings } from '@/hooks/useHRSettings';
-import { PlusIcon, PencilIcon, TrashIcon, SearchIcon, CheckIcon, LoaderIcon } from './SettingsIcons';
+import { PlusIcon, SearchIcon, CheckIcon, LoaderIcon } from './SettingsIcons';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
@@ -246,7 +246,7 @@ export function CandidateRejectReasonTab() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Candidate Reject Reason</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Candidate Reject Reason</h2>
           <p className="mt-1 text-sm text-ink-secondary">
             Define standardized rejection categories across applicant review and hiring pipeline stages.
           </p>
@@ -321,38 +321,21 @@ export function CandidateRejectReasonTab() {
                     {reason.description || '—'}
                   </td>
                   <td className="px-6 py-4">
-                    <button
-                      type="button"
-                      onClick={() => handleToggleActive(reason.id)}
-                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
-                        reason.isActive
-                          ? 'bg-success-lighter text-success-dark hover:bg-success-lighter'
-                          : 'bg-surface-neutral text-ink-secondary hover:bg-grey-200'
-                      }`}
-                    >
-                      {reason.isActive && <CheckIcon className="h-3 w-3" />}
-                      {reason.isActive ? 'Active' : 'Inactive'}
-                    </button>
+                    <Button
+ type="button"
+ size="small"
+ variant="soft"
+ color={reason.isActive ? 'success' : 'inherit'}
+ startIcon={reason.isActive ? <CheckIcon /> : undefined}
+ onClick={() => handleToggleActive(reason.id)}
+ >
+ {reason.isActive ? 'Active' : 'Inactive'}
+ </Button>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <div className="inline-flex items-center rounded-md border border-divider bg-surface-neutral/50 p-0.5">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenEdit(reason)}
-                        className="rounded p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
-                        title="Edit reason"
-                      >
-                        <PencilIcon className="h-4 w-4" />
-                      </button>
-                      <div className="h-4 w-px bg-grey-200 my-auto" />
-                      <button
-                        type="button"
-                        onClick={() => setDeleteTarget(reason)}
-                        className="rounded p-1.5 text-ink-disabled hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
-                        title="Delete reason"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
+                    <div className="inline-flex items-center gap-1">
+                      <IconButton icon="pencil" size="small" aria-label="Edit reason" title="Edit reason" onClick={() => handleOpenEdit(reason)} />
+                      <IconButton icon="trash" size="small" color="error" aria-label="Delete reason" title="Delete reason" onClick={() => setDeleteTarget(reason)} />
                     </div>
                   </td>
                 </tr>
@@ -368,16 +351,10 @@ export function CandidateRejectReasonTab() {
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             {/* Modal Header Bar */}
             <div className="flex items-center justify-between pb-3 border-b border-divider">
-              <h3 id="CandidateRejectReasonTab-modal-title-1" className="text-base font-semibold text-ink-primary">
+              <h3 id="CandidateRejectReasonTab-modal-title-1" className="text-lg font-semibold text-ink-primary">
                 {editingReason ? 'Edit Reject Reason' : 'Create Reject Reason'}
               </h3>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
-              >
-                <span className="text-xl font-light leading-none">&times;</span>
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setModalOpen(false)} />
             </div>
 
             {/* Form inside border box matching screenshot standard */}
@@ -470,7 +447,7 @@ export function CandidateRejectReasonTab() {
       {deleteTarget && (
         <Modal open onClose={() => setDeleteTarget(null)} labelledBy="CandidateRejectReasonTab-modal-title-2" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
-            <h3 id="CandidateRejectReasonTab-modal-title-2" className="text-lg font-bold text-ink-primary">Delete Reject Reason</h3>
+            <h3 id="CandidateRejectReasonTab-modal-title-2" className="text-lg font-semibold text-ink-primary">Delete Reject Reason</h3>
             <p className="mt-2 text-sm text-ink-secondary">
               Are you sure you want to delete the rejection reason &quot;{deleteTarget.title}&quot;? This action cannot be undone.
             </p>

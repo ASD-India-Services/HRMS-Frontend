@@ -83,7 +83,7 @@ export function CompanyProfileTab() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-bold tracking-tight text-ink-primary">Company Profile &amp; Embed</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">Company Profile &amp; Embed</h2>
         <p className="mt-1 text-sm text-ink-secondary">
           General organization details and careers widget embedding.
         </p>
@@ -174,14 +174,9 @@ export function CompanyProfileTab() {
                 <span>Live Preview</span>
                 <ExternalLinkIcon className="h-3 w-3" />
               </a>
-              <button
-                type="button"
-                onClick={handleCopyEmbed}
-                className="inline-flex items-center gap-1 rounded bg-primary-lighter px-2 py-0.5 text-xs font-semibold text-primary-dark hover:bg-primary-lighter transition-colors"
-              >
-                <CopyIcon className="h-3 w-3" />
-                {copiedEmbed ? '✓ Copied' : 'Copy Code'}
-              </button>
+              <Button size="small" variant="soft" startIcon={<CopyIcon />} onClick={handleCopyEmbed}>
+                {copiedEmbed ? 'Copied' : 'Copy Code'}
+              </Button>
             </div>
           </div>
           <Input

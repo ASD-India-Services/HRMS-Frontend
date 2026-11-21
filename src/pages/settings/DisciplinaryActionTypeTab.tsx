@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon, CheckIcon } from './SettingsIcons';
+import { PlusIcon, CheckIcon } from './SettingsIcons';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
@@ -192,7 +192,7 @@ export function DisciplinaryActionTypeTab() {
     <div className="space-y-6 py-2">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Disciplinary Action Type</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Disciplinary Action Type</h2>
           <p className="mt-1 text-sm text-ink-secondary">
             Configure standardized policy violation types, severity categories, and HR review workflows.
           </p>
@@ -247,37 +247,21 @@ export function DisciplinaryActionTypeTab() {
                   {item.validityMonths > 0 ? `${item.validityMonths} Months` : 'Permanent'}
                 </td>
                 <td className="px-6 py-4">
-                  <button
-                    type="button"
-                    onClick={() => handleToggleActive(item.id)}
-                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
-                      item.isActive
-                        ? 'bg-success-lighter text-success-dark hover:bg-success-lighter'
-                        : 'bg-surface-neutral text-ink-secondary hover:bg-grey-200'
-                    }`}
-                  >
-                    {item.isActive && <CheckIcon className="h-3 w-3" />}
-                    {item.isActive ? 'Active' : 'Inactive'}
-                  </button>
+                  <Button
+ type="button"
+ size="small"
+ variant="soft"
+ color={item.isActive ? 'success' : 'inherit'}
+ startIcon={item.isActive ? <CheckIcon /> : undefined}
+ onClick={() => handleToggleActive(item.id)}
+ >
+ {item.isActive ? 'Active' : 'Inactive'}
+ </Button>
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleOpenEdit(item)}
-                      className="rounded p-1.5 text-ink-secondary hover:bg-surface-neutral hover:text-primary-main transition-colors"
-                      title="Edit type"
-                    >
-                      <PencilIcon className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(item.id)}
-                      className="rounded p-1.5 text-ink-secondary hover:bg-surface-neutral hover:text-error-main transition-colors"
-                      title="Delete type"
-                    >
-                      <TrashIcon className="h-4 w-4" />
-                    </button>
+                    <IconButton icon="pencil" size="small" aria-label="Edit type" title="Edit type" onClick={() => handleOpenEdit(item)} />
+                    <IconButton icon="trash" size="small" color="error" aria-label="Delete type" title="Delete type" onClick={() => handleDelete(item.id)} />
                   </div>
                 </td>
               </tr>
@@ -290,7 +274,7 @@ export function DisciplinaryActionTypeTab() {
       {modalOpen && (
         <Modal open onClose={() => setModalOpen(false)} labelledBy="DisciplinaryActionTypeTab-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 space-y-4 min-h-0 flex-1 overflow-y-auto">
-            <h3 id="DisciplinaryActionTypeTab-modal-title-1" className="text-lg font-bold text-ink-primary">
+            <h3 id="DisciplinaryActionTypeTab-modal-title-1" className="text-lg font-semibold text-ink-primary">
               {editingItem ? 'Edit Disciplinary Action Type' : 'Add Disciplinary Action Type'}
             </h3>
 

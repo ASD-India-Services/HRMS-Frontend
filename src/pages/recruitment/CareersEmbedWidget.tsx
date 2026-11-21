@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
@@ -253,15 +253,17 @@ export default function CareersEmbedWidget() {
                 : 'There are currently no open positions. Please check back later!'}
             </p>
             {(search || selectedDept !== 'all') && (
-              <button
+              <Button
+                variant="text"
+                size="small"
                 onClick={() => {
                   setSearch('');
                   setSelectedDept('all');
                 }}
-                className="mt-4 text-xs font-medium text-primary-main hover:text-primary-dark underline"
+                className="mt-4"
               >
                 Clear all filters
-              </button>
+              </Button>
             )}
           </div>
         ) : (
@@ -330,15 +332,7 @@ export default function CareersEmbedWidget() {
                 </span>
                 <h2 id="CareersEmbedWidget-modal-title-1" className="text-lg sm:text-xl font-bold text-ink-primary mt-0.5">{selectedJob.title}</h2>
               </div>
-              <button
-                type="button"
-                onClick={handleCloseModal}
-                className="rounded-lg p-1.5 text-ink-disabled hover:bg-grey-200 hover:text-ink-secondary transition-colors"
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={handleCloseModal} />
             </div>
 
             {/* Modal Body */}
@@ -368,13 +362,9 @@ export default function CareersEmbedWidget() {
                     <p className="text-xs text-success-dark max-w-md mx-auto">
                       Thank you, <strong className="font-semibold">{form.name}</strong>! Your application has been directly sent to our hiring team. We will review your profile and reach out via email.
                     </p>
-                    <button
-                      type="button"
-                      onClick={handleCloseModal}
-                      className="mt-2 inline-flex items-center rounded-lg bg-success-main px-5 py-2 text-xs font-semibold text-primary-contrast shadow-sm hover:bg-success-dark"
-                    >
+                    <Button color="success" onClick={handleCloseModal} className="mt-2">
                       Done
-                    </button>
+                    </Button>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-4">

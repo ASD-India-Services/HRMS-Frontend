@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { PlusIcon, PencilIcon, TrashIcon, CheckIcon } from './SettingsIcons';
+import { PlusIcon, CheckIcon } from './SettingsIcons';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 
@@ -130,7 +130,7 @@ export function RotatingWorkTypeTab() {
     <div className="space-y-6 py-2">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Rotating Work Type</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Rotating Work Type</h2>
           <p className="mt-1 text-sm text-ink-secondary">
             Define recurring cyclic rotation schedules between multiple work arrangements.
           </p>
@@ -172,37 +172,21 @@ export function RotatingWorkTypeTab() {
                 </td>
                 <td className="px-6 py-4 text-ink-secondary text-xs">{item.departments}</td>
                 <td className="px-6 py-4">
-                  <button
-                    type="button"
-                    onClick={() => handleToggleActive(item.id)}
-                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium cursor-pointer transition-colors ${
-                      item.isActive
-                        ? 'bg-success-lighter text-success-dark hover:bg-success-lighter'
-                        : 'bg-surface-neutral text-ink-secondary hover:bg-grey-200'
-                    }`}
-                  >
-                    {item.isActive && <CheckIcon className="h-3 w-3" />}
-                    {item.isActive ? 'Active' : 'Inactive'}
-                  </button>
+                  <Button
+ type="button"
+ size="small"
+ variant="soft"
+ color={item.isActive ? 'success' : 'inherit'}
+ startIcon={item.isActive ? <CheckIcon /> : undefined}
+ onClick={() => handleToggleActive(item.id)}
+ >
+ {item.isActive ? 'Active' : 'Inactive'}
+ </Button>
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleOpenEdit(item)}
-                      className="rounded p-1.5 text-ink-secondary hover:bg-surface-neutral hover:text-primary-main transition-colors"
-                      title="Edit policy"
-                    >
-                      <PencilIcon className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(item.id)}
-                      className="rounded p-1.5 text-ink-secondary hover:bg-surface-neutral hover:text-error-main transition-colors"
-                      title="Delete policy"
-                    >
-                      <TrashIcon className="h-4 w-4" />
-                    </button>
+                    <IconButton icon="pencil" size="small" aria-label="Edit policy" title="Edit policy" onClick={() => handleOpenEdit(item)} />
+                    <IconButton icon="trash" size="small" color="error" aria-label="Delete policy" title="Delete policy" onClick={() => handleDelete(item.id)} />
                   </div>
                 </td>
               </tr>
@@ -215,7 +199,7 @@ export function RotatingWorkTypeTab() {
       {modalOpen && (
         <Modal open onClose={() => setModalOpen(false)} labelledBy="RotatingWorkTypeTab-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 space-y-4 min-h-0 flex-1 overflow-y-auto">
-            <h3 id="RotatingWorkTypeTab-modal-title-1" className="text-lg font-bold text-ink-primary">
+            <h3 id="RotatingWorkTypeTab-modal-title-1" className="text-lg font-semibold text-ink-primary">
               {editingItem ? 'Edit Rotating Work Type' : 'Add Rotating Work Type'}
             </h3>
 

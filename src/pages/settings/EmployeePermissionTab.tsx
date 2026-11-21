@@ -20,9 +20,10 @@ import {
   PencilIcon,
 } from './SettingsIcons';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { Iconify } from '@/components/Iconify';
 
 export type DataScope = 'organisation' | 'department' | 'self';
 
@@ -480,23 +481,16 @@ export function EmployeePermissionTab() {
         {/* Top Header / Back Link */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-divider pb-4">
           <div>
-            <button
-              type="button"
-              onClick={() => setSelectedEmployee(null)}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-main hover:text-primary-dark transition-colors mb-2 cursor-pointer"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-              </svg>
-              <span>Back to All Employees</span>
-            </button>
+            <Button variant="text" size="small" startIcon={<Iconify icon="arrow-left" />} onClick={() => setSelectedEmployee(null)} className="mb-2">
+              Back to All Employees
+            </Button>
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center font-bold text-base shadow-xs">
                 {selectedEmployee.first_name?.[0]?.toUpperCase() || 'E'}
                 {selectedEmployee.last_name?.[0]?.toUpperCase() || ''}
               </div>
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-ink-primary">
+                <h2 className="text-lg font-semibold text-ink-primary">
                   {selectedEmployee.first_name} {selectedEmployee.last_name}
                 </h2>
                 <p className="text-xs text-ink-secondary">
@@ -531,20 +525,16 @@ export function EmployeePermissionTab() {
            ───────────────────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {/* Scope 1: Organisation-wide */}
-          <button
-            type="button"
-            onClick={() => setActiveDataScope('organisation')}
-            className={`flex items-center justify-between rounded-xl border p-4 text-left transition-all cursor-pointer ${
-              activeDataScope === 'organisation'
-                ? 'border-primary-main bg-primary-lighter/70 shadow-xs'
-                : 'border-divider bg-surface-paper hover:border-divider hover:bg-surface-neutral/50'
-            }`}
-          >
+          <Button
+ type="button"
+ variant="outlined"
+ color={activeDataScope === 'organisation' ? 'primary' : 'inherit'}
+ onClick={() => setActiveDataScope('organisation')}
+ className={`!h-auto !justify-between !rounded-card !p-4 !text-left !font-normal ${activeDataScope === 'organisation' ? 'bg-primary-main/10' : ''}`}
+ >
             <div className="flex items-center gap-2.5">
               <span className={`p-1.5 rounded-lg ${activeDataScope === 'organisation' ? 'text-primary-main' : 'text-ink-disabled'}`}>
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
-                </svg>
+                <Iconify icon="branches" />
               </span>
               <div>
                 <span className="block text-sm font-bold text-ink-primary">Organisation-wide</span>
@@ -558,23 +548,19 @@ export function EmployeePermissionTab() {
             >
               {activeDataScope === 'organisation' && <span className="h-1.5 w-1.5 rounded-full bg-surface-paper" />}
             </span>
-          </button>
+          </Button>
 
           {/* Scope 2: Own Department Only */}
-          <button
-            type="button"
-            onClick={() => setActiveDataScope('department')}
-            className={`flex items-center justify-between rounded-xl border p-4 text-left transition-all cursor-pointer ${
-              activeDataScope === 'department'
-                ? 'border-primary-main bg-primary-lighter/70 shadow-xs'
-                : 'border-divider bg-surface-paper hover:border-divider hover:bg-surface-neutral/50'
-            }`}
-          >
+          <Button
+ type="button"
+ variant="outlined"
+ color={activeDataScope === 'department' ? 'primary' : 'inherit'}
+ onClick={() => setActiveDataScope('department')}
+ className={`!h-auto !justify-between !rounded-card !p-4 !text-left !font-normal ${activeDataScope === 'department' ? 'bg-primary-main/10' : ''}`}
+ >
             <div className="flex items-center gap-2.5">
               <span className={`p-1.5 rounded-lg ${activeDataScope === 'department' ? 'text-primary-main' : 'text-ink-disabled'}`}>
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
+                <Iconify icon="departments" />
               </span>
               <div>
                 <span className="block text-sm font-bold text-ink-primary">Own Department Only</span>
@@ -588,18 +574,16 @@ export function EmployeePermissionTab() {
             >
               {activeDataScope === 'department' && <span className="h-1.5 w-1.5 rounded-full bg-surface-paper" />}
             </span>
-          </button>
+          </Button>
 
           {/* Scope 3: Normal Employee */}
-          <button
-            type="button"
-            onClick={() => setActiveDataScope('self')}
-            className={`flex items-center justify-between rounded-xl border p-4 text-left transition-all cursor-pointer ${
-              activeDataScope === 'self'
-                ? 'border-primary-main bg-primary-lighter/70 shadow-xs'
-                : 'border-divider bg-surface-paper hover:border-divider hover:bg-surface-neutral/50'
-            }`}
-          >
+          <Button
+ type="button"
+ variant="outlined"
+ color={activeDataScope === 'self' ? 'primary' : 'inherit'}
+ onClick={() => setActiveDataScope('self')}
+ className={`!h-auto !justify-between !rounded-card !p-4 !text-left !font-normal ${activeDataScope === 'self' ? 'bg-primary-main/10' : ''}`}
+ >
             <div className="flex items-center gap-2.5">
               <span className={`p-1.5 rounded-lg ${activeDataScope === 'self' ? 'text-primary-main' : 'text-ink-disabled'}`}>
                 <UsersIcon className="h-5 w-5" />
@@ -616,7 +600,7 @@ export function EmployeePermissionTab() {
             >
               {activeDataScope === 'self' && <span className="h-1.5 w-1.5 rounded-full bg-surface-paper" />}
             </span>
-          </button>
+          </Button>
         </div>
 
         {/* ─────────────────────────────────────────────────────────────
@@ -700,7 +684,7 @@ export function EmployeePermissionTab() {
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Employee Permissions</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Employee Permissions</h2>
           <p className="mt-1 text-sm text-ink-secondary">
             View, assign, and customize granular module permissions and data access scopes for individual employees.
           </p>
@@ -874,15 +858,9 @@ export function EmployeePermissionTab() {
             <div className="flex items-center justify-between px-6 py-4 border-b border-divider bg-surface-neutral/70">
               <div className="flex items-center gap-2">
                 <ShieldCheckIcon className="h-5 w-5 text-primary-main" />
-                <h3 id="EmployeePermissionTab-modal-title-1" className="text-lg font-bold text-ink-primary">Assign Role &amp; Permissions</h3>
+                <h3 id="EmployeePermissionTab-modal-title-1" className="text-lg font-semibold text-ink-primary">Assign Role &amp; Permissions</h3>
               </div>
-              <button
-                type="button"
-                onClick={() => setIsAssignModalOpen(false)}
-                className="rounded-md p-1.5 text-ink-disabled hover:bg-grey-200 hover:text-ink-primary transition-colors cursor-pointer"
-              >
-                <span className="text-xl font-light leading-none">&times;</span>
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setIsAssignModalOpen(false)} />
             </div>
 
             {/* Modal Body: Scrollable with Employee Selector & Permissions Matrix */}

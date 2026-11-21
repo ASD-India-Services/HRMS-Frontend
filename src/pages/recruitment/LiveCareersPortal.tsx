@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
+import { Card } from '@/components/ui/Card';
 
 export function LiveCareersPortal() {
   const [activeTab, setActiveTab] = useState<'preview' | 'guide' | 'external'>('preview');
@@ -88,16 +90,16 @@ export function LiveCareersPortal() {
 
   if (isSettingsLoading) {
     return (
-      <div className="flex h-96 items-center justify-center rounded-xl border border-divider bg-surface-paper">
+      <Card className="flex h-96 items-center justify-center">
         <div className="text-sm font-medium text-ink-secondary">Loading Careers Integration...</div>
-      </div>
+      </Card>
     );
   }
 
   return (
     <div className="space-y-6">
       {/* Method 1 Header & Action Toolbar */}
-      <div className="flex flex-col gap-4 rounded-xl border border-divider bg-surface-paper p-5 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+      <Card className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-start sm:items-center gap-3">
           <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-primary-lighter text-primary-dark font-bold">
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,63 +121,51 @@ export function LiveCareersPortal() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <Button size="small"
-            type="button"
-            onClick={handleCopyEmbed}
-          >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-            </svg>
+          <Button size="small" onClick={handleCopyEmbed} startIcon={<Iconify icon="copy" />}>
             {copiedEmbed ? 'Embed Code Copied!' : 'Copy Embed Code'}
           </Button>
 
-          <Button variant="outlined" color="inherit" size="small"
-            type="button"
-            onClick={handleCopyLink}
-          >
-            <svg className="h-4 w-4 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-            </svg>
+          <Button variant="outlined" color="inherit" size="small" onClick={handleCopyLink} startIcon={<Iconify icon="link" />}>
             {copiedLink ? 'Link Copied!' : 'Copy Public URL'}
           </Button>
 
-          <a
+          <ButtonLink
             href={directUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-surface-paper px-3 py-2 text-xs font-medium text-ink-primary shadow-sm hover:bg-surface-neutral transition-colors"
+            variant="outlined"
+            color="inherit"
+            size="small"
+            startIcon={<Iconify icon="external" />}
           >
-            <svg className="h-4 w-4 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
             Open Standalone
-          </a>
+          </ButtonLink>
         </div>
-      </div>
+      </Card>
 
       {/* Metric Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-divider bg-surface-paper p-4 shadow-sm">
+        <Card className="p-4">
           <div className="text-xs font-medium text-ink-secondary">Live Active Positions</div>
           <div className="mt-1 text-2xl font-bold text-ink-primary">{publicJobs?.total_openings ?? 0}</div>
           <div className="mt-1 text-xs text-success-main font-medium">Visible to candidates online</div>
-        </div>
+        </Card>
 
-        <div className="rounded-xl border border-divider bg-surface-paper p-4 shadow-sm">
+        <Card className="p-4">
           <div className="text-xs font-medium text-ink-secondary">Integration Architecture</div>
           <div className="mt-1 text-base font-semibold text-ink-primary">Method 1: iFrame Widget</div>
           <div className="mt-1 text-xs text-ink-secondary">Seamless embed into existing website</div>
-        </div>
+        </Card>
 
-        <div className="rounded-xl border border-divider bg-surface-paper p-4 shadow-sm">
+        <Card className="p-4">
           <div className="text-xs font-medium text-ink-secondary">Candidate Pipeline Intake</div>
           <div className="mt-1 text-base font-semibold text-success-main">Instant Sync</div>
           <div className="mt-1 text-xs text-ink-secondary">Directly routes to Applicant Pipeline</div>
-        </div>
+        </Card>
       </div>
 
       {/* Embed Code Snippet Card */}
-      <div className="rounded-xl border border-divider bg-surface-paper shadow-sm overflow-hidden">
+      <Card className="overflow-hidden">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-divider bg-surface-neutral px-5 py-3.5">
           <div>
             <h3 className="text-sm font-semibold text-ink-primary">Embed Snippet for Your Existing Website</h3>
@@ -208,58 +198,42 @@ export function LiveCareersPortal() {
             {embedCodeSnippet}
           </pre>
         </div>
-      </div>
+      </Card>
 
       {/* Main Container: Tab Switcher (Live Preview vs Installation Guide vs Company Site) */}
-      <div className="rounded-xl border border-divider bg-surface-paper shadow-sm overflow-hidden">
+      <Card className="overflow-hidden">
         <div className="flex flex-wrap items-center justify-between border-b border-divider bg-surface-neutral px-4 py-2">
           <div className="flex space-x-1">
-            <button
-              type="button"
+            <Button
+              variant={activeTab === 'preview' ? 'soft' : 'text'}
+              color={activeTab === 'preview' ? 'primary' : 'inherit'}
+              size="small"
               onClick={() => setActiveTab('preview')}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                activeTab === 'preview'
-                  ? 'bg-surface-paper text-primary-dark shadow-xs border border-divider'
-                  : 'text-ink-secondary hover:text-ink-primary'
-              }`}
+              startIcon={<Iconify icon="eye" />}
             >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
               Live Widget Preview
-            </button>
+            </Button>
 
-            <button
-              type="button"
+            <Button
+              variant={activeTab === 'guide' ? 'soft' : 'text'}
+              color={activeTab === 'guide' ? 'primary' : 'inherit'}
+              size="small"
               onClick={() => setActiveTab('guide')}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                activeTab === 'guide'
-                  ? 'bg-surface-paper text-primary-dark shadow-xs border border-divider'
-                  : 'text-ink-secondary hover:text-ink-primary'
-              }`}
+              startIcon={<Iconify icon="policies" />}
             >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
               CMS Setup Guide
-            </button>
+            </Button>
 
             {formattedWebsite && (
-              <button
-                type="button"
-                onClick={() => setActiveTab('external')}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  activeTab === 'external'
-                    ? 'bg-surface-paper text-primary-dark shadow-xs border border-divider'
-                    : 'text-ink-secondary hover:text-ink-primary'
-                }`}
-              >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                </svg>
-                Company Website
-              </button>
+              <Button
+              variant={activeTab === 'external' ? 'soft' : 'text'}
+              color={activeTab === 'external' ? 'primary' : 'inherit'}
+              size="small"
+              onClick={() => setActiveTab('external')}
+              startIcon={<Iconify icon="branches" />}
+            >
+              Company Website
+            </Button>
             )}
           </div>
 
@@ -282,7 +256,7 @@ export function LiveCareersPortal() {
                 rel="noopener noreferrer"
                 className="font-medium text-primary-main hover:underline"
               >
-                Open in Full Window &rarr;
+                Open in Full Window
               </a>
             </div>
             <div className="w-full bg-surface-neutral min-h-[650px]">
@@ -314,18 +288,15 @@ export function LiveCareersPortal() {
                 { id: 'squarespace', name: 'Squarespace / Wix' },
                 { id: 'html', name: 'Custom HTML / React / Vue' },
               ].map((p) => (
-                <button
+                <Button
                   key={p.id}
-                  type="button"
+                  size="small"
+                  variant={selectedGuidePlatform === p.id ? 'contained' : 'soft'}
+                  color={selectedGuidePlatform === p.id ? 'primary' : 'inherit'}
                   onClick={() => setSelectedGuidePlatform(p.id as any)}
-                  className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                    selectedGuidePlatform === p.id
-                      ? 'bg-primary-main text-primary-contrast shadow-xs'
-                      : 'bg-surface-neutral text-ink-primary hover:bg-grey-200'
-                  }`}
                 >
                   {p.name}
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -395,7 +366,7 @@ export function LiveCareersPortal() {
                 rel="noopener noreferrer"
                 className="font-semibold text-warning-darker underline"
               >
-                Open in Full Tab &rarr;
+                Open in Full Tab
               </a>
             </div>
             <iframe
@@ -406,7 +377,7 @@ export function LiveCareersPortal() {
             />
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

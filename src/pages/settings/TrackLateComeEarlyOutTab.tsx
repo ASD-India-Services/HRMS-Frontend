@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
 import { CheckIcon, LoaderIcon } from './SettingsIcons';
+import { Switch } from '@/components/ui/Button';
 
 const LOCAL_STORAGE_KEY = 'hrms_track_late_come_early_out';
 
@@ -70,7 +71,7 @@ export function TrackLateComeEarlyOutTab() {
 
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Track Late Come Early Out</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">Track Late Come Early Out</h2>
         <p className="mt-1 text-sm text-ink-secondary">
           Enable or disable automatic tracking for late check-in and early check-out.
         </p>
@@ -105,23 +106,7 @@ export function TrackLateComeEarlyOutTab() {
             {updateSettings.isPending && (
               <LoaderIcon className="h-4 w-4 animate-spin text-primary-main" />
             )}
-            <button
-              type="button"
-              role="switch"
-              aria-checked={enabled}
-              disabled={isLoading || updateSettings.isPending}
-              onClick={handleToggle}
-              className={`relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 disabled:opacity-50 ${
-                enabled ? 'bg-primary-main' : 'bg-grey-300'
-              }`}
-            >
-              <span
-                aria-hidden="true"
-                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                  enabled ? 'translate-x-7' : 'translate-x-0'
-                }`}
-              />
-            </button>
+            <Switch checked={enabled} disabled={isLoading || updateSettings.isPending} onClick={handleToggle} />
           </div>
         </div>
       </div>

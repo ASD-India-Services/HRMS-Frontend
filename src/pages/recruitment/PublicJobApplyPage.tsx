@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
+import { Iconify } from '@/components/Iconify';
 
 interface JobDetails {
   id: string;
@@ -118,12 +119,12 @@ export default function PublicJobApplyPage() {
           </p>
           <div className="mt-6 border-t border-divider pt-6">
             {job.company_website && (
-              <a
+              <ButtonLink
                 href={job.company_website.startsWith('http') ? job.company_website : `https://${job.company_website}`}
-                className="inline-flex items-center gap-2 rounded-lg bg-primary-main px-5 py-2.5 text-sm font-semibold text-primary-contrast shadow-sm hover:bg-primary-dark transition-colors"
+                endIcon={<Iconify icon="arrow-right" />}
               >
-                Back to Company Website &rarr;
-              </a>
+                Back to Company Website
+              </ButtonLink>
             )}
           </div>
         </div>
@@ -147,7 +148,7 @@ export default function PublicJobApplyPage() {
               rel="noopener noreferrer"
               className="text-xs font-medium text-ink-secondary hover:text-primary-main transition-colors"
             >
-              Company Website &rarr;
+              Company Website
             </a>
           )}
         </div>

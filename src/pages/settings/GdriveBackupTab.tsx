@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { InfoIcon, CheckIcon, LoaderIcon, AlertCircleIcon } from './SettingsIcons';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
 import api from '@/lib/api';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton, Switch } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
 function SwitchToggle({
@@ -15,23 +15,7 @@ function SwitchToggle({
   disabled?: boolean;
 }) {
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      disabled={disabled}
-      onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main/30 ${
-        checked ? 'bg-primary-main' : 'bg-grey-200'
-      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-    >
-      <span
-        aria-hidden="true"
-        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-          checked ? 'translate-x-5' : 'translate-x-0'
-        }`}
-      />
-    </button>
+    <Switch checked={checked} disabled={disabled} onClick={() => onChange(!checked)} />
   );
 }
 
@@ -190,7 +174,7 @@ export function GdriveBackupTab() {
     <div className="space-y-6 py-2">
       {/* ─── Header matching screenshot ───────────────────────────────────── */}
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Gdrive Backup</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">Gdrive Backup</h2>
       </div>
 
       <hr className="border-divider" />
@@ -224,14 +208,7 @@ export function GdriveBackupTab() {
             {serviceAccountFilename && (
               <div className="flex items-center gap-2 text-xs text-ink-secondary bg-surface-neutral border border-divider rounded-md px-3 py-1.5 w-fit">
                 <span className="font-medium text-ink-primary">{serviceAccountFilename}</span>
-                <button
-                  type="button"
-                  onClick={handleRemoveFile}
-                  className="text-error-main hover:text-error-dark font-semibold ml-2"
-                  title="Remove file"
-                >
-                  ✕
-                </button>
+                <IconButton icon="close" size="small" color="error" aria-label="Remove file" title="Remove file" onClick={handleRemoveFile} />
               </div>
             )}
           </div>

@@ -139,7 +139,7 @@ export function MailServerTab() {
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Mail Server (SMTP)</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Mail Server (SMTP)</h2>
           <p className="mt-1 text-sm text-ink-secondary">
             Configure SMTP credentials for transactional emails, payslips, and applicant invitations.
           </p>
@@ -354,7 +354,7 @@ export function MailServerTab() {
                 <MailIcon className="h-5 w-5" />
               </div>
               <div>
-                <h3 id="MailServerTab-modal-title-1" className="text-base font-bold text-ink-primary">Send Test Email</h3>
+                <h3 id="MailServerTab-modal-title-1" className="text-lg font-semibold text-ink-primary">Send Test Email</h3>
                 <p className="text-xs text-ink-secondary">Verify SMTP handshake & authentication</p>
               </div>
             </div>
@@ -381,16 +381,16 @@ export function MailServerTab() {
             )}
 
             <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
+              <Button
+                variant="outlined"
+                color="inherit"
                 onClick={() => {
                   setShowTestModal(false);
                   setTestResult(null);
                 }}
-                className="rounded-lg border border-divider px-4 py-2 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
               >
                 Close
-              </button>
+              </Button>
               <Button
                 type="button"
                 onClick={handleSendTestEmail}

@@ -1,19 +1,11 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useLocation, Link } from 'react-router-dom';
-import {
-  SettingsIcon,
-  LayersIcon,
-  GridIcon,
-  ClipboardDocumentIcon,
-  UsersIcon,
-  ClockIcon,
-  CalendarIcon,
-  BanknotesIcon,
-  ChartBarIcon,
-  HeadphonesIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-} from './SettingsIcons';
+import { SettingsIcon, ClipboardDocumentIcon, UsersIcon, ClockIcon, CalendarIcon, BanknotesIcon, ChartBarIcon, HeadphonesIcon, ChevronDownIcon, ChevronRightIcon } from './SettingsIcons';
+import { Iconify } from '@/components/Iconify';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 interface NavItem {
   id: string;
@@ -137,54 +129,44 @@ export function SettingsLayout() {
   const currentPathSegment = location.pathname.split('/').pop() || 'general-settings';
 
   return (
-    <div className="min-h-screen bg-surface-neutral px-4 py-6 sm:px-6 lg:px-8">
-      {/* ─── Breadcrumb Navigation ────────────────────────────────────── */}
-      <nav className="mb-4 flex items-center gap-2 text-xs text-ink-secondary">
-        <Link to="/" className="hover:text-ink-primary transition-colors">
-          DigiHRMS
-        </Link>
-        <span>&gt;</span>
-        <span className="text-ink-secondary">settings</span>
-        <span>&gt;</span>
-        <span className="font-semibold text-ink-primary">{currentPathSegment}</span>
-      </nav>
+    <PageContainer>
+      <PageHeader
+        title="Settings"
+        breadcrumb={
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-xs">
+            <Link to="/" className="transition-colors hover:text-ink-primary">
+              DigiHRMS
+            </Link>
+            <Iconify icon="chevron-right" width={14} />
+            <span>settings</span>
+            <Iconify icon="chevron-right" width={14} />
+            <span className="font-semibold text-ink-primary">{currentPathSegment}</span>
+          </nav>
+        }
+      />
 
-      {/* ─── Page Title ──────────────────────────────────────────────── */}
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-ink-primary">Settings</h1>
-        </div>
-      </div>
-
-      {/* ─── Two-Column Container ────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Sidebar Navigation */}
-        <aside className="lg:col-span-3 rounded-2xl border border-divider bg-surface-paper p-4 shadow-xs">
-          <div className="space-y-6">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        <Card className="p-4 lg:col-span-3">
+          <div className="space-y-4">
             {SETTINGS_GROUPS.map((group) => {
               const isCollapsed = !!collapsedGroups[group.id];
               const GroupIcon = group.icon;
 
               return (
-                <div key={group.id} className="space-y-2">
-                  {/* Category Header */}
-                  <button
-                    type="button"
+                <div key={group.id} className="space-y-1">
+                  <Button
+                    variant="text"
+                    color="inherit"
+                    size="small"
                     onClick={() => toggleGroup(group.id)}
-                    className="flex w-full items-center justify-between px-2 py-1.5 text-xs font-bold uppercase tracking-wider text-ink-secondary hover:text-ink-primary transition-colors"
+                    startIcon={<GroupIcon />}
+                    endIcon={isCollapsed ? <ChevronRightIcon /> : <ChevronDownIcon />}
+                    aria-expanded={!isCollapsed}
+                    className="!w-full !justify-between !text-xs !font-semibold uppercase tracking-wider"
                   >
-                    <div className="flex items-center gap-2">
-                      <GroupIcon className="h-4 w-4 text-ink-disabled" />
-                      <span>{group.label}</span>
-                    </div>
-                    {isCollapsed ? (
-                      <ChevronRightIcon className="h-3.5 w-3.5 text-ink-disabled" />
-                    ) : (
-                      <ChevronDownIcon className="h-3.5 w-3.5 text-ink-disabled" />
-                    )}
-                  </button>
+                    <span className="mr-auto pl-2">{group.label}</span>
+                  </Button>
 
-                  {/* Sub-items */}
                   {!isCollapsed && (
                     <div className="space-y-1 pl-1">
                       {group.items.map((item) => {
@@ -196,13 +178,13 @@ export function SettingsLayout() {
                           <NavLink
                             key={item.id}
                             to={item.path}
-                            className={`flex items-center justify-between px-3.5 py-2.5 text-sm transition-all ${
+                            className={`flex items-center rounded px-3 py-2 text-sm transition-colors ${
                               isActive
-                                ? 'rounded-2xl border-2 border-primary-main bg-primary-lighter/70 font-bold text-primary-main shadow-xs'
-                                : 'rounded-xl text-ink-primary hover:bg-surface-neutral hover:text-ink-primary font-medium'
+                                ? 'bg-primary-main/10 font-semibold text-primary-main'
+                                : 'font-medium text-ink-secondary hover:bg-grey-500/10 hover:text-ink-primary'
                             }`}
                           >
-                            <span>{item.label}</span>
+                            {item.label}
                           </NavLink>
                         );
                       })}
@@ -212,13 +194,12 @@ export function SettingsLayout() {
               );
             })}
           </div>
-        </aside>
+        </Card>
 
-        {/* Right Main Content Panel */}
-        <main className="lg:col-span-9 rounded-2xl border border-divider bg-surface-paper p-6 sm:p-8 shadow-xs min-h-[500px]">
+        <Card className="min-h-[500px] p-6 sm:p-8 lg:col-span-9">
           <Outlet />
-        </main>
+        </Card>
       </div>
-    </div>
+    </PageContainer>
   );
 }

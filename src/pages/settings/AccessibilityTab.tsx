@@ -10,8 +10,9 @@ import {
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
 import api from '@/lib/api';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton, Switch } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
+import { Iconify } from '@/components/Iconify';
 
 export interface CategoryFilters {
   employee?: string;
@@ -109,23 +110,7 @@ function SwitchToggle({
   disabled?: boolean;
 }) {
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      disabled={disabled}
-      onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main/30 ${
-        checked ? 'bg-primary-main' : 'bg-grey-200'
-      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-    >
-      <span
-        aria-hidden="true"
-        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-          checked ? 'translate-x-5' : 'translate-x-0'
-        }`}
-      />
-    </button>
+    <Switch checked={checked} disabled={disabled} onClick={() => onChange(!checked)} />
   );
 }
 
@@ -398,13 +383,7 @@ export function AccessibilityTab() {
             <CheckIcon className="h-4 w-4 text-success-main" />
             <span>{bannerNotice}</span>
           </div>
-          <button
-            type="button"
-            onClick={() => setBannerNotice(null)}
-            className="text-xs font-semibold text-success-dark hover:text-success-darker"
-          >
-            ✕
-          </button>
+          <IconButton icon="close" size="small" color="success" aria-label="Dismiss" onClick={() => setBannerNotice(null)} />
         </div>
       )}
 
@@ -419,21 +398,15 @@ export function AccessibilityTab() {
             <div key={item.id} className="transition-colors hover:bg-surface-neutral/30">
               {/* Row Header matching screenshot: — Default Employee View [Actions ▼] */}
               <div className="flex items-center justify-between px-6 py-4">
-                <button
-                  type="button"
+                <Button
+                  variant="text"
+                  color="inherit"
                   onClick={() => toggleExpand(item.id)}
-                  className="flex flex-1 items-center gap-3 text-left focus:outline-none"
+                  startIcon={<Iconify icon={isExpanded ? 'minus' : 'plus'} />}
+                  className="!h-auto flex-1 !justify-start !px-0 !text-sm !font-semibold"
                 >
-                  {/* Indicator: — when expanded, + when collapsed */}
-                  <span className="flex h-5 w-5 items-center justify-center font-bold text-ink-secondary text-base leading-none select-none">
-                    {isExpanded ? '—' : '+'}
-                  </span>
-
-                  {/* Feature Title */}
-                  <span className="text-sm font-semibold text-ink-primary hover:text-primary-main transition-colors">
-                    {item.label}
-                  </span>
-                </button>
+                  {item.label}
+                </Button>
 
                 {/* Right Actions Dropdown */}
                 <div className="relative">
@@ -455,37 +428,37 @@ export function AccessibilityTab() {
                       className="absolute right-0 z-30 mt-1 w-44 rounded-xl border border-divider bg-surface-paper py-1 shadow-lg ring-1 ring-grey-900/5 animate-in fade-in zoom-in-95 duration-100"
                     >
                       {/* Clear Filter option with confirmation */}
-                      <button
-                        type="button"
-                        onClick={() => handleOpenClearFilter(item)}
-                        className="flex w-full items-center justify-between px-3.5 py-2 text-xs font-medium text-ink-primary hover:bg-surface-neutral hover:text-error-main transition-colors text-left"
-                      >
-                        <span>Clear Filter</span>
-                      </button>
+                      <Button variant="text" color="error" size="small" onClick={() => handleOpenClearFilter(item)} className="!w-full !justify-start !rounded-none">
+                        Clear Filter
+                      </Button>
 
                       <div className="my-1 border-t border-divider" />
 
-                      <button
-                        type="button"
+                      <Button
+                        variant="text"
+                        color="inherit"
+                        size="small"
                         onClick={() => {
                           setActiveActionsId(null);
                           handleToggleRestrictAll(item.id);
                         }}
-                        className="flex w-full items-center justify-between px-3.5 py-2 text-xs font-medium text-ink-primary hover:bg-surface-neutral text-left"
+                        className="!w-full !justify-start !rounded-none"
                       >
-                        <span>{item.restrict_all ? 'Allow All' : 'Restrict All'}</span>
-                      </button>
+                        {item.restrict_all ? 'Allow All' : 'Restrict All'}
+                      </Button>
 
-                      <button
-                        type="button"
+                      <Button
+                        variant="text"
+                        color="inherit"
+                        size="small"
                         onClick={() => {
                           setActiveActionsId(null);
                           toggleExpand(item.id);
                         }}
-                        className="flex w-full items-center px-3.5 py-2 text-xs font-medium text-ink-secondary hover:bg-surface-neutral text-left"
+                        className="!w-full !justify-start !rounded-none"
                       >
                         {isExpanded ? 'Collapse' : 'Expand'}
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -771,7 +744,7 @@ export function AccessibilityTab() {
                 <AlertCircleIcon className="h-5 w-5" />
               </div>
               <div>
-                <h3 id="AccessibilityTab-modal-title-1" className="text-base font-bold text-ink-primary">Clear Filter Confirmation</h3>
+                <h3 id="AccessibilityTab-modal-title-1" className="text-lg font-semibold text-ink-primary">Clear Filter Confirmation</h3>
                 <p className="text-xs text-ink-secondary">Reset category permissions</p>
               </div>
             </div>

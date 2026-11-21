@@ -5,7 +5,7 @@
  */
 
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApplicants, useChangeApplicantStatus, useJobOpenings, useRecruitmentStages } from '@/hooks/useRecruitment';
 import { getStagePreset } from './RecruitmentStages';
@@ -15,9 +15,11 @@ import type { FieldConfig } from '@/components/CrudModal';
 import api from '@/lib/api';
 import type { ApplicantStatus, JobApplicant } from '@/types/recruitment';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink, IconButton } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
+import { Iconify } from '@/components/Iconify';
+import { Card } from '@/components/ui/Card';
 
 const APPLICANT_FIELDS: FieldConfig[] = [
   { key: 'name', label: 'Name', type: 'text', required: true },
@@ -269,12 +271,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
             </svg>
             <span className="font-semibold">{onboardSuccessMessage}</span>
           </div>
-          <button
-            onClick={() => setOnboardSuccessMessage(null)}
-            className="text-success-main hover:text-success-dark"
-          >
-            &times;
-          </button>
+          <IconButton icon="close" size="small" color="success" aria-label="Dismiss" onClick={() => setOnboardSuccessMessage(null)} />
         </div>
       )}
 
@@ -287,12 +284,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
             </svg>
             <span className="font-semibold">{cancelSuccessMessage}</span>
           </div>
-          <button
-            onClick={() => setCancelSuccessMessage(null)}
-            className="text-error-main hover:text-error-dark"
-          >
-            &times;
-          </button>
+          <IconButton icon="close" size="small" color="error" aria-label="Dismiss" onClick={() => setCancelSuccessMessage(null)} />
         </div>
       )}
 
@@ -309,12 +301,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                 'Failed to update stage. Please try again.'}
             </span>
           </div>
-          <button
-            onClick={() => changeStatus.reset()}
-            className="text-error-main hover:text-error-dark"
-          >
-            &times;
-          </button>
+          <IconButton icon="close" size="small" color="error" aria-label="Dismiss" onClick={() => changeStatus.reset()} />
         </div>
       )}
 
@@ -322,15 +309,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           {onBack && (
-            <button
-              onClick={onBack}
-              className="rounded-md p-1.5 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary"
-              aria-label="Go back"
-            >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
+            <IconButton icon="arrow-left" aria-label="Go back" onClick={onBack} />
           )}
           <div>
             <h2 className="text-lg font-semibold text-ink-primary">Applicant Pipeline</h2>
@@ -342,15 +321,9 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
 
         {/* Actions & Filters */}
         <div className="flex flex-wrap items-center gap-2">
-          <Link
-            to="/recruitment/stages"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-surface-paper px-3 py-2 text-xs font-semibold text-ink-primary shadow-xs hover:bg-surface-neutral transition"
-          >
-            <svg className="h-4 w-4 text-secondary-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
-            </svg>
+          <ButtonLink to="/recruitment/stages" variant="outlined" color="inherit" startIcon={<Iconify icon="settings" />}>
             Configure Stages
-          </Link>
+          </ButtonLink>
           <CreateButton permission="recruitment.create" label="Add Applicant" onClick={() => setShowCreate(true)} />
           <Select
             value={selectedJobOpening}
@@ -390,10 +363,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
           {activeStages.map((stage) => {
             const applicants = groupedApplicants[stage.key] || [];
             return (
-              <div
-                key={stage.key}
-                className={`min-w-[270px] flex-1 rounded-xl border-t-4 bg-surface-paper p-3 shadow-xs border ${stage.border}`}
-              >
+              <Card key={stage.key} className={`min-w-[270px] flex-1 border-t-4 p-3 ${stage.border}`}>
                 {/* Column Header */}
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
@@ -434,7 +404,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
                     />
                   ))}
                 </div>
-              </div>
+              </Card>
             );
           })}
         </div>
@@ -510,26 +480,14 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
               >
                 Cancel
               </Button>
-              <button
-                type="button"
+              <Button
+                color="success"
                 onClick={handleConfirmOnboarding}
-                disabled={onboardMutation.isPending}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-success-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-success-dark disabled:opacity-50"
+                loading={onboardMutation.isPending}
+                startIcon={<Iconify icon="check" />}
               >
-                {onboardMutation.isPending ? (
-                  <>
-                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-surface-paper border-t-transparent" />
-                    <span>Processing...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>Confirm & Move to Onboarding</span>
-                  </>
-                )}
-              </button>
+                {onboardMutation.isPending ? 'Processing...' : 'Confirm & Move to Onboarding'}
+              </Button>
             </div>
           </div>
         </Modal>
@@ -622,26 +580,14 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
               >
                 Keep Onboarded
               </Button>
-              <button
-                type="button"
+              <Button
+                color="error"
                 onClick={handleConfirmCancelOnboarding}
-                disabled={cancelOnboardMutation.isPending}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-error-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-error-dark disabled:opacity-50"
+                loading={cancelOnboardMutation.isPending}
+                startIcon={<Iconify icon="trash" />}
               >
-                {cancelOnboardMutation.isPending ? (
-                  <>
-                    <div className="h-3 w-3 animate-spin rounded-full border-2 border-surface-paper border-t-transparent" />
-                    <span>Processing...</span>
-                  </>
-                ) : (
-                  <>
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    <span>Confirm Revoke Offer</span>
-                  </>
-                )}
-              </button>
+                {cancelOnboardMutation.isPending ? 'Processing...' : 'Confirm Revoke Offer'}
+              </Button>
             </div>
           </div>
         </Modal>
@@ -778,7 +724,7 @@ function ApplicantCard({
   const nextStages = availableStages.filter((s) => s.key !== currentStage);
 
   return (
-    <div className="rounded-md border border-divider bg-surface-paper p-3 shadow-sm transition-shadow hover:shadow-md">
+    <Card className="p-3 transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between">
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-ink-primary">{applicant.name}</p>
@@ -810,18 +756,17 @@ function ApplicantCard({
       {/* Selected Stage: Prominent Move to Onboarding Button */}
       {currentStage === 'selected' && (
         <div className="mt-2.5">
-          <button
-            type="button"
+          <Button
+            color="success"
+            size="small"
             onClick={() => onInitiateOnboarding(applicant)}
             disabled={isMoving}
-            className="w-full inline-flex items-center justify-center gap-1.5 rounded-md bg-success-main px-2.5 py-1.5 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-success-dark transition-colors disabled:opacity-50"
             title="Complete hiring and move to onboarding"
+            startIcon={<Iconify icon="check" />}
+            className="w-full"
           >
-            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            <span>Move to Onboarding</span>
-          </button>
+            Move to Onboarding
+          </Button>
         </div>
       )}
 
@@ -849,50 +794,48 @@ function ApplicantCard({
               <span>Locked</span>
             </div>
 
-            <button
-              type="button"
+            <Button
+              variant="soft"
+              color="error"
+              size="small"
               onClick={() => onCancelOnboarding(applicant)}
               disabled={isMoving}
-              className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-semibold text-error-dark bg-error-lighter hover:bg-error-lighter border border-error-light transition-colors disabled:opacity-50"
               title="Revoke offer or cancel onboarding if candidate backs out"
+              startIcon={<Iconify icon="close" />}
             >
-              <svg className="h-3 w-3 text-error-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              <span>Revoke Offer</span>
-            </button>
+              Revoke Offer
+            </Button>
           </div>
         </div>
       ) : (
         /* Move Actions Dropdown (Only for stages other than onboarded) */
         <div className="mt-2 flex items-center justify-between pt-1 border-t border-divider">
-          <button
-            onClick={() => setShowActions(!showActions)}
-            className="text-xs text-primary-main hover:text-primary-dark font-medium"
-            disabled={isMoving}
-          >
+          <Button variant="text" size="small" onClick={() => setShowActions(!showActions)} disabled={isMoving}>
             {showActions ? 'Cancel' : 'Change stage...'}
-          </button>
+          </Button>
 
           {showActions && (
             <div className="mt-1.5 flex flex-wrap gap-1">
               {nextStages.map((stage) => (
-                <button
+                <Button
                   key={stage.key}
+                  variant="outlined"
+                  color="inherit"
+                  size="small"
                   onClick={() => {
                     onMove(applicant.id, stage.key);
                     setShowActions(false);
                   }}
                   disabled={isMoving}
-                  className="rounded border border-divider px-2 py-0.5 text-xs text-ink-secondary hover:bg-surface-neutral disabled:opacity-50 capitalize"
+                  className="capitalize"
                 >
                   {stage.label}
-                </button>
+                </Button>
               ))}
             </div>
           )}
         </div>
       )}
-    </div>
+    </Card>
   );
 }

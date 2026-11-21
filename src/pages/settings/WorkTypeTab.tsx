@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
-import { PlusIcon, PencilIcon, TrashIcon, SearchIcon, CheckIcon, LoaderIcon } from './SettingsIcons';
+import { PlusIcon, SearchIcon, CheckIcon, LoaderIcon } from './SettingsIcons';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 
@@ -204,7 +204,7 @@ export function WorkTypeTab() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Work Type</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Work Type</h2>
           <p className="mt-1 text-sm text-ink-secondary">
             Define recognized employment work arrangements and associated companies.
           </p>
@@ -270,24 +270,9 @@ export function WorkTypeTab() {
                   <td className="px-6 py-4 font-medium text-ink-primary">{item.name}</td>
                   <td className="px-6 py-4 text-ink-secondary">{item.company}</td>
                   <td className="px-6 py-4 text-right">
-                    <div className="inline-flex items-center rounded-md border border-divider bg-surface-neutral/50 p-0.5">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenEdit(item)}
-                        className="rounded p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
-                        title="Edit work type"
-                      >
-                        <PencilIcon className="h-4 w-4" />
-                      </button>
-                      <div className="h-4 w-px bg-grey-200 my-auto" />
-                      <button
-                        type="button"
-                        onClick={() => setDeleteTarget(item)}
-                        className="rounded p-1.5 text-ink-disabled hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
-                        title="Delete work type"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
+                    <div className="inline-flex items-center gap-1">
+                      <IconButton icon="pencil" size="small" aria-label="Edit work type" title="Edit work type" onClick={() => handleOpenEdit(item)} />
+                      <IconButton icon="trash" size="small" color="error" aria-label="Delete work type" title="Delete work type" onClick={() => setDeleteTarget(item)} />
                     </div>
                   </td>
                 </tr>
@@ -305,16 +290,10 @@ export function WorkTypeTab() {
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             {/* Modal Header Bar */}
             <div className="flex items-center justify-between pb-3 border-b border-divider">
-              <h3 id="WorkTypeTab-modal-title-1" className="text-base font-semibold text-ink-primary">
+              <h3 id="WorkTypeTab-modal-title-1" className="text-lg font-semibold text-ink-primary">
                 {editingItem ? 'Edit Work Type' : 'Create Work Type'}
               </h3>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
-              >
-                <span className="text-xl font-light leading-none">&times;</span>
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setModalOpen(false)} />
             </div>
 
             {/* Form inside border box matching screenshot */}
@@ -380,7 +359,7 @@ export function WorkTypeTab() {
       {deleteTarget && (
         <Modal open onClose={() => setDeleteTarget(null)} labelledBy="WorkTypeTab-modal-title-2" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
-            <h3 id="WorkTypeTab-modal-title-2" className="text-lg font-bold text-ink-primary">Delete Work Type</h3>
+            <h3 id="WorkTypeTab-modal-title-2" className="text-lg font-semibold text-ink-primary">Delete Work Type</h3>
             <p className="mt-2 text-sm text-ink-secondary">
               Are you sure you want to delete the work type &quot;{deleteTarget.name}&quot;? This action cannot be undone.
             </p>

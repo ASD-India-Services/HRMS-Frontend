@@ -3,7 +3,7 @@ import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
 import type { AttendanceBreakPointConfig } from '@/hooks/useHRSettings';
 import { CheckIcon, LoaderIcon } from './SettingsIcons';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton, Switch } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
 const LOCAL_STORAGE_KEY = 'hrms_attendance_break_point';
@@ -104,7 +104,7 @@ export function AttendanceBreakPointTab() {
 
       {/* Header matching screenshot */}
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Break Point Condition</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">Break Point Condition</h2>
       </div>
 
       <hr className="border-divider" />
@@ -165,14 +165,8 @@ export function AttendanceBreakPointTab() {
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between pb-4">
-              <h3 id="AttendanceBreakPointTab-modal-title-1" className="text-xl font-bold text-ink-primary">Edit Break Point Condition</h3>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
-              >
-                <span className="text-xl font-light leading-none">&times;</span>
-              </button>
+              <h3 id="AttendanceBreakPointTab-modal-title-1" className="text-lg font-semibold text-ink-primary">Edit Break Point Condition</h3>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setModalOpen(false)} />
             </div>
 
             {/* Form */}
@@ -224,22 +218,7 @@ export function AttendanceBreakPointTab() {
                   <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Auto Approve OT
                   </label>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={formAutoApproveOT}
-                    onClick={() => setFormAutoApproveOT((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                      formAutoApproveOT ? 'bg-primary-main' : 'bg-grey-300'
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formAutoApproveOT ? 'translate-x-5' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
+                  <Switch checked={formAutoApproveOT} onClick={() => setFormAutoApproveOT((prev) => !prev)} />
                   <span className="ml-3 text-sm font-medium text-ink-primary">
                     {formAutoApproveOT ? 'Yes' : 'No'}
                   </span>

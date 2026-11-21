@@ -12,7 +12,7 @@
  */
 
 import { useState, useMemo } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import {
   useRecruitmentStages,
   useCreateRecruitmentStage,
@@ -26,9 +26,13 @@ import {
 import type { RecruitmentStage, JobOpeningStatus } from '@/types/recruitment';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { Iconify } from '@/components/Iconify';
+import { Card } from '@/components/ui/Card';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 export const STAGE_COLOR_PRESETS: {
   key: string;
@@ -47,7 +51,7 @@ export const STAGE_COLOR_PRESETS: {
   { key: 'rose', label: 'Rose / Red', bg: 'bg-error-main', dot: 'bg-error-main', badge: 'bg-error-lighter text-error-dark border-error-light', border: 'border-error-main', previewClass: 'from-error-main to-error-main' },
   { key: 'indigo', label: 'Indigo', bg: 'bg-secondary-main', dot: 'bg-secondary-main', badge: 'bg-secondary-lighter text-secondary-dark border-secondary-light', border: 'border-secondary-main', previewClass: 'from-secondary-main to-secondary-main' },
   { key: 'cyan', label: 'Sky Cyan', bg: 'bg-info-main', dot: 'bg-info-main', badge: 'bg-info-lighter text-info-dark border-info-light', border: 'border-info-main', previewClass: 'from-info-main to-primary-main' },
-  { key: 'pink', label: 'Pink', bg: 'bg-pink-500', dot: 'bg-pink-500', badge: 'bg-pink-50 text-pink-700 border-pink-200', border: 'border-pink-400', previewClass: 'from-pink-500 to-error-main' },
+  { key: 'pink', label: 'Pink', bg: 'bg-error-light', dot: 'bg-error-light', badge: 'bg-error-lighter text-error-dark border-error-light', border: 'border-error-light', previewClass: 'from-error-light to-error-main' },
   { key: 'slate', label: 'Slate Gray', bg: 'bg-grey-500', dot: 'bg-grey-500', badge: 'bg-surface-neutral text-ink-primary border-divider', border: 'border-grey-400', previewClass: 'from-grey-600 to-grey-700' },
 ];
 
@@ -292,38 +296,19 @@ export function RecruitmentStages() {
   // ─────────────────────────────────────────────────────────────────────────────
   if (!selectedJobId) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        {/* Top Header */}
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-main text-primary-contrast shadow-sm">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
-                </svg>
-              </span>
-              <h1 className="text-2xl font-bold text-ink-primary">Recruitment Stages</h1>
-            </div>
-            <p className="mt-1 text-sm text-ink-secondary">
-              Configure custom hiring pipeline stages for each job opening, or manage organization defaults.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link
-              to="/recruitment/pipeline"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-surface-paper px-3.5 py-2 text-sm font-medium text-ink-primary shadow-sm transition hover:bg-surface-neutral focus:outline-none focus:ring-2 focus:ring-secondary-main"
-            >
-              <svg className="h-4 w-4 text-ink-secondary" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z" />
-              </svg>
+      <PageContainer>
+        <PageHeader
+          title="Recruitment Stages"
+          subtitle="Configure custom hiring pipeline stages for each job opening, or manage organization defaults."
+          actions={
+            <ButtonLink to="/recruitment/pipeline" variant="outlined" color="inherit" startIcon={<Iconify icon="pipeline" />}>
               View Pipeline Board
-            </Link>
-          </div>
-        </div>
+            </ButtonLink>
+          }
+        />
 
         {/* Global Default Stages Highlight Card */}
-        <div className="mb-8 overflow-hidden rounded-2xl border border-secondary-lighter bg-gradient-to-r from-secondary-lighter/70 via-surface-paper to-secondary-lighter/50 p-5 shadow-sm">
+        <Card className="mb-8 p-5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-3.5">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary-main text-primary-contrast shadow-sm">
@@ -354,7 +339,7 @@ export function RecruitmentStages() {
               </svg>
             </Button>
           </div>
-        </div>
+        </Card>
 
         {/* Filter and Search Bar */}
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -379,30 +364,29 @@ export function RecruitmentStages() {
 
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-ink-secondary">Status:</span>
-            <div className="inline-flex rounded-lg border border-divider bg-surface-paper p-0.5 shadow-2xs">
+            <Card className="inline-flex p-0.5">
               {['all', 'open', 'closed', 'on_hold'].map((st) => (
-                <button
+                <Button
                   key={st}
+                  size="small"
+                  variant={statusFilter === st ? 'contained' : 'text'}
+                  color={statusFilter === st ? 'secondary' : 'inherit'}
                   onClick={() => setStatusFilter(st)}
-                  className={`rounded-md px-3 py-1 text-xs font-medium capitalize transition ${
-                    statusFilter === st
-                      ? 'bg-secondary-main text-primary-contrast shadow-xs'
-                      : 'text-ink-secondary hover:text-ink-primary'
-                  }`}
+                  className="capitalize"
                 >
                   {st === 'all' ? 'All Jobs' : st.replace('_', ' ')}
-                </button>
+                </Button>
               ))}
-            </div>
+            </Card>
           </div>
         </div>
 
         {/* Loading State */}
         {isLoadingOpenings && (
-          <div className="rounded-2xl border border-divider bg-surface-paper p-12 text-center shadow-sm">
+          <Card className="p-12 text-center">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-secondary-main border-r-transparent"></div>
             <p className="mt-3 text-sm font-medium text-ink-secondary">Loading job openings...</p>
-          </div>
+          </Card>
         )}
 
         {/* Empty State */}
@@ -417,12 +401,9 @@ export function RecruitmentStages() {
             <p className="mt-1 text-sm text-ink-secondary">
               {searchTerm ? 'No job openings match your search filter.' : 'Create your first job opening to configure stages.'}
             </p>
-            <Link
-              to="/recruitment"
-              className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-secondary-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-secondary-dark"
-            >
+            <ButtonLink to="/recruitment" color="secondary" size="small" className="mt-4">
               Go to Job Openings
-            </Link>
+            </ButtonLink>
           </div>
         )}
 
@@ -502,22 +483,23 @@ export function RecruitmentStages() {
 
                   {/* Card Bottom Action */}
                   <div className="mt-5 pt-3 border-t border-divider">
-                    <button
+                    <Button
+                      variant="soft"
+                      color="secondary"
+                      size="small"
                       onClick={() => setSearchParams({ job: job.id })}
-                      className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-secondary-lighter py-2.5 text-xs font-semibold text-secondary-dark transition hover:bg-secondary-main hover:text-primary-contrast"
+                      endIcon={<Iconify icon="arrow-right" />}
+                      className="w-full"
                     >
-                      <span>Configure Stages</span>
-                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                      </svg>
-                    </button>
+                      Configure Stages
+                    </Button>
                   </div>
                 </div>
               );
             })}
           </div>
         )}
-      </div>
+      </PageContainer>
     );
   }
 
@@ -531,18 +513,12 @@ export function RecruitmentStages() {
     : 'Configure Job Stages';
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <PageContainer>
       {/* Breadcrumb / Back button */}
       <div className="mb-4 flex items-center justify-between">
-        <button
-          onClick={() => setSearchParams({})}
-          className="inline-flex items-center gap-2 text-xs font-semibold text-ink-secondary hover:text-secondary-main transition"
-        >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-          </svg>
+        <Button variant="text" color="inherit" size="small" startIcon={<Iconify icon="arrow-left" />} onClick={() => setSearchParams({})}>
           Back to All Job Openings
-        </button>
+        </Button>
 
         {/* Quick job switcher */}
         <div className="flex items-center gap-2">
@@ -552,7 +528,7 @@ export function RecruitmentStages() {
             onChange={(e) => setSearchParams(e.target.value ? { job: e.target.value } : {})}
             className="font-medium"
           >
-            <option value="default">📋 Organization Defaults</option>
+            <option value="default">Organization Defaults</option>
             {jobOpenings.map((j) => (
               <option key={j.id} value={j.id}>
                 {j.title} {j.has_custom_stages ? '(Custom)' : ''}
@@ -562,76 +538,53 @@ export function RecruitmentStages() {
         </div>
       </div>
 
-      {/* Top Banner & Header */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-secondary-main text-primary-contrast shadow-sm">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
-              </svg>
-            </span>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold text-ink-primary">{pageTitle}</h1>
-                {selectedOpening && (
-                  <span
-                    className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${
-                      STATUS_BADGES[selectedOpening.status]?.badge || STATUS_BADGES.open.badge
-                    }`}
-                  >
-                    <span className={`h-1.5 w-1.5 rounded-full ${STATUS_BADGES[selectedOpening.status]?.dot || STATUS_BADGES.open.dot}`} />
-                    {selectedOpening.status.toUpperCase()}
-                  </span>
-                )}
-              </div>
-              <p className="mt-1 text-xs text-ink-secondary">
-                {isDefaultPipeline
-                  ? 'Manage the global default stages applied to all job openings that do not have custom stages.'
-                  : selectedOpening
-                  ? `Customized hiring pipeline specifically for "${selectedOpening.title}". Candidates for this job will progress through these stages.`
-                  : 'Recruitment stage configuration.'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Link
-            to="/recruitment/pipeline"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-surface-paper px-3.5 py-2 text-sm font-medium text-ink-primary shadow-sm transition hover:bg-surface-neutral focus:outline-none focus:ring-2 focus:ring-secondary-main"
-          >
-            <svg className="h-4 w-4 text-ink-secondary" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z" />
-            </svg>
-            View Pipeline Board
-          </Link>
-
-          {/* Copy defaults button if opening has no custom stages */}
+      <PageHeader
+        title={
+          <span className="flex flex-wrap items-center gap-2">
+            {pageTitle}
+            {selectedOpening && (
+              <span
+                className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${
+                  STATUS_BADGES[selectedOpening.status]?.badge || STATUS_BADGES.open.badge
+                }`}
+              >
+                <span className={`h-1.5 w-1.5 rounded-full ${STATUS_BADGES[selectedOpening.status]?.dot || STATUS_BADGES.open.dot}`} />
+                {selectedOpening.status.toUpperCase()}
+              </span>
+            )}
+          </span>
+        }
+        subtitle={
+          isDefaultPipeline
+            ? 'Manage the global default stages applied to all job openings that do not have custom stages.'
+            : selectedOpening
+            ? `Customized hiring pipeline specifically for "${selectedOpening.title}". Candidates for this job will progress through these stages.`
+            : 'Recruitment stage configuration.'
+        }
+        actions={
+          <>
+            <ButtonLink to="/recruitment/pipeline" variant="outlined" color="inherit" startIcon={<Iconify icon="pipeline" />}>
+              View Pipeline Board
+            </ButtonLink>
+            {/* Copy defaults button if opening has no custom stages */}
           {selectedOpening && sortedStages.length === 0 && (
-            <button
+            <Button
+              variant="soft"
+              color="secondary"
               onClick={handleInitializeDefaults}
               disabled={initializeMutation.isPending}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-secondary-light bg-secondary-lighter px-3.5 py-2 text-sm font-semibold text-secondary-dark shadow-sm transition hover:bg-secondary-lighter disabled:opacity-50"
+              startIcon={<Iconify icon="copy" />}
             >
-              <svg className="h-4 w-4 text-secondary-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
-              </svg>
               {initializeMutation.isPending ? 'Copying...' : 'Copy Default Stages'}
-            </button>
+            </Button>
           )}
 
-          <button
-            onClick={openCreateModal}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-secondary-main px-4 py-2 text-sm font-semibold text-primary-contrast shadow-sm transition hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-secondary-main"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
+          <Button color="secondary" onClick={openCreateModal} startIcon={<Iconify icon="plus" />}>
             Add Stage
-          </button>
-        </div>
-      </div>
+          </Button>
+          </>
+        }
+      />
 
       {/* Success Notification */}
       {successBanner && (
@@ -642,9 +595,7 @@ export function RecruitmentStages() {
             </svg>
             <span className="font-medium">{successBanner}</span>
           </div>
-          <button onClick={() => setSuccessBanner(null)} className="text-success-main hover:text-success-dark">
-            ✕
-          </button>
+          <IconButton icon="close" size="small" color="success" aria-label="Dismiss" onClick={() => setSuccessBanner(null)} />
         </div>
       )}
 
@@ -669,13 +620,15 @@ export function RecruitmentStages() {
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <button
+              <Button
+                color="warning"
+                size="small"
                 onClick={handleInitializeDefaults}
                 disabled={initializeMutation.isPending}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-warning-main px-3.5 py-2 text-xs font-bold text-primary-contrast shadow-xs hover:bg-warning-dark disabled:opacity-50"
+                startIcon={<Iconify icon="copy" />}
               >
-                ⚡ Copy Organization Defaults
-              </button>
+                Copy Organization Defaults
+              </Button>
               <Button type="button" variant="outlined" color="inherit" size="small"
                 onClick={openCreateModal}
               >
@@ -726,10 +679,10 @@ export function RecruitmentStages() {
 
       {/* Loading & Error States */}
       {isLoadingStages && (
-        <div className="rounded-2xl border border-divider bg-surface-paper p-12 text-center shadow-sm">
+        <Card className="p-12 text-center">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-secondary-main border-r-transparent"></div>
           <p className="mt-3 text-sm font-medium text-ink-secondary">Loading stages...</p>
-        </div>
+        </Card>
       )}
 
       {isStageError && (
@@ -743,7 +696,7 @@ export function RecruitmentStages() {
 
       {/* Main Stages Cards / Table */}
       {!isLoadingStages && !isStageError && sortedStages.length > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-grey-300/90 bg-surface-paper shadow-sm">
+        <Card className="overflow-hidden">
           <div className="border-b border-divider bg-surface-neutral/75 px-6 py-3.5">
             <div className="grid grid-cols-12 text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               <div className="col-span-1">Order</div>
@@ -769,26 +722,22 @@ export function RecruitmentStages() {
                       #{stage.order}
                     </span>
                     <div className="flex flex-col">
-                      <button
+                      <IconButton
+                        icon="chevron-up"
+                        size="small"
                         onClick={() => handleMove(index, 'up')}
                         disabled={index === 0 || reorderMutation.isPending}
                         title="Move Up"
-                        className="rounded p-0.5 text-ink-disabled hover:bg-grey-200 hover:text-ink-primary disabled:opacity-20 disabled:hover:bg-transparent"
-                      >
-                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                        </svg>
-                      </button>
-                      <button
+                        aria-label="Move Up"
+                      />
+                      <IconButton
+                        icon="chevron-down"
+                        size="small"
                         onClick={() => handleMove(index, 'down')}
                         disabled={index === sortedStages.length - 1 || reorderMutation.isPending}
                         title="Move Down"
-                        className="rounded p-0.5 text-ink-disabled hover:bg-grey-200 hover:text-ink-primary disabled:opacity-20 disabled:hover:bg-transparent"
-                      >
-                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                        </svg>
-                      </button>
+                        aria-label="Move Down"
+                      />
                     </div>
                   </div>
 
@@ -837,31 +786,25 @@ export function RecruitmentStages() {
 
                   {/* Actions */}
                   <div className="col-span-2 flex items-center justify-end gap-2">
-                    <button
-                      onClick={() => openEditModal(stage)}
-                      className="inline-flex items-center gap-1 rounded-lg border border-divider px-2.5 py-1.5 text-xs font-semibold text-ink-primary hover:bg-surface-neutral transition shadow-2xs"
-                    >
-                      <svg className="h-3.5 w-3.5 text-ink-secondary" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                      </svg>
+                    <Button variant="outlined" color="inherit" size="small" startIcon={<Iconify icon="pencil" />} onClick={() => openEditModal(stage)}>
                       Edit
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      size="small"
+                      startIcon={<Iconify icon="trash" />}
                       onClick={() => setDeleteStageTarget(stage)}
-                      className="inline-flex items-center gap-1 rounded-lg border border-error-light px-2.5 py-1.5 text-xs font-semibold text-error-main hover:bg-error-lighter hover:border-error-light transition shadow-2xs"
                       title={`Delete stage ${stage.name}`}
                     >
-                      <svg className="h-3.5 w-3.5 text-error-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                      </svg>
                       Delete
-                    </button>
+                    </Button>
                   </div>
                 </div>
               );
             })}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Add / Edit Stage Modal */}
@@ -877,12 +820,7 @@ export function RecruitmentStages() {
                   {selectedOpening ? `Scoped to: ${selectedOpening.title}` : 'Organization Default Pipeline'}
                 </p>
               </div>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setIsModalOpen(false)} />
             </div>
 
             {formError && (
@@ -954,27 +892,19 @@ export function RecruitmentStages() {
                 </label>
                 <div className="grid grid-cols-5 gap-2">
                   {STAGE_COLOR_PRESETS.map((preset) => (
-                    <button
-                      type="button"
+                    <Button
                       key={preset.key}
+                      variant="outlined"
+                      color={formColor === preset.key ? 'secondary' : 'inherit'}
                       onClick={() => setFormColor(preset.key)}
-                      className={`flex flex-col items-center gap-1 rounded-xl border p-2 text-center transition ${
-                        formColor === preset.key
-                          ? 'border-secondary-main bg-secondary-lighter/50 ring-2 ring-secondary-main/30'
-                          : 'border-divider hover:border-divider hover:bg-surface-neutral'
-                      }`}
+                      aria-pressed={formColor === preset.key}
+                      className="!h-auto flex-col !gap-1 !rounded-xl !p-2"
                     >
-                      <span className={`h-5 w-5 rounded-full ${preset.bg} shadow-xs flex items-center justify-center`}>
-                        {formColor === preset.key && (
-                          <svg className="h-3 w-3 text-primary-contrast" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                          </svg>
-                        )}
+                      <span className={`flex h-5 w-5 items-center justify-center rounded-full ${preset.bg} text-primary-contrast shadow-xs`}>
+                        {formColor === preset.key && <Iconify icon="check" width={12} />}
                       </span>
-                      <span className="text-[10px] font-medium text-ink-secondary truncate w-full">
-                        {preset.label.split(' ')[0]}
-                      </span>
-                    </button>
+                      <span className="w-full truncate text-[10px] font-medium">{preset.label.split(' ')[0]}</span>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -1022,13 +952,9 @@ export function RecruitmentStages() {
                   >
                     Cancel
                   </Button>
-                  <button
-                    type="submit"
-                    disabled={createMutation.isPending || updateMutation.isPending}
-                    className="rounded-xl bg-secondary-main px-5 py-2 text-sm font-semibold text-primary-contrast shadow-sm hover:bg-secondary-dark disabled:opacity-50"
-                  >
+                  <Button type="submit" color="secondary" disabled={createMutation.isPending || updateMutation.isPending}>
                     {createMutation.isPending || updateMutation.isPending ? 'Saving...' : editingStage ? 'Update Stage' : 'Create Stage'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </form>
@@ -1068,19 +994,18 @@ export function RecruitmentStages() {
               >
                 Cancel
               </Button>
-              <button
-                type="button"
+              <Button
+                color="error"
                 disabled={deleteMutation.isPending || getStageApplicantCount(deleteStageTarget) > 0}
                 onClick={() => handleDelete(deleteStageTarget)}
-                className="rounded-xl bg-error-main px-4 py-2 text-sm font-semibold text-primary-contrast shadow-sm hover:bg-error-dark disabled:opacity-50"
               >
                 {deleteMutation.isPending ? 'Deleting...' : 'Confirm Delete'}
-              </button>
+              </Button>
             </div>
           </div>
         </Modal>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

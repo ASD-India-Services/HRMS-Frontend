@@ -1,12 +1,5 @@
 import { Link } from 'react-router-dom';
-import {
-  ShieldCheckIcon,
-  UsersIcon,
-  TagIcon,
-  CloudIcon,
-  BriefcaseIcon,
-  ExternalLinkIcon,
-} from './SettingsIcons';
+import { UsersIcon, TagIcon, BriefcaseIcon, ExternalLinkIcon } from './SettingsIcons';
 
 export { EmployeePermissionTab } from './EmployeePermissionTab';
 
@@ -14,7 +7,7 @@ export function UserGroupTab() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold tracking-tight text-ink-primary">User Groups &amp; Roles</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">User Groups &amp; Roles</h2>
         <p className="mt-1 text-sm text-ink-secondary">
           Organize employees into functional user groups (e.g. HR Admin, Department Head, Payroll Manager, Field Staff).
         </p>
@@ -48,7 +41,7 @@ export function HistoryTagsTab() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold tracking-tight text-ink-primary">History Tags</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">History Tags</h2>
         <p className="mt-1 text-sm text-ink-secondary">
           Configure audit log markers and automated history tags for tracking changes across employee records.
         </p>
@@ -85,7 +78,7 @@ export function EmploymentTypesTab() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold tracking-tight text-ink-primary">Employment Types</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">Employment Types</h2>
         <p className="mt-1 text-sm text-ink-secondary">
           Define worker categories available during onboarding and contract renewals.
         </p>
@@ -114,7 +107,7 @@ export function AttendanceBreakpointsTab() {
   return (
     <div className="space-y-6 py-2">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Attendance Breakpoints</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">Attendance Breakpoints</h2>
         <p className="mt-1 text-sm text-ink-secondary">
           Configure minimum hours required for Full Day, Half Day, and Short Leave classifications.
         </p>
@@ -145,7 +138,7 @@ export function IpRestrictionsTab() {
   return (
     <div className="space-y-6 py-2">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-ink-primary">IP Restrictions &amp; Geofencing</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">IP Restrictions &amp; Geofencing</h2>
         <p className="mt-1 text-sm text-ink-secondary">
           Restrict web check-ins to approved office network IP subnets and GPS boundaries.
         </p>
@@ -170,7 +163,7 @@ export function GraceTimeTab() {
   return (
     <div className="space-y-6 py-2">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Grace Time &amp; Penalties</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">Grace Time &amp; Penalties</h2>
         <p className="mt-1 text-sm text-ink-secondary">
           Set permissible check-in delays and automated deduction rules for late coming and early departures.
         </p>

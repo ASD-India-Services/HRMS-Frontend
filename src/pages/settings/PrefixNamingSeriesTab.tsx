@@ -150,7 +150,7 @@ export function PrefixNamingSeriesTab() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-bold tracking-tight text-ink-primary">Prefixes & Naming Series</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">Prefixes & Naming Series</h2>
         <p className="mt-1 text-sm text-ink-secondary">
           Configure auto-generated identifier patterns for employees, applicants, leave requests, and claims.
         </p>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
 import type { BonusPointSettingItem } from '@/hooks/useHRSettings';
-import { PlusIcon, PencilIcon, TrashIcon, CheckIcon, LoaderIcon, SearchIcon } from './SettingsIcons';
+import { PlusIcon, CheckIcon, LoaderIcon, SearchIcon } from './SettingsIcons';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton, Switch } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 
@@ -236,7 +236,7 @@ export function BonusPointSettingTab() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Bonus Point Setting</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Bonus Point Setting</h2>
           <p className="mt-1 text-sm text-ink-secondary">
             Configure automated performance bonus point rules and criteria based on objective models.
           </p>
@@ -334,42 +334,12 @@ export function BonusPointSettingTab() {
                   <td className="px-5 py-3.5 text-ink-secondary">{item.field_2}</td>
                   <td className="px-5 py-3.5 font-semibold text-ink-primary">{item.points}</td>
                   <td className="px-5 py-3.5">
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={item.is_active}
-                      onClick={() => handleToggleActive(item.id)}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                        item.is_active ? 'bg-primary-main' : 'bg-grey-300'
-                      }`}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                          item.is_active ? 'translate-x-5' : 'translate-x-0'
-                        }`}
-                      />
-                    </button>
+                    <Switch checked={!!item.is_active} onClick={() => handleToggleActive(item.id)} />
                   </td>
                   <td className="px-5 py-3.5 text-right">
-                    <div className="inline-flex items-center rounded-md border border-divider bg-surface-neutral/50 p-0.5">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenEdit(item)}
-                        title="Edit"
-                        className="rounded p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
-                      >
-                        <PencilIcon className="h-4 w-4" />
-                      </button>
-                      <div className="h-4 w-px bg-grey-200 my-auto" />
-                      <button
-                        type="button"
-                        onClick={() => setDeleteId(item.id)}
-                        title="Delete"
-                        className="rounded p-1.5 text-error-main hover:bg-surface-paper hover:text-error-dark hover:shadow-xs transition-colors"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
+                    <div className="inline-flex items-center gap-1">
+                      <IconButton icon="pencil" size="small" aria-label="Edit" title="Edit" onClick={() => handleOpenEdit(item)} />
+                      <IconButton icon="trash" size="small" color="error" aria-label="Delete" title="Delete" onClick={() => setDeleteId(item.id)} />
                     </div>
                   </td>
                 </tr>
@@ -387,16 +357,10 @@ export function BonusPointSettingTab() {
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             {/* Modal Header Bar */}
             <div className="flex items-center justify-between pb-3 border-b border-divider">
-              <h3 id="BonusPointSettingTab-modal-title-1" className="text-base font-semibold text-ink-primary">
+              <h3 id="BonusPointSettingTab-modal-title-1" className="text-lg font-semibold text-ink-primary">
                 {editingItem ? 'Edit Bonus Point Setting' : 'Create Bonus Point Setting'}
               </h3>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
-              >
-                <span className="text-xl font-light leading-none">&times;</span>
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setModalOpen(false)} />
             </div>
 
             <form onSubmit={handleSaveModal} className="space-y-5 pt-4">
@@ -527,22 +491,7 @@ export function BonusPointSettingTab() {
                     Is active
                   </label>
                   <div className="pt-1">
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={formIsActive}
-                      onClick={() => setFormIsActive((prev) => !prev)}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-                        formIsActive ? 'bg-primary-main' : 'bg-grey-300'
-                      }`}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-                          formIsActive ? 'translate-x-5' : 'translate-x-0'
-                        }`}
-                      />
-                    </button>
+                    <Switch checked={formIsActive} onClick={() => setFormIsActive((prev) => !prev)} />
                   </div>
                 </div>
               </div>
@@ -572,7 +521,7 @@ export function BonusPointSettingTab() {
       {deleteId && (
         <Modal open onClose={() => setDeleteId(null)} labelledBy="BonusPointSettingTab-modal-title-2" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
-            <h3 id="BonusPointSettingTab-modal-title-2" className="text-lg font-bold text-ink-primary">Delete Bonus Point Setting</h3>
+            <h3 id="BonusPointSettingTab-modal-title-2" className="text-lg font-semibold text-ink-primary">Delete Bonus Point Setting</h3>
             <p className="mt-2 text-sm text-ink-secondary">
               Are you sure you want to delete this bonus point setting rule? This action cannot be undone.
             </p>

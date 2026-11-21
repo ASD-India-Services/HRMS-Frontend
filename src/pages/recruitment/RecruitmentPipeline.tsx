@@ -32,6 +32,8 @@ import api from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { ColumnDef } from '@/types/datatable';
 import { ApplicantDetailDrawer, type ApplicantRow } from './ApplicantDetailDrawer';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const APPLICANT_FIELDS: FieldConfig[] = [
   { key: 'name', label: 'Applicant Name', type: 'text', required: true },
@@ -194,17 +196,12 @@ export function RecruitmentPipeline() {
 
   return (
     <Can permissions={['recruitment.view']}>
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        {/* Page header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-ink-primary">Pipeline — All Candidates</h1>
-            <p className="mt-1 text-sm text-ink-secondary">
-              Select any candidate to view their complete application details. Candidates with "Applied" status can be moved to Screening.
-            </p>
-          </div>
-          <CreateButton permission="recruitment.create" label="Add Applicant" onClick={() => setShowCreate(true)} />
-        </div>
+      <PageContainer>
+        <PageHeader
+          title="Pipeline — All Candidates"
+          subtitle={'Select any candidate to view their complete application details. Candidates with "Applied" status can be moved to Screening.'}
+          actions={<CreateButton permission="recruitment.create" label="Add Applicant" onClick={() => setShowCreate(true)} />}
+        />
 
         {/* Filter bar */}
         <FilterBar
@@ -252,7 +249,7 @@ export function RecruitmentPipeline() {
           onSubmit={(data) => createMutation.mutate(data)}
           isLoading={createMutation.isPending}
         />
-      </div>
+      </PageContainer>
     </Can>
   );
 }

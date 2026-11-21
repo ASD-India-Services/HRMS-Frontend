@@ -6,9 +6,9 @@ import {
   useDeleteHelpdeskTag,
 } from '@/hooks/useHelpdesk';
 import type { HelpdeskTag } from '@/types/helpdesk';
-import { PlusIcon, PencilIcon, TrashIcon, CheckIcon, LoaderIcon, SearchIcon } from './SettingsIcons';
+import { PlusIcon, CheckIcon, LoaderIcon, SearchIcon } from './SettingsIcons';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
 const DEFAULT_TAGS: HelpdeskTag[] = [
@@ -178,7 +178,7 @@ export function HelpdeskTagsTab() {
       {/* Page Header matching screenshot */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-ink-primary">Helpdesk Tags</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Helpdesk Tags</h2>
           <p className="mt-1 text-sm text-ink-secondary">
             Create and organize tags to label and categorize Help Desk tickets, inquiries, and FAQs.
           </p>
@@ -252,24 +252,9 @@ export function HelpdeskTagsTab() {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <div className="inline-flex items-center rounded-md border border-divider bg-surface-neutral/50 p-0.5">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenEdit(tag)}
-                        title="Edit Tag"
-                        className="rounded p-1.5 text-ink-secondary hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
-                      >
-                        <PencilIcon className="h-4 w-4" />
-                      </button>
-                      <div className="h-4 w-px bg-grey-200 my-auto" />
-                      <button
-                        type="button"
-                        onClick={() => setDeleteTarget(tag)}
-                        title="Delete Tag"
-                        className="rounded p-1.5 text-ink-disabled hover:bg-surface-paper hover:text-primary-main hover:shadow-xs transition-colors"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
+                    <div className="inline-flex items-center gap-1">
+                      <IconButton icon="pencil" size="small" aria-label="Edit Tag" title="Edit Tag" onClick={() => handleOpenEdit(tag)} />
+                      <IconButton icon="trash" size="small" color="error" aria-label="Delete Tag" title="Delete Tag" onClick={() => setDeleteTarget(tag)} />
                     </div>
                   </td>
                 </tr>
@@ -287,16 +272,10 @@ export function HelpdeskTagsTab() {
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             {/* Modal Header Bar */}
             <div className="flex items-center justify-between pb-3 border-b border-divider">
-              <h3 id="HelpdeskTagsTab-modal-title-1" className="text-base font-semibold text-ink-primary">
+              <h3 id="HelpdeskTagsTab-modal-title-1" className="text-lg font-semibold text-ink-primary">
                 {editingTag ? 'Edit Helpdesk Tag' : 'Create Helpdesk Tag'}
               </h3>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="rounded-md p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition-colors"
-              >
-                <span className="text-xl font-light leading-none">&times;</span>
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setModalOpen(false)} />
             </div>
 
             <form onSubmit={handleSaveModal} className="space-y-6 pt-4">
@@ -357,17 +336,17 @@ export function HelpdeskTagsTab() {
                       {/* Quick preset color swatches */}
                       <div className="flex flex-wrap gap-1.5 pt-1">
                         {PRESET_COLORS.map((c) => (
-                          <button
+                          <Button
                             key={c}
-                            type="button"
+                            variant="text"
+                            color="inherit"
                             onClick={() => setFormColor(c)}
-                            className={`h-5 w-5 rounded-full border border-grey-900/15 transition-transform hover:scale-110 shrink-0 ${
-                              formColor.toLowerCase() === c.toLowerCase()
-                                ? 'ring-2 ring-primary-main ring-offset-1 scale-110'
-                                : ''
+                            className={`!h-5 !w-5 !min-w-0 !rounded-full !p-0 border border-grey-900/15 hover:scale-110 ${
+                              formColor.toLowerCase() === c.toLowerCase() ? 'ring-2 ring-primary-main ring-offset-1 scale-110' : ''
                             }`}
                             style={{ backgroundColor: c }}
                             title={c}
+                            aria-label={c}
                           />
                         ))}
                       </div>
@@ -401,7 +380,7 @@ export function HelpdeskTagsTab() {
       {deleteTarget && (
         <Modal open onClose={() => setDeleteTarget(null)} labelledBy="HelpdeskTagsTab-modal-title-2" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
-            <h3 id="HelpdeskTagsTab-modal-title-2" className="text-lg font-bold text-ink-primary">Delete Helpdesk Tag</h3>
+            <h3 id="HelpdeskTagsTab-modal-title-2" className="text-lg font-semibold text-ink-primary">Delete Helpdesk Tag</h3>
             <p className="mt-2 text-sm text-ink-secondary">
               Are you sure you want to delete the tag &quot;{deleteTarget.title}&quot;? This action cannot be undone.
             </p>

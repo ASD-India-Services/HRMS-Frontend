@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { InfoIcon, CheckIcon, LoaderIcon, AlertCircleIcon } from './SettingsIcons';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton, Switch } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 
@@ -16,23 +16,7 @@ function SwitchToggle({
   disabled?: boolean;
 }) {
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      disabled={disabled}
-      onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main/30 ${
-        checked ? 'bg-primary-main' : 'bg-grey-200'
-      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-    >
-      <span
-        aria-hidden="true"
-        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow-md ring-0 transition duration-200 ease-in-out ${
-          checked ? 'translate-x-5' : 'translate-x-0'
-        }`}
-      />
-    </button>
+    <Switch checked={checked} disabled={disabled} onClick={() => onChange(!checked)} />
   );
 }
 
@@ -380,7 +364,7 @@ export function GeneralSettingsTab() {
       {/* ─── 1. Announcement Expire ────────────────────────────────────── */}
       <section className="space-y-4 pt-1 first:pt-0">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Announcement Expire</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Announcement Expire</h2>
         </div>
 
         <div>
@@ -429,7 +413,7 @@ export function GeneralSettingsTab() {
       {/* ─── 2. Default Records Per Page ───────────────────────────────── */}
       <section className="space-y-4 pt-8">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Default Records Per Page</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Default Records Per Page</h2>
         </div>
 
         <div>
@@ -476,16 +460,16 @@ export function GeneralSettingsTab() {
           <p className="mt-1.5 text-xs text-ink-secondary">
             Quick presets:
             {[10, 25, 50, 100].map((preset) => (
-              <button
+              <Button
                 key={preset}
-                type="button"
+                variant="text"
+                color={pagination === preset ? 'primary' : 'inherit'}
+                size="small"
                 onClick={() => setPagination(preset)}
-                className={`ml-2 text-xs font-semibold ${
-                  pagination === preset ? 'text-primary-main underline' : 'text-ink-secondary hover:text-ink-primary'
-                }`}
+                className="ml-2"
               >
                 {preset}
-              </button>
+              </Button>
             ))}
           </p>
         </div>
@@ -494,7 +478,7 @@ export function GeneralSettingsTab() {
       {/* ─── 3. Employee Account Restrictions ──────────────────────────── */}
       <section className="space-y-4 pt-8">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Employee Account Restrictions</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Employee Account Restrictions</h2>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 pt-1">
@@ -549,7 +533,7 @@ export function GeneralSettingsTab() {
       {/* ─── 4. Resignation Request ────────────────────────────────────── */}
       <section className="space-y-4 pt-8">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Resignation Request</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Resignation Request</h2>
         </div>
 
         <div className="space-y-2">
@@ -580,7 +564,7 @@ export function GeneralSettingsTab() {
       {/* ─── 5. Time Runner (At-Work Tracker) ──────────────────────────── */}
       <section className="space-y-4 pt-8">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Time Runner</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Time Runner</h2>
         </div>
 
         <div className="space-y-2">
@@ -611,7 +595,7 @@ export function GeneralSettingsTab() {
       {/* ─── 6. Notice Period ──────────────────────────────────────────── */}
       <section className="space-y-4 pt-8">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Notice Period</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Notice Period</h2>
         </div>
 
         <div>
@@ -660,7 +644,7 @@ export function GeneralSettingsTab() {
       {/* ─── 7. Badge Prefix ───────────────────────────────────────────── */}
       <section className="space-y-4 pt-8">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Badge Prefix</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Badge Prefix</h2>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -733,7 +717,7 @@ export function GeneralSettingsTab() {
       {/* ─── 8. Encashment Redeem Condition ────────────────────────────── */}
       <section className="space-y-4 pt-8">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Encashment Redeem Condition</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Encashment Redeem Condition</h2>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -804,7 +788,7 @@ export function GeneralSettingsTab() {
       {/* ─── 9. Employee History Tracking ──────────────────────────────── */}
       <section className="space-y-4 pt-8">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Employee History Tracking</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Employee History Tracking</h2>
         </div>
 
         <div>
@@ -837,16 +821,16 @@ export function GeneralSettingsTab() {
                           className="inline-flex items-center gap-1 rounded bg-primary-lighter px-2 py-0.5 text-xs font-medium text-primary-dark border border-primary-light"
                         >
                           {field?.label || fieldId}
-                          <button
-                            type="button"
+                          <IconButton
+                            icon="close"
+                            size="small"
+                            color="primary"
+                            aria-label="Remove field"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleToggleTrackingField(fieldId);
                             }}
-                            className="text-primary-main hover:text-primary-dark focus:outline-none ml-0.5"
-                          >
-                            &times;
-                          </button>
+                          />
                         </span>
                       );
                     })
@@ -932,7 +916,7 @@ export function GeneralSettingsTab() {
       {/* ─── 10. Currency ──────────────────────────────────────────────── */}
       <section className="space-y-4 pt-8">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-ink-primary">Currency</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Currency</h2>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
