@@ -10,7 +10,7 @@ import { CreateButton, EditButton, DeleteButton } from '@/components/ActionButto
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
-import { formatCurrency } from '@/utils/formatters';
+import { formatCurrency, formatDate } from '@/utils/formatters';
 import { Modal } from '@/components/ui/Modal';
 import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -334,7 +334,7 @@ export default function Gratuity() {
             <h3 className="text-base font-semibold text-success-darker mb-3">Result</h3>
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4 text-sm">
               <div><p className="text-xs text-ink-secondary">Employee</p><p className="font-medium">{calcResult.employee_name}</p></div>
-              <div><p className="text-xs text-ink-secondary">Joined</p><p className="font-medium">{calcResult.date_of_joining}</p></div>
+              <div><p className="text-xs text-ink-secondary">Joined</p><p className="font-medium">{calcResult.date_of_joining ? formatDate(calcResult.date_of_joining) : '—'}</p></div>
               <div><p className="text-xs text-ink-secondary">Years of Service</p><p className="font-medium">{calcResult.years_of_service} yrs</p></div>
               <div><p className="text-xs text-ink-secondary">Base Salary</p><p className="font-medium">{formatCurrency(parseFloat(calcResult.base_salary))}</p></div>
               <div><p className="text-xs text-ink-secondary">Components</p><p className="font-medium">{calcResult.salary_components_used.join(', ')}</p></div>

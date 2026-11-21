@@ -19,22 +19,22 @@ const DEFAULT_WORK_TYPES: WorkTypeItem[] = [
   {
     id: '1',
     name: 'Full-time On-site',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
   {
     id: '2',
     name: 'Remote / Work From Home',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
   {
     id: '3',
     name: 'Hybrid',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
   {
     id: '4',
     name: 'Field & Client Site',
-    company: 'G7 Synergon PVT. LTD. CRO',
+    company: 'digiHRMS',
   },
 ];
 
@@ -77,26 +77,36 @@ export function WorkTypeTab() {
     const branchList = Array.isArray(branchesData)
       ? branchesData
       : Array.isArray((branchesData as any)?.results)
-      ? (branchesData as any).results
-      : [];
+        ? (branchesData as any).results
+        : [];
     branchList.forEach((b: any) => {
       add(b?.name);
     });
 
     // 3. Fallback to organization company name if none loaded yet
     if (list.length === 0) {
-      list.push('G7 Synergon PVT. LTD. CRO');
+      list.push(settings?.company_name || 'digiHRMS');
     }
 
     return list;
   }, [settings, branchesData]);
+
+  const defaultCompany = settings?.company_name || 'DigiHRMS';
 
   const [workTypes, setWorkTypes] = useState<WorkTypeItem[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((item: any) => ({
+            ...item,
+            company:
+              !item.company || item.company.includes('Synergon')
+                ? defaultCompany
+                : item.company,
+          }));
+        }
       }
     } catch {
       // fallback
@@ -110,7 +120,7 @@ export function WorkTypeTab() {
 
   // Form states matching screenshot
   const [formWorkType, setFormWorkType] = useState('');
-  const [formCompany, setFormCompany] = useState(() => availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+  const [formCompany, setFormCompany] = useState(() => availableCompanies[0] || 'digiHRMS');
 
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<WorkTypeItem | null>(null);
@@ -139,14 +149,18 @@ export function WorkTypeTab() {
   const handleOpenAdd = () => {
     setEditingItem(null);
     setFormWorkType('');
-    setFormCompany(availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+    setFormCompany(availableCompanies[0] || 'digiHRMS');
     setModalOpen(true);
   };
 
   const handleOpenEdit = (item: WorkTypeItem) => {
     setEditingItem(item);
     setFormWorkType(item.name);
-    setFormCompany(item.company || availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+    setFormCompany(
+      !item.company || item.company.includes('Synergon')
+        ? availableCompanies[0] || defaultCompany
+        : item.company
+    );
     setModalOpen(true);
   };
 
@@ -154,16 +168,16 @@ export function WorkTypeTab() {
     e.preventDefault();
     if (!formWorkType.trim()) return;
 
-    const companyToSave = formCompany || availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO';
+    const companyToSave = formCompany || availableCompanies[0] || 'digiHRMS';
 
     if (editingItem) {
       const updated = workTypes.map((w) =>
         w.id === editingItem.id
           ? {
-              ...w,
-              name: formWorkType.trim(),
-              company: companyToSave,
-            }
+            ...w,
+            name: formWorkType.trim(),
+            company: companyToSave,
+          }
           : w
       );
       saveToStorage(updated, 'Work type updated successfully');
@@ -215,7 +229,7 @@ export function WorkTypeTab() {
           className="shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
-          + Create
+          Create
         </Button>
       </div>
 

@@ -4,6 +4,7 @@ import api from '@/lib/api';
 import { EMPLOYEES } from '@/lib/endpoints';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { formatDateTime } from '@/utils/formatters';
 import {
   useMeetings,
   useQuestionTemplates,
@@ -535,7 +536,7 @@ export default function Meetings() {
 
                       {/* Date & Time */}
                       <td className="py-3 px-3 text-ink-primary whitespace-nowrap font-medium">
-                        {m.formatted_date || m.date}
+                        {formatDateTime(m.date) !== '—' ? formatDateTime(m.date) : (m.formatted_date || m.date)}
                       </td>
 
                       {/* Managers */}
@@ -850,7 +851,11 @@ export default function Meetings() {
                   <span className="font-bold text-ink-primary block text-[11px] uppercase tracking-wider mb-0.5">
                     Date &amp; Time
                   </span>
-                  <span className="text-ink-primary font-medium">{selectedMeeting.formatted_date}</span>
+                  <span className="text-ink-primary font-medium">
+                    {formatDateTime(selectedMeeting.date) !== '—'
+                      ? formatDateTime(selectedMeeting.date)
+                      : (selectedMeeting.formatted_date || selectedMeeting.date)}
+                  </span>
                 </div>
                 <div>
                   <span className="font-bold text-ink-primary block text-[11px] uppercase tracking-wider mb-0.5">

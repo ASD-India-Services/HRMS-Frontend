@@ -166,16 +166,16 @@ export function BonusPointSettingTab() {
       const updated = settingsList.map((item) =>
         item.id === editingItem.id
           ? {
-              ...item,
-              model: formModel,
-              applicable_for: formApplicableFor,
-              bonus_for: formBonusFor,
-              field_1: formField1,
-              conditions: formConditions,
-              field_2: formField2,
-              points: Number(formPoints),
-              is_active: formIsActive,
-            }
+            ...item,
+            model: formModel,
+            applicable_for: formApplicableFor,
+            bonus_for: formBonusFor,
+            field_1: formField1,
+            conditions: formConditions,
+            field_2: formField2,
+            points: Number(formPoints),
+            is_active: formIsActive,
+          }
           : item
       );
       saveList(updated, 'Bonus point setting updated successfully');

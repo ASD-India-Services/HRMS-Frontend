@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/EmptyState';
 import { WeekNavigator } from './components/WeekNavigator';
+import { formatDate } from '@/utils/formatters';
 
 /** Get the Monday of the week containing a given date. */
 function getWeekStart(date: Date): Date {
@@ -108,8 +109,7 @@ export function ShiftRoster() {
         <div>
           <h2 className="text-lg font-semibold text-ink-primary">Team Roster</h2>
           <p className="text-sm text-ink-secondary">
-            {weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} –{' '}
-            {weekDays[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            {formatDate(weekStart)} – {formatDate(weekDays[6])}
           </p>
         </div>
 

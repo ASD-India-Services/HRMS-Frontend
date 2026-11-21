@@ -55,15 +55,15 @@ export function AutoPayslipSettingsTab() {
     const branchList = Array.isArray(branchesData)
       ? branchesData
       : Array.isArray((branchesData as any)?.results)
-      ? (branchesData as any).results
-      : [];
+        ? (branchesData as any).results
+        : [];
     branchList.forEach((b: any) => {
       add(b?.name);
     });
 
     // 3. Fallback to organization company name if none loaded yet
     if (list.length === 0) {
-      list.push('G7 Synergon PVT. LTD. CRO');
+      list.push(settings?.company_name || 'digiHRMS');
     }
 
     return list;
@@ -74,7 +74,15 @@ export function AutoPayslipSettingsTab() {
       const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((item: any) => ({
+            ...item,
+            company:
+              !item.company || item.company.includes('Synergon') || item.company.includes('G7')
+                ? 'digiHRMS'
+                : item.company,
+          }));
+        }
       }
     } catch {
       // fallback
@@ -83,7 +91,7 @@ export function AutoPayslipSettingsTab() {
       {
         id: '1',
         generate_day: '1st',
-        company: 'G7 Synergon PVT. LTD. CRO',
+        company: 'digiHRMS',
         auto_generate: false,
       },
     ];
@@ -95,7 +103,7 @@ export function AutoPayslipSettingsTab() {
 
   // Form states
   const [formGenerateDay, setFormGenerateDay] = useState('1st');
-  const [formCompany, setFormCompany] = useState(() => availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+  const [formCompany, setFormCompany] = useState(() => availableCompanies[0] || 'digiHRMS');
   const [formAutoGenerate, setFormAutoGenerate] = useState(false);
 
   // Keep formCompany in sync when available companies load
@@ -139,7 +147,7 @@ export function AutoPayslipSettingsTab() {
   const handleOpenCreate = () => {
     setEditingItem(null);
     setFormGenerateDay('1st');
-    setFormCompany(availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO');
+    setFormCompany(availableCompanies[0] || 'digiHRMS');
     setFormAutoGenerate(false);
     setModalOpen(true);
   };
@@ -155,17 +163,17 @@ export function AutoPayslipSettingsTab() {
   const handleSaveModal = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const companyToSave = formCompany || availableCompanies[0] || 'G7 Synergon PVT. LTD. CRO';
+    const companyToSave = formCompany || availableCompanies[0] || 'digiHRMS';
 
     if (editingItem) {
       const updated = rules.map((r) =>
         r.id === editingItem.id
           ? {
-              ...r,
-              generate_day: formGenerateDay,
-              company: companyToSave,
-              auto_generate: formAutoGenerate,
-            }
+            ...r,
+            generate_day: formGenerateDay,
+            company: companyToSave,
+            auto_generate: formAutoGenerate,
+          }
           : r
       );
       saveRules(updated, 'Auto payslip schedule updated successfully');

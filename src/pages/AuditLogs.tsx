@@ -14,6 +14,7 @@ import api from '@/lib/api';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card } from '@/components/ui/Card';
+import { formatDateTime } from '@/utils/formatters';
 
 interface AuditLogEntry {
   id: string;
@@ -75,10 +76,7 @@ const columns: ColumnDef<AuditLogEntry>[] = [
     key: 'timestamp',
     header: 'Timestamp',
     sortable: true,
-    render: (value: unknown) => {
-      const date = new Date(value as string);
-      return date.toLocaleString();
-    },
+    render: (value: unknown) => formatDateTime(value as string),
   },
   { key: 'user_email', header: 'User', sortable: true },
   {

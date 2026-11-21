@@ -4,6 +4,7 @@ import api from '@/lib/api';
 import { EMPLOYEES } from '@/lib/endpoints';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { formatDate } from '@/utils/formatters';
 import {
   useEmployeeBonusPoints,
   useCreateBonusPoint,
@@ -458,11 +459,7 @@ export default function EmployeeBonusPoints() {
                           {item.created_by_name || 'System / Admin'}
                         </td>
                         <td className="py-2.5 px-4 text-ink-secondary whitespace-nowrap">
-                          {new Date(item.created_at).toLocaleDateString(undefined, {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          })}
+                          {formatDate(item.created_at)}
                         </td>
                         {(canEdit || canDelete) && (
                           <td className="py-2.5 px-4 text-right whitespace-nowrap">
@@ -523,11 +520,7 @@ export default function EmployeeBonusPoints() {
                       {item.created_by_name || 'System / Admin'}
                     </td>
                     <td className="py-2.5 px-4 text-ink-secondary whitespace-nowrap">
-                      {new Date(item.created_at).toLocaleDateString(undefined, {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
+                      {formatDate(item.created_at)}
                     </td>
                     {(canEdit || canDelete) && (
                       <td className="py-2.5 px-4 text-right whitespace-nowrap">

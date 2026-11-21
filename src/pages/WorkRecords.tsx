@@ -4,6 +4,7 @@ import api from '@/lib/api';
 import { DEPARTMENTS, DESIGNATIONS, BRANCHES, SHIFTS } from '@/lib/endpoints';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { useWorkRecords } from '@/hooks/useWorkRecords';
+import { formatDate } from '@/utils/formatters';
 import type {
   WorkRecordDay,
   EmployeeWorkRecord,
@@ -318,10 +319,9 @@ export default function WorkRecords() {
     return cols;
   }, [daysInMonth, weekOffDaysSet]);
 
-  // Formatted date string for top right: "Nov. 10, 2026"
+  // Formatted date string for top right: formatted according to HR Settings
   const formattedToday = useMemo(() => {
-    const mStr = today.toLocaleString('en-US', { month: 'short' });
-    return `${mStr}. ${today.getDate()}, ${today.getFullYear()}`;
+    return formatDate(today);
   }, [today]);
 
   const monthName = MONTH_NAMES[selectedMonth - 1] || 'November';

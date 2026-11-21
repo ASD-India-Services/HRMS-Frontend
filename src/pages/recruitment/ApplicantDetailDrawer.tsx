@@ -22,6 +22,7 @@ import { Button, ButtonLink, IconButton } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
 import { Iconify } from '@/components/Iconify';
 import { Card } from '@/components/ui/Card';
+import { formatDate } from '@/utils/formatters';
 
 export interface ApplicantRow {
   id: string;
@@ -294,15 +295,7 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
   const formattedAppliedDate = useMemo(() => {
     const rawDate = applicant.applied_date || applicant.created_at;
     if (!rawDate) return '—';
-    try {
-      return new Date(rawDate).toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      });
-    } catch {
-      return String(rawDate);
-    }
+    return formatDate(rawDate);
   }, [applicant.applied_date, applicant.created_at]);
 
   return (

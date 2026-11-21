@@ -19,8 +19,8 @@ export function useAppFormatting() {
       settings,
       currencySymbol: settings?.currency_symbol || '₹',
       currencyPosition: settings?.currency_position || 'Prefix',
-      dateFormat: settings?.date_format || 'DD-MM-YYYY',
-      timeFormat: settings?.time_format || '24h',
+      dateFormat: settings?.date_format || 'DD/MM/YYYY',
+      timeFormat: settings?.time_format || '12h',
       formatCurrency: (
         val: number | string | null | undefined,
         opts?: FormatCurrencyOptions

@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useUpdateEmployee } from '@/hooks/useEmployee';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import api from '@/lib/api';
+import { formatDate } from '@/utils/formatters';
 import type { EmployeeDetail, EmployeeProfileUpdate } from '@/types/employee';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -142,7 +143,7 @@ export default function Profile() {
           {employee && (
             <>
               <InfoRow label="Employee ID" value={employee.employee_id} />
-              <InfoRow label="Date of Joining" value={employee.date_of_joining ? new Date(employee.date_of_joining).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '--'} />
+              <InfoRow label="Date of Joining" value={employee.date_of_joining ? formatDate(employee.date_of_joining) : '--'} />
               <InfoRow label="Employment Type" value={employee.employment_type?.replace('_', ' ')} capitalize />
             </>
           )}

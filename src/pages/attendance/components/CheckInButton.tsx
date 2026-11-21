@@ -7,6 +7,7 @@ import api from '@/lib/api'
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Iconify } from '@/components/Iconify';
+import { formatDate } from '@/utils/formatters'
 
 interface CheckInButtonProps {
   /** Current attendance record for today */
@@ -207,12 +208,7 @@ export function CheckInButton({ record }: CheckInButtonProps) {
       </Button>
       {/* Current date display */}
       <p className="mt-4 text-sm text-ink-secondary">
-        {new Date().toLocaleDateString(undefined, {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })}
+        {formatDate(new Date())}
       </p>
 
       {/* Coordinates display */}

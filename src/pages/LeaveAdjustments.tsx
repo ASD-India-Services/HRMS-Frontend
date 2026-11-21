@@ -4,6 +4,7 @@ import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/Da
 import { CreateButton, DeleteButton } from '@/components/ActionButton';
 import { CrudModal } from '@/components/CrudModal';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
@@ -35,8 +36,7 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
   {
     key: 'created_at', header: 'Date', sortable: true, render: (v: unknown) => {
       if (!v) return '–';
-      const d = new Date(v as string);
-      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      return formatDate(v as string);
     }
   },
 ];

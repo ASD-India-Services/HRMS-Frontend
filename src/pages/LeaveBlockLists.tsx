@@ -9,6 +9,7 @@ import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { formatDate } from '@/utils/formatters';
 
 const ENDPOINT = '/api/v1/leaves/block-lists/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -22,7 +23,7 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
   { key: 'block_dates', header: 'Blocked Dates', sortable: false, render: (v: unknown) => {
     const dates = v as Array<{ date?: string; reason?: string }> | null;
     if (!dates || dates.length === 0) return <span className="text-ink-secondary text-xs">–</span>;
-    return <span className="text-xs">{dates.map(d => d.date).join(', ')}</span>;
+    return <span className="text-xs">{dates.map(d => formatDate(d.date)).join(', ')}</span>;
   }},
   { key: 'is_active', header: 'Active', sortable: true, render: (v: unknown) => (v ? 'Yes' : 'No') },
 ];

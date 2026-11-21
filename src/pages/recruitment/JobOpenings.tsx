@@ -20,6 +20,7 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Card } from '@/components/ui/Card';
 import { Iconify } from '@/components/Iconify';
+import { formatDate } from '@/utils/formatters';
 
 const JOB_OPENING_FIELDS: FieldConfig[] = [
   { key: 'title', label: 'Title', type: 'text', required: true },
@@ -277,10 +278,10 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-ink-secondary">
-                      {new Date(opening.posted_on).toLocaleDateString()}
+                      {formatDate(opening.posted_on)}
                     </td>
                     <td className="px-4 py-3 text-sm text-ink-secondary">
-                      {opening.closes_on ? new Date(opening.closes_on).toLocaleDateString() : '—'}
+                      {opening.closes_on ? formatDate(opening.closes_on) : '—'}
                     </td>
                     <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end">

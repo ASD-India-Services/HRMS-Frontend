@@ -106,6 +106,7 @@ const Promotions = lazy(() => import('@/pages/Promotions'));
 const Gratuity = lazy(() => import('@/pages/Gratuity'));
 const AppointmentLetters = lazy(() => import('@/pages/AppointmentLetters'));
 const Policies = lazy(() => import('@/pages/Policies'));
+const HRSettings = lazy(() => import('@/pages/HRSettings'));
 const Meetings = lazy(() => import('@/pages/Meetings'));
 const EmployeeBonusPoints = lazy(() => import('@/pages/EmployeeBonusPoints'));
 const AuditLogs = lazy(() => import('@/pages/AuditLogs'));
@@ -124,6 +125,7 @@ const GdriveBackupTab = lazy(() => import('@/pages/settings/GdriveBackupTab').th
 const EmploymentTypesTab = lazy(() => import('@/pages/settings/SecondarySettingsTabs').then(m => ({ default: m.EmploymentTypesTab })));
 const CandidateSelfTrackingTab = lazy(() => import('@/pages/settings/CandidateSelfTrackingTab').then(m => ({ default: m.CandidateSelfTrackingTab })));
 const CandidateRejectReasonTab = lazy(() => import('@/pages/settings/CandidateRejectReasonTab').then(m => ({ default: m.CandidateRejectReasonTab })));
+const CareersWidgetTab = lazy(() => import('@/pages/settings/CareersWidgetTab').then(m => ({ default: m.CareersWidgetTab })));
 const LinkedinIntegrationTab = lazy(() => import('@/pages/settings/LinkedinIntegrationTab').then(m => ({ default: m.LinkedinIntegrationTab })));
 const WorkTypeTab = lazy(() => import('@/pages/settings/WorkTypeTab').then(m => ({ default: m.WorkTypeTab })));
 const LeaveTypeTab = lazy(() => import('@/pages/settings/LeaveTypeTab').then(m => ({ default: m.LeaveTypeTab })));
@@ -146,6 +148,7 @@ const AttendanceDashboard = lazy(() => import('@/pages/attendance/AttendanceDash
 const LeaveDashboard = lazy(() => import('@/pages/leaves/LeaveDashboard'));
 const PayrollDashboard = lazy(() => import('@/pages/payroll/PayrollDashboard'));
 const PermissionDashboard = lazy(() => import('@/pages/admin/PermissionDashboard'));
+const PerformanceDashboard = lazy(() => import('@/pages/performance/PerformanceDashboard'));
 
 // Leaves — direct component imports (no sub-routing in Leaves.tsx)
 const MyLeaves = lazy(() => import('@/pages/leaves/MyLeaves'));
@@ -726,7 +729,15 @@ export const router = createBrowserRouter([
         element: gated('attendance_enabled', 'Attendance', 'geofence_locations.view', <GeoFenceLocations />),
       },
 
-      // ─── Performance: KRAs, Templates, Goals, Feedback ─────────
+      // ─── Performance: Dashboard, KRAs, Templates, Goals, Feedback ─────────
+      {
+        path: 'performance/dashboard',
+        element: gated('appraisals_enabled', 'Performance Dashboard', 'appraisals.view', <PerformanceDashboard />),
+      },
+      {
+        path: 'pms/dashboard-view',
+        element: gated('appraisals_enabled', 'Performance Dashboard', 'appraisals.view', <PerformanceDashboard />),
+      },
       {
         path: 'kras',
         element: gated('appraisals_enabled', 'Appraisals', 'kras.view', <KRAs />),
@@ -855,7 +866,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'hr-settings',
-        element: <Navigate to="/settings/general-settings" replace />,
+        element: permGatedAny(['hr_settings.view', 'hr_settings.manage', 'roles.manage'], <HRSettings />),
       },
       {
         path: 'user_accessibility',
@@ -914,6 +925,7 @@ export const router = createBrowserRouter([
           { path: 'candidate-self-tracking', element: <CandidateSelfTrackingTab /> },
           { path: 'candidate-reject-reasons', element: <CandidateRejectReasonTab /> },
           { path: 'candidate-reject-reason', element: <Navigate to="candidate-reject-reasons" replace /> },
+          { path: 'careers-widget', element: <CareersWidgetTab /> },
           { path: 'skills', element: <Navigate to="candidate-reject-reasons" replace /> },
           { path: 'linkedin-integration', element: <Navigate to="candidate-reject-reasons" replace /> },
 
@@ -977,7 +989,7 @@ export const router = createBrowserRouter([
       // ─── Help Desk ──────────────────────────────────────────────
       {
         path: 'helpdesk',
-        element: <Navigate to="/settings/helpdesk-tags" replace />,
+        element: <Navigate to="/helpdesk/faq-categories" replace />,
       },
       {
         path: 'helpdesk/tags',
@@ -989,15 +1001,15 @@ export const router = createBrowserRouter([
       },
       {
         path: 'helpdesk/faq-categories',
-        element: <Navigate to="/settings/helpdesk-tags" replace />,
+        element: permGatedAny(['faq_categories.view', 'faqs.view'], <FAQCategories />),
       },
       {
         path: 'helpdesk/faqs',
-        element: <Navigate to="/settings/helpdesk-tags" replace />,
+        element: permGatedAny(['faqs.view', 'faq_categories.view'], <FAQs />),
       },
       {
         path: 'helpdesk/faq-view/:categoryId',
-        element: <Navigate to="/settings/helpdesk-tags" replace />,
+        element: permGatedAny(['faqs.view', 'faq_categories.view'], <FAQs />),
       },
 
       // ─── Admin: Roles & Permissions ────────────────────────────

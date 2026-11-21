@@ -5,6 +5,7 @@ import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/Da
 import { CreateButton, EditButton, DeleteButton } from '@/components/ActionButton';
 import { CrudModal } from '@/components/CrudModal';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
@@ -134,7 +135,7 @@ function HolidayEntries({ list, onBack }: { list: Record<string, unknown>; onBac
     <PageContainer>
       <PageHeader
         title={list.name as string}
-        subtitle={`${list.from_date as string} to ${list.to_date as string} · ${entries.length} holidays`}
+        subtitle={`${formatDate(list.from_date as string)} to ${formatDate(list.to_date as string)} · ${entries.length} holidays`}
         breadcrumb={
           <Button variant="text" color="inherit" size="small" startIcon={<Iconify icon="arrow-left" />} onClick={onBack}>
             Back to Holiday Lists
@@ -160,7 +161,7 @@ function HolidayEntries({ list, onBack }: { list: Record<string, unknown>; onBac
               {entries.map((entry: Record<string, unknown>) => (
                 <tr key={entry.id as string}>
                   <td className="px-4 py-3 text-sm text-ink-primary">
-                    {new Date(entry.holiday_date as string).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', weekday: 'short' })}
+                    {formatDate(entry.holiday_date as string)}
                   </td>
                   <td className="px-4 py-3 text-sm text-ink-primary">{entry.description as string}</td>
                   <td className="px-4 py-3 text-right">

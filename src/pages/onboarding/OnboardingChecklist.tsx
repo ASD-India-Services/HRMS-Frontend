@@ -11,6 +11,7 @@ import { Select } from '@/components/ui/Select';
 import { IconButton } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/EmptyState';
+import { formatDate } from '@/utils/formatters';
 
 const STATUS_STYLES: Record<OnboardingTaskStatus, { label: string; className: string }> = {
   pending: { label: 'Pending', className: 'bg-surface-neutral text-ink-primary' },
@@ -167,7 +168,7 @@ export function OnboardingChecklist({ employeeId }: OnboardingChecklistProps) {
                   {/* Due date */}
                   {task.due_date && (
                     <span className="shrink-0 text-xs text-ink-disabled">
-                      Due {new Date(task.due_date).toLocaleDateString()}
+                      Due {formatDate(task.due_date)}
                     </span>
                   )}
 

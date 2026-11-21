@@ -4,11 +4,13 @@ import { EMAIL_CONFIG } from '@/lib/endpoints';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 import { Select } from '@/components/ui/Select';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card } from '@/components/ui/Card';
 import { Iconify } from '@/components/Iconify';
+import { formatDateTime } from '@/utils/formatters';
 
 const ENDPOINT = '/api/v1/hr-settings/';
 
@@ -57,7 +59,25 @@ export default function HRSettings() {
   const [saved, setSaved] = useState(false);
   const [copiedEmbed, setCopiedEmbed] = useState(false);
 
-  const embedCodeSnippet = `<iframe id="hrms-careers-frame" src="${typeof window !== 'undefined' ? window.location.origin : ''}/careers/embed" width="100%" height="750" style="border:none;width:100%;min-height:700px;overflow:hidden;border-radius:12px;" scrolling="no" title="Careers Portal"></iframe>`;
+  const [embedMode, setEmbedMode] = useState<'widget' | 'iframe'>('widget');
+
+  const originUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3001';
+  const apiBaseUrl = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:8002';
+  const tenantSlug = 'org_digihrms';
+
+  const widgetSnippet = `<!-- Option 2: Drop-in JavaScript Widget for your existing blank careers page section -->
+<div id="hrms-careers-widget" data-tenant="${tenantSlug}" data-api="${apiBaseUrl}" data-primary-color="#2563eb"></div>
+<script src="${originUrl}/widget/careers.js" async></script>`;
+
+  const iframeSnippet = `<!-- Option 1: Responsive iFrame with auto-height adjustment -->
+<div id="hrms-careers-wrapper" style="width:100%;min-height:500px;">
+  <iframe id="hrms-careers-frame" src="${originUrl}/careers/embed?hide_header=true&tenant=${tenantSlug}" width="100%" style="border:none;width:100%;min-height:500px;background:transparent;" scrolling="no" title="Careers"></iframe>
+</div>
+<script>
+  window.addEventListener('message',function(e){if(e.data&&e.data.type==='HRMS_CAREERS_RESIZE'){var f=document.getElementById('hrms-careers-frame');if(f)f.style.height=(e.data.height+20)+'px';}});
+</script>`;
+
+  const embedCodeSnippet = embedMode === 'widget' ? widgetSnippet : iframeSnippet;
 
   const handleCopyEmbed = () => {
     navigator.clipboard.writeText(embedCodeSnippet);
@@ -235,9 +255,34 @@ export default function HRSettings() {
           <div>
             <div className="flex items-center justify-between mb-1">
               <label htmlFor="embed_code" className="block text-sm font-medium text-ink-primary">
-                Careers Embed Code
+                Careers Website Embed
               </label>
               <div className="flex items-center gap-2">
+                <Button
+                  variant={embedMode === 'widget' ? 'soft' : 'text'}
+                  color={embedMode === 'widget' ? 'primary' : 'inherit'}
+                  size="small"
+                  onClick={() => setEmbedMode('widget')}
+                >
+                  JS Widget
+                </Button>
+                <Button
+                  variant={embedMode === 'iframe' ? 'soft' : 'text'}
+                  color={embedMode === 'iframe' ? 'primary' : 'inherit'}
+                  size="small"
+                  onClick={() => setEmbedMode('iframe')}
+                >
+                  iFrame
+                </Button>
+                <a
+                  href="/test-widget.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-primary-main hover:text-primary-dark"
+                  title="Test Drop-In Demo in simulated company page"
+                >
+                  Demo <Iconify icon="external" width={14} />
+                </a>
                 <a
                   href="/careers/embed"
                   target="_blank"
@@ -253,18 +298,20 @@ export default function HRSettings() {
               </div>
             </div>
             <div className="relative">
-              <Input
+              <Textarea
                 id="embed_code"
-                type="text"
+                rows={3}
                 readOnly
                 value={embedCodeSnippet}
-                onClick={(e) => (e.target as HTMLInputElement).select()}
+                onClick={(e) => (e.target as HTMLTextAreaElement).select()}
                 className="font-mono cursor-pointer"
                 title="Click to select all and copy embed code"
               />
             </div>
             <p className="mt-1 text-xs text-ink-secondary">
-              Embed this iframe into your company website to display live open positions.
+              {embedMode === 'widget'
+                ? 'Option 2 (Recommended): Paste this 15 KB snippet into your website blank careers section to inject native job cards.'
+                : 'Option 1: Paste this responsive iframe into your existing website.'}
             </p>
           </div>
 
@@ -514,7 +561,7 @@ export default function HRSettings() {
 
         {emailConfig?.last_tested_at && (
           <p className="mt-3 text-xs text-ink-secondary">
-            Last tested: {new Date(emailConfig.last_tested_at).toLocaleString()}
+            Last tested: {formatDateTime(emailConfig.last_tested_at)}
           </p>
         )}
       </Card>

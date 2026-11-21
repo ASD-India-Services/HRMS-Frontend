@@ -12,6 +12,7 @@ import {
 } from '@/types/documents';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { formatDate } from '@/utils/formatters';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { Modal } from '@/components/ui/Modal';
 import { Button, ButtonLink, IconButton } from '@/components/ui/Button';
@@ -506,11 +507,7 @@ export default function DocumentRequests() {
 
                     {/* Date */}
                     <td className="px-4 py-3.5 whitespace-nowrap text-ink-secondary">
-                      {new Date(req.created_at).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
+                      {formatDate(req.created_at)}
                     </td>
 
                       {/* Issued Document */}
@@ -965,7 +962,7 @@ export default function DocumentRequests() {
                 <div>
                   <span className="text-ink-disabled">Status:</span>
                   <p className="mt-0.5 font-semibold capitalize text-ink-primary">{viewingRequest.status_display || viewingRequest.status}</p>
-                  <p className="text-[11px] text-ink-secondary">Created: {new Date(viewingRequest.created_at).toLocaleDateString()}</p>
+                  <p className="text-[11px] text-ink-secondary">Created: {formatDate(viewingRequest.created_at)}</p>
                 </div>
               </div>
 

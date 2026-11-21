@@ -18,6 +18,7 @@ import { StatCard } from '@/components/ui/StatCard';
 import { DonutChart, ChartCard, ChartTooltip, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
 import { EmptyState } from '@/components/EmptyState';
 import { Iconify } from '@/components/Iconify';
+import { formatDate } from '@/utils/formatters';
 
 interface SalarySlip {
   id: string;
@@ -281,7 +282,7 @@ export default function PayrollDashboard() {
                           {run.number_of_employees || '—'} staff
                         </td>
                         <td className="px-4 py-3 font-mono text-xs text-ink-secondary">
-                          {run.posting_date || run.start_date || '—'}
+                          {formatDate(run.posting_date || run.start_date)}
                         </td>
                         <td className="px-4 py-3">
                           <span className="inline-flex items-center rounded bg-success-lighter px-2 py-0.5 text-xs font-semibold capitalize text-success-dark">

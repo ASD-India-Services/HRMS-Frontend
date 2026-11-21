@@ -15,20 +15,30 @@ const MONTH_NAMES_LONG = [
 ];
 
 export function getCachedHRSettings(): Partial<HRSettings> {
+  const directDateFormat = typeof window !== 'undefined' ? localStorage.getItem('hrms_date_format') : null;
+  const directTimeFormat = typeof window !== 'undefined' ? localStorage.getItem('hrms_time_format') : null;
+  const directCurrencySymbol = typeof window !== 'undefined' ? localStorage.getItem('hrms_currency_symbol') : null;
+  const directCurrencyPosition = typeof window !== 'undefined' ? localStorage.getItem('hrms_currency_position') : null;
+
+  let parsed: Partial<HRSettings> = {};
   try {
-    const raw = localStorage.getItem('hrms_cached_settings');
+    const raw = typeof window !== 'undefined' ? localStorage.getItem('hrms_cached_settings') : null;
     if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed === 'object') return parsed;
+      const json = JSON.parse(raw);
+      if (json && typeof json === 'object') {
+        parsed = json;
+      }
     }
   } catch {
     // fallback to individual keys
   }
+
   return {
-    currency_symbol: localStorage.getItem('hrms_currency_symbol') || '₹',
-    currency_position: (localStorage.getItem('hrms_currency_position') as any) || 'Prefix',
-    date_format: localStorage.getItem('hrms_date_format') || 'DD-MM-YYYY',
-    time_format: localStorage.getItem('hrms_time_format') || '24h',
+    ...parsed,
+    currency_symbol: directCurrencySymbol || parsed.currency_symbol || '₹',
+    currency_position: (directCurrencyPosition || parsed.currency_position || 'Prefix') as any,
+    date_format: directDateFormat || parsed.date_format || 'DD/MM/YYYY',
+    time_format: directTimeFormat || parsed.time_format || '12h',
   };
 }
 
@@ -99,19 +109,30 @@ export function formatDate(
 ): string {
   if (!dateInput) return '—';
 
-  const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
-  if (isNaN(d.getTime())) return String(dateInput);
+  let day: number;
+  let month: number;
+  let year: number;
 
-  const pattern = formatPattern || getCachedHRSettings().date_format || 'DD-MM-YYYY';
+  if (typeof dateInput === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateInput.trim())) {
+    const parts = dateInput.trim().split('-');
+    year = parseInt(parts[0], 10);
+    month = parseInt(parts[1], 10);
+    day = parseInt(parts[2], 10);
+  } else {
+    const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+    if (isNaN(d.getTime())) return String(dateInput);
+    day = d.getDate();
+    month = d.getMonth() + 1;
+    year = d.getFullYear();
+  }
 
-  const day = d.getDate();
+  const pattern = (formatPattern || getCachedHRSettings().date_format || 'DD/MM/YYYY').toUpperCase();
+
   const dayStr = String(day).padStart(2, '0');
-  const month = d.getMonth() + 1;
   const monthStr = String(month).padStart(2, '0');
-  const year = d.getFullYear();
   const yearShort = String(year).slice(-2);
-  const monthShort = MONTH_NAMES_SHORT[d.getMonth()] || monthStr;
-  const monthLong = MONTH_NAMES_LONG[d.getMonth()] || monthStr;
+  const monthShort = MONTH_NAMES_SHORT[month - 1] || monthStr;
+  const monthLong = MONTH_NAMES_LONG[month - 1] || monthStr;
 
   switch (pattern) {
     case 'DD-MM-YYYY':
@@ -164,8 +185,19 @@ export function formatDate(
     case 'YYYY-MMM-DD':
       return `${year}-${monthShort}-${dayStr}`;
 
+    case 'DD MMMM, YYYY':
+      return `${dayStr} ${monthLong}, ${year}`;
+    case 'DD MMMM YYYY':
+      return `${dayStr} ${monthLong} ${year}`;
+    case 'MMMM DD, YYYY':
+      return `${monthLong} ${dayStr}, ${year}`;
+    case 'MMMM DD YYYY':
+      return `${monthLong} ${dayStr} ${year}`;
+    case 'DD-MMMM-YYYY':
+      return `${dayStr}-${monthLong}-${year}`;
+
     default:
-      return `${dayStr}-${monthStr}-${year}`;
+      return `${dayStr}/${monthStr}/${year}`;
   }
 }
 
@@ -199,14 +231,38 @@ export function formatTime(
     minutes = timeInput.getMinutes();
   }
 
-  const pattern = formatPattern || getCachedHRSettings().time_format || '24h';
+  const pattern = (formatPattern || getCachedHRSettings().time_format || '12h').toLowerCase();
 
-  if (pattern === '12h') {
+  if (pattern === '12h' || pattern.includes('12')) {
     const period = hours >= 12 ? 'PM' : 'AM';
     const h12 = hours % 12 || 12;
     return `${h12}:${String(minutes).padStart(2, '0')} ${period}`;
   }
 
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
+
+export function formatDateTime(
+  dateTimeInput: string | Date | null | undefined,
+  dateFormatPattern?: string,
+  timeFormatPattern?: string,
+): string {
+  if (!dateTimeInput) return '—';
+  const dStr = formatDate(dateTimeInput, dateFormatPattern);
+  const tStr = formatTime(dateTimeInput, timeFormatPattern);
+  if (dStr === '—' && tStr === '—') return '—';
+  if (dStr === '—') return tStr;
+  if (tStr === '—') return dStr;
+  return `${dStr} ${tStr}`;
+}
+
+export function isIsoDateString(val: unknown): boolean {
+  if (typeof val !== 'string') return false;
+  return /^\d{4}-\d{2}-\d{2}$/.test(val.trim());
+}
+
+export function isIsoDateTimeString(val: unknown): boolean {
+  if (typeof val !== 'string') return false;
+  return /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/.test(val.trim());
 }
 

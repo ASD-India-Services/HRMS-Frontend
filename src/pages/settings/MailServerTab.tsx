@@ -5,6 +5,7 @@ import { EMAIL_CONFIG } from '@/lib/endpoints';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { formatDateTime } from '@/utils/formatters';
 
 interface EmailConfigData {
   configured: boolean;
@@ -337,7 +338,7 @@ export function MailServerTab() {
 
         {emailConfig?.last_tested_at && (
           <p className="text-xs text-ink-disabled">
-            Last successful delivery test: {new Date(emailConfig.last_tested_at).toLocaleString()}
+            Last successful delivery test: {formatDateTime(emailConfig.last_tested_at)}
           </p>
         )}
       </div>

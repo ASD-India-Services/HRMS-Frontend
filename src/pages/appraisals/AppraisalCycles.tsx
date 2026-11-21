@@ -18,6 +18,7 @@ import {
 } from '@/config/crud/appraisalCycles';
 import { appraisalCycleWorkflow } from '@/config/workflows/appraisalCycle';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
+import { formatDate } from '@/utils/formatters';
 import { WorkflowEngine } from '@/components/WorkflowEngine';
 import { CreateButton } from '@/components/ActionButton';
 import { CrudModal } from '@/components/CrudModal';
@@ -45,14 +46,6 @@ const appraisalCrud = createCrudHooks<AppraisalCycle>({
   endpoints: appraisalCyclesCrudConfig.endpoints,
 });
 
-function formatDate(dateStr: string): string {
-  if (!dateStr) return '—';
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
 
 function useAppraisalColumns(): ColumnDef<AppraisalCycle>[] {
   return useMemo(

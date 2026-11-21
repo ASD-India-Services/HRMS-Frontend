@@ -143,7 +143,7 @@ export function GeneralSettingsTab() {
       if (settings.badge_prefix !== undefined) {
         setBadgePrefix(settings.badge_prefix || 'PEP');
       }
-      const defaultCompany = settings.company_name || 'G7 SYNERGON PVT. LTD. CRO.';
+      const defaultCompany = settings.company_name || 'digiHRMS';
       setBadgeCompany(settings.badge_company || defaultCompany);
       if (settings.encashment_bonus_unit !== undefined) {
         setBonusUnit(Number(settings.encashment_bonus_unit) || 1);
@@ -357,7 +357,7 @@ export function GeneralSettingsTab() {
     );
   }
 
-  const companyDisplayName = settings?.company_name || 'G7 SYNERGON PVT. LTD. CRO.';
+  const companyDisplayName = settings?.company_name || 'digiHRMS';
 
   return (
     <div className="space-y-10 divide-y divide-divider">
@@ -685,7 +685,7 @@ export function GeneralSettingsTab() {
               className="mt-2.5"
             >
               <option value={companyDisplayName}>{companyDisplayName}</option>
-              <option value="G7 SYNERGON PVT. LTD. CRO.">G7 SYNERGON PVT. LTD. CRO.</option>
+              <option value="digiHRMS">digiHRMS</option>
               <option value="DigiHRMS Corporate">DigiHRMS Corporate</option>
             </Select>
           </div>
@@ -978,7 +978,7 @@ export function GeneralSettingsTab() {
               className="mt-2.5"
             >
               <option value={companyDisplayName}>{companyDisplayName}</option>
-              <option value="G7 SYNERGON PVT. LTD. CRO.">G7 SYNERGON PVT. LTD. CRO.</option>
+              <option value="digiHRMS">digiHRMS</option>
               <option value="DigiHRMS Corporate">DigiHRMS Corporate</option>
             </Select>
           </div>

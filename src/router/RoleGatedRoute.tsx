@@ -61,8 +61,16 @@ export function RoleGatedRoute({
     );
   }
 
-  // org_admin role bypasses permission checks (full access)
-  if (roleName === 'org_admin') {
+  // Admin roles bypass permission checks (full access)
+  const normalizedRole = (roleName || role || '').toLowerCase().trim();
+  const isAdmin =
+    normalizedRole === 'org_admin' ||
+    normalizedRole === 'admin' ||
+    normalizedRole === 'administrator' ||
+    normalizedRole === 'org admin' ||
+    normalizedRole === 'superadmin';
+
+  if (isAdmin) {
     return <>{children}</>;
   }
 

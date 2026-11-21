@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import type { WorkflowConfig, WorkflowTimelineEntry } from '@/types/workflow';
 import { StatusBadge } from './StatusBadge';
+import { formatDateTime } from '@/utils/formatters';
 
 export interface WorkflowTimelineProps {
   /** The record ID to fetch timeline for */
@@ -24,16 +25,7 @@ export interface WorkflowTimelineProps {
 }
 
 function formatTimestamp(timestamp: string): string {
-  const date = new Date(timestamp);
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }) + ' at ' + date.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
+  return formatDateTime(timestamp);
 }
 
 function TimelineSkeleton() {

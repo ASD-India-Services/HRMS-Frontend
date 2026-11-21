@@ -18,6 +18,7 @@ import { useLeaveBalances, useLeaveApplications } from '@/hooks/useLeaves';
 import { useExpenseClaims } from '@/hooks/useExpenses';
 import { Can } from '@/components/Can';
 import { CheckInButton } from '@/pages/attendance/components/CheckInButton';
+import { formatDate } from '@/utils/formatters';
 
 export function EmployeeDashboard() {
   const { data: attendanceToday, isLoading: attendanceLoading } = useAttendanceToday();
@@ -167,7 +168,7 @@ export function EmployeeDashboard() {
                       <div>
                         <p className="font-semibold text-ink-primary">{app.leave_type.name}</p>
                         <p className="inline-flex items-center gap-1 text-ink-secondary">
-                          {app.from_date} <Iconify icon="arrow-right" width={12} /> {app.to_date} ({app.total_days} {app.total_days === 1 ? 'day' : 'days'})
+                          {formatDate(app.from_date)} <Iconify icon="arrow-right" width={12} /> {formatDate(app.to_date)} ({app.total_days} {app.total_days === 1 ? 'day' : 'days'})
                         </p>
                       </div>
                       <span
@@ -214,7 +215,7 @@ export function EmployeeDashboard() {
                     <div key={exp.id} className="flex items-center justify-between rounded-lg bg-surface-neutral p-2.5 text-xs">
                       <div>
                         <p className="font-semibold text-ink-primary">{exp.expense_type.name}</p>
-                        <p className="text-ink-secondary">₹{exp.amount} · {exp.expense_date}</p>
+                        <p className="text-ink-secondary">₹{exp.amount} · {formatDate(exp.expense_date)}</p>
                       </div>
                       <span
                         className={`rounded-full px-2 py-0.5 font-medium capitalize ${

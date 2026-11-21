@@ -12,6 +12,7 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Iconify } from '@/components/Iconify';
+import { formatDate } from '@/utils/formatters';
 
 const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   draft: { label: 'Draft', className: 'bg-surface-neutral text-ink-primary' },
@@ -45,11 +46,6 @@ function getEnrollmentBadge(status?: string) {
   };
 }
 
-function formatDate(dateStr?: string | null): string {
-  if (!dateStr) return '—';
-  const d = new Date(dateStr);
-  return isNaN(d.getTime()) ? '—' : d.toLocaleDateString();
-}
 
 interface TrainingDetailProps {
   eventId: string;

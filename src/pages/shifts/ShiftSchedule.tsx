@@ -10,6 +10,7 @@ import { ShiftCard } from './components/ShiftCard';
 import type { ShiftAssignment } from '@/types/shift';
 import { Card } from '@/components/ui/Card';
 import { WeekNavigator } from './components/WeekNavigator';
+import { formatDate } from '@/utils/formatters';
 
 /** Get the Monday of the week containing a given date. */
 function getWeekStart(date: Date): Date {
@@ -92,8 +93,7 @@ export function ShiftSchedule() {
         <div>
           <h2 className="text-lg font-semibold text-ink-primary">My Shift Schedule</h2>
           <p className="text-sm text-ink-secondary">
-            {weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} –{' '}
-            {weekDays[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            {formatDate(weekStart)} – {formatDate(weekDays[6])}
           </p>
         </div>
 

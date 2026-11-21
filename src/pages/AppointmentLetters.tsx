@@ -4,6 +4,7 @@ import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/Da
 import { CreateButton, EditButton, DeleteButton } from '@/components/ActionButton';
 import { CrudModal } from '@/components/CrudModal';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
@@ -18,7 +19,7 @@ const crud = createCrudHooks<Record<string, unknown>>({
 
 const columns: ColumnDef<Record<string, unknown>>[] = [
   { key: 'name', header: 'Name', sortable: true },
-  { key: 'created_at', header: 'Created At', sortable: true, render: (v: unknown) => v ? new Date(v as string).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '' },
+  { key: 'created_at', header: 'Created At', sortable: true, render: (v: unknown) => v ? formatDate(v as string) : '' },
 ];
 
 const filters: FilterConfig[] = [

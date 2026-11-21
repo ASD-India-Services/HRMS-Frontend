@@ -12,6 +12,7 @@ import { ButtonLink } from '@/components/ui/Button';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { EmptyState } from '@/components/EmptyState';
 import { Iconify } from '@/components/Iconify';
+import { formatDate } from '@/utils/formatters';
 
 const statusStyles: Record<AppraisalStatus, string> = {
   draft: 'bg-surface-neutral text-ink-primary',
@@ -27,13 +28,6 @@ const statusLabels: Record<AppraisalStatus, string> = {
   completed: 'Completed',
 };
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
 
 export function AppraisalDetail() {
   const { id } = useParams<{ id: string }>();

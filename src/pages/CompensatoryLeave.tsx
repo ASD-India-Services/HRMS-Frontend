@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { EMPLOYEES } from '@/lib/endpoints';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
+import { formatDate, formatDateTime } from '@/utils/formatters';
 import {
   useCompensatoryLeaveRequests,
   useEligibleAttendances,
@@ -313,7 +314,7 @@ export default function CompensatoryLeave() {
       <PageContainer>
         <PageHeader
           title="Comments"
-          subtitle={`${commentsViewReq.employee_name} (${commentsViewReq.formatted_work_date})`}
+          subtitle={`${commentsViewReq.employee_name} (${formatDate(commentsViewReq.work_date) || commentsViewReq.formatted_work_date})`}
           actions={
             <Button variant="soft" size="small" startIcon={<Iconify icon="arrow-left" />} onClick={() => {
               setCommentsViewReq(null);
@@ -360,7 +361,9 @@ export default function CompensatoryLeave() {
                     <span className="text-xs font-bold text-ink-primary">{c.author_name}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] text-ink-disabled">{c.created_at_display}</span>
+                    <span className="text-[11px] text-ink-disabled">
+                      {formatDateTime(c.created_at) !== '—' ? formatDateTime(c.created_at) : (c.created_at_display || c.created_at)}
+                    </span>
                     {(isApproverOrAdmin || (currentEmployee && c.author === currentEmployee.id)) && (
                       <IconButton icon="trash" size="small" color="error" onClick={() => handleDeleteComment(c.id)} aria-label="Delete comment" />
                     )}
@@ -566,7 +569,7 @@ export default function CompensatoryLeave() {
 
                       {/* Attendance Dates */}
                       <td className="py-3 px-3 text-ink-primary font-medium whitespace-nowrap">
-                        {req.formatted_work_date || req.work_date}
+                        {formatDate(req.work_date) || req.formatted_work_date || req.work_date}
                       </td>
 
                       {/* Requested Days */}
@@ -938,7 +941,7 @@ export default function CompensatoryLeave() {
               </div>
               <div>
                 <span className="font-semibold text-ink-secondary">Attendance Date: </span>
-                <span className="text-ink-primary">{commentModalReq.formatted_work_date}</span>
+                <span className="text-ink-primary">{formatDate(commentModalReq.work_date) || commentModalReq.formatted_work_date}</span>
               </div>
               <div>
                 <span className="font-semibold text-ink-secondary">Reason: </span>
