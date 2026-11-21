@@ -47,11 +47,11 @@ export default function RecruitmentDashboard() {
 
   // 1. Fetch Job Openings
   const { data: openingsData, isLoading: openingsLoading } = useJobOpenings({ page: 1, page_size: 100 });
-  const openings = openingsData?.results ?? [];
+  const openings = useMemo(() => openingsData?.results ?? [], [openingsData]);
 
   // 2. Fetch Applicants
   const { data: applicantsData, isLoading: applicantsLoading } = useApplicants({ page: 1, page_size: 100 });
-  const applicants = applicantsData?.results ?? [];
+  const applicants = useMemo(() => applicantsData?.results ?? [], [applicantsData]);
 
   // 3. Fetch Interviews
   const { data: interviewsData, isLoading: interviewsLoading } = useInterviews({ page: 1, page_size: 100 });
@@ -59,7 +59,7 @@ export default function RecruitmentDashboard() {
 
   // 4. Fetch Employees (for Joinings Per Month)
   const { data: employeesResponse, isLoading: employeesLoading } = useEmployees({ page_size: 200 });
-  const employees = employeesResponse?.results ?? [];
+  const employees = useMemo(() => employeesResponse?.results ?? [], [employeesResponse]);
 
   // ─── 5 Top Cards Metrics (Matching Screenshot 1) ──────────────────────────
   

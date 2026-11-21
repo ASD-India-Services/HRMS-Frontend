@@ -9,6 +9,12 @@ const SHOT_NAME = process.env.SHOT_NAME ?? 'baseline'
 
 const ROUTES: Array<[slug: string, path: string]> = [
   ['dashboard', '/dashboard'],
+  ['performance-dashboard', '/performance/dashboard'],
+  ['settings-careers-widget', '/settings/careers-widget'],
+  ['hr-settings', '/hr-settings'],
+  ['settings-grace-time', '/settings/grace-time'],
+  ['attendance-upload', '/attendance-upload'],
+  ['faq-categories', '/helpdesk/faq-categories'],
   ['profile', '/profile'],
   ['employees', '/employees'],
   ['employees-new', '/employees/new'],

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CheckIcon, LoaderIcon, AlertCircleIcon, MailIcon, SendIcon, ShieldCheckIcon, ShieldAlertIcon } from './SettingsIcons';
+import { CheckIcon, LoaderIcon, MailIcon, SendIcon, ShieldCheckIcon, ShieldAlertIcon } from './SettingsIcons';
 import api from '@/lib/api';
 import { EMAIL_CONFIG } from '@/lib/endpoints';
 import { Modal } from '@/components/ui/Modal';

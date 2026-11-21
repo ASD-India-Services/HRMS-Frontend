@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   BarChart,
@@ -261,7 +261,7 @@ export default function LeaveDashboard() {
   }, [holidays, monthStartISO, monthEndISO]);
 
   // ─── Robust Month Overlap Checker ─────────────────────────────────────────
-  const isRecordInSelectedMonth = (record: LeaveRecord): boolean => {
+  const isRecordInSelectedMonth = useCallback((record: LeaveRecord): boolean => {
     const from = parseDateSafe(record.from_date);
     const to = parseDateSafe(record.to_date) || from;
     const applied = parseDateSafe(record.applied_on || record.created_at);
@@ -303,7 +303,7 @@ export default function LeaveDashboard() {
     }
 
     return false;
-  };
+  }, [selectedMonth, selectedYear]);
 
   // Helper to extract employee display name
   const getEmployeeName = (record: LeaveRecord): string => {
@@ -324,7 +324,7 @@ export default function LeaveDashboard() {
   };
 
   // Helper to extract clean leave type name
-  const getLeaveTypeName = (record: LeaveRecord): string => {
+  const getLeaveTypeName = useCallback((record: LeaveRecord): string => {
     if (typeof record.leave_type === 'object' && record.leave_type !== null) {
       return record.leave_type.name || 'Leave';
     }
@@ -342,14 +342,14 @@ export default function LeaveDashboard() {
       if (match && match[1]) return match[1].trim();
     }
     return record.leave_type || 'Leave';
-  };
+  }, [allConfiguredLeaveTypes]);
 
   // ─── ADMIN METRICS & DATA ─────────────────────────────────────────────────
 
   // All applications in selected month
   const monthAllApplications = useMemo(() => {
     return allApplications.filter((a) => isRecordInSelectedMonth(a));
-  }, [allApplications, selectedMonth, selectedYear]);
+  }, [allApplications, isRecordInSelectedMonth]);
 
   // Card 1: Requests to Approve (all pending applications)
   const requestsToApproveCount = useMemo(() => {
@@ -418,7 +418,7 @@ export default function LeaveDashboard() {
     }
 
     return Array.from(empMap.values());
-  }, [monthAllApplications, employees, activeLeaveTypeNames]);
+  }, [monthAllApplications, employees, activeLeaveTypeNames, getLeaveTypeName]);
 
   // Paged slice of employees (6 per page)
   const pagedEmployeeLeaves = useMemo(() => {
@@ -474,7 +474,7 @@ export default function LeaveDashboard() {
       name,
       value,
     }));
-  }, [monthAllApplications, activeLeaveTypeNames]);
+  }, [monthAllApplications, activeLeaveTypeNames, getLeaveTypeName]);
 
   // Bottom Row Col 3: Weekly Leave Analytics (Line Chart)
   const weeklyLeaveData = useMemo(() => {
@@ -518,7 +518,7 @@ export default function LeaveDashboard() {
 
   const myMonthLeaveRequests = useMemo(() => {
     return myApplications.filter((a) => isRecordInSelectedMonth(a));
-  }, [myApplications, selectedMonth, selectedYear]);
+  }, [myApplications, isRecordInSelectedMonth]);
 
   const totalAvailableBalance = useMemo(() => {
     return balances.reduce((sum, b) => sum + (Number(b.available_balance) || 0), 0);

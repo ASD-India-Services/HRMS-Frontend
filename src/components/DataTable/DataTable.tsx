@@ -14,7 +14,7 @@
  */
 
 import { useState, useMemo, useCallback } from 'react';
-import type { ColumnDef, DataTableProps } from '@/types/datatable';
+import type { DataTableProps } from '@/types/datatable';
 import { ColumnVisibilityMenu } from './ColumnVisibilityMenu';
 import { BulkActionToolbar } from './BulkActionToolbar';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';

@@ -164,6 +164,7 @@ export function CandidateRejectReasonTab() {
       setReasons(updated);
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings?.company_name]);
 
   const [searchTerm, setSearchTerm] = useState('');

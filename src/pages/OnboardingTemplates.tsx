@@ -7,7 +7,7 @@
  * Permission: onboarding.manage (HR Manager / Org Admin only)
  */
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { createCrudHooks } from '@/hooks/useCrud';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
 import { CreateButton, EditButton, DeleteButton } from '@/components/ActionButton';

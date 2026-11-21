@@ -5,7 +5,6 @@
 
 import { useState } from 'react';
 import { useTrainingEvent, useEnrollInEvent, useCompleteEnrollment } from '@/hooks/useTraining';
-import type { TrainingEventStatus, EnrollmentStatus } from '@/types/training';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
 import { PageContainer } from '@/components/ui/PageContainer';

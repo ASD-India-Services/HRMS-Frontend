@@ -86,7 +86,7 @@ export default function CareersEmbedWidget() {
     staleTime: 60 * 1000,
   });
 
-  const jobs = data?.results || [];
+  const jobs = useMemo(() => data?.results || [], [data]);
   const companyName = data?.company_name || 'Our Company';
 
   // Extract unique departments for filtering
