@@ -280,7 +280,7 @@ export default function Policies() {
         <Card>
           <StateView
             icon="policies"
-            title="No Policies Found"
+            title="No records found"
             description={
               searchTerm
                 ? 'No policies match your search term. Try a different query.'

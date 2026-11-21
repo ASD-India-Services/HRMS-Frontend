@@ -44,7 +44,7 @@ export default function Compliance() {
         {COMPLIANCE_CONFIGS.map((config) => (
           <Card
             key={config.title}
-            className="p-6"
+            className="flex flex-col p-6"
           >
             <div className="flex items-start justify-between">
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary-main/10 text-primary-main">
@@ -56,11 +56,11 @@ export default function Compliance() {
             </div>
 
             <h3 className="mt-4 text-base font-semibold text-ink-primary">{config.title}</h3>
-            <p className="mt-1 text-sm text-ink-secondary">{config.description}</p>
+            <p className="mb-5 mt-1 text-sm text-ink-secondary">{config.description}</p>
 
             <Button variant="outlined" color="inherit"
               type="button"
-              className="mt-5"
+              className="mt-auto self-start"
             >
               Configure
             </Button>

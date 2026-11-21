@@ -466,7 +466,7 @@ export default function Meetings() {
         }
       />
 
-      <div className="mb-6 flex flex-wrap items-center gap-3">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <div className="relative">
           <Input
             type="text"
@@ -496,7 +496,7 @@ export default function Meetings() {
           </div>
         ) : meetings.length === 0 ? (
           /* Empty State matching Screenshot 1 */
-          <StateView icon="search" title="No records found" description="No meetings have been created yet." />
+          <StateView icon="search" title="No records found" description="Try adjusting your filters or adding new data." />
         ) : (
           /* Meetings Table */
           <div className="overflow-x-auto">

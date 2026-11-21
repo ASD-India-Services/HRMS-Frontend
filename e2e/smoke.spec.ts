@@ -69,7 +69,6 @@ const ROUTES: Array<[slug: string, path: string]> = [
   ['goals', '/goals'],
   ['transfers', '/transfers'],
   ['promotions', '/promotions'],
-  ['hr-settings', '/hr-settings'],
   ['settings-mail-server', '/settings/mail-server'],
   ['helpdesk', '/helpdesk'],
   ['permissions-dashboard', '/permissions/dashboard'],

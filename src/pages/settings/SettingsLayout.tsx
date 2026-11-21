@@ -135,7 +135,7 @@ export function SettingsLayout() {
       <PageHeader
         title="Settings"
         breadcrumb={
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-xs">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1">
             <Link to="/" className="transition-colors hover:text-ink-primary">
               DigiHRMS
             </Link>
