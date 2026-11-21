@@ -188,13 +188,13 @@ export function GraceTimeTab() {
       const updated = records.map((r) =>
         r.id === editingRecord.id
           ? {
-              ...r,
-              allowed_time: formRecordAllowedTime.trim(),
-              is_active: formRecordIsActive,
-              applicable_clock_in: formRecordClockIn,
-              applicable_clock_out: formRecordClockOut,
-              assigned_shifts: formRecordAssignedShift,
-            }
+            ...r,
+            allowed_time: formRecordAllowedTime.trim(),
+            is_active: formRecordIsActive,
+            applicable_clock_in: formRecordClockIn,
+            applicable_clock_out: formRecordClockOut,
+            assigned_shifts: formRecordAssignedShift,
+          }
           : r
       );
       saveRecords(updated, 'Grace time rule updated successfully');
@@ -278,15 +278,13 @@ export function GraceTimeTab() {
                     role="switch"
                     aria-checked={defaultGraceTime.is_active}
                     onClick={() => handleToggleDefault('is_active')}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      defaultGraceTime.is_active ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${defaultGraceTime.is_active ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                        defaultGraceTime.is_active ? 'translate-x-5' : 'translate-x-0'
-                      }`}
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${defaultGraceTime.is_active ? 'translate-x-5' : 'translate-x-0'
+                        }`}
                     />
                   </button>
                 </td>
@@ -296,15 +294,13 @@ export function GraceTimeTab() {
                     role="switch"
                     aria-checked={defaultGraceTime.applicable_clock_in}
                     onClick={() => handleToggleDefault('applicable_clock_in')}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      defaultGraceTime.applicable_clock_in ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${defaultGraceTime.applicable_clock_in ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                        defaultGraceTime.applicable_clock_in ? 'translate-x-5' : 'translate-x-0'
-                      }`}
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${defaultGraceTime.applicable_clock_in ? 'translate-x-5' : 'translate-x-0'
+                        }`}
                     />
                   </button>
                 </td>
@@ -314,15 +310,13 @@ export function GraceTimeTab() {
                     role="switch"
                     aria-checked={defaultGraceTime.applicable_clock_out}
                     onClick={() => handleToggleDefault('applicable_clock_out')}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      defaultGraceTime.applicable_clock_out ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${defaultGraceTime.applicable_clock_out ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                        defaultGraceTime.applicable_clock_out ? 'translate-x-5' : 'translate-x-0'
-                      }`}
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${defaultGraceTime.applicable_clock_out ? 'translate-x-5' : 'translate-x-0'
+                        }`}
                     />
                   </button>
                 </td>
@@ -372,7 +366,7 @@ export function GraceTimeTab() {
             className="inline-flex items-center justify-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors shrink-0"
           >
             <PlusIcon className="h-4 w-4" />
-            + Create
+            Create
           </button>
         </div>
 
@@ -423,15 +417,13 @@ export function GraceTimeTab() {
                         role="switch"
                         aria-checked={record.is_active}
                         onClick={() => handleToggleRecord(record.id, 'is_active')}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                          record.is_active ? 'bg-blue-600' : 'bg-gray-300'
-                        }`}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${record.is_active ? 'bg-blue-600' : 'bg-gray-300'
+                          }`}
                       >
                         <span
                           aria-hidden="true"
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                            record.is_active ? 'translate-x-5' : 'translate-x-0'
-                          }`}
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${record.is_active ? 'translate-x-5' : 'translate-x-0'
+                            }`}
                         />
                       </button>
                     </td>
@@ -441,15 +433,13 @@ export function GraceTimeTab() {
                         role="switch"
                         aria-checked={record.applicable_clock_in}
                         onClick={() => handleToggleRecord(record.id, 'applicable_clock_in')}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                          record.applicable_clock_in ? 'bg-blue-600' : 'bg-gray-300'
-                        }`}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${record.applicable_clock_in ? 'bg-blue-600' : 'bg-gray-300'
+                          }`}
                       >
                         <span
                           aria-hidden="true"
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                            record.applicable_clock_in ? 'translate-x-5' : 'translate-x-0'
-                          }`}
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${record.applicable_clock_in ? 'translate-x-5' : 'translate-x-0'
+                            }`}
                         />
                       </button>
                     </td>
@@ -459,15 +449,13 @@ export function GraceTimeTab() {
                         role="switch"
                         aria-checked={record.applicable_clock_out}
                         onClick={() => handleToggleRecord(record.id, 'applicable_clock_out')}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                          record.applicable_clock_out ? 'bg-blue-600' : 'bg-gray-300'
-                        }`}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${record.applicable_clock_out ? 'bg-blue-600' : 'bg-gray-300'
+                          }`}
                       >
                         <span
                           aria-hidden="true"
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                            record.applicable_clock_out ? 'translate-x-5' : 'translate-x-0'
-                          }`}
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${record.applicable_clock_out ? 'translate-x-5' : 'translate-x-0'
+                            }`}
                         />
                       </button>
                     </td>
@@ -544,15 +532,13 @@ export function GraceTimeTab() {
                     role="switch"
                     aria-checked={formDefaultIsActive}
                     onClick={() => setFormDefaultIsActive((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formDefaultIsActive ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${formDefaultIsActive ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formDefaultIsActive ? 'translate-x-5' : 'translate-x-0'
-                      }`}
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${formDefaultIsActive ? 'translate-x-5' : 'translate-x-0'
+                        }`}
                     />
                   </button>
                 </div>
@@ -564,15 +550,13 @@ export function GraceTimeTab() {
                     role="switch"
                     aria-checked={formDefaultClockIn}
                     onClick={() => setFormDefaultClockIn((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formDefaultClockIn ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${formDefaultClockIn ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formDefaultClockIn ? 'translate-x-5' : 'translate-x-0'
-                      }`}
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${formDefaultClockIn ? 'translate-x-5' : 'translate-x-0'
+                        }`}
                     />
                   </button>
                 </div>
@@ -584,15 +568,13 @@ export function GraceTimeTab() {
                     role="switch"
                     aria-checked={formDefaultClockOut}
                     onClick={() => setFormDefaultClockOut((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formDefaultClockOut ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${formDefaultClockOut ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formDefaultClockOut ? 'translate-x-5' : 'translate-x-0'
-                      }`}
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${formDefaultClockOut ? 'translate-x-5' : 'translate-x-0'
+                        }`}
                     />
                   </button>
                 </div>
@@ -686,15 +668,13 @@ export function GraceTimeTab() {
                     role="switch"
                     aria-checked={formRecordIsActive}
                     onClick={() => setFormRecordIsActive((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formRecordIsActive ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${formRecordIsActive ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formRecordIsActive ? 'translate-x-5' : 'translate-x-0'
-                      }`}
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${formRecordIsActive ? 'translate-x-5' : 'translate-x-0'
+                        }`}
                     />
                   </button>
                 </div>
@@ -706,15 +686,13 @@ export function GraceTimeTab() {
                     role="switch"
                     aria-checked={formRecordClockIn}
                     onClick={() => setFormRecordClockIn((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formRecordClockIn ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${formRecordClockIn ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formRecordClockIn ? 'translate-x-5' : 'translate-x-0'
-                      }`}
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${formRecordClockIn ? 'translate-x-5' : 'translate-x-0'
+                        }`}
                     />
                   </button>
                 </div>
@@ -726,15 +704,13 @@ export function GraceTimeTab() {
                     role="switch"
                     aria-checked={formRecordClockOut}
                     onClick={() => setFormRecordClockOut((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formRecordClockOut ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${formRecordClockOut ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formRecordClockOut ? 'translate-x-5' : 'translate-x-0'
-                      }`}
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${formRecordClockOut ? 'translate-x-5' : 'translate-x-0'
+                        }`}
                     />
                   </button>
                 </div>

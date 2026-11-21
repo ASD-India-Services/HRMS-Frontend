@@ -93,8 +93,8 @@ export function LeaveTypeTab() {
     const branchList = Array.isArray(branchesData)
       ? branchesData
       : Array.isArray((branchesData as any)?.results)
-      ? (branchesData as any).results
-      : [];
+        ? (branchesData as any).results
+        : [];
     branchList.forEach((b: any) => {
       add(b?.name);
     });
@@ -220,10 +220,10 @@ export function LeaveTypeTab() {
       const updated = leaveTypes.map((w) =>
         w.id === editingItem.id
           ? {
-              ...w,
-              name: formLeaveType.trim(),
-              company: companyToSave,
-            }
+            ...w,
+            name: formLeaveType.trim(),
+            company: companyToSave,
+          }
           : w
       );
       saveToStorage(updated, 'Leave type updated successfully');

@@ -2,8 +2,9 @@
  * Navigation configuration for the HRMS sidebar.
  *
  * Defines the sidebar navigation structure with module groups,
- * each specifying label, icon (SVG path data), href, featureFlag, and requiredPermission.
- * Groups are filtered by both feature flag availability and permission checks.
+ * each specifying label, icon (SVG path data and Iconify identifier), href,
+ * featureFlag, and requiredPermission. Groups are filtered by both feature flag
+ * availability and permission checks.
  *
  * Requirements: 11.1, 11.2, 16.1, 16.2, 16.3, 16.4, 16.5
  */
@@ -13,8 +14,14 @@ export interface NavItem {
   label: string;
   /** Route path (relative to root) */
   href: string;
-  /** SVG path `d` attribute for a 24x24 stroke-based icon (Heroicons style) */
+  /** SVG path `d` attribute for a 24x24 stroke-based icon (Heroicons fallback style) */
   icon: string;
+  /** Iconify icon identifier for clean linear outline icons */
+  iconName?: string;
+  /** Optional badge value (e.g. number of pending items or notifications) */
+  badge?: string | number;
+  /** Optional badge background color */
+  badgeColor?: string;
   /** Permission code required to see this item (e.g. "employees.view") */
   requiredPermission: string;
   /** Optional: show the item if the user has ANY one of these permissions. */
@@ -26,11 +33,15 @@ export interface NavItem {
 export interface NavGroup {
   /** Section title displayed above the group items */
   label: string;
+  /** Clean linear icon for the parent group from Iconify */
+  icon?: string;
+  /** Optional badge count for the group */
+  badge?: string | number;
   /** Navigation items in this group */
   items: NavItem[];
 }
 
-// ─── SVG Icon Paths (Heroicons 24x24, stroke-based) ────────────────────────
+// ─── SVG Icon Paths (Fallback Heroicons 24x24, stroke-based) ────────────────────────
 
 const ICONS = {
   dashboard:
@@ -172,147 +183,159 @@ const ICONS = {
 export const navigationConfig: NavGroup[] = [
   {
     label: 'Overview',
+    icon: 'solar:home-2-linear',
     items: [
-      { label: 'Dashboard', href: '/dashboard', icon: ICONS.dashboard, requiredPermission: 'dashboard.view', featureFlag: null },
+      { label: 'Dashboard', href: '/dashboard', icon: ICONS.dashboard, iconName: 'solar:home-2-linear', requiredPermission: 'dashboard.view', featureFlag: null },
     ],
   },
   {
     label: 'People',
+    icon: 'solar:users-group-rounded-linear',
     items: [
-      { label: 'Employees', href: '/employees', icon: ICONS.employees, requiredPermission: 'employees.view', featureFlag: 'employees_enabled' },
-      { label: 'Org Chart', href: '/org-chart', icon: ICONS.orgChart, requiredPermission: 'employees.view', featureFlag: 'employees_enabled' },
-      { label: 'Departments', href: '/departments', icon: ICONS.departments, requiredPermission: 'departments.view', featureFlag: 'employees_enabled' },
-      { label: 'Designations', href: '/designations', icon: ICONS.designations, requiredPermission: 'designations.view', featureFlag: 'employees_enabled' },
-      { label: 'Grades', href: '/employee-grades', icon: ICONS.grades, requiredPermission: 'employee_grades.view', featureFlag: 'employees_enabled' },
-      { label: 'Approvers', href: '/department-approvers', icon: ICONS.approvers, requiredPermission: 'department_approvers.view', featureFlag: 'employees_enabled' },
-      { label: 'Branches', href: '/branches', icon: ICONS.branches, requiredPermission: 'branches.view', featureFlag: 'employees_enabled' },
-      { label: 'Transfers', href: '/transfers', icon: ICONS.transfers, requiredPermission: 'transfers.view', featureFlag: 'employees_enabled' },
-      { label: 'Promotions', href: '/promotions', icon: ICONS.promotions, requiredPermission: 'promotions.view', featureFlag: 'employees_enabled' },
-      { label: 'Meetings', href: '/meetings', icon: ICONS.meetings, requiredPermission: 'meetings.view', featureFlag: null },
-      { label: 'Employee Bonus Point', href: '/employee-bonus-points', icon: ICONS.bonusPoints, requiredPermission: 'bonus_points.view', featureFlag: null },
+      { label: 'Employees', href: '/employees', icon: ICONS.employees, iconName: 'solar:user-linear', requiredPermission: 'employees.view', featureFlag: 'employees_enabled' },
+      { label: 'Org Chart', href: '/org-chart', icon: ICONS.orgChart, iconName: 'solar:structure-linear', requiredPermission: 'employees.view', featureFlag: 'employees_enabled' },
+      { label: 'Departments', href: '/departments', icon: ICONS.departments, iconName: 'solar:buildings-2-linear', requiredPermission: 'departments.view', featureFlag: 'employees_enabled' },
+      { label: 'Designations', href: '/designations', icon: ICONS.designations, iconName: 'solar:user-id-linear', requiredPermission: 'designations.view', featureFlag: 'employees_enabled' },
+      { label: 'Grades', href: '/employee-grades', icon: ICONS.grades, iconName: 'solar:ranking-linear', requiredPermission: 'employee_grades.view', featureFlag: 'employees_enabled' },
+      { label: 'Approvers', href: '/department-approvers', icon: ICONS.approvers, iconName: 'solar:check-circle-linear', requiredPermission: 'department_approvers.view', featureFlag: 'employees_enabled' },
+      { label: 'Branches', href: '/branches', icon: ICONS.branches, iconName: 'solar:global-linear', requiredPermission: 'branches.view', featureFlag: 'employees_enabled' },
+      { label: 'Transfers', href: '/transfers', icon: ICONS.transfers, iconName: 'solar:transfer-horizontal-linear', requiredPermission: 'transfers.view', featureFlag: 'employees_enabled' },
+      { label: 'Promotions', href: '/promotions', icon: ICONS.promotions, iconName: 'solar:arrow-up-linear', requiredPermission: 'promotions.view', featureFlag: 'employees_enabled' },
+      { label: 'Meetings', href: '/meetings', icon: ICONS.meetings, iconName: 'solar:videocamera-record-linear', requiredPermission: 'meetings.view', featureFlag: null },
+      { label: 'Employee Bonus Point', href: '/employee-bonus-points', icon: ICONS.bonusPoints, iconName: 'solar:star-fall-minimalistic-2-linear', requiredPermission: 'bonus_points.view', featureFlag: null },
     ],
   },
   {
     label: 'Leaves',
+    icon: 'solar:calendar-date-linear',
     items: [
-      { label: 'Dashboard', href: '/leaves/dashboard', icon: ICONS.dashboard, requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
-      { label: 'My Leaves', href: '/my-leaves', icon: ICONS.leaves, requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
-      { label: 'Leave Approvals', href: '/leaves/approvals', icon: ICONS.leaveApprovals, requiredPermission: 'leave_approvals.view', featureFlag: 'leaves_enabled' },
-      { label: 'Compensatory Leave', href: '/leaves/compensatory', icon: ICONS.leaveApprovals, requiredPermission: 'compensatory_leave.view', featureFlag: 'leaves_enabled' },
-      { label: 'Leave Policies', href: '/leave-policies', icon: ICONS.leavePolicies, requiredPermission: 'leave_policies.view', featureFlag: 'leaves_enabled' },
-      { label: 'Policy Assignments', href: '/leave-policy-assignments', icon: ICONS.leaveAdjust, requiredPermission: 'leave_policy_assignments.view', featureFlag: 'leaves_enabled' },
-      { label: 'Block Lists', href: '/leave-block-lists', icon: ICONS.leaveBlock, requiredPermission: 'leave_block_lists.view', featureFlag: 'leaves_enabled' },
-      { label: 'Adjustments', href: '/leave-adjustments', icon: ICONS.leaveAdjust, requiredPermission: 'leave_adjustments.view', featureFlag: 'leaves_enabled' },
-      { label: 'Earned Leave Schedules', href: '/earned-leave-schedules', icon: ICONS.leaveEarned, requiredPermission: 'earned_leave_schedules.view', featureFlag: 'leaves_enabled' },
-      { label: 'Loss of Pay', href: '/loss-of-pay', icon: ICONS.leaveAdjust, requiredPermission: 'loss_of_pay.view', featureFlag: 'leaves_enabled' },
-      { label: 'Company Leaves', href: '/leaves/company-leaves', icon: ICONS.leaves, requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
+      { label: 'Dashboard', href: '/leaves/dashboard', icon: ICONS.dashboard, iconName: 'solar:chart-2-linear', requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
+      { label: 'My Leaves', href: '/my-leaves', icon: ICONS.leaves, iconName: 'solar:calendar-linear', requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
+      { label: 'Leave Approvals', href: '/leaves/approvals', icon: ICONS.leaveApprovals, iconName: 'solar:checklist-minimalistic-linear', requiredPermission: 'leave_approvals.view', featureFlag: 'leaves_enabled' },
+      { label: 'Compensatory Leave', href: '/leaves/compensatory', icon: ICONS.leaveApprovals, iconName: 'solar:refresh-circle-linear', requiredPermission: 'compensatory_leave.view', featureFlag: 'leaves_enabled' },
+      { label: 'Leave Policies', href: '/leave-policies', icon: ICONS.leavePolicies, iconName: 'solar:document-text-linear', requiredPermission: 'leave_policies.view', featureFlag: 'leaves_enabled' },
+      { label: 'Policy Assignments', href: '/leave-policy-assignments', icon: ICONS.leaveAdjust, iconName: 'solar:user-check-linear', requiredPermission: 'leave_policy_assignments.view', featureFlag: 'leaves_enabled' },
+      { label: 'Block Lists', href: '/leave-block-lists', icon: ICONS.leaveBlock, iconName: 'solar:forbidden-circle-linear', requiredPermission: 'leave_block_lists.view', featureFlag: 'leaves_enabled' },
+      { label: 'Adjustments', href: '/leave-adjustments', icon: ICONS.leaveAdjust, iconName: 'solar:tuning-square-2-linear', requiredPermission: 'leave_adjustments.view', featureFlag: 'leaves_enabled' },
+      { label: 'Earned Leave Schedules', href: '/earned-leave-schedules', icon: ICONS.leaveEarned, iconName: 'solar:calendar-add-linear', requiredPermission: 'earned_leave_schedules.view', featureFlag: 'leaves_enabled' },
+      { label: 'Loss of Pay', href: '/loss-of-pay', icon: ICONS.leaveAdjust, iconName: 'solar:card-2-linear', requiredPermission: 'loss_of_pay.view', featureFlag: 'leaves_enabled' },
+      { label: 'Company Leaves', href: '/leaves/company-leaves', icon: ICONS.leaves, iconName: 'solar:sun-2-linear', requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
     ],
   },
   {
     label: 'Attendance',
+    icon: 'solar:clock-circle-linear',
     items: [
-      { label: 'Dashboard', href: '/attendance/dashboard', icon: ICONS.dashboard, requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
-      { label: 'Attendance', href: '/attendance', icon: ICONS.attendance, requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
-      { label: 'My Attendance', href: '/my-attendance', icon: ICONS.attendanceRegister, requiredPermission: 'my_attendance.view', featureFlag: 'attendance_enabled' },
-      { label: 'Attendance Register', href: '/attendance-register', icon: ICONS.attendanceRegister, requiredPermission: 'attendance_register.view', featureFlag: 'attendance_enabled' },
-      { label: 'Attendance Requests', href: '/attendance-requests', icon: ICONS.attendanceRequest, requiredPermission: 'attendance_requests.view', featureFlag: 'attendance_enabled' },
-      { label: 'Hour Account', href: '/attendance/hour-account', icon: ICONS.overtime, requiredPermission: 'hour_account.view', featureFlag: 'attendance_enabled' },
-      { label: 'Work Records', href: '/attendance/work-records', icon: ICONS.attendanceRegister, requiredPermission: 'work_records.view', featureFlag: 'attendance_enabled' },
-      { label: 'Attendance Upload', href: '/attendance-upload', icon: ICONS.attendanceUpload, requiredPermission: 'attendance_upload.manage', featureFlag: 'attendance_enabled' },
-      { label: 'Geo Locations', href: '/geofence-locations', icon: ICONS.geoLocations, requiredPermission: 'geofence_locations.view', featureFlag: 'attendance_enabled' },
-      { label: 'Shifts', href: '/shifts', icon: ICONS.shifts, requiredPermission: 'shifts.view_own', requiredAnyPermission: ['shifts.view_own', 'shifts.view_team'], featureFlag: 'shifts_enabled' },
-      { label: 'Shift Types', href: '/shift-types', icon: ICONS.shiftTypes, requiredPermission: 'shift_types.view', featureFlag: 'shifts_enabled' },
-      { label: 'Shift Requests', href: '/shift-requests', icon: ICONS.shiftRequests, requiredPermission: 'shift_requests.view', featureFlag: 'shifts_enabled' },
-      { label: 'Shift Schedules', href: '/shift-schedules', icon: ICONS.shifts, requiredPermission: 'shift_schedules.view', featureFlag: 'shifts_enabled' },
+      { label: 'Dashboard', href: '/attendance/dashboard', icon: ICONS.dashboard, iconName: 'solar:chart-2-linear', requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
+      { label: 'Attendance', href: '/attendance', icon: ICONS.attendance, iconName: 'solar:clock-circle-linear', requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
+      { label: 'My Attendance', href: '/my-attendance', icon: ICONS.attendanceRegister, iconName: 'solar:history-linear', requiredPermission: 'my_attendance.view', featureFlag: 'attendance_enabled' },
+      { label: 'Attendance Register', href: '/attendance-register', icon: ICONS.attendanceRegister, iconName: 'solar:notes-linear', requiredPermission: 'attendance_register.view', featureFlag: 'attendance_enabled' },
+      { label: 'Attendance Requests', href: '/attendance-requests', icon: ICONS.attendanceRequest, iconName: 'solar:chat-round-dots-linear', requiredPermission: 'attendance_requests.view', featureFlag: 'attendance_enabled' },
+      { label: 'Hour Account', href: '/attendance/hour-account', icon: ICONS.overtime, iconName: 'solar:hourglass-linear', requiredPermission: 'hour_account.view', featureFlag: 'attendance_enabled' },
+      { label: 'Work Records', href: '/attendance/work-records', icon: ICONS.attendanceRegister, iconName: 'solar:clipboard-check-linear', requiredPermission: 'work_records.view', featureFlag: 'attendance_enabled' },
+      { label: 'Attendance Upload', href: '/attendance-upload', icon: ICONS.attendanceUpload, iconName: 'solar:upload-track-linear', requiredPermission: 'attendance_upload.manage', featureFlag: 'attendance_enabled' },
+      { label: 'Geo Locations', href: '/geofence-locations', icon: ICONS.geoLocations, iconName: 'solar:map-point-linear', requiredPermission: 'geofence_locations.view', featureFlag: 'attendance_enabled' },
+      { label: 'Shifts', href: '/shifts', icon: ICONS.shifts, iconName: 'solar:refresh-linear', requiredPermission: 'shifts.view_own', requiredAnyPermission: ['shifts.view_own', 'shifts.view_team'], featureFlag: 'shifts_enabled' },
+      { label: 'Shift Types', href: '/shift-types', icon: ICONS.shiftTypes, iconName: 'solar:settings-linear', requiredPermission: 'shift_types.view', featureFlag: 'shifts_enabled' },
+      { label: 'Shift Requests', href: '/shift-requests', icon: ICONS.shiftRequests, iconName: 'solar:calendar-search-linear', requiredPermission: 'shift_requests.view', featureFlag: 'shifts_enabled' },
+      { label: 'Shift Schedules', href: '/shift-schedules', icon: ICONS.shifts, iconName: 'solar:calendar-minimalistic-linear', requiredPermission: 'shift_schedules.view', featureFlag: 'shifts_enabled' },
     ],
   },
   {
     label: 'Payroll',
+    icon: 'solar:wallet-money-linear',
     items: [
-      { label: 'Dashboard', href: '/payroll/dashboard', icon: ICONS.dashboard, requiredPermission: 'payroll.view', featureFlag: 'payroll_enabled' },
-      { label: 'Payroll Runs', href: '/payroll/runs', icon: ICONS.payroll, requiredPermission: 'payroll_runs.view', featureFlag: 'payroll_enabled' },
-      { label: 'Salary Slips', href: '/payroll', icon: ICONS.salarySlips, requiredPermission: 'payroll.view', featureFlag: 'payroll_enabled' },
-      { label: 'Components', href: '/salary-components', icon: ICONS.expenseTaxes, requiredPermission: 'salary_components.view', featureFlag: 'payroll_enabled' },
-      { label: 'Structures', href: '/salary-structures', icon: ICONS.leavePolicies, requiredPermission: 'salary_structures.view', featureFlag: 'payroll_enabled' },
-      { label: 'Assignments', href: '/salary-structure-assignments', icon: ICONS.leaveAdjust, requiredPermission: 'salary_structure_assignments.view', featureFlag: 'payroll_enabled' },
-      { label: 'Payroll Periods', href: '/payroll-periods', icon: ICONS.leaves, requiredPermission: 'payroll_periods.view', featureFlag: 'payroll_enabled' },
-      { label: 'Corrections', href: '/payroll-corrections', icon: ICONS.hrSettings, requiredPermission: 'payroll_corrections.view', featureFlag: 'payroll_enabled' },
-      { label: 'Incentives', href: '/employee-incentives', icon: ICONS.appraisals, requiredPermission: 'employee_incentives.view', featureFlag: 'payroll_enabled' },
-      { label: 'Gratuity', href: '/gratuity', icon: ICONS.costCenters, requiredPermission: 'gratuity.view', featureFlag: 'payroll_enabled' },
+      { label: 'Dashboard', href: '/payroll/dashboard', icon: ICONS.dashboard, iconName: 'solar:chart-2-linear', requiredPermission: 'payroll.view', featureFlag: 'payroll_enabled' },
+      { label: 'Payroll Runs', href: '/payroll/runs', icon: ICONS.payroll, iconName: 'solar:play-circle-linear', requiredPermission: 'payroll_runs.view', featureFlag: 'payroll_enabled' },
+      { label: 'Salary Slips', href: '/payroll', icon: ICONS.salarySlips, iconName: 'solar:document-linear', requiredPermission: 'payroll.view', featureFlag: 'payroll_enabled' },
+      { label: 'Components', href: '/salary-components', icon: ICONS.expenseTaxes, iconName: 'solar:layers-linear', requiredPermission: 'salary_components.view', featureFlag: 'payroll_enabled' },
+      { label: 'Structures', href: '/salary-structures', icon: ICONS.leavePolicies, iconName: 'solar:align-bottom-linear', requiredPermission: 'salary_structures.view', featureFlag: 'payroll_enabled' },
+      { label: 'Assignments', href: '/salary-structure-assignments', icon: ICONS.leaveAdjust, iconName: 'solar:user-plus-linear', requiredPermission: 'salary_structure_assignments.view', featureFlag: 'payroll_enabled' },
+      { label: 'Payroll Periods', href: '/payroll-periods', icon: ICONS.leaves, iconName: 'solar:calendar-mark-linear', requiredPermission: 'payroll_periods.view', featureFlag: 'payroll_enabled' },
+      { label: 'Corrections', href: '/payroll-corrections', icon: ICONS.hrSettings, iconName: 'solar:pen-new-square-linear', requiredPermission: 'payroll_corrections.view', featureFlag: 'payroll_enabled' },
+      { label: 'Incentives', href: '/employee-incentives', icon: ICONS.appraisals, iconName: 'solar:medal-star-linear', requiredPermission: 'employee_incentives.view', featureFlag: 'payroll_enabled' },
+      { label: 'Gratuity', href: '/gratuity', icon: ICONS.costCenters, iconName: 'solar:hand-money-linear', requiredPermission: 'gratuity.view', featureFlag: 'payroll_enabled' },
     ],
   },
   {
     label: 'Recruitment',
+    icon: 'solar:case-round-linear',
     items: [
-      { label: 'Dashboard', href: '/recruitment/dashboard', icon: ICONS.dashboard, requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
-      { label: 'Job Openings', href: '/recruitment/job-openings', icon: ICONS.recruitment, requiredPermission: 'job_openings.view', featureFlag: 'recruitment_enabled' },
-      { label: 'Pipeline', href: '/recruitment/pipeline', icon: ICONS.pipeline, requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
-      { label: 'Stages', href: '/recruitment/stages', icon: ICONS.pipeline, requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
-      { label: 'Referrals', href: '/referrals', icon: ICONS.referrals, requiredPermission: 'referrals.view', featureFlag: 'recruitment_enabled' },
-      { label: 'Interview Types', href: '/interview-types', icon: ICONS.interviewTypes, requiredPermission: 'interview_types.view', featureFlag: 'recruitment_enabled' },
-      { label: 'Job Templates', href: '/job-templates', icon: ICONS.jobTemplates, requiredPermission: 'job_templates.view', featureFlag: 'recruitment_enabled' },
+      { label: 'Dashboard', href: '/recruitment/dashboard', icon: ICONS.dashboard, iconName: 'solar:chart-2-linear', requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
+      { label: 'Job Openings', href: '/recruitment/job-openings', icon: ICONS.recruitment, iconName: 'solar:case-minimalistic-linear', requiredPermission: 'job_openings.view', featureFlag: 'recruitment_enabled' },
+      { label: 'Pipeline', href: '/recruitment/pipeline', icon: ICONS.pipeline, iconName: 'solar:tuning-2-linear', requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
+      { label: 'Stages', href: '/recruitment/stages', icon: ICONS.pipeline, iconName: 'solar:sort-by-time-linear', requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
+      { label: 'Referrals', href: '/referrals', icon: ICONS.referrals, iconName: 'solar:users-group-two-rounded-linear', requiredPermission: 'referrals.view', featureFlag: 'recruitment_enabled' },
+      { label: 'Interview Types', href: '/interview-types', icon: ICONS.interviewTypes, iconName: 'solar:dialog-linear', requiredPermission: 'interview_types.view', featureFlag: 'recruitment_enabled' },
+      { label: 'Job Templates', href: '/job-templates', icon: ICONS.jobTemplates, iconName: 'solar:copy-linear', requiredPermission: 'job_templates.view', featureFlag: 'recruitment_enabled' },
     ],
   },
   {
     label: 'Performance',
+    icon: 'solar:chart-square-linear',
     items: [
-      { label: 'Dashboard', href: '/performance/dashboard', icon: ICONS.dashboard, requiredPermission: 'appraisals.view', requiredAnyPermission: ['appraisals.view', 'goals.view', 'kras.view', 'performance_feedback.view'], featureFlag: 'appraisals_enabled' },
-      { label: 'Appraisals', href: '/appraisals', icon: ICONS.appraisals, requiredPermission: 'appraisals.view', featureFlag: 'appraisals_enabled' },
-      { label: 'KRAs', href: '/kras', icon: ICONS.kras, requiredPermission: 'kras.view', featureFlag: 'appraisals_enabled' },
-      { label: 'Templates', href: '/appraisal-templates', icon: ICONS.jobTemplates, requiredPermission: 'appraisal_templates.view', featureFlag: 'appraisals_enabled' },
-      { label: 'Goals', href: '/goals', icon: ICONS.goals, requiredPermission: 'goals.view', featureFlag: 'appraisals_enabled' },
-      { label: 'Feedback', href: '/performance-feedback', icon: ICONS.feedback, requiredPermission: 'performance_feedback.view', featureFlag: 'appraisals_enabled' },
+      { label: 'Dashboard', href: '/performance/dashboard', icon: ICONS.dashboard, iconName: 'solar:chart-2-linear', requiredPermission: 'appraisals.view', requiredAnyPermission: ['appraisals.view', 'goals.view', 'kras.view', 'performance_feedback.view'], featureFlag: 'appraisals_enabled' },
+      { label: 'Appraisals', href: '/appraisals', icon: ICONS.appraisals, iconName: 'solar:medal-ribbons-star-linear', requiredPermission: 'appraisals.view', featureFlag: 'appraisals_enabled' },
+      { label: 'KRAs', href: '/kras', icon: ICONS.kras, iconName: 'solar:target-linear', requiredPermission: 'kras.view', featureFlag: 'appraisals_enabled' },
+      { label: 'Templates', href: '/appraisal-templates', icon: ICONS.jobTemplates, iconName: 'solar:file-text-linear', requiredPermission: 'appraisal_templates.view', featureFlag: 'appraisals_enabled' },
+      { label: 'Goals', href: '/goals', icon: ICONS.goals, iconName: 'solar:flag-2-linear', requiredPermission: 'goals.view', featureFlag: 'appraisals_enabled' },
+      { label: 'Feedback', href: '/performance-feedback', icon: ICONS.feedback, iconName: 'solar:chat-round-line-linear', requiredPermission: 'performance_feedback.view', featureFlag: 'appraisals_enabled' },
     ],
   },
   {
     label: 'Expenses',
+    icon: 'solar:bill-list-linear',
     items: [
-      { label: 'My Expenses', href: '/expenses', icon: ICONS.expenses, requiredPermission: 'expenses.view', featureFlag: 'expenses_enabled' },
-      { label: 'Expense Approvals', href: '/expenses/approvals', icon: ICONS.expenseApprovals, requiredPermission: 'expense_approvals.view', featureFlag: 'expenses_enabled' },
-      { label: 'Expense Types', href: '/expense-types', icon: ICONS.expenseTypes, requiredPermission: 'expense_types.view', featureFlag: 'expenses_enabled' },
-      { label: 'Expense Taxes', href: '/expense-taxes', icon: ICONS.expenseTaxes, requiredPermission: 'expense_taxes.view', featureFlag: 'expenses_enabled' },
+      { label: 'My Expenses', href: '/expenses', icon: ICONS.expenses, iconName: 'solar:wallet-linear', requiredPermission: 'expenses.view', featureFlag: 'expenses_enabled' },
+      { label: 'Expense Approvals', href: '/expenses/approvals', icon: ICONS.expenseApprovals, iconName: 'solar:check-read-linear', requiredPermission: 'expense_approvals.view', featureFlag: 'expenses_enabled' },
+      { label: 'Expense Types', href: '/expense-types', icon: ICONS.expenseTypes, iconName: 'solar:tag-linear', requiredPermission: 'expense_types.view', featureFlag: 'expenses_enabled' },
+      { label: 'Expense Taxes', href: '/expense-taxes', icon: ICONS.expenseTaxes, iconName: 'solar:calculator-linear', requiredPermission: 'expense_taxes.view', featureFlag: 'expenses_enabled' },
     ],
   },
   {
     label: 'Learning',
+    icon: 'solar:square-academic-cap-linear',
     items: [
-      { label: 'Onboarding', href: '/onboarding', icon: ICONS.onboarding, requiredPermission: 'onboarding.view' },
-      { label: 'Onboarding Templates', href: '/onboarding-templates', icon: ICONS.onboardingTemplates, requiredPermission: 'onboarding_templates.view' },
-      { label: 'Onboarding Tracking', href: '/onboarding-tracking', icon: ICONS.onboardingTracking, requiredPermission: 'onboarding_tracking.view' },
-      { label: 'Training', href: '/training', icon: ICONS.training, requiredPermission: 'training.view', featureFlag: 'training_enabled' },
-      { label: 'Training Programs', href: '/training-programs', icon: ICONS.trainingPrograms, requiredPermission: 'training_programs.view', featureFlag: 'training_enabled' },
-      { label: 'Training Results', href: '/training-results', icon: ICONS.trainingResults, requiredPermission: 'training_results.view', featureFlag: 'training_enabled' },
+      { label: 'Onboarding', href: '/onboarding', icon: ICONS.onboarding, iconName: 'solar:user-hands-linear', requiredPermission: 'onboarding.view' },
+      { label: 'Onboarding Templates', href: '/onboarding-templates', icon: ICONS.onboardingTemplates, iconName: 'solar:diploma-verified-linear', requiredPermission: 'onboarding_templates.view' },
+      { label: 'Onboarding Tracking', href: '/onboarding-tracking', icon: ICONS.onboardingTracking, iconName: 'solar:routing-2-linear', requiredPermission: 'onboarding_tracking.view' },
+      { label: 'Training', href: '/training', icon: ICONS.training, iconName: 'solar:laptop-minimalistic-linear', requiredPermission: 'training.view', featureFlag: 'training_enabled' },
+      { label: 'Training Programs', href: '/training-programs', icon: ICONS.trainingPrograms, iconName: 'solar:book-bookmark-minimalistic-linear', requiredPermission: 'training_programs.view', featureFlag: 'training_enabled' },
+      { label: 'Training Results', href: '/training-results', icon: ICONS.trainingResults, iconName: 'solar:diploma-linear', requiredPermission: 'training_results.view', featureFlag: 'training_enabled' },
     ],
   },
   {
     label: 'More',
+    icon: 'solar:menu-dots-square-linear',
     items: [
-      { label: 'Grievances', href: '/grievances', icon: ICONS.grievances, requiredPermission: 'grievances.view', requiredAnyPermission: ['grievances.view', 'grievances.create'], featureFlag: null },
-      { label: 'Grievance Types', href: '/grievance-types', icon: ICONS.grievanceTypes, requiredPermission: 'grievance_types.view' },
-      { label: 'Travel', href: '/travel', icon: ICONS.travel, requiredPermission: 'travel.view', featureFlag: 'travel_enabled' },
-      { label: 'Overtime', href: '/overtime', icon: ICONS.overtime, requiredPermission: 'overtime.view', featureFlag: null },
-      { label: 'Overtime Types', href: '/overtime-types', icon: ICONS.overtimeTypes, requiredPermission: 'overtime_types.view' },
-      { label: 'Overtime Categories', href: '/overtime-categories', icon: ICONS.overtimeTypes, requiredPermission: 'overtime_categories.view' },
-      { label: 'Settlements', href: '/settlements', icon: ICONS.settlements, requiredPermission: 'settlements.view', featureFlag: 'settlements_enabled' },
-      { label: 'Exit Interviews', href: '/exit-interviews', icon: ICONS.exitInterviews, requiredPermission: 'exit_interviews.view', featureFlag: null },
-      { label: 'Holiday Assignments', href: '/holiday-assignments', icon: ICONS.holidayAssignments, requiredPermission: 'holiday_assignments.view', featureFlag: null },
-      { label: 'Holiday Lists', href: '/holiday-lists', icon: ICONS.holidayLists, requiredPermission: 'holidays.view' },
-      { label: 'Health Insurance', href: '/health-insurance', icon: ICONS.healthInsurance, requiredPermission: 'health_insurance.view' },
-      { label: 'Cost Centers', href: '/cost-centers', icon: ICONS.costCenters, requiredPermission: 'cost_centers.view' },
-      { label: 'Document Types', href: '/document-types', icon: ICONS.documentTypes, requiredPermission: 'document_types.view' },
-      { label: 'Employee Documents', href: '/employee-documents', icon: ICONS.employeeDocuments, requiredPermission: 'documents.view' },
-      { label: 'Document Requests', href: '/document-requests', icon: ICONS.employeeDocuments, requiredPermission: 'document_requests.view', requiredAnyPermission: ['document_requests.view', 'documents.view'] },
-      { label: 'Appointment Letters', href: '/appointment-letters', icon: ICONS.appointmentLetters, requiredPermission: 'appointment_letters.view' },
-      { label: 'Policies', href: '/policies', icon: ICONS.policies, requiredPermission: 'policies.view', requiredAnyPermission: ['policies.view', 'documents.view'], featureFlag: null },
+      { label: 'Grievances', href: '/grievances', icon: ICONS.grievances, iconName: 'solar:danger-triangle-linear', requiredPermission: 'grievances.view', requiredAnyPermission: ['grievances.view', 'grievances.create'], featureFlag: null },
+      { label: 'Grievance Types', href: '/grievance-types', icon: ICONS.grievanceTypes, iconName: 'solar:shield-warning-linear', requiredPermission: 'grievance_types.view' },
+      { label: 'Travel', href: '/travel', icon: ICONS.travel, iconName: 'solar:plain-linear', requiredPermission: 'travel.view', featureFlag: 'travel_enabled' },
+      { label: 'Overtime', href: '/overtime', icon: ICONS.overtime, iconName: 'solar:alarm-linear', requiredPermission: 'overtime.view', featureFlag: null },
+      { label: 'Overtime Types', href: '/overtime-types', icon: ICONS.overtimeTypes, iconName: 'solar:clock-circle-linear', requiredPermission: 'overtime_types.view' },
+      { label: 'Overtime Categories', href: '/overtime-categories', icon: ICONS.overtimeTypes, iconName: 'solar:folder-with-files-linear', requiredPermission: 'overtime_categories.view' },
+      { label: 'Settlements', href: '/settlements', icon: ICONS.settlements, iconName: 'solar:money-bag-linear', requiredPermission: 'settlements.view', featureFlag: 'settlements_enabled' },
+      { label: 'Exit Interviews', href: '/exit-interviews', icon: ICONS.exitInterviews, iconName: 'solar:square-share-line-linear', requiredPermission: 'exit_interviews.view', featureFlag: null },
+      { label: 'Holiday Assignments', href: '/holiday-assignments', icon: ICONS.holidayAssignments, iconName: 'solar:calendar-minimalistic-linear', requiredPermission: 'holiday_assignments.view', featureFlag: null },
+      { label: 'Holiday Lists', href: '/holiday-lists', icon: ICONS.holidayLists, iconName: 'solar:calendar-linear', requiredPermission: 'holidays.view' },
+      { label: 'Health Insurance', href: '/health-insurance', icon: ICONS.healthInsurance, iconName: 'solar:heart-pulse-linear', requiredPermission: 'health_insurance.view' },
+      { label: 'Cost Centers', href: '/cost-centers', icon: ICONS.costCenters, iconName: 'solar:pie-chart-linear', requiredPermission: 'cost_centers.view' },
+      { label: 'Document Types', href: '/document-types', icon: ICONS.documentTypes, iconName: 'solar:file-favourite-linear', requiredPermission: 'document_types.view' },
+      { label: 'Employee Documents', href: '/employee-documents', icon: ICONS.employeeDocuments, iconName: 'solar:folder-linear', requiredPermission: 'documents.view' },
+      { label: 'Document Requests', href: '/document-requests', icon: ICONS.employeeDocuments, iconName: 'solar:file-send-linear', requiredPermission: 'document_requests.view', requiredAnyPermission: ['document_requests.view', 'documents.view'] },
+      { label: 'Appointment Letters', href: '/appointment-letters', icon: ICONS.appointmentLetters, iconName: 'solar:letter-linear', requiredPermission: 'appointment_letters.view' },
+      { label: 'Policies', href: '/policies', icon: ICONS.policies, iconName: 'solar:notes-linear', requiredPermission: 'policies.view', requiredAnyPermission: ['policies.view', 'documents.view'], featureFlag: null },
     ],
   },
   {
     label: 'Help Desk',
+    icon: 'solar:help-linear',
     items: [
       {
         label: 'FAQs',
         href: '/helpdesk/faq-categories',
         icon: ICONS.faqs,
+        iconName: 'solar:question-circle-linear',
         requiredPermission: 'faq_categories.view',
         requiredAnyPermission: ['faq_categories.view', 'faqs.view'],
         featureFlag: null,
@@ -321,17 +344,19 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     label: 'Admin',
+    icon: 'solar:shield-keyhole-linear',
     items: [
-      { label: 'Roles & Permissions', href: '/admin/roles', icon: ICONS.settings, requiredPermission: 'roles.manage', featureFlag: null },
+      { label: 'Roles & Permissions', href: '/admin/roles', icon: ICONS.settings, iconName: 'solar:lock-keyhole-minimalistic-linear', requiredPermission: 'roles.manage', featureFlag: null },
       {
         label: 'HR Settings',
         href: '/hr-settings',
         icon: ICONS.hrSettings,
+        iconName: 'solar:settings-minimalistic-linear',
         requiredPermission: 'roles.manage',
         requiredAnyPermission: ['roles.manage', 'hr_settings.view', 'hr_settings.manage'],
         featureFlag: null,
       },
-      { label: 'Audit Logs', href: '/audit-logs', icon: ICONS.auditLogs, requiredPermission: 'roles.manage', requiredAnyPermission: ['roles.manage', 'audit_logs.view'], featureFlag: null },
+      { label: 'Audit Logs', href: '/audit-logs', icon: ICONS.auditLogs, iconName: 'solar:shield-check-linear', requiredPermission: 'roles.manage', requiredAnyPermission: ['roles.manage', 'audit_logs.view'], featureFlag: null },
     ],
   },
 ];

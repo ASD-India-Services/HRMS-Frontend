@@ -162,16 +162,16 @@ export function BonusPointSettingTab() {
       const updated = settingsList.map((item) =>
         item.id === editingItem.id
           ? {
-              ...item,
-              model: formModel,
-              applicable_for: formApplicableFor,
-              bonus_for: formBonusFor,
-              field_1: formField1,
-              conditions: formConditions,
-              field_2: formField2,
-              points: Number(formPoints),
-              is_active: formIsActive,
-            }
+            ...item,
+            model: formModel,
+            applicable_for: formApplicableFor,
+            bonus_for: formBonusFor,
+            field_1: formField1,
+            conditions: formConditions,
+            field_2: formField2,
+            points: Number(formPoints),
+            is_active: formIsActive,
+          }
           : item
       );
       saveList(updated, 'Bonus point setting updated successfully');
@@ -243,7 +243,7 @@ export function BonusPointSettingTab() {
           className="inline-flex items-center justify-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
-          + Create
+          Create
         </button>
       </div>
 
@@ -335,15 +335,13 @@ export function BonusPointSettingTab() {
                       role="switch"
                       aria-checked={item.is_active}
                       onClick={() => handleToggleActive(item.id)}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                        item.is_active ? 'bg-blue-600' : 'bg-gray-300'
-                      }`}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${item.is_active ? 'bg-blue-600' : 'bg-gray-300'
+                        }`}
                     >
                       <span
                         aria-hidden="true"
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                          item.is_active ? 'translate-x-5' : 'translate-x-0'
-                        }`}
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${item.is_active ? 'translate-x-5' : 'translate-x-0'
+                          }`}
                       />
                     </button>
                   </td>
@@ -535,15 +533,13 @@ export function BonusPointSettingTab() {
                       role="switch"
                       aria-checked={formIsActive}
                       onClick={() => setFormIsActive((prev) => !prev)}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                        formIsActive ? 'bg-blue-600' : 'bg-gray-300'
-                      }`}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${formIsActive ? 'bg-blue-600' : 'bg-gray-300'
+                        }`}
                     >
                       <span
                         aria-hidden="true"
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                          formIsActive ? 'translate-x-5' : 'translate-x-0'
-                        }`}
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${formIsActive ? 'translate-x-5' : 'translate-x-0'
+                          }`}
                       />
                     </button>
                   </div>

@@ -171,11 +171,10 @@ export function ShiftRoster() {
                   return (
                     <th
                       key={dateStr}
-                      className={`border-b px-2 py-3 text-center text-xs font-medium ${
-                        isToday
-                          ? 'border-primary-300 bg-primary-50 text-primary-700'
-                          : 'border-gray-200 bg-gray-50 text-gray-600'
-                      }`}
+                      className={`border-b px-2 py-3 text-center text-xs font-medium ${isToday
+                        ? 'border-primary-300 bg-primary-50 text-primary-700'
+                        : 'border-gray-200 bg-gray-50 text-gray-600'
+                        }`}
                     >
                       <div>{DAY_LABELS[i]}</div>
                       <div className="text-sm font-semibold">{date.getDate()}</div>
@@ -200,9 +199,8 @@ export function ShiftRoster() {
                     return (
                       <td
                         key={`${employeeId}-${dateStr}`}
-                        className={`px-1 py-1.5 text-center ${
-                          isToday ? 'bg-primary-50/30' : ''
-                        }`}
+                        className={`px-1 py-1.5 text-center ${isToday ? 'bg-primary-50/30' : ''
+                          }`}
                       >
                         {dayAssignments.length === 0 ? (
                           <span className="text-xs text-gray-300">—</span>

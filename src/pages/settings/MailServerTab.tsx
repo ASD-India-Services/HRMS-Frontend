@@ -145,11 +145,10 @@ export function MailServerTab() {
 
         {emailConfig?.configured && (
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
-              emailConfig.is_verified
-                ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                : 'bg-amber-100 text-amber-800 border border-amber-200'
-            }`}
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${emailConfig.is_verified
+              ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+              : 'bg-amber-100 text-amber-800 border border-amber-200'
+              }`}
           >
             {emailConfig.is_verified ? (
               <>
@@ -376,9 +375,8 @@ export function MailServerTab() {
 
             {testResult && (
               <div
-                className={`mt-4 rounded-lg p-3 text-sm ${
-                  testResult.success ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-800 border border-red-200'
-                }`}
+                className={`mt-4 rounded-lg p-3 text-sm ${testResult.success ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-red-50 text-red-800 border border-red-200'
+                  }`}
               >
                 {testResult.success ? testResult.message : testResult.error}
               </div>

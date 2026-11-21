@@ -186,7 +186,7 @@ export function HelpdeskTagsTab() {
           className="inline-flex items-center justify-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
-          + Create
+          Create
         </button>
       </div>
 
@@ -359,11 +359,10 @@ export function HelpdeskTagsTab() {
                             key={c}
                             type="button"
                             onClick={() => setFormColor(c)}
-                            className={`h-5 w-5 rounded-full border border-black/15 transition-transform hover:scale-110 shrink-0 ${
-                              formColor.toLowerCase() === c.toLowerCase()
+                            className={`h-5 w-5 rounded-full border border-black/15 transition-transform hover:scale-110 shrink-0 ${formColor.toLowerCase() === c.toLowerCase()
                                 ? 'ring-2 ring-blue-500 ring-offset-1 scale-110'
                                 : ''
-                            }`}
+                              }`}
                             style={{ backgroundColor: c }}
                             title={c}
                           />

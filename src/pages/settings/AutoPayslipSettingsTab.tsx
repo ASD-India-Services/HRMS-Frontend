@@ -51,8 +51,8 @@ export function AutoPayslipSettingsTab() {
     const branchList = Array.isArray(branchesData)
       ? branchesData
       : Array.isArray((branchesData as any)?.results)
-      ? (branchesData as any).results
-      : [];
+        ? (branchesData as any).results
+        : [];
     branchList.forEach((b: any) => {
       add(b?.name);
     });
@@ -165,11 +165,11 @@ export function AutoPayslipSettingsTab() {
       const updated = rules.map((r) =>
         r.id === editingItem.id
           ? {
-              ...r,
-              generate_day: formGenerateDay,
-              company: companyToSave,
-              auto_generate: formAutoGenerate,
-            }
+            ...r,
+            generate_day: formGenerateDay,
+            company: companyToSave,
+            auto_generate: formAutoGenerate,
+          }
           : r
       );
       saveRules(updated, 'Auto payslip schedule updated successfully');
@@ -230,7 +230,7 @@ export function AutoPayslipSettingsTab() {
           className="inline-flex items-center justify-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
-          + Create
+          Create
         </button>
       </div>
 
@@ -297,15 +297,13 @@ export function AutoPayslipSettingsTab() {
                       role="switch"
                       aria-checked={rule.auto_generate}
                       onClick={() => handleToggleAutoGenerate(rule.id)}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                        rule.auto_generate ? 'bg-blue-600' : 'bg-gray-300'
-                      }`}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${rule.auto_generate ? 'bg-blue-600' : 'bg-gray-300'
+                        }`}
                     >
                       <span
                         aria-hidden="true"
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                          rule.auto_generate ? 'translate-x-5' : 'translate-x-0'
-                        }`}
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${rule.auto_generate ? 'translate-x-5' : 'translate-x-0'
+                          }`}
                       />
                     </button>
                   </td>
@@ -423,15 +421,13 @@ export function AutoPayslipSettingsTab() {
                     role="switch"
                     aria-checked={formAutoGenerate}
                     onClick={() => setFormAutoGenerate((prev) => !prev)}
-                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      formAutoGenerate ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${formAutoGenerate ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
                   >
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-                        formAutoGenerate ? 'translate-x-5' : 'translate-x-0'
-                      }`}
+                      className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${formAutoGenerate ? 'translate-x-5' : 'translate-x-0'
+                        }`}
                     />
                   </button>
                 </div>

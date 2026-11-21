@@ -1,62 +1,32 @@
 /**
  * Sidebar Navigation
  *
- * Modern collapsible sidebar with SVG icons, expandable nav groups,
- * and active state highlighting. Responsive behavior:
- * - Desktop (lg+): always visible, collapsible to icon-only mode
- * - Tablet (md): icon-only mode by default
- * - Mobile (<md): hamburger menu with overlay
- *
- * Collapsed state UX:
- * - Icons centered with hover tooltip showing label
- * - Left accent bar on active item
- * - Thin divider lines between groups
- * - Larger click targets for icons
+ * Redesigned DigiHRMS Sidebar following the modern linear/outline UI/UX reference design.
+ * Features:
+ * - Pure white background (#ffffff) with soft light-gray active menu highlights (bg-gray-100)
+ * - Clean linear/outline icons from Iconify (@iconify/react Solar Linear collection)
+ * - Tree connector lines (continuous vertical guide line + horizontal branch connector ticks)
+ * - Expandable/collapsible accordion sections with smooth rotation
+ * - Active child items highlighted with rounded-xl pill and right chevron (›)
+ * - Preserves all existing DigiHRMS menu items, hierarchy, routes, permissions, and functionality
+ * - Responsive desktop (open/collapsed) and mobile drawer modes with sleek scrollbar
  *
  * Requirements: 16.1, 16.2, 16.3, 16.4
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { Icon } from '@iconify/react';
 import { usePermissions, useUser } from '@platform/auth-sdk';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
-import { getFilteredNavigation, type NavGroup } from '@/config/navigation';
+import { getFilteredNavigation, type NavGroup, type NavItem } from '@/config/navigation';
+import { NavIcon } from './NavIcon';
 
 interface SidebarProps {
   isOpen: boolean;
   isCollapsed: boolean;
   onClose: () => void;
   onToggleCollapse: () => void;
-}
-
-/** Chevron icon for group expand/collapse toggle */
-function ChevronIcon({ expanded }: { expanded: boolean }) {
-  return (
-    <svg
-      className={`h-3.5 w-3.5 text-gray-400 transition-transform duration-200 ${expanded ? 'rotate-90' : ''}`}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-    </svg>
-  );
-}
-
-/** Renders SVG icon from path data */
-function NavIcon({ path, isActive }: { path: string; isActive: boolean }) {
-  return (
-    <svg
-      className={`h-[18px] w-[18px] flex-shrink-0 transition-colors ${isActive ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-600'}`}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={1.5}
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d={path} />
-    </svg>
-  );
 }
 
 export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: SidebarProps) {
@@ -74,36 +44,42 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
     normalizedRole === 'org admin' ||
     normalizedRole === 'superadmin';
 
-  const effectiveHasPermission = isAdmin
-    ? () => true
-    : hasPermission;
+  const effectiveHasPermission = isAdmin ? () => true : hasPermission;
 
   // Filter navigation based on HRMS permissions and feature flags
-  const visibleGroups = getFilteredNavigation(effectiveHasPermission, hasFeature);
+  const visibleGroups: NavGroup[] = getFilteredNavigation(effectiveHasPermission, hasFeature);
 
-  // Track which group is expanded (accordion — only one open at a time)
+  /** Check if any item in a group is active */
+  const isGroupActive = (group: NavGroup) =>
+    group.items.some((item: NavItem) => location.pathname === item.href || location.pathname.startsWith(item.href + '/'));
+
+  // Track which group is expanded
   // Auto-expand the group containing the active route on first render
   const [expandedGroup, setExpandedGroup] = useState<string | null>(() => {
-    const active = visibleGroups.find((g) =>
-      g.items.some((item) => location.pathname === item.href || location.pathname.startsWith(item.href + '/'))
-    );
-    return active?.label ?? null;
+    const active = visibleGroups.find((g: NavGroup) => isGroupActive(g));
+    return active?.label ?? visibleGroups[0]?.label ?? null;
   });
+
+  // Keep expanded group aligned when route changes
+  useEffect(() => {
+    const active = visibleGroups.find((g: NavGroup) =>
+      g.items.some((item: NavItem) => location.pathname === item.href || location.pathname.startsWith(item.href + '/'))
+    );
+    if (active) {
+      setExpandedGroup((prev) => (prev !== active.label ? active.label : prev));
+    }
+  }, [location.pathname, visibleGroups]);
 
   const toggleGroup = (label: string) => {
     setExpandedGroup((prev) => (prev === label ? null : label));
   };
 
-  /** Check if any item in a group is active */
-  const isGroupActive = (group: NavGroup) =>
-    group.items.some((item) => location.pathname === item.href || location.pathname.startsWith(item.href + '/'));
-
   return (
     <>
-      {/* Mobile overlay */}
+      {/* Mobile backdrop overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
+          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm md:hidden transition-opacity duration-200"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -112,121 +88,207 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
       {/* Sidebar panel */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 flex flex-col shrink-0 bg-white border-r border-gray-200/80
-          transform transition-all duration-200 ease-in-out
-          ${isCollapsed ? 'w-[60px]' : 'w-60'}
+          fixed inset-y-0 left-0 z-50 flex flex-col shrink-0 bg-white border-r border-gray-100 shadow-[1px_0_4px_rgba(0,0,0,0.02)]
+          transform transition-all duration-200 ease-in-out select-none
+          ${isCollapsed ? 'w-[68px]' : 'w-64'}
           lg:translate-x-0 lg:static lg:z-auto
           md:translate-x-0 md:static md:z-auto
           ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
         `}
         aria-label="Sidebar navigation"
       >
-        {/* Logo area */}
-        <div className={`flex h-14 items-center border-b border-gray-100 ${isCollapsed ? 'justify-center px-2' : 'justify-between px-4'}`}>
-          <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 shadow-sm">
-              <span className="text-xs font-bold text-white">D</span>
+        {/* Brand Header */}
+        <div className={`flex h-16 items-center border-b border-gray-100 ${isCollapsed ? 'justify-center px-2' : 'justify-between px-4'}`}>
+          <div className="flex items-center gap-3 overflow-hidden">
+            {/* Logo Badge: Vibrant blue rounded square with 'D' */}
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-blue-600 shadow-sm text-white font-bold text-sm">
+              <span>D</span>
             </div>
             {!isCollapsed && (
-              <span className="text-sm font-bold text-gray-800 tracking-tight">DigiHRMS</span>
+              <span className="text-[15px] font-bold text-gray-900 tracking-tight">DigiHRMS</span>
             )}
           </div>
+
+          {/* Collapse sidebar button */}
           {!isCollapsed && (
             <button
               type="button"
               onClick={onToggleCollapse}
-              className="hidden md:flex h-6 w-6 items-center justify-center rounded text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              className="hidden md:flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
               aria-label="Collapse sidebar"
+              title="Collapse sidebar"
             >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-              </svg>
+              <Icon icon="solar:arrow-left-linear" className="w-4 h-4" strokeWidth={1.5} />
             </button>
           )}
         </div>
 
         {/* Expand button when collapsed */}
         {isCollapsed && (
-          <div className="flex justify-center py-2 border-b border-gray-100">
+          <div className="flex justify-center py-2.5 border-b border-gray-100">
             <button
               type="button"
               onClick={onToggleCollapse}
-              className="hidden md:flex h-7 w-7 items-center justify-center rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+              className="hidden md:flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
               aria-label="Expand sidebar"
+              title="Expand sidebar"
             >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-              </svg>
+              <Icon icon="solar:arrow-right-linear" className="w-4 h-4" strokeWidth={1.5} />
             </button>
           </div>
         )}
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-3 px-2" aria-label="Main navigation">
-          <div className={isCollapsed ? 'space-y-1' : 'space-y-4'}>
-            {visibleGroups.map((group, groupIdx) => {
+        {/* Navigation list */}
+        <nav
+          className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-3 scrollbar-thin scrollbar-thumb-gray-200 hover:scrollbar-thumb-gray-300"
+          aria-label="Main navigation"
+        >
+          {/* Main Menu Label */}
+          {!isCollapsed && (
+            <div className="px-3 pt-1 pb-2 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+              Main Menu
+            </div>
+          )}
+
+          <div className="space-y-1">
+            {visibleGroups.map((group: NavGroup) => {
               const groupExpanded = expandedGroup === group.label;
-              const _groupActive = isGroupActive(group);
+              const groupActive = isGroupActive(group);
 
-              return (
-                <div key={group.label}>
-                  {/* Group divider in collapsed mode */}
-                  {isCollapsed && groupIdx > 0 && (
-                    <div className="mx-2 my-2 border-t border-gray-100" />
-                  )}
-
-                  {/* Group header — only show in expanded mode */}
-                  {!isCollapsed && (
+              // ─── Collapsed Mode (Icon only with hover tooltip) ─────────────
+              if (isCollapsed) {
+                return (
+                  <div key={group.label} className="relative group/collapsed flex justify-center py-0.5">
                     <button
                       type="button"
                       onClick={() => toggleGroup(group.label)}
-                      className="flex w-full items-center justify-between px-2 py-1 mb-0.5 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-gray-500 transition-colors"
+                      className={`flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-150 ${
+                        groupActive
+                          ? 'bg-gray-100 text-gray-900 font-semibold'
+                          : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+                      }`}
+                      aria-label={group.label}
                     >
-                      <span>{group.label}</span>
-                      <ChevronIcon expanded={groupExpanded} />
+                      <NavIcon
+                        icon={group.icon || group.items[0]?.iconName || group.items[0]?.icon}
+                        className="w-5 h-5"
+                        isActive={groupActive}
+                      />
                     </button>
-                  )}
 
-                  {/* Group items */}
-                  {(groupExpanded || isCollapsed) && (
-                    <ul className={isCollapsed ? 'space-y-0.5' : 'space-y-px'}>
-                      {group.items.map((item) => (
-                        <li key={item.href} className="relative">
-                          <NavLink
-                            to={item.href}
-                            end={item.href === '/payroll' || item.href === '/recruitment' || item.href === '/leaves' || item.href === '/expenses'}
-                            onClick={onClose}
-                            className={({ isActive }) =>
-                              isCollapsed
-                                ? `group relative flex items-center justify-center rounded-md h-9 w-9 mx-auto transition-all duration-150 ${
-                                    isActive
-                                      ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-200'
-                                      : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
-                                  }`
-                                : `group flex items-center gap-2.5 rounded-md px-2.5 py-[7px] text-[13px] font-medium transition-all duration-150 ${
-                                    isActive
-                                      ? 'bg-primary-50 text-primary-700 border-l-2 border-primary-500 pl-[8px]'
-                                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                                  }`
-                            }
-                          >
-                            {({ isActive }) => (
-                              <>
-                                <NavIcon path={item.icon} isActive={isActive} />
-                                {!isCollapsed && <span className="truncate">{item.label}</span>}
-                                {/* Tooltip for collapsed mode */}
-                                {isCollapsed && (
-                                  <span className="absolute left-full ml-2 z-50 hidden group-hover:flex items-center px-2.5 py-1.5 rounded-md bg-gray-900 text-white text-xs font-medium shadow-lg whitespace-nowrap pointer-events-none">
-                                    {item.label}
-                                    <span className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45" />
-                                  </span>
-                                )}
-                              </>
-                            )}
-                          </NavLink>
-                        </li>
-                      ))}
-                    </ul>
+                    {/* Tooltip on hover */}
+                    <div className="absolute left-full ml-3 z-50 hidden group-hover/collapsed:flex items-center px-3 py-1.5 rounded-lg bg-gray-900 text-white text-xs font-medium shadow-xl whitespace-nowrap pointer-events-none">
+                      {group.label}
+                      <span className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45" />
+                    </div>
+                  </div>
+                );
+              }
+
+              // ─── Expanded Mode (Full Designer Reference Layout) ────────────
+              return (
+                <div key={group.label} className="group-wrapper">
+                  {/* Parent Group Header Button */}
+                  <button
+                    type="button"
+                    onClick={() => toggleGroup(group.label)}
+                    className={`flex w-full items-center justify-between px-3 py-2.5 rounded-xl text-[13.5px] transition-all duration-150 ${
+                      groupExpanded || groupActive
+                        ? 'bg-gray-100 text-gray-900 font-semibold'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900 font-medium'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <NavIcon
+                        icon={group.icon || group.items[0]?.iconName || group.items[0]?.icon}
+                        className="w-[18px] h-[18px]"
+                        isActive={groupExpanded || groupActive}
+                      />
+                      <span className="truncate">{group.label}</span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      {group.badge != null && (
+                        <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-semibold bg-purple-600 text-white">
+                          {group.badge}
+                        </span>
+                      )}
+                      <Icon
+                        icon="solar:alt-arrow-down-linear"
+                        className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${
+                          groupExpanded ? 'rotate-180' : ''
+                        }`}
+                        strokeWidth={2}
+                      />
+                    </div>
+                  </button>
+
+                  {/* Expanded Submenu with Tree Connector Lines */}
+                  {groupExpanded && (
+                    <div className="relative ml-2.5 pl-6 py-1 space-y-0.5">
+                      {/* 
+                        Continuous vertical guide line:
+                        Starts below parent icon and terminates precisely at the horizontal tick of the last child item (bottom-[14px])
+                      */}
+                      <div
+                        className="absolute left-[13px] top-0 bottom-[14px] w-px bg-gray-200 pointer-events-none"
+                        aria-hidden="true"
+                      />
+
+                      <ul className="space-y-0.5" role="menu">
+                        {group.items.map((item: NavItem) => (
+                          <li key={item.href} className="relative flex items-center" role="none">
+                            {/* Horizontal branch connector tick extending from the vertical line */}
+                            <span
+                              className="absolute -left-[11px] top-1/2 -translate-y-1/2 w-3 h-px bg-gray-200 pointer-events-none"
+                              aria-hidden="true"
+                            />
+
+                            <NavLink
+                              to={item.href}
+                              end={
+                                item.href === '/payroll' ||
+                                item.href === '/recruitment' ||
+                                item.href === '/leaves' ||
+                                item.href === '/expenses' ||
+                                item.href === '/dashboard'
+                              }
+                              onClick={onClose}
+                              role="menuitem"
+                              className={({ isActive }) =>
+                                `group/item relative flex w-full items-center justify-between rounded-xl px-3 py-2 text-[13px] transition-all duration-150 ${
+                                  isActive
+                                    ? 'bg-gray-100 text-gray-900 font-semibold'
+                                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-medium'
+                                }`
+                              }
+                            >
+                              {({ isActive }) => (
+                                <>
+                                  <span className="truncate text-left">{item.label}</span>
+
+                                  {/* Badge count if present */}
+                                  {item.badge != null && (
+                                    <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-semibold bg-purple-600 text-white ml-auto">
+                                      {item.badge}
+                                    </span>
+                                  )}
+
+                                  {/* Active item right chevron (›) matching Screenshot 2 'Study Team' reference */}
+                                  {isActive && (
+                                    <Icon
+                                      icon="solar:alt-arrow-right-linear"
+                                      className="h-3.5 w-3.5 text-gray-400 ml-auto flex-shrink-0"
+                                      strokeWidth={2}
+                                    />
+                                  )}
+                                </>
+                              )}
+                            </NavLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
                 </div>
               );
@@ -234,38 +296,49 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
           </div>
         </nav>
 
-        {/* Bottom section — profile */}
-        <div className={`border-t border-gray-100 ${isCollapsed ? 'p-2' : 'p-2.5'}`}>
+        {/* Bottom Profile Section */}
+        <div className={`border-t border-gray-100 ${isCollapsed ? 'p-2' : 'p-3'}`}>
           <NavLink
             to="/profile"
+            onClick={onClose}
             className={({ isActive }) =>
               isCollapsed
-                ? `group relative flex items-center justify-center rounded-md h-9 w-9 mx-auto transition-all duration-150 ${
-                    isActive ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-200' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                ? `group relative flex items-center justify-center rounded-xl h-10 w-10 mx-auto transition-all duration-150 ${
+                    isActive
+                      ? 'bg-gray-100 text-gray-900 font-semibold'
+                      : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
                   }`
-                : `group flex items-center gap-2.5 rounded-md px-2.5 py-[7px] text-[13px] font-medium transition-all duration-150 ${
-                    isActive ? 'bg-primary-50 text-primary-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                : `group flex items-center justify-between rounded-xl px-3 py-2.5 text-[13.5px] transition-all duration-150 ${
+                    isActive
+                      ? 'bg-gray-100 text-gray-900 font-semibold'
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900 font-medium'
                   }`
             }
           >
             {({ isActive }) => (
               <>
-                <svg
-                  className={`h-[18px] w-[18px] flex-shrink-0 ${isActive ? 'text-primary-600' : 'text-gray-400 group-hover:text-gray-600'}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                <div className="flex items-center gap-3 min-w-0">
+                  <Icon
+                    icon="solar:user-circle-linear"
+                    className={`w-[18px] h-[18px] flex-shrink-0 transition-colors ${
+                      isActive ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-800'
+                    }`}
+                    strokeWidth={1.5}
                   />
-                </svg>
-                {!isCollapsed && <span className="truncate">My Profile</span>}
+                  {!isCollapsed && <span className="truncate">My Profile</span>}
+                </div>
+
+                {!isCollapsed && (
+                  <Icon
+                    icon="solar:alt-arrow-right-linear"
+                    className="h-3.5 w-3.5 text-gray-400 flex-shrink-0"
+                    strokeWidth={2}
+                  />
+                )}
+
+                {/* Tooltip for collapsed mode */}
                 {isCollapsed && (
-                  <span className="absolute left-full ml-2 z-50 hidden group-hover:flex items-center px-2.5 py-1.5 rounded-md bg-gray-900 text-white text-xs font-medium shadow-lg whitespace-nowrap pointer-events-none">
+                  <span className="absolute left-full ml-3 z-50 hidden group-hover:flex items-center px-3 py-1.5 rounded-lg bg-gray-900 text-white text-xs font-medium shadow-xl whitespace-nowrap pointer-events-none">
                     My Profile
                     <span className="absolute -left-1 top-1/2 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45" />
                   </span>
