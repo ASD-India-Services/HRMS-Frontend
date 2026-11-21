@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useLeaveApplications, useApproveLeave, useRejectLeave } from '@/hooks/useLeaves';
+import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 import type { LeaveApplication } from '@/types/leave';
 import { formatDate } from '@/utils/formatters';
 
@@ -76,8 +77,9 @@ function ApprovalModal({ application, action, onClose, onConfirm, isPending }: A
 }
 
 export function LeaveApproval() {
+  const pageSize = useDefaultPaginationSize();
   const [page, setPage] = useState(1);
-  const { data, isLoading, isError } = useLeaveApplications({ status: 'pending', page, page_size: 10 });
+  const { data, isLoading, isError } = useLeaveApplications({ status: 'pending', page, page_size: pageSize });
   const approveLeave = useApproveLeave();
   const rejectLeave = useRejectLeave();
 

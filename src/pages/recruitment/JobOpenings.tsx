@@ -7,6 +7,7 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useJobOpenings } from '@/hooks/useRecruitment';
+import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
 import { CreateButton } from '@/components/ActionButton';
@@ -38,8 +39,6 @@ const JOB_OPENING_FIELDS: FieldConfig[] = [
   { key: 'closes_on', label: 'Closes On', type: 'date' },
 ];
 
-const PAGE_SIZE = 10;
-
 const STATUS_BADGES: Record<JobOpeningStatus, { label: string; className: string }> = {
   open: { label: 'Open', className: 'bg-green-100 text-green-800' },
   closed: { label: 'Closed', className: 'bg-gray-100 text-gray-800' },
@@ -52,6 +51,7 @@ interface JobOpeningsProps {
 }
 
 export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
+  const pageSize = useDefaultPaginationSize();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [status, setStatus] = useState<JobOpeningStatus | ''>('');
@@ -144,10 +144,10 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
     search: debouncedSearch || undefined,
     status: status || undefined,
     page,
-    page_size: PAGE_SIZE,
+    page_size: pageSize,
   });
 
-  const totalPages = data ? Math.ceil(data.count / PAGE_SIZE) : 0;
+  const totalPages = data ? Math.max(1, Math.ceil(data.count / pageSize)) : 0;
 
   const handleCopyApplyLink = (jobId: string, e: React.MouseEvent) => {
     e.stopPropagation();

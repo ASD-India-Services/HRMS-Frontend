@@ -29,6 +29,8 @@ export interface Employee {
   status: EmploymentStatus;
   employment_type: EmploymentType;
   date_of_joining: string;
+  notice_period_days?: number;
+  badge_id?: string;
   reporting_manager?: {
     id: string;
     first_name: string;
@@ -61,6 +63,8 @@ export interface EmployeeDetail extends Employee {
   uan_number?: string;
   date_of_leaving?: string;
   notice_period_days?: number;
+  notice_period_start?: string | null;
+  separation_reason?: string | null;
   probation_end_date?: string;
   confirmation_date?: string;
   custom_fields?: Record<string, unknown>;
@@ -97,4 +101,20 @@ export interface EmployeeFilters {
   employment_type?: EmploymentType | '';
   page?: number;
   page_size?: number;
+}
+
+export interface PropertyHistoryItem {
+  id: string;
+  employee: string;
+  employee_name?: string;
+  field_name: string;
+  field_display?: string;
+  old_value: string;
+  new_value: string;
+  old_display?: string;
+  new_display?: string;
+  change_type: 'transfer' | 'promotion' | 'update' | string;
+  change_type_display?: string;
+  reference_id?: string | null;
+  changed_at: string;
 }

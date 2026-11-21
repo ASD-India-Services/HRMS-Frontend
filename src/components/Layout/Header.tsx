@@ -14,6 +14,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ProductSwitcher } from '@/components/ProductSwitcher';
 import { useNotifications } from '@/hooks/useNotifications';
 import { SettingsIcon } from '@/pages/settings/SettingsIcons';
+import { TimeRunnerWidget } from './TimeRunnerWidget';
 import api from '@/lib/api';
 
 interface HeaderProps {
@@ -83,7 +84,10 @@ export function Header({ onMenuToggle }: HeaderProps) {
       <div className="flex-1 min-w-0" />
 
       {/* Right side actions */}
-      <div className="flex items-center gap-2 shrink-0">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        {/* Time Runner (At-Work Tracker) Widget */}
+        <TimeRunnerWidget />
+
         {/* Notification bell */}
         <div className="relative" ref={notificationRef}>
           <button

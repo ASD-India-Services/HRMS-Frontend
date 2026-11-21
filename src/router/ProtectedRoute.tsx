@@ -1,9 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { useAuth } from '@platform/auth-sdk';
-import { HrmsPermissionsProvider } from '@/contexts/HrmsPermissionsContext';
+import { HrmsPermissionsProvider, useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+}
+
+function AccountAccessGuard({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }
 
 /**
@@ -58,7 +62,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   return (
     <HrmsPermissionsProvider>
-      {children}
+      <AccountAccessGuard>{children}</AccountAccessGuard>
     </HrmsPermissionsProvider>
   );
 }

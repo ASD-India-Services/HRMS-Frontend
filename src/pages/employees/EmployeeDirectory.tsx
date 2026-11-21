@@ -6,6 +6,7 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEmployees } from '@/hooks/useEmployees';
+import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 import { EmployeeCard } from './components/EmployeeCard';
 import { EmployeeFilters } from './components/EmployeeFilters';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
@@ -15,9 +16,8 @@ import { BulkActions } from '@/components/BulkActions';
 import type { EmploymentStatus, EmploymentType } from '@/types/employee';
 import api from '@/lib/api';
 
-const PAGE_SIZE = 12;
-
 export function EmployeeDirectory() {
+  const pageSize = useDefaultPaginationSize();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -63,10 +63,10 @@ export function EmployeeDirectory() {
     department: department || undefined,
     employment_type: employmentType || undefined,
     page,
-    page_size: PAGE_SIZE,
+    page_size: pageSize,
   });
 
-  const totalPages = data ? Math.ceil(data.count / PAGE_SIZE) : 0;
+  const totalPages = data ? Math.max(1, Math.ceil(data.count / pageSize)) : 0;
 
   const handleStatusChange = (value: EmploymentStatus | '') => {
     setStatus(value);

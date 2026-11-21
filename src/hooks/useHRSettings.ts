@@ -1,8 +1,8 @@
+import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 
 export interface AccountRestrictions {
-  restrict_login_account?: boolean;
   restrict_profile_edit?: boolean;
   restrict_bank_edit?: boolean;
   restrict_outside_checkin?: boolean;
@@ -118,7 +118,6 @@ export interface HRSettings {
   time_format: string;
   timezone: string;
   naming_series_config: NamingSeriesConfig;
-  resignation_request?: boolean;
   at_work_tracker?: boolean;
   badge_prefix?: string;
   badge_company?: string;
@@ -160,6 +159,7 @@ export function useHRSettings() {
       const res = await api.get<HRSettings>('/api/v1/hr-settings/');
       try {
         localStorage.setItem('hrms_cached_settings', JSON.stringify(res.data));
+        if (res.data.default_pagination_size) localStorage.setItem('hrms_default_pagination_size', String(res.data.default_pagination_size));
         if (res.data.currency_symbol) localStorage.setItem('hrms_currency_symbol', res.data.currency_symbol);
         if (res.data.currency_position) localStorage.setItem('hrms_currency_position', res.data.currency_position);
         if (res.data.date_format) localStorage.setItem('hrms_date_format', res.data.date_format);
@@ -191,6 +191,10 @@ export function useUpdateHRSettings() {
       });
       try {
         localStorage.setItem('hrms_cached_settings', JSON.stringify(updated));
+        if (updated.default_pagination_size) {
+          localStorage.setItem('hrms_default_pagination_size', String(updated.default_pagination_size));
+          window.dispatchEvent(new CustomEvent('hrms-pagination-size-changed', { detail: updated.default_pagination_size }));
+        }
         if (updated.currency_symbol) localStorage.setItem('hrms_currency_symbol', updated.currency_symbol);
         if (updated.currency_position) localStorage.setItem('hrms_currency_position', updated.currency_position);
         if (updated.date_format) localStorage.setItem('hrms_date_format', updated.date_format);
@@ -206,5 +210,68 @@ export function useUpdateHRSettings() {
       queryClient.invalidateQueries({ queryKey: HR_SETTINGS_QUERY_KEY });
     },
   });
+}
+
+/**
+ * Synchronous helper to retrieve default pagination size from localStorage or settings cache.
+ * Falls back to 20 if not set.
+ */
+export function getDefaultPaginationSize(): number {
+  try {
+    const stored = localStorage.getItem('hrms_default_pagination_size');
+    if (stored) {
+      const parsed = parseInt(stored, 10);
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+    const cached = localStorage.getItem('hrms_cached_settings');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (parsed?.default_pagination_size && typeof parsed.default_pagination_size === 'number' && parsed.default_pagination_size > 0) {
+        return parsed.default_pagination_size;
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return 20;
+}
+
+/**
+ * Reactive hook to get the configured default pagination size.
+ * Updates dynamically if the user updates General Settings in another tab or the same session.
+ */
+export function useDefaultPaginationSize(): number {
+  const { data } = useHRSettings();
+  const [size, setSize] = useState<number>(() => {
+    return data?.default_pagination_size ?? getDefaultPaginationSize();
+  });
+
+  useEffect(() => {
+    if (data?.default_pagination_size && data.default_pagination_size !== size) {
+      setSize(data.default_pagination_size);
+    }
+  }, [data?.default_pagination_size, size]);
+
+  useEffect(() => {
+    const handleStorage = () => {
+      setSize(getDefaultPaginationSize());
+    };
+    const handleCustom = (e: Event) => {
+      const customEvent = e as CustomEvent<number>;
+      if (customEvent.detail && typeof customEvent.detail === 'number') {
+        setSize(customEvent.detail);
+      } else {
+        setSize(getDefaultPaginationSize());
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('hrms-pagination-size-changed', handleCustom);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('hrms-pagination-size-changed', handleCustom);
+    };
+  }, []);
+
+  return size;
 }
 

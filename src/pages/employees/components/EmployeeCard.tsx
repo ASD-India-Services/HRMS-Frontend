@@ -111,6 +111,14 @@ export function EmployeeCard({ employee }: EmployeeCardProps) {
           <span className="text-xs text-gray-400">
             ID: {employee.employee_id}
           </span>
+          {employee.badge_id && (
+            <span
+              className="inline-flex items-center rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[11px] font-medium text-slate-600 border border-slate-200/60"
+              title="Security Access Badge ID"
+            >
+              Badge: {employee.badge_id}
+            </span>
+          )}
         </div>
       </div>
     </Link>

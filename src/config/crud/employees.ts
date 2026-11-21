@@ -182,6 +182,20 @@ export const employeeCrudConfig = {
       },
     },
     { name: 'date_of_joining', label: 'Date of Joining', type: 'date', required: true, step: 1 },
+    {
+      name: 'notice_period_days',
+      label: 'Notice Period (days)',
+      type: 'number',
+      step: 1,
+      placeholder: 'Default is company notice period (e.g. 30)',
+    },
+    {
+      name: 'badge_id',
+      label: 'Security Badge ID',
+      type: 'text',
+      step: 1,
+      placeholder: 'Auto-generated from prefix if blank (e.g. PEP-0001)',
+    },
     // Step 2: Address
     { name: 'address', label: 'Address', type: 'textarea', step: 2 },
     { name: 'city', label: 'City', type: 'text', step: 2 },

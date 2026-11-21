@@ -14,7 +14,7 @@
  * Requirements: 16.1, 16.2, 16.3, 16.4
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { usePermissions, useUser } from '@platform/auth-sdk';
@@ -47,31 +47,54 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
   const effectiveHasPermission = isAdmin ? () => true : hasPermission;
 
   // Filter navigation based on HRMS permissions and feature flags
-  const visibleGroups: NavGroup[] = getFilteredNavigation(effectiveHasPermission, hasFeature);
+  const visibleGroups: NavGroup[] = useMemo(
+    () => getFilteredNavigation(effectiveHasPermission, hasFeature),
+    [effectiveHasPermission, hasFeature]
+  );
 
   /** Check if any item in a group is active */
-  const isGroupActive = (group: NavGroup) =>
-    group.items.some((item: NavItem) => location.pathname === item.href || location.pathname.startsWith(item.href + '/'));
+  const isGroupActive = useCallback(
+    (group: NavGroup) =>
+      group.items.some((item: NavItem) => location.pathname === item.href || location.pathname.startsWith(item.href + '/')),
+    [location.pathname]
+  );
 
-  // Track which group is expanded
-  // Auto-expand the group containing the active route on first render
-  const [expandedGroup, setExpandedGroup] = useState<string | null>(() => {
-    const active = visibleGroups.find((g: NavGroup) => isGroupActive(g));
-    return active?.label ?? visibleGroups[0]?.label ?? null;
+  // Track which groups are expanded (Record of group.label -> boolean)
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    visibleGroups.forEach((g: NavGroup) => {
+      if (isGroupActive(g)) {
+        initial[g.label] = true;
+      }
+    });
+    // Default open active group or first group
+    if (Object.keys(initial).length === 0 && visibleGroups[0]) {
+      initial[visibleGroups[0].label] = true;
+    }
+    return initial;
   });
 
-  // Keep expanded group aligned when route changes
+  // Keep active route's group expanded when navigating
   useEffect(() => {
     const active = visibleGroups.find((g: NavGroup) =>
       g.items.some((item: NavItem) => location.pathname === item.href || location.pathname.startsWith(item.href + '/'))
     );
     if (active) {
-      setExpandedGroup((prev) => (prev !== active.label ? active.label : prev));
+      setExpandedGroups((prev) => {
+        if (prev[active.label]) return prev;
+        return { ...prev, [active.label]: true };
+      });
     }
   }, [location.pathname, visibleGroups]);
 
   const toggleGroup = (label: string) => {
-    setExpandedGroup((prev) => (prev === label ? null : label));
+    if (isCollapsed) {
+      onToggleCollapse();
+    }
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [label]: !prev[label],
+    }));
   };
 
   return (
@@ -152,7 +175,7 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
 
           <div className="space-y-1">
             {visibleGroups.map((group: NavGroup) => {
-              const groupExpanded = expandedGroup === group.label;
+              const groupExpanded = !!expandedGroups[group.label];
               const groupActive = isGroupActive(group);
 
               // ─── Collapsed Mode (Icon only with hover tooltip) ─────────────

@@ -10,6 +10,7 @@
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { FilterConfig } from '@/types/datatable';
+import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 
 export interface UseFilterSyncOptions {
   /** Filter configurations to sync */
@@ -72,6 +73,7 @@ export function useFilterSync({
   paramPrefix = '',
 }: UseFilterSyncOptions): UseFilterSyncResult {
   const [searchParams, setSearchParams] = useSearchParams();
+  const defaultPageSize = useDefaultPaginationSize();
 
   const filterKeys = useMemo(() => filters.map((f) => f.key), [filters]);
 
@@ -88,9 +90,9 @@ export function useFilterSync({
 
   const pageSize = useMemo(() => {
     const sizeParam = searchParams.get(`${paramPrefix}page_size`);
-    const parsed = sizeParam ? parseInt(sizeParam, 10) : 10;
-    return isNaN(parsed) || parsed < 1 ? 10 : parsed;
-  }, [searchParams, paramPrefix]);
+    const parsed = sizeParam ? parseInt(sizeParam, 10) : defaultPageSize;
+    return isNaN(parsed) || parsed < 1 ? defaultPageSize : parsed;
+  }, [searchParams, paramPrefix, defaultPageSize]);
 
   const setFilter = useCallback(
     (key: string, value: string) => {

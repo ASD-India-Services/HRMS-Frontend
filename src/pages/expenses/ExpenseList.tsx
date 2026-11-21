@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useExpenseClaims } from '@/hooks/useExpenses';
+import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
 import type { ExpenseClaimStatus } from '@/types/expense';
@@ -27,6 +28,7 @@ const statusStyles: Record<ExpenseClaimStatus, string> = {
 };
 
 export function ExpenseList() {
+  const pageSize = useDefaultPaginationSize();
   const [activeStatus, setActiveStatus] = useState<ExpenseClaimStatus | ''>('');
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ export function ExpenseList() {
   const { data, isLoading, isError, refetch } = useExpenseClaims({
     status: activeStatus || undefined,
     page,
-    page_size: 10,
+    page_size: pageSize,
     mine: true,
   });
 

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { EMPLOYEES } from '@/lib/endpoints';
+import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { formatDate, formatDateTime } from '@/utils/formatters';
 import {
@@ -33,6 +34,7 @@ export default function CompensatoryLeave() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const pageSize = useDefaultPaginationSize();
   const [page, setPage] = useState(1);
 
   // Create Modal State
@@ -104,7 +106,7 @@ export default function CompensatoryLeave() {
     status: statusFilter || undefined,
     search: search.trim() || undefined,
     page,
-    page_size: 20,
+    page_size: pageSize,
   });
 
   // Eligible Attendances for selected employee

@@ -4,6 +4,7 @@ import api from '@/lib/api';
 import { DEPARTMENTS, DESIGNATIONS, BRANCHES, SHIFTS } from '@/lib/endpoints';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { useWorkRecords } from '@/hooks/useWorkRecords';
+import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 import { formatDate } from '@/utils/formatters';
 import type {
   WorkRecordDay,
@@ -49,6 +50,7 @@ export default function WorkRecords() {
   const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
 
   // Pagination & Search
+  const pageSize = useDefaultPaginationSize();
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
 
@@ -198,11 +200,11 @@ export default function WorkRecords() {
       year: selectedYear,
       month: selectedMonth,
       page,
-      page_size: 20,
+      page_size: pageSize,
       search: search.trim() || undefined,
       ...appliedFilters,
     }),
-    [selectedYear, selectedMonth, page, search, appliedFilters]
+    [selectedYear, selectedMonth, page, pageSize, search, appliedFilters]
   );
 
   const { data, isLoading, isError, refetch } = useWorkRecords(queryParams);

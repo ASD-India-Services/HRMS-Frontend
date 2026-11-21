@@ -282,7 +282,7 @@ export function BonusPointSettingTab() {
             className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
           >
             <PlusIcon className="h-4 w-4" />
-            + Create
+            Create
           </button>
         </div>
       ) : (

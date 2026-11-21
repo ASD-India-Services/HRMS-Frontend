@@ -10,6 +10,7 @@ import { useUser } from '@platform/auth-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useUpdateEmployee } from '@/hooks/useEmployee';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
+import { useHRSettings } from '@/hooks/useHRSettings';
 import api from '@/lib/api';
 import { formatDate } from '@/utils/formatters';
 import type { EmployeeDetail, EmployeeProfileUpdate } from '@/types/employee';
@@ -26,19 +27,33 @@ function useCurrentEmployee() {
 
 export default function Profile() {
   const { name, email, role, orgId } = useUser();
-  const { roleName } = useHrmsPermissionsContext();
+  const { roleName, hasPermission } = useHrmsPermissionsContext();
+  const { data: hrSettings } = useHRSettings();
   const { data: employee, isLoading } = useCurrentEmployee();
-  const updateMutation = useUpdateEmployee(employee?.id?.toString() ?? '');
+  const updateMutation = useUpdateEmployee(employee?.id?.toString() ?? 'me');
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<EmployeeProfileUpdate>({});
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Determine if user is admin (can edit all fields) or regular employee (limited edits)
-  const isAdmin = roleName === 'org_admin' || roleName === 'hr_manager';
-  // Employees with completed onboarding can only edit: profile_picture, emergency contact
-  const isReadOnlyEmployee = !isAdmin;
+  // Determine if user is admin (exempt from restrictions)
+  const isAdmin =
+    roleName?.toLowerCase() === 'org_admin' ||
+    roleName?.toLowerCase() === 'admin' ||
+    roleName?.toLowerCase() === 'superadmin' ||
+    roleName?.toLowerCase() === 'hr_manager' ||
+    hasPermission('employees.edit');
+
+  // Check if profile edit is restricted by HR settings
+  const isProfileEditRestricted = !isAdmin && !!hrSettings?.account_restrictions?.restrict_profile_edit;
+  // If not restricted, user can edit profile
+  const canEditProfile = !isProfileEditRestricted;
 
   const startEditing = () => {
+    if (isProfileEditRestricted) return;
+    setErrorMessage(null);
+    setSuccessMessage(null);
     if (employee) {
       setFormData({
         phone: employee.phone ?? '',
@@ -59,12 +74,29 @@ export default function Profile() {
   const cancelEditing = () => {
     setIsEditing(false);
     setFormData({});
+    setErrorMessage(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isProfileEditRestricted) return;
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
     updateMutation.mutate(formData, {
-      onSuccess: () => setIsEditing(false),
+      onSuccess: () => {
+        setIsEditing(false);
+        setSuccessMessage('Profile updated successfully.');
+        setTimeout(() => setSuccessMessage(null), 4000);
+      },
+      onError: (err: any) => {
+        const detail =
+          err?.response?.data?.detail ||
+          err?.response?.data?.message ||
+          (typeof err?.response?.data === 'string' ? err.response.data : null) ||
+          'Failed to update profile. Please try again.';
+        setErrorMessage(detail);
+      },
     });
   };
 
@@ -74,12 +106,31 @@ export default function Profile() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">My Profile</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          View and manage your personal information.
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">My Profile</h1>
+          <p className="mt-1 text-sm text-gray-600">
+            View and manage your personal information.
+          </p>
+        </div>
+        {!isEditing && canEditProfile && employee && (
+          <button
+            onClick={startEditing}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Edit Profile
+          </button>
+        )}
       </div>
+
+      {successMessage && (
+        <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800 text-sm flex items-center gap-2">
+          <svg className="h-5 w-5 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <span>{successMessage}</span>
+        </div>
+      )}
 
       {/* Profile Header with Avatar */}
       <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -145,6 +196,9 @@ export default function Profile() {
           {employee && (
             <>
               <InfoRow label="Employee ID" value={employee.employee_id} />
+              {employee.badge_id && (
+                <InfoRow label="Security Badge ID" value={employee.badge_id} />
+              )}
               <InfoRow label="Date of Joining" value={employee.date_of_joining ? formatDate(employee.date_of_joining) : '--'} />
               <InfoRow label="Employment Type" value={employee.employment_type?.replace('_', ' ')} capitalize />
             </>
@@ -162,14 +216,29 @@ export default function Profile() {
 
       {employee && !isEditing && (
         <>
-          {/* Personal Details (read-only) */}
+          {/* Profile Edit Restriction Banner */}
+          {isProfileEditRestricted && (
+            <div className="mt-6 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900 shadow-sm">
+              <svg className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              <div className="text-sm">
+                <p className="font-semibold text-amber-950">Profile Editing Restricted</p>
+                <p className="mt-0.5 text-amber-800">
+                  Self-service profile and emergency contact editing have been disabled by your organization's HR settings. Please contact your HR administrator to update your details.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Personal Details */}
           <section className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Contact Information</h2>
-              {isAdmin && (
+              {canEditProfile && (
                 <button
                   onClick={startEditing}
-                  className="rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                  className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600 hover:bg-blue-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   Edit
                 </button>
@@ -184,21 +253,21 @@ export default function Profile() {
               <InfoRow label="Country" value={employee.country} />
               <InfoRow label="PIN Code" value={employee.pincode} />
             </dl>
-            {isReadOnlyEmployee && (
-              <p className="mt-3 text-xs text-gray-400">
-                Contact information is read-only. Please contact HR for changes.
+            {isProfileEditRestricted && (
+              <p className="mt-3 text-xs text-amber-600">
+                Contact information editing is restricted by HR settings.
               </p>
             )}
           </section>
 
-          {/* Emergency Contact (editable by employee) */}
+          {/* Emergency Contact */}
           <section className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900">Emergency Contact</h2>
-              {!isEditing && (
+              {canEditProfile && (
                 <button
                   onClick={startEditing}
-                  className="rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                  className="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600 hover:bg-blue-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   Edit
                 </button>
@@ -237,54 +306,52 @@ export default function Profile() {
       {/* Edit Form */}
       {employee && isEditing && (
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-          {/* Contact Info — only shown for admins */}
-          {isAdmin && (
-            <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900">Edit Contact Information</h2>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <FormField
-                  label="Phone"
-                  value={formData.phone ?? ''}
-                  onChange={(v) => handleChange('phone', v)}
-                  type="tel"
-                />
-                <FormField
-                  label="Personal Email"
-                  value={formData.personal_email ?? ''}
-                  onChange={(v) => handleChange('personal_email', v)}
-                  type="email"
-                />
-                <FormField
-                  label="Address"
-                  value={formData.address ?? ''}
-                  onChange={(v) => handleChange('address', v)}
-                  className="sm:col-span-2"
-                />
-                <FormField
-                  label="City"
-                  value={formData.city ?? ''}
-                  onChange={(v) => handleChange('city', v)}
-                />
-                <FormField
-                  label="State"
-                  value={formData.state ?? ''}
-                  onChange={(v) => handleChange('state', v)}
-                />
-                <FormField
-                  label="Country"
-                  value={formData.country ?? ''}
-                  onChange={(v) => handleChange('country', v)}
-                />
-                <FormField
-                  label="PIN Code"
-                  value={formData.pincode ?? ''}
-                  onChange={(v) => handleChange('pincode', v)}
-                />
-              </div>
-            </section>
-          )}
+          {/* Contact Info */}
+          <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900">Edit Contact Information</h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <FormField
+                label="Phone"
+                value={formData.phone ?? ''}
+                onChange={(v) => handleChange('phone', v)}
+                type="tel"
+              />
+              <FormField
+                label="Personal Email"
+                value={formData.personal_email ?? ''}
+                onChange={(v) => handleChange('personal_email', v)}
+                type="email"
+              />
+              <FormField
+                label="Address"
+                value={formData.address ?? ''}
+                onChange={(v) => handleChange('address', v)}
+                className="sm:col-span-2"
+              />
+              <FormField
+                label="City"
+                value={formData.city ?? ''}
+                onChange={(v) => handleChange('city', v)}
+              />
+              <FormField
+                label="State"
+                value={formData.state ?? ''}
+                onChange={(v) => handleChange('state', v)}
+              />
+              <FormField
+                label="Country"
+                value={formData.country ?? ''}
+                onChange={(v) => handleChange('country', v)}
+              />
+              <FormField
+                label="PIN Code"
+                value={formData.pincode ?? ''}
+                onChange={(v) => handleChange('pincode', v)}
+              />
+            </div>
+          </section>
 
-          {/* Emergency Contact — editable by everyone */}
+          {/* Emergency Contact */}
           <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="mb-4 text-lg font-semibold text-gray-900">Emergency Contact</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -312,24 +379,25 @@ export default function Profile() {
             <button
               type="submit"
               disabled={updateMutation.isPending}
-              className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50"
+              className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
             >
               {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
             </button>
             <button
               type="button"
               onClick={cancelEditing}
-              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
             >
               Cancel
             </button>
           </div>
 
-          {updateMutation.isError && (
-            <div className="rounded-md bg-red-50 p-3">
-              <p className="text-sm text-red-800">
-                Failed to update profile. Please try again.
-              </p>
+          {(errorMessage || updateMutation.isError) && (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800 flex items-center gap-2">
+              <svg className="h-5 w-5 text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{errorMessage || 'Failed to update profile. Please try again.'}</span>
             </div>
           )}
         </form>

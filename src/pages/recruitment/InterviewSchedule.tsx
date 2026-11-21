@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useInterviews } from '@/hooks/useRecruitment';
+import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 import { CreateButton } from '@/components/ActionButton';
 import { CrudModal } from '@/components/CrudModal';
 import type { FieldConfig } from '@/components/CrudModal';
@@ -37,9 +38,8 @@ const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   cancelled: { label: 'Cancelled', className: 'bg-gray-100 text-gray-800' },
 };
 
-const PAGE_SIZE = 10;
-
 export function InterviewSchedule() {
+  const pageSize = useDefaultPaginationSize();
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
   const [showCreate, setShowCreate] = useState(false);
@@ -56,10 +56,10 @@ export function InterviewSchedule() {
   const { data, isLoading, isError, error, isFetching } = useInterviews({
     status: statusFilter || undefined,
     page,
-    page_size: PAGE_SIZE,
+    page_size: pageSize,
   });
 
-  const totalPages = data ? Math.ceil(data.count / PAGE_SIZE) : 0;
+  const totalPages = data ? Math.max(1, Math.ceil(data.count / pageSize)) : 0;
 
   return (
     <div>

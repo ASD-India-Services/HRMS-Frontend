@@ -50,6 +50,7 @@ const EmployeeGrades = lazy(() => import('@/pages/EmployeeGrades'));
 const DepartmentApprovers = lazy(() => import('@/pages/DepartmentApprovers'));
 const Branches = lazy(() => import('@/pages/Branches'));
 const EmployeeDetailPage = lazy(() => import('@/pages/employees/EmployeeDetailPage'));
+const EmployeeLifecyclePage = lazy(() => import('@/pages/employees/EmployeeLifecyclePage'));
 const EmployeeEditPage = lazy(() => import('@/pages/employees/EmployeeEditPage'));
 const EmployeeForm = lazy(() => import('@/pages/employees/EmployeeForm').then((m) => ({ default: m.EmployeeForm as React.ComponentType })));
 const OrgChart = lazy(() => import('@/pages/employees/OrgChart'));
@@ -388,6 +389,10 @@ export const router = createBrowserRouter([
         element: gated('employees_enabled', 'Employees', 'employees.view', <EmployeeDetailPage />),
       },
       {
+        path: 'employees/:id/lifecycle',
+        element: gated('employees_enabled', 'Employees', 'employees.view', <EmployeeLifecyclePage />),
+      },
+      {
         path: 'departments',
         element: gated('employees_enabled', 'Employees', 'departments.view', <Departments />),
       },
@@ -439,7 +444,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'leaves/approvals',
-        element: gated('leaves_enabled', 'Leave Management', 'leave_approvals.view', <LeaveApprovals />),
+        element: gatedAny('leaves_enabled', 'Leave Management', ['leave_approvals.view', 'leaves.approve'], <LeaveApprovals />),
       },
       {
         path: 'leaves/compensatory',

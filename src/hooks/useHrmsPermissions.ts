@@ -24,6 +24,8 @@ interface PermissionsResponse {
   permissions: string[];
   /** permission_code → dept IDs ([] = all departments / no restriction) */
   permission_scopes: Record<string, string[]>;
+  is_login_restricted?: boolean;
+  restriction_reason?: string;
 }
 
 export function useHrmsPermissions() {
@@ -64,12 +66,17 @@ export function useHrmsPermissions() {
     [permissions, permissionScopes],
   );
 
+  const isLoginRestricted = !!data?.is_login_restricted;
+  const restrictionReason = data?.restriction_reason ?? '';
+
   return {
     permissions,
     roleName,
     permissionScopes,
     hasPermission,
     getPermissionScope,
+    isLoginRestricted,
+    restrictionReason,
     isLoading: isLoading || !isAuthenticated,
     error,
     refetch,

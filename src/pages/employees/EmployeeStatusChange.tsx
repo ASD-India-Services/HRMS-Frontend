@@ -10,10 +10,12 @@
  * Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { Can } from '@/components/Can/Can';
+import { useHRSettings } from '@/hooks/useHRSettings';
+import { useEmployee } from '@/hooks/useEmployee';
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -78,13 +80,36 @@ export function EmployeeStatusChange({
   onStatusChanged,
 }: EmployeeStatusChangeProps) {
   const queryClient = useQueryClient();
+  const { data: hrSettings } = useHRSettings();
+  const { data: employee } = useEmployee(employeeId);
 
   const [selectedStatus, setSelectedStatus] = useState<EmployeeStatus | ''>('');
   const [showForm, setShowForm] = useState(false);
   const [reason, setReason] = useState('');
   const [effectiveDate, setEffectiveDate] = useState(getTodayISO());
+  const [noticePeriodDays, setNoticePeriodDays] = useState<number>(() => {
+    return employee?.notice_period_days ?? hrSettings?.notice_period_days ?? 30;
+  });
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Sync default notice period when employee or HR settings change
+  useEffect(() => {
+    if (employee?.notice_period_days !== undefined) {
+      setNoticePeriodDays(employee.notice_period_days);
+    } else if (hrSettings?.notice_period_days !== undefined) {
+      setNoticePeriodDays(hrSettings.notice_period_days);
+    }
+  }, [employee?.notice_period_days, hrSettings?.notice_period_days]);
+
+  // Calculate relieving date if status is on_notice
+  const calculatedRelievingDate = useMemo(() => {
+    if (!effectiveDate) return '';
+    const d = new Date(effectiveDate);
+    if (isNaN(d.getTime())) return '';
+    d.setDate(d.getDate() + (Number(noticePeriodDays) || 0));
+    return d.toISOString().split('T')[0];
+  }, [effectiveDate, noticePeriodDays]);
 
   const availableTransitions = STATUS_TRANSITIONS[currentStatus];
   const isTerminalState = availableTransitions.length === 0;
@@ -94,9 +119,12 @@ export function EmployeeStatusChange({
     mutationFn: async (payload: {
       status: EmployeeStatus;
       status_reason: string;
+      reason?: string;
       status_effective_date: string;
+      notice_period_start?: string;
+      notice_period_days?: number;
     }) => {
-      const response = await api.patch(`/api/v1/employees/${employeeId}/`, payload);
+      const response = await api.patch(`/api/v1/employees/${employeeId}/change-status/`, payload);
       return response.data;
     },
     onSuccess: () => {
@@ -114,8 +142,9 @@ export function EmployeeStatusChange({
     setShowForm(false);
     setReason('');
     setEffectiveDate(getTodayISO());
+    setNoticePeriodDays(employee?.notice_period_days ?? hrSettings?.notice_period_days ?? 30);
     setValidationErrors({});
-  }, []);
+  }, [employee?.notice_period_days, hrSettings?.notice_period_days]);
 
   const handleStatusSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value as EmployeeStatus | '';
@@ -148,6 +177,9 @@ export function EmployeeStatusChange({
     if (!selectedStatus) {
       errors.status = 'Please select a status';
     }
+    if (selectedStatus === 'on_notice' && (!noticePeriodDays || noticePeriodDays < 0)) {
+      errors.noticePeriodDays = 'Notice period days must be 0 or greater';
+    }
 
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
@@ -158,7 +190,10 @@ export function EmployeeStatusChange({
     statusMutation.mutate({
       status: selectedStatus as EmployeeStatus,
       status_reason: reason.trim(),
+      reason: reason.trim(),
       status_effective_date: effectiveDate,
+      notice_period_start: effectiveDate,
+      notice_period_days: Number(noticePeriodDays) || 30,
     });
   };
 
@@ -293,7 +328,8 @@ export function EmployeeStatusChange({
                 htmlFor="status-effective-date"
                 className="block text-sm font-medium text-gray-700"
               >
-                Effective Date <span className="text-red-500">*</span>
+                {selectedStatus === 'on_notice' ? 'Notice Period Start Date' : 'Effective Date'}{' '}
+                <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
@@ -326,6 +362,74 @@ export function EmployeeStatusChange({
                 </p>
               )}
             </div>
+
+            {/* If On Notice: Show Notice Period Days and Calculated Relieving Date */}
+            {selectedStatus === 'on_notice' && (
+              <div className="rounded-lg border border-purple-100 bg-purple-50/50 p-3.5 space-y-3">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor="notice-period-days"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Notice Period (days) <span className="text-red-500">*</span>
+                    </label>
+                    <span className="text-xs text-gray-500">
+                      Company policy: {hrSettings?.notice_period_days ?? 30} days
+                    </span>
+                  </div>
+                  <input
+                    type="number"
+                    id="notice-period-days"
+                    min={0}
+                    value={noticePeriodDays}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10) || 0;
+                      setNoticePeriodDays(val);
+                      if (validationErrors.noticePeriodDays) {
+                        setValidationErrors((prev) => {
+                          const next = { ...prev };
+                          delete next.noticePeriodDays;
+                          return next;
+                        });
+                      }
+                    }}
+                    disabled={statusMutation.isPending}
+                    className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  />
+                  {validationErrors.noticePeriodDays && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {validationErrors.noticePeriodDays}
+                    </p>
+                  )}
+                </div>
+
+                {calculatedRelievingDate && (
+                  <div className="flex items-start gap-2 pt-1 text-xs text-purple-900">
+                    <svg
+                      className="h-4 w-4 shrink-0 text-purple-600 mt-0.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <div>
+                      <span className="font-semibold">Calculated Relieving Date: </span>
+                      <span className="font-mono font-medium">{calculatedRelievingDate}</span>
+                      <span className="text-purple-700 ml-1">
+                        ({noticePeriodDays} days from notice start date)
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Backend error */}
             {backendError && (

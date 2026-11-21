@@ -24,6 +24,8 @@ interface HrmsPermissionsContextValue {
    * [] means org-wide (no restriction).
    */
   getPermissionScope: (perm: string) => string[] | null;
+  isLoginRestricted: boolean;
+  restrictionReason: string;
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -42,6 +44,8 @@ export function HrmsPermissionsProvider({ children }: HrmsPermissionsProviderPro
     permissionScopes,
     hasPermission,
     getPermissionScope,
+    isLoginRestricted,
+    restrictionReason,
     isLoading,
     error,
     refetch,
@@ -55,6 +59,8 @@ export function HrmsPermissionsProvider({ children }: HrmsPermissionsProviderPro
         permissionScopes,
         hasPermission,
         getPermissionScope,
+        isLoginRestricted,
+        restrictionReason,
         isLoading,
         error: error as Error | null,
         refetch,

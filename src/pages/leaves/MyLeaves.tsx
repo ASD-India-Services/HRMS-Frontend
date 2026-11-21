@@ -7,6 +7,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLeaveApplications, useLeaveBalances, useCancelLeave } from '@/hooks/useLeaves';
+import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 import { LeaveBalanceCard } from './components/LeaveBalanceCard';
 import { LeaveApply } from './LeaveApply';
 import { Can } from '@/components/Can';
@@ -43,6 +44,7 @@ export default function MyLeaves() {
 }
 
 function MyLeavesContent() {
+  const pageSize = useDefaultPaginationSize();
   const [activeStatus, setActiveStatus] = useState<LeaveApplicationStatus | ''>('');
   const [page, setPage] = useState(1);
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
@@ -63,7 +65,7 @@ function MyLeavesContent() {
   const { data, isLoading, isError, refetch } = useLeaveApplications({
     status: activeStatus || undefined,
     page,
-    page_size: 10,
+    page_size: pageSize,
     mine: true,
   });
 

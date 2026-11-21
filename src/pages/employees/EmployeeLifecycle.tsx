@@ -16,7 +16,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { EMPLOYEES, PROMOTIONS, TRANSFERS } from '@/lib/endpoints';
-import { WorkflowTimeline } from '@/components/WorkflowEngine/WorkflowTimeline';
+import { PropertyHistoryTimeline } from './components/PropertyHistoryTimeline';
 import { Can } from '@/components/Can';
 import { FormBuilder } from '@/components/FormBuilder';
 import type { WorkflowConfig } from '@/types/workflow';
@@ -43,6 +43,7 @@ const employeeLifecycleConfig: WorkflowConfig = {
       requiresReason: true,
       formFields: [
         { name: 'notice_period_start', label: 'Notice Period Start', type: 'date', required: true },
+        { name: 'notice_period_days', label: 'Notice Period (days)', type: 'number', required: false },
       ],
     },
     {
@@ -115,6 +116,7 @@ const transferFields: FieldSchema[] = [
 // Form fields for Initiate Separation action
 const separationFields: FieldSchema[] = [
   { name: 'notice_period_start', label: 'Notice Period Start', type: 'date', required: true },
+  { name: 'notice_period_days', label: 'Notice Period (days)', type: 'number', required: false },
   { name: 'reason', label: 'Reason for Separation', type: 'textarea', required: true },
 ];
 
@@ -174,6 +176,7 @@ export function EmployeeLifecycle() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['employees', 'detail', employeeId] });
+      queryClient.invalidateQueries({ queryKey: ['employee', employeeId] });
       queryClient.invalidateQueries({ queryKey: ['workflow-timeline', 'employee-lifecycle', employeeId] });
       setSuccessMessage('Separation initiated successfully');
       setActiveAction(null);
@@ -391,15 +394,13 @@ export function EmployeeLifecycle() {
         </div>
       )}
 
-      {/* Lifecycle Timeline */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Lifecycle Timeline</h2>
-        <WorkflowTimeline
-          recordId={employeeId}
-          endpoint={EMPLOYEES.PROPERTY_HISTORY}
-          config={employeeLifecycleConfig}
-        />
-      </div>
+      {/* Lifecycle & Work Information History */}
+      <PropertyHistoryTimeline
+        employeeId={employeeId}
+        title="Lifecycle & Work Information History"
+      />
     </div>
   );
 }
+
+export default EmployeeLifecycle;

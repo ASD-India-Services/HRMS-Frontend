@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEmployee } from '@/hooks/useEmployee';
+import { useHRSettings } from '@/hooks/useHRSettings';
 import { UserPermissionsPanel } from '@/pages/admin/UserPermissionsPanel';
 import { EmployeeStatusChange } from '@/pages/employees/EmployeeStatusChange';
 import { Can } from '@/components/Can/Can';
@@ -16,6 +17,7 @@ import { EditButton, DeleteButton, ActionButton } from '@/components/ActionButto
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { CrudModal } from '@/components/CrudModal';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PropertyHistoryTimeline } from './components/PropertyHistoryTimeline';
 import { formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
 
@@ -42,6 +44,7 @@ export function EmployeeDetail() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: employee, isLoading, isError, error } = useEmployee(id);
+  const { data: hrSettings } = useHRSettings();
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showPromote, setShowPromote] = useState(false);
@@ -121,6 +124,21 @@ export function EmployeeDetail() {
   const statusColor = statusColors[employee.status] ?? 'bg-gray-100 text-gray-800';
   const statusLabel = statusLabels[employee.status] ?? employee.status;
 
+  const effectiveNoticeDays = employee.notice_period_days ?? hrSettings?.notice_period_days ?? 30;
+  const isCustomNotice = Boolean(employee.custom_fields && (employee.custom_fields as any).notice_period_days);
+  const isOnNotice = employee.status === 'on_notice';
+  const noticeStart = employee.notice_period_start || (employee.custom_fields as any)?.notice_period_start;
+  const relievingDate = employee.date_of_leaving;
+  const separationReason = employee.separation_reason || (employee.custom_fields as any)?.separation_reason;
+
+  let daysRemaining: number | null = null;
+  if (relievingDate) {
+    const target = new Date(relievingDate).getTime();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    daysRemaining = Math.max(0, Math.ceil((target - today.getTime()) / (1000 * 60 * 60 * 24)));
+  }
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
@@ -158,9 +176,19 @@ export function EmployeeDetail() {
             <p className="mt-1 text-sm text-gray-600">
               {employee.designation?.title || 'No Designation'} · {employee.department?.name || 'No Department'}
             </p>
-            <p className="mt-0.5 text-xs text-gray-400">
-              Employee ID: {employee.employee_id}
-            </p>
+            <div className="mt-1.5 flex flex-wrap items-center gap-2.5 text-xs">
+              <span className="text-gray-500">
+                Employee ID: <strong className="font-semibold text-gray-700">{employee.employee_id}</strong>
+              </span>
+              {employee.badge_id && (
+                <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-xs font-semibold text-slate-700">
+                  <svg className="h-3 w-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.364a4.125 4.125 0 00-6.338 0" />
+                  </svg>
+                  Badge: {employee.badge_id}
+                </span>
+              )}
+            </div>
           </div>
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center gap-2">
@@ -189,6 +217,16 @@ export function EmployeeDetail() {
               </svg>
               <span>Org Chart</span>
             </Link>
+            <Link
+              to={`/employees/${employee.id}/lifecycle`}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-xs hover:bg-gray-50 transition-colors"
+              title="View full lifecycle actions, transfers, promotions, and history timeline"
+            >
+              <svg className="h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Lifecycle & History</span>
+            </Link>
             <EditButton
               label="Edit"
               onClick={() => navigate(`/employees/${employee.id}/edit`)}
@@ -204,6 +242,58 @@ export function EmployeeDetail() {
           </div>
         </div>
       </div>
+
+      {/* Notice Period Alert Banner — Shown when employee is currently On Notice */}
+      {isOnNotice && (
+        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/80 p-4 shadow-xs">
+          <div className="flex items-start gap-3">
+            <div className="rounded-lg bg-amber-100 p-2 text-amber-700 shrink-0">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-sm font-semibold text-amber-900">
+                  Serving Notice Period
+                </h3>
+                {daysRemaining !== null && (
+                  <span className="inline-flex items-center rounded-full bg-amber-200/80 px-2.5 py-0.5 text-xs font-semibold text-amber-900">
+                    {daysRemaining === 0 ? 'Last Working Day Today' : `${daysRemaining} days remaining`}
+                  </span>
+                )}
+              </div>
+              <div className="mt-2 grid grid-cols-1 gap-2 text-xs text-amber-800 sm:grid-cols-3">
+                <div>
+                  <span className="font-medium text-amber-900">Notice Start: </span>
+                  {noticeStart ? formatDate(noticeStart) : '—'}
+                </div>
+                <div>
+                  <span className="font-medium text-amber-900">Notice Duration: </span>
+                  {effectiveNoticeDays} days
+                </div>
+                <div>
+                  <span className="font-medium text-amber-900">Relieving Date: </span>
+                  <span className="font-semibold text-amber-950">
+                    {relievingDate ? formatDate(relievingDate) : '—'}
+                  </span>
+                </div>
+              </div>
+              {separationReason && (
+                <p className="mt-2 text-xs text-amber-800 border-t border-amber-200/60 pt-2">
+                  <span className="font-medium text-amber-900">Reason: </span>
+                  {separationReason}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Employee Status Change — visible to users with employees.edit permission */}
       <div className="mt-4">
@@ -250,14 +340,16 @@ export function EmployeeDetail() {
             <DetailRow label="Confirmation Date" value={formatDate(employee.confirmation_date)} />
             <DetailRow
               label="Notice Period"
-              value={
-                employee.notice_period_days
-                  ? `${employee.notice_period_days} days`
-                  : undefined
-              }
+              value={`${effectiveNoticeDays} days ${isCustomNotice ? '(Custom)' : '(Company Policy)'}`}
             />
+            {employee.badge_id && (
+              <DetailRow label="Security Badge ID" value={employee.badge_id} />
+            )}
             {employee.date_of_leaving && (
-              <DetailRow label="Date of Leaving" value={formatDate(employee.date_of_leaving)} />
+              <DetailRow
+                label={isOnNotice ? 'Expected Relieving Date' : 'Date of Leaving'}
+                value={formatDate(employee.date_of_leaving)}
+              />
             )}
           </dl>
         </section>
@@ -318,6 +410,11 @@ export function EmployeeDetail() {
             <UserPermissionsPanel userId={employee.id} />
           </section>
         </Can>
+
+        {/* Work Information & History Tracking Timeline */}
+        <section className="lg:col-span-2">
+          <PropertyHistoryTimeline employeeId={employee.id} />
+        </section>
       </div>
 
       {/* Delete Confirmation Dialog */}

@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 import {
   useCompanyLeaves,
   useCreateCompanyLeave,
@@ -45,8 +46,8 @@ export default function CompanyLeaves() {
   const [appliedWeekDay, setAppliedWeekDay] = useState('');
 
   // Pagination
+  const pageSize = useDefaultPaginationSize();
   const [page, setPage] = useState(1);
-  const pageSize = 10;
 
   // Debounce search
   useEffect(() => {

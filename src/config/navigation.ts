@@ -211,7 +211,7 @@ export const navigationConfig: NavGroup[] = [
     items: [
       { label: 'Dashboard', href: '/leaves/dashboard', icon: ICONS.dashboard, iconName: 'solar:chart-2-linear', requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
       { label: 'My Leaves', href: '/my-leaves', icon: ICONS.leaves, iconName: 'solar:calendar-linear', requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
-      { label: 'Leave Approvals', href: '/leaves/approvals', icon: ICONS.leaveApprovals, iconName: 'solar:checklist-minimalistic-linear', requiredPermission: 'leave_approvals.view', featureFlag: 'leaves_enabled' },
+      { label: 'Leave Approvals', href: '/leaves/approvals', icon: ICONS.leaveApprovals, iconName: 'solar:checklist-minimalistic-linear', requiredPermission: 'leave_approvals.view', requiredAnyPermission: ['leave_approvals.view', 'leaves.approve'], featureFlag: 'leaves_enabled' },
       { label: 'Compensatory Leave', href: '/leaves/compensatory', icon: ICONS.leaveApprovals, iconName: 'solar:refresh-circle-linear', requiredPermission: 'compensatory_leave.view', featureFlag: 'leaves_enabled' },
       { label: 'Leave Policies', href: '/leave-policies', icon: ICONS.leavePolicies, iconName: 'solar:document-text-linear', requiredPermission: 'leave_policies.view', featureFlag: 'leaves_enabled' },
       { label: 'Policy Assignments', href: '/leave-policy-assignments', icon: ICONS.leaveAdjust, iconName: 'solar:user-check-linear', requiredPermission: 'leave_policy_assignments.view', featureFlag: 'leaves_enabled' },

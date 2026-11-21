@@ -15,7 +15,8 @@ async function updateEmployee(
   id: string,
   data: EmployeeProfileUpdate
 ): Promise<EmployeeDetail> {
-  const response = await api.patch<EmployeeDetail>(`/api/v1/employees/${id}/`, data);
+  const url = id && id !== 'me' ? `/api/v1/employees/${id}/` : `/api/v1/employees/me/`;
+  const response = await api.patch<EmployeeDetail>(url, data);
   return response.data;
 }
 
@@ -40,8 +41,12 @@ export function useUpdateEmployee(id: string) {
   return useMutation({
     mutationFn: (data: EmployeeProfileUpdate) => updateEmployee(id, data),
     onSuccess: (updatedEmployee) => {
-      queryClient.setQueryData(['employee', id], updatedEmployee);
+      if (id) {
+        queryClient.setQueryData(['employee', id], updatedEmployee);
+      }
+      queryClient.setQueryData(['employee', 'me'], updatedEmployee);
       queryClient.invalidateQueries({ queryKey: ['employees'] });
+      queryClient.invalidateQueries({ queryKey: ['employee'] });
     },
   });
 }

@@ -37,19 +37,13 @@ export function GeneralSettingsTab() {
   const { data: settings, isLoading, isError, error } = useHRSettings();
   const updateMutation = useUpdateHRSettings();
 
-  // 1. Announcement expire state
-  const [expireDays, setExpireDays] = useState<number>(30);
-  const [expireSaving, setExpireSaving] = useState(false);
-  const [expireSaved, setExpireSaved] = useState(false);
-
-  // 2. Pagination state
+  // 1. Pagination state
   const [pagination, setPagination] = useState<number>(50);
   const [paginationSaving, setPaginationSaving] = useState(false);
   const [paginationSaved, setPaginationSaved] = useState(false);
 
   // 3. Employee Account Restrictions state
   const [restrictions, setRestrictions] = useState({
-    restrict_login_account: false,
     restrict_profile_edit: false,
     restrict_bank_edit: false,
     restrict_outside_checkin: false,
@@ -57,11 +51,6 @@ export function GeneralSettingsTab() {
   });
   const [restrictionsSaving, setRestrictionsSaving] = useState(false);
   const [restrictionsSaved, setRestrictionsSaved] = useState(false);
-
-  // 4. Resignation Request state
-  const [resignationRequest, setResignationRequest] = useState<boolean>(false);
-  const [resignationSaving, setResignationSaving] = useState(false);
-  const [resignationSaved, setResignationSaved] = useState(false);
 
   // 5. Time Runner (At-Work Tracker) state
   const [atWorkTracker, setAtWorkTracker] = useState<boolean>(true);
@@ -129,23 +118,16 @@ export function GeneralSettingsTab() {
   // Synchronize state when settings load
   useEffect(() => {
     if (settings) {
-      if (settings.announcement_expire_days !== undefined) {
-        setExpireDays(settings.announcement_expire_days);
-      }
       if (settings.default_pagination_size !== undefined) {
         setPagination(settings.default_pagination_size);
       }
       if (settings.account_restrictions) {
         setRestrictions({
-          restrict_login_account: !!settings.account_restrictions.restrict_login_account,
           restrict_profile_edit: !!settings.account_restrictions.restrict_profile_edit,
           restrict_bank_edit: !!settings.account_restrictions.restrict_bank_edit,
           restrict_outside_checkin: !!settings.account_restrictions.restrict_outside_checkin,
           allow_employee_password_reset: settings.account_restrictions.allow_employee_password_reset ?? true,
         });
-      }
-      if (settings.resignation_request !== undefined) {
-        setResignationRequest(!!settings.resignation_request);
       }
       if (settings.at_work_tracker !== undefined) {
         setAtWorkTracker(!!settings.at_work_tracker);
@@ -180,22 +162,7 @@ export function GeneralSettingsTab() {
     }
   }, [settings]);
 
-  // Save 1. Announcement Expiry Days
-  const handleSaveExpireDays = async () => {
-    setExpireSaving(true);
-    setExpireSaved(false);
-    try {
-      await updateMutation.mutateAsync({
-        announcement_expire_days: Number(expireDays) || 30,
-      });
-      setExpireSaved(true);
-      setTimeout(() => setExpireSaved(false), 3000);
-    } finally {
-      setExpireSaving(false);
-    }
-  };
-
-  // Save 2. Pagination
+  // Save 1. Pagination
   const handleSavePagination = async () => {
     setPaginationSaving(true);
     setPaginationSaved(false);
@@ -223,21 +190,6 @@ export function GeneralSettingsTab() {
       setTimeout(() => setRestrictionsSaved(false), 2500);
     } finally {
       setRestrictionsSaving(false);
-    }
-  };
-
-  // Save 4. Resignation Request
-  const handleToggleResignation = async (nextVal: boolean) => {
-    setResignationRequest(nextVal);
-    setResignationSaving(true);
-    try {
-      await updateMutation.mutateAsync({
-        resignation_request: nextVal,
-      });
-      setResignationSaved(true);
-      setTimeout(() => setResignationSaved(false), 2500);
-    } finally {
-      setResignationSaving(false);
     }
   };
 
@@ -374,58 +326,8 @@ export function GeneralSettingsTab() {
 
   return (
     <div className="space-y-10 divide-y divide-gray-100">
-      {/* ─── 1. Announcement Expire ────────────────────────────────────── */}
+      {/* ─── 1. Default Records Per Page ───────────────────────────────── */}
       <section className="space-y-4 pt-1 first:pt-0">
-        <div>
-          <h2 className="text-xl font-bold tracking-tight text-gray-900">Announcement Expire</h2>
-        </div>
-
-        <div>
-          <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-800">
-            <span>Default Expire Days</span>
-            <span
-              title="Number of days an announcement or company notice remains visible before automatically expiring"
-              className="cursor-help text-gray-400 hover:text-gray-600"
-            >
-              <InfoIcon className="h-4 w-4" />
-            </span>
-          </label>
-
-          <div className="mt-2.5 flex flex-wrap items-center gap-4">
-            <input
-              type="number"
-              min={1}
-              max={365}
-              value={expireDays}
-              onChange={(e) => setExpireDays(Math.max(1, parseInt(e.target.value, 10) || 1))}
-              className="w-48 rounded-md border border-gray-300 bg-white px-3.5 py-2 text-base text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-            />
-            <button
-              type="button"
-              onClick={handleSaveExpireDays}
-              disabled={expireSaving}
-              className="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 transition-colors"
-            >
-              {expireSaving ? (
-                <>
-                  <LoaderIcon className="mr-2 h-4 w-4" /> Saving...
-                </>
-              ) : (
-                'Save Changes'
-              )}
-            </button>
-
-            {expireSaved && (
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
-                <CheckIcon className="h-4 w-4" /> Saved successfully
-              </span>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── 2. Default Records Per Page ───────────────────────────────── */}
-      <section className="space-y-4 pt-8">
         <div>
           <h2 className="text-xl font-bold tracking-tight text-gray-900">Default Records Per Page</h2>
         </div>
@@ -498,26 +400,6 @@ export function GeneralSettingsTab() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 pt-1">
-          {/* Restrict Login Account */}
-          <div className="space-y-2">
-            <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-800">
-              <span>Restrict Login Account</span>
-              <span
-                title="Prevent inactive, contract-ended, or restricted employees from accessing the portal"
-                className="cursor-help text-gray-400 hover:text-gray-600"
-              >
-                <InfoIcon className="h-4 w-4" />
-              </span>
-            </label>
-            <div>
-              <SwitchToggle
-                checked={restrictions.restrict_login_account}
-                onChange={() => handleToggleRestriction('restrict_login_account')}
-                disabled={restrictionsSaving}
-              />
-            </div>
-          </div>
-
           {/* Restrict Profile Edit */}
           <div className="space-y-2">
             <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-800">
@@ -544,37 +426,6 @@ export function GeneralSettingsTab() {
             <CheckIcon className="h-3.5 w-3.5" /> Restrictions updated
           </p>
         )}
-      </section>
-
-      {/* ─── 4. Resignation Request ────────────────────────────────────── */}
-      <section className="space-y-4 pt-8">
-        <div>
-          <h2 className="text-xl font-bold tracking-tight text-gray-900">Resignation Request</h2>
-        </div>
-
-        <div className="space-y-2">
-          <label className="flex items-center gap-1.5 text-sm font-semibold text-gray-800">
-            <span>Resignation Request</span>
-            <span
-              title="Allow employees to initiate formal resignation requests and track notice period progress from their self-service dashboard"
-              className="cursor-help text-gray-400 hover:text-gray-600"
-            >
-              <InfoIcon className="h-4 w-4" />
-            </span>
-          </label>
-          <div className="flex items-center gap-3">
-            <SwitchToggle
-              checked={resignationRequest}
-              onChange={handleToggleResignation}
-              disabled={resignationSaving}
-            />
-            {resignationSaved && (
-              <span className="text-xs font-medium text-emerald-600 flex items-center gap-1">
-                <CheckIcon className="h-3.5 w-3.5" /> Saved
-              </span>
-            )}
-          </div>
-        </div>
       </section>
 
       {/* ─── 5. Time Runner (At-Work Tracker) ──────────────────────────── */}
@@ -923,11 +774,16 @@ export function GeneralSettingsTab() {
               <InfoIcon className="h-4 w-4" />
             </span>
           </label>
-          <div>
+          <div className="flex items-center gap-3">
             <SwitchToggle
               checked={workInfoTracking}
               onChange={handleToggleWorkInfo}
             />
+            <span className={`text-xs font-medium ${workInfoTracking ? 'text-emerald-700' : 'text-gray-500'}`}>
+              {workInfoTracking
+                ? 'Active — Changes to selected tracking fields are automatically logged to employee history'
+                : 'Disabled — Work information changes are not recorded'}
+            </span>
           </div>
         </div>
       </section>

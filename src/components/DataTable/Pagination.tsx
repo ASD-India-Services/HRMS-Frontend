@@ -31,7 +31,7 @@ export function Pagination({
   page,
   pageSize,
   totalCount,
-  pageSizeOptions = [10, 25, 50, 100],
+  pageSizeOptions = [10, 20, 25, 50, 100],
   onPageChange,
   onPageSizeChange,
 }: PaginationProps) {
@@ -39,6 +39,14 @@ export function Pagination({
     () => Math.max(1, Math.ceil(totalCount / pageSize)),
     [totalCount, pageSize]
   );
+
+  const computedPageSizeOptions = useMemo(() => {
+    const optionsSet = new Set(pageSizeOptions);
+    if (pageSize && pageSize > 0) {
+      optionsSet.add(pageSize);
+    }
+    return Array.from(optionsSet).sort((a, b) => a - b);
+  }, [pageSizeOptions, pageSize]);
 
   const startItem = totalCount === 0 ? 0 : (page - 1) * pageSize + 1;
   const endItem = Math.min(page * pageSize, totalCount);
@@ -101,7 +109,7 @@ export function Pagination({
             onChange={handlePageSizeChange}
             className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           >
-            {pageSizeOptions.map((size) => (
+            {computedPageSizeOptions.map((size) => (
               <option key={size} value={size}>
                 {size}
               </option>

@@ -64,11 +64,14 @@ const approvalFilters = [
 
 /**
  * Main LeaveApprovals component wrapped in RBAC check.
+ * Accessible to users with either 'leave_approvals.view' (viewing applications)
+ * or 'leaves.approve' (approving applications).
  */
 export function LeaveApprovals() {
   return (
     <Can
-      permissions={['leaves.approve']}
+      permissions={['leave_approvals.view', 'leaves.approve']}
+      requireAll={false}
       fallback={<AccessDenied />}
     >
       <LeaveApprovalsContent />
@@ -411,56 +414,69 @@ function LeaveApprovalsContent() {
 
             {selectedApplicant.status === 'pending' && !isOwnApplication(selectedApplicant) && (
               <div className="mt-5 border-t pt-4">
-                <label className="block text-xs font-medium text-gray-700 uppercase mb-1">
-                  Manager Comments (Optional)
-                </label>
-                <textarea
-                  value={actionComments}
-                  onChange={(e) => setActionComments(e.target.value)}
-                  rows={2}
-                  placeholder="Enter remarks for approval or rejection..."
-                  className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-primary-500 focus:ring-primary-500"
-                />
+                <Can permissions={['leaves.approve', 'leaves.reject']} requireAll={false}>
+                  <label className="block text-xs font-medium text-gray-700 uppercase mb-1">
+                    Manager Comments (Optional)
+                  </label>
+                  <textarea
+                    value={actionComments}
+                    onChange={(e) => setActionComments(e.target.value)}
+                    rows={2}
+                    placeholder="Enter remarks for approval or rejection..."
+                    className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-primary-500 focus:ring-primary-500"
+                  />
+                </Can>
 
                 <div className="mt-4 flex items-center justify-end gap-3">
                   <button
                     type="button"
-                    disabled={rejectMutation.isPending || approveMutation.isPending}
-                    onClick={() => {
-                      rejectMutation.mutate(
-                        { id: selectedApplicant.id, payload: { comments: actionComments } },
-                        {
-                          onSuccess: () => {
-                            setSelectedApplicant(null);
-                            setActionComments('');
-                            queryResult.refetch();
-                          },
-                        }
-                      );
-                    }}
-                    className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 disabled:opacity-50"
+                    onClick={() => { setSelectedApplicant(null); setActionComments(''); }}
+                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                   >
-                    {rejectMutation.isPending ? 'Rejecting...' : 'Reject Leave'}
+                    Close
                   </button>
-                  <button
-                    type="button"
-                    disabled={approveMutation.isPending || rejectMutation.isPending}
-                    onClick={() => {
-                      approveMutation.mutate(
-                        { id: selectedApplicant.id, payload: { comments: actionComments } },
-                        {
-                          onSuccess: () => {
-                            setSelectedApplicant(null);
-                            setActionComments('');
-                            queryResult.refetch();
-                          },
-                        }
-                      );
-                    }}
-                    className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
-                  >
-                    {approveMutation.isPending ? 'Approving...' : 'Approve Leave'}
-                  </button>
+                  <Can permissions={['leaves.reject']}>
+                    <button
+                      type="button"
+                      disabled={rejectMutation.isPending || approveMutation.isPending}
+                      onClick={() => {
+                        rejectMutation.mutate(
+                          { id: selectedApplicant.id, payload: { comments: actionComments } },
+                          {
+                            onSuccess: () => {
+                              setSelectedApplicant(null);
+                              setActionComments('');
+                              queryResult.refetch();
+                            },
+                          }
+                        );
+                      }}
+                      className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 disabled:opacity-50"
+                    >
+                      {rejectMutation.isPending ? 'Rejecting...' : 'Reject Leave'}
+                    </button>
+                  </Can>
+                  <Can permissions={['leaves.approve']}>
+                    <button
+                      type="button"
+                      disabled={approveMutation.isPending || rejectMutation.isPending}
+                      onClick={() => {
+                        approveMutation.mutate(
+                          { id: selectedApplicant.id, payload: { comments: actionComments } },
+                          {
+                            onSuccess: () => {
+                              setSelectedApplicant(null);
+                              setActionComments('');
+                              queryResult.refetch();
+                            },
+                          }
+                        );
+                      }}
+                      className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
+                    >
+                      {approveMutation.isPending ? 'Approving...' : 'Approve Leave'}
+                    </button>
+                  </Can>
                 </div>
               </div>
             )}

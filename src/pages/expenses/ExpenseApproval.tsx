@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 import { useExpenseClaims, useApproveExpenseClaim } from '@/hooks/useExpenses';
+import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 import type { ExpenseClaim } from '@/types/expense';
 import { formatDate, formatCurrency } from '@/utils/formatters';
 
@@ -104,8 +105,9 @@ function ApprovalModal({ claim, action, onClose, onConfirm, isPending }: Approva
 }
 
 export function ExpenseApproval() {
+  const pageSize = useDefaultPaginationSize();
   const [page, setPage] = useState(1);
-  const { data, isLoading, isError } = useExpenseClaims({ status: 'pending', page, page_size: 10 });
+  const { data, isLoading, isError } = useExpenseClaims({ status: 'pending', page, page_size: pageSize });
   const approveClaim = useApproveExpenseClaim();
 
   const [selectedClaim, setSelectedClaim] = useState<ExpenseClaim | null>(null);

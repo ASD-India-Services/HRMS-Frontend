@@ -11,6 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useLeaveApplications, useCancelLeave } from '@/hooks/useLeaves';
 import { useHrmsPermissions } from '@/hooks/useHrmsPermissions';
+import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
 import { BulkActions } from '@/components/BulkActions';
@@ -35,6 +36,7 @@ const statusStyles: Record<string, string> = {
 };
 
 export function LeaveList() {
+  const pageSize = useDefaultPaginationSize();
   const [activeStatus, setActiveStatus] = useState<LeaveApplicationStatus | ''>('');
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
@@ -56,7 +58,7 @@ export function LeaveList() {
   const { data, isLoading, isError, refetch } = useLeaveApplications({
     status: activeStatus || undefined,
     page,
-    page_size: 10,
+    page_size: pageSize,
   });
   const cancelLeave = useCancelLeave();
 
