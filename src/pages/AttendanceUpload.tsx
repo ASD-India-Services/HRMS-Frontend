@@ -1,5 +1,10 @@
 import { useState } from 'react';
 import api from '@/lib/api';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Iconify } from '@/components/Iconify';
 
 const ENDPOINT = '/api/v1/attendance/upload/';
 
@@ -136,209 +141,154 @@ export default function AttendanceUpload() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 font-sans">
-      {/* Header */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Attendance Bulk Upload</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Download the format template, fill in your employee attendance records, and upload the CSV file.
-          </p>
-        </div>
-
-        {/* Download Template Action */}
-        <div>
-          <button
-            onClick={downloadSampleTemplate}
-            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 transition-colors"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 12L12 16.5m0 0L16.5 12M12 16.5V3" />
-            </svg>
+    <PageContainer>
+      <PageHeader
+        title="Attendance Bulk Upload"
+        subtitle="Download the format template, fill in your employee attendance records, and upload the CSV file."
+        actions={
+          <Button onClick={downloadSampleTemplate} startIcon={<Iconify icon="download" />}>
             Download Sample Template (.CSV)
-          </button>
-        </div>
-      </div>
+          </Button>
+        }
+      />
 
-      {/* Main Upload Card */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-base font-semibold text-gray-900 mb-4">Select Attendance CSV File</h2>
+      <Card>
+        <CardContent>
+          <h2 className="mb-4 text-base font-semibold text-ink-primary">Select Attendance CSV File</h2>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <input
-            type="file"
-            accept=".csv"
-            onChange={(e) => handleFileChange(e.target.files?.[0] ?? null)}
-            className="block w-full sm:w-auto text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-primary-50 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100 transition-colors cursor-pointer"
-          />
+          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+            <input
+              type="file"
+              accept=".csv"
+              aria-label="Attendance CSV file"
+              onChange={(e) => handleFileChange(e.target.files?.[0] ?? null)}
+              className="block w-full cursor-pointer text-sm text-ink-secondary transition-colors file:mr-4 file:cursor-pointer file:rounded file:border-0 file:bg-primary-main/10 file:px-4 file:py-2 file:text-sm file:font-bold file:text-primary-dark hover:file:bg-primary-main/20 sm:w-auto"
+            />
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleUpload}
-              disabled={!file || uploading || !!formatWarning}
-              className="inline-flex items-center gap-2 rounded-md bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {uploading ? (
-                <>
-                  <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  Uploading...
-                </>
-              ) : (
-                'Upload Attendance Records'
+            <div className="flex items-center gap-2">
+              <Button onClick={handleUpload} disabled={!file || !!formatWarning} loading={uploading}>
+                {uploading ? 'Uploading...' : 'Upload Attendance Records'}
+              </Button>
+              {file && (
+                <Button variant="outlined" color="inherit" onClick={handleReset}>
+                  Clear
+                </Button>
               )}
-            </button>
-
-            {file && (
-              <button
-                onClick={handleReset}
-                type="button"
-                className="rounded-md border border-gray-300 bg-white px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                Clear
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Format Warning Notice */}
-        {formatWarning && (
-          <div className="mt-4 rounded-md bg-amber-50 p-3 border border-amber-200 text-sm text-amber-800 flex items-center gap-2">
-            <svg className="w-5 h-5 text-amber-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-            {formatWarning}
-          </div>
-        )}
-
-        {/* Global Error Notice */}
-        {error && (
-          <div className="mt-4 rounded-md bg-red-50 p-3 border border-red-200 text-sm text-red-700 flex items-center gap-2">
-            <svg className="w-5 h-5 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            </svg>
-            {error}
-          </div>
-        )}
-
-        {/* In-Browser CSV Preview */}
-        {file && previewHeaders.length > 0 && !result && (
-          <div className="mt-6 border-t border-gray-100 pt-5">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-sm font-semibold text-gray-800">
-                Preview File: <span className="text-gray-600 font-normal">{file.name}</span>
-              </div>
-              <span className="text-xs font-medium text-gray-500">
-                {totalDetectedRows} total records found (showing first {previewRows.length})
-              </span>
             </div>
+          </div>
 
-            <div className="overflow-x-auto rounded border border-gray-200">
-              <table className="min-w-full divide-y divide-gray-200 text-xs">
-                <thead className="bg-gray-50">
-                  <tr>
-                    {previewHeaders.map((head, i) => (
-                      <th
-                        key={i}
-                        className="px-3 py-2 text-left font-semibold text-gray-700 tracking-wider"
-                      >
-                        {head}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {previewRows.map((row, rowIdx) => (
-                    <tr key={rowIdx} className="hover:bg-gray-50">
-                      {previewHeaders.map((_, colIdx) => (
-                        <td key={colIdx} className="px-3 py-2 text-gray-600 whitespace-nowrap">
-                          {row[colIdx] || <span className="text-gray-300 italic">—</span>}
-                        </td>
+          {formatWarning && (
+            <div className="mt-4 flex items-center gap-2 rounded bg-warning-main/10 p-3 text-sm text-warning-dark">
+              <Iconify icon="warning" width={20} className="shrink-0" />
+              {formatWarning}
+            </div>
+          )}
+
+          {error && (
+            <div className="mt-4 flex items-center gap-2 rounded bg-error-main/10 p-3 text-sm text-error-dark">
+              <Iconify icon="error" width={20} className="shrink-0" />
+              {error}
+            </div>
+          )}
+
+          {file && previewHeaders.length > 0 && !result && (
+            <div className="mt-6 border-t border-divider/20 pt-5">
+              <div className="mb-2 flex items-center justify-between">
+                <div className="text-sm font-semibold text-ink-primary">
+                  Preview File: <span className="font-normal text-ink-secondary">{file.name}</span>
+                </div>
+                <span className="text-xs font-medium text-ink-secondary">
+                  {totalDetectedRows} total records found (showing first {previewRows.length})
+                </span>
+              </div>
+
+              <div className="overflow-x-auto rounded border border-divider/20">
+                <table className="min-w-full divide-y divide-divider/20 text-xs">
+                  <thead className="bg-surface-neutral">
+                    <tr>
+                      {previewHeaders.map((head, i) => (
+                        <th key={i} className="px-3 py-2 text-left font-semibold tracking-wider text-ink-secondary">
+                          {head}
+                        </th>
                       ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* ─── Results Summary Cards & Error Breakdown ──────────────────────── */}
-        {result && (
-          <div className="mt-6 border-t border-gray-200 pt-6">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Upload Summary</h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-              <div className="rounded-lg bg-gray-50 border border-gray-200 p-4">
-                <div className="text-xs text-gray-500 font-medium">Total Rows</div>
-                <div className="text-2xl font-bold text-gray-900 mt-1">{result.total}</div>
-              </div>
-
-              <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-4">
-                <div className="text-xs text-emerald-700 font-medium">Successfully Imported</div>
-                <div className="text-2xl font-bold text-emerald-700 mt-1">{result.success}</div>
-              </div>
-
-              <div className="rounded-lg bg-red-50 border border-red-200 p-4">
-                <div className="text-xs text-red-700 font-medium">Failed / Skipped</div>
-                <div className="text-2xl font-bold text-red-700 mt-1">{result.failed}</div>
-              </div>
-            </div>
-
-            {/* Error Details Table */}
-            {result.errors && result.errors.length > 0 && (
-              <div className="mt-4">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-red-700 mb-2">
-                  Validation Errors ({result.errors.length})
-                </h4>
-                <div className="overflow-x-auto rounded border border-red-200 bg-red-50/40">
-                  <table className="min-w-full divide-y divide-red-200 text-xs">
-                    <thead className="bg-red-100/60">
-                      <tr>
-                        <th className="px-3 py-2 text-left font-semibold text-red-900">Row</th>
-                        <th className="px-3 py-2 text-left font-semibold text-red-900">Field</th>
-                        <th className="px-3 py-2 text-left font-semibold text-red-900">Message</th>
+                  </thead>
+                  <tbody className="divide-y divide-divider/20 bg-surface-paper">
+                    {previewRows.map((row, rowIdx) => (
+                      <tr key={rowIdx} className="hover:bg-grey-500/10">
+                        {previewHeaders.map((_, colIdx) => (
+                          <td key={colIdx} className="whitespace-nowrap px-3 py-2 text-ink-secondary">
+                            {row[colIdx] || <span className="italic text-ink-disabled">—</span>}
+                          </td>
+                        ))}
                       </tr>
-                    </thead>
-                    <tbody className="divide-y divide-red-100 bg-white">
-                      {result.errors.map((errItem, idx) => (
-                        <tr key={idx} className="hover:bg-red-50/30">
-                          <td className="px-3 py-2 font-mono text-gray-600 whitespace-nowrap">
-                            {errItem.row ? `Row ${errItem.row}` : '—'}
-                          </td>
-                          <td className="px-3 py-2 font-mono text-gray-700 whitespace-nowrap">
-                            {errItem.field || '—'}
-                          </td>
-                          <td className="px-3 py-2 text-red-600 font-medium">
-                            {errItem.message}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {result && (
+            <div className="mt-6 border-t border-divider/20 pt-6">
+              <h3 className="mb-3 text-sm font-semibold text-ink-primary">Upload Summary</h3>
+
+              <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div className="rounded-card bg-surface-neutral p-4">
+                  <div className="text-xs font-medium text-ink-secondary">Total Rows</div>
+                  <div className="mt-1 text-2xl font-bold text-ink-primary">{result.total}</div>
+                </div>
+                <div className="rounded-card bg-success-main/10 p-4">
+                  <div className="text-xs font-medium text-success-dark">Successfully Imported</div>
+                  <div className="mt-1 text-2xl font-bold text-success-dark">{result.success}</div>
+                </div>
+                <div className="rounded-card bg-error-main/10 p-4">
+                  <div className="text-xs font-medium text-error-dark">Failed / Skipped</div>
+                  <div className="mt-1 text-2xl font-bold text-error-dark">{result.failed}</div>
                 </div>
               </div>
-            )}
 
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={handleReset}
-                className="rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800 transition-colors"
-              >
-                Upload Another File
-              </button>
+              {result.errors && result.errors.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-error-dark">
+                    Validation Errors ({result.errors.length})
+                  </h4>
+                  <div className="overflow-x-auto rounded border border-error-main/30">
+                    <table className="min-w-full divide-y divide-error-main/20 text-xs">
+                      <thead className="bg-error-main/10">
+                        <tr>
+                          <th className="px-3 py-2 text-left font-semibold text-error-dark">Row</th>
+                          <th className="px-3 py-2 text-left font-semibold text-error-dark">Field</th>
+                          <th className="px-3 py-2 text-left font-semibold text-error-dark">Message</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-divider/20 bg-surface-paper">
+                        {result.errors.map((errItem, idx) => (
+                          <tr key={idx} className="hover:bg-error-main/5">
+                            <td className="whitespace-nowrap px-3 py-2 font-mono text-ink-secondary">
+                              {errItem.row ? `Row ${errItem.row}` : '—'}
+                            </td>
+                            <td className="whitespace-nowrap px-3 py-2 font-mono text-ink-secondary">
+                              {errItem.field || '—'}
+                            </td>
+                            <td className="px-3 py-2 font-medium text-error-main">{errItem.message}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-6 flex justify-end">
+                <Button color="inherit" onClick={handleReset}>
+                  Upload Another File
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-    </div>
+          )}
+        </CardContent>
+      </Card>
+    </PageContainer>
   );
 }

@@ -15,18 +15,14 @@ import { useEmployees } from '@/hooks/useEmployees';
 import { useHourAccounts } from '@/hooks/useHourAccounts';
 import type { Employee } from '@/types/employee';
 import noOvertimeClock from '@/assets/no_overtime_clock.png';
-
-// Department color palette matching the Attendance Analytic screenshot
-const DEPT_CHART_COLORS = [
-  '#93c5fd', // Light Blue: Administration & Human Resources
-  '#f472b6', // Pink: Information Technology
-  '#fed7aa', // Peach / Orange: Quality Assurance
-  '#fef08a', // Soft Yellow: Clinical Operations
-  '#99f6e4', // Teal: Bioanalytical Laboratory
-  '#c4b5fd', // Lavender
-  '#a7f3d0', // Mint
-  '#fbcfe8', // Rose
-];
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { ButtonLink } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
+import { Input } from '@/components/ui/Input';
+import { StatCard } from '@/components/ui/StatCard';
+import { ChartCard, ChartTooltip, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
+import { Iconify } from '@/components/Iconify';
 
 const MONTH_NAMES = [
   'January',
@@ -74,6 +70,17 @@ function parseHoursToNumber(val: string | number | null | undefined): number {
   }
   const parsed = parseFloat(val);
   return isNaN(parsed) ? 0 : parsed;
+}
+
+/** Shared ChartTooltip with an "hrs" unit on every value and an optional label prefix. */
+function hoursTooltip(labelPrefix = '') {
+  return (props: { active?: boolean; label?: string | number; payload?: ReadonlyArray<{ name?: string | number; value?: string | number | ReadonlyArray<string | number>; color?: string; payload?: { fill?: string } }> }) => (
+    <ChartTooltip
+      active={props.active}
+      label={props.label !== undefined ? `${labelPrefix}${props.label}` : undefined}
+      payload={props.payload?.map((e) => ({ ...e, value: `${typeof e.value === 'number' ? e.value : 0} hrs` }))}
+    />
+  );
 }
 
 export default function AttendanceDashboard() {
@@ -359,267 +366,213 @@ export default function AttendanceDashboard() {
   }, [activeDepartments, hourAccounts, employees]);
 
   const isLoading = employeesLoading || attendanceLoading;
+  const theme = getChartTheme();
+  const deptColors = theme.colors;
+
+  const periodOptions = (
+    <>
+      <option value="Day">Day</option>
+      <option value="Week">Week</option>
+      <option value="Month">Month</option>
+    </>
+  );
 
   return (
-    <div className="space-y-6">
-      {/* ─── Top Cards (4 Cards matching Screenshot + On Leave) ───────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Card 1: Today's Attendances */}
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm border-t-4 border-t-slate-500 p-6 flex flex-col justify-between">
-          <div className="text-sm font-semibold text-gray-800">Today's Attendances</div>
-          <div className="mt-4 text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight">
-            {isLoading ? '...' : `${attendancePercentage}%`}
-          </div>
+    <PageContainer>
+      <PageHeader
+        title="Attendance Dashboard"
+        subtitle="Workforce attendance tracking, punctuality metrics, and daily working hours overview."
+        actions={
+          <>
+            <ButtonLink to="/attendance/hour-account" variant="outlined" color="inherit" startIcon={<Iconify icon="attendance" />}>
+              Hour Account
+            </ButtonLink>
+            <ButtonLink to="/attendance/work-records" startIcon={<Iconify icon="attendanceRegister" />}>
+              Work Records
+            </ButtonLink>
+          </>
+        }
+      />
+      <div className="space-y-6">
+        {/* Top metric cards */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard title="Today's Attendances" value={`${attendancePercentage}%`} icon="attendance" isLoading={isLoading} />
+          <StatCard title="On Time" value={onTimeCount} icon="success" isLoading={isLoading} />
+          <StatCard title="Late Come" value={lateCount} icon="overtime" isLoading={isLoading} />
+          <StatCard title="On Leave" value={onLeaveCount} icon="leaves" isLoading={isLoading} />
         </div>
 
-        {/* Card 2: On Time */}
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm border-t-4 border-t-emerald-500 p-6 flex flex-col justify-between">
-          <div className="text-sm font-semibold text-gray-800">On Time</div>
-          <div className="mt-4 text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight">
-            {isLoading ? '...' : onTimeCount}
-          </div>
-        </div>
-
-        {/* Card 3: Late Come */}
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm border-t-4 border-t-rose-600 p-6 flex flex-col justify-between">
-          <div className="text-sm font-semibold text-gray-800">Late Come</div>
-          <div className="mt-4 text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight">
-            {isLoading ? '...' : lateCount}
-          </div>
-        </div>
-
-        {/* Card 4: On Leave (Added per user request) */}
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm border-t-4 border-t-amber-500 p-6 flex flex-col justify-between">
-          <div className="text-sm font-semibold text-gray-800">On Leave</div>
-          <div className="mt-4 text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight">
-            {isLoading ? '...' : onLeaveCount}
-          </div>
-        </div>
-      </div>
-
-      {/* ─── Main Content: 3 Column Layout Matching Screenshots ─────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* ─── Column 1: Attendance Analytic ───────────────────────────────── */}
-        <div className="bg-white rounded-lg border border-gray-200/80 p-5 shadow-xs flex flex-col h-[480px]">
-          {/* Header & Controls */}
-          <div className="flex items-center justify-between gap-2 mb-3">
-            <h2 className="text-sm font-bold text-gray-900">Attendance Analytic</h2>
-            <div className="flex items-center gap-2">
-              <select
-                value={analyticPeriod}
-                onChange={(e) => setAnalyticPeriod(e.target.value as 'Day' | 'Week' | 'Month')}
-                className="text-xs border border-gray-300 rounded px-2.5 py-1 text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
-              >
-                <option value="Day">Day</option>
-                <option value="Week">Week</option>
-                <option value="Month">Month</option>
-              </select>
-              <input
-                type="date"
-                value={analyticDate}
-                onChange={(e) => setAnalyticDate(e.target.value)}
-                className="text-xs border border-gray-300 rounded px-2 py-1 text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
-              />
-            </div>
-          </div>
-
-          {/* Department Legend matching screenshot */}
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-4 text-[11px] text-gray-600">
-            {activeDepartments.map((deptName, idx) => (
-              <div key={deptName} className="flex items-center gap-1.5">
-                <span
-                  className="w-5 h-2.5 rounded-2xs inline-block"
-                  style={{ backgroundColor: DEPT_CHART_COLORS[idx % DEPT_CHART_COLORS.length] }}
-                />
-                <span className="truncate max-w-[150px]" title={deptName}>
-                  {deptName}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Grouped Bar Chart: On Time, Late Come, Early Out */}
-          <div className="flex-1 w-full min-h-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={analyticChartData}
-                margin={{ top: 10, right: 10, left: -25, bottom: 5 }}
-                barGap={2}
-                barCategoryGap="25%"
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="category" tick={{ fontSize: 11, fill: '#64748b' }} axisLine={{ stroke: '#cbd5e1' }} />
-                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#64748b' }} axisLine={{ stroke: '#cbd5e1' }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#ffffff',
-                    borderRadius: '6px',
-                    border: '1px solid #e2e8f0',
-                    fontSize: '12px',
-                  }}
-                />
-                {activeDepartments.map((deptName, idx) => (
-                  <Bar
-                    key={deptName}
-                    dataKey={deptName}
-                    name={deptName}
-                    fill={DEPT_CHART_COLORS[idx % DEPT_CHART_COLORS.length]}
-                    radius={[2, 2, 0, 0]}
-                  />
-                ))}
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* ─── Column 2: Department Overtime Chart (Replaces Offline Employees) ── */}
-        <div className="bg-white rounded-lg border border-gray-200/80 p-5 shadow-xs flex flex-col h-[480px]">
-          {/* Header & Controls matching screenshot */}
-          <div className="flex items-center justify-between gap-2 mb-3">
-            <h2 className="text-sm font-bold text-gray-900">Department Overtime Chart</h2>
-            <div className="flex items-center gap-2">
-              <select
-                value={overtimePeriod}
-                onChange={(e) => setOvertimePeriod(e.target.value as 'Day' | 'Week' | 'Month')}
-                className="text-xs border border-gray-300 rounded px-2.5 py-1 text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
-              >
-                <option value="Day">Day</option>
-                <option value="Week">Week</option>
-                <option value="Month">Month</option>
-              </select>
-              <input
-                type="date"
-                value={overtimeDate}
-                onChange={(e) => setOvertimeDate(e.target.value)}
-                className="text-xs border border-gray-300 rounded px-2 py-1 text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
-              />
-            </div>
-          </div>
-
-          {/* Overtime Content Area */}
-          {overtimeChartData.hasValidatedOvertime ? (
-            <div className="flex-1 w-full min-h-0 pt-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={overtimeChartData.dataPoints}
-                  margin={{ top: 10, right: 10, left: -20, bottom: 40 }}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Attendance Analytic */}
+          <ChartCard
+            title="Attendance Analytic"
+            height={380}
+          >
+            <div className="flex h-full flex-col">
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <Select
+                  selectSize="small"
+                  aria-label="Attendance analytic period"
+                  className="w-24"
+                  value={analyticPeriod}
+                  onChange={(e) => setAnalyticPeriod(e.target.value as 'Day' | 'Week' | 'Month')}
                 >
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  {periodOptions}
+                </Select>
+                <Input
+                  type="date"
+                  inputSize="small"
+                  aria-label="Attendance analytic date"
+                  className="w-36"
+                  value={analyticDate}
+                  onChange={(e) => setAnalyticDate(e.target.value)}
+                />
+              </div>
+              <div className="min-h-0 flex-1">
+            <div className="flex h-full flex-col">
+              <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-ink-secondary">
+                {activeDepartments.map((deptName, idx) => (
+                  <div key={deptName} className="flex items-center gap-1.5">
+                    <span
+                      className="inline-block h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: deptColors[idx % deptColors.length] }}
+                    />
+                    <span className="max-w-[150px] truncate" title={deptName}>
+                      {deptName}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="min-h-0 w-full flex-1">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={analyticChartData} barGap={2} barCategoryGap="25%">
+                    <CartesianGrid {...theme.grid} />
+                    <XAxis dataKey="category" tick={theme.tick} {...AXIS_PROPS} />
+                    <YAxis allowDecimals={false} tick={theme.tick} {...AXIS_PROPS} />
+                    <Tooltip content={<ChartTooltip />} cursor={theme.cursor} />
+                    {activeDepartments.map((deptName, idx) => (
+                      <Bar
+                        key={deptName}
+                        dataKey={deptName}
+                        name={deptName}
+                        fill={deptColors[idx % deptColors.length]}
+                        radius={[4, 4, 0, 0]}
+                      />
+                    ))}
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+              </div>
+            </div>
+          </ChartCard>
+
+          {/* Department Overtime Chart */}
+          <ChartCard
+            title="Department Overtime Chart"
+            height={380}
+          >
+            <div className="flex h-full flex-col">
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <Select
+                  selectSize="small"
+                  aria-label="Overtime period"
+                  className="w-24"
+                  value={overtimePeriod}
+                  onChange={(e) => setOvertimePeriod(e.target.value as 'Day' | 'Week' | 'Month')}
+                >
+                  {periodOptions}
+                </Select>
+                <Input
+                  type="date"
+                  inputSize="small"
+                  aria-label="Overtime date"
+                  className="w-36"
+                  value={overtimeDate}
+                  onChange={(e) => setOvertimeDate(e.target.value)}
+                />
+              </div>
+              <div className="min-h-0 flex-1">
+            {overtimeChartData.hasValidatedOvertime ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={overtimeChartData.dataPoints} margin={{ bottom: 40 }}>
+                  <CartesianGrid {...theme.grid} />
                   <XAxis
                     dataKey="shortName"
                     interval={0}
                     angle={-45}
                     textAnchor="end"
-                    tick={{ fontSize: 10, fill: '#64748b' }}
+                    tick={theme.tick}
                     height={40}
+                    {...AXIS_PROPS}
                   />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 10, fill: '#64748b' }} />
-                  <Tooltip
-                    formatter={(val: unknown) => [`${typeof val === 'number' ? val : 0} hrs`, 'Overtime']}
-                    contentStyle={{
-                      backgroundColor: '#ffffff',
-                      borderRadius: '6px',
-                      border: '1px solid #e2e8f0',
-                      fontSize: '11px',
-                    }}
-                  />
-                  <Bar dataKey="overtimeHours" fill="#f59e0b" radius={[2, 2, 0, 0]} />
+                  <YAxis allowDecimals={false} tick={theme.tick} {...AXIS_PROPS} />
+                  <Tooltip content={hoursTooltip()} cursor={theme.cursor} />
+                  <Bar dataKey="overtimeHours" name="Overtime" fill="rgb(var(--warning-main))" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center">
+                <img
+                  src={noOvertimeClock}
+                  alt="No validated overtimes"
+                  className="pointer-events-none mb-4 h-auto w-24 select-none object-contain"
+                />
+                <p className="text-center text-sm font-semibold text-ink-secondary">No validated Overtimes were found</p>
+              </div>
+            )}
+              </div>
             </div>
-          ) : (
-            /* Empty State Matching Screenshot */
-            <div className="flex-1 flex flex-col items-center justify-center py-10">
-              <img
-                src={noOvertimeClock}
-                alt="No validated overtimes"
-                className="w-24 h-auto object-contain mb-4 select-none pointer-events-none"
-              />
-              <p className="text-sm font-bold text-gray-500 tracking-normal text-center">
-                No validated Overtimes were found
-              </p>
-            </div>
-          )}
+          </ChartCard>
 
-          {/* Subtle bottom separator matching screenshot */}
-          <div className="mt-auto pt-3 border-t border-gray-100" />
-        </div>
-
-        {/* ─── Column 3: Hours Chart (Stacked Bar Chart Matching Screenshot) ── */}
-        <div className="bg-white rounded-lg border border-gray-200/80 p-5 shadow-xs flex flex-col h-[480px]">
-          {/* Header & Month Selector matching screenshot */}
-          <div className="flex items-center justify-between gap-2 mb-2">
-            <h2 className="text-sm font-bold text-gray-900">Hours Chart</h2>
-            <div className="flex items-center border border-gray-300 rounded px-2.5 py-1 text-xs text-gray-700 bg-white">
-              <select
+          {/* Hours Chart */}
+          <ChartCard
+            title="Hours Chart"
+            height={380}
+            action={
+              <Select
+                selectSize="small"
+                aria-label="Hours chart month"
+                className="w-32"
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
-                className="bg-transparent text-xs text-gray-700 focus:outline-none cursor-pointer pr-1"
               >
                 {MONTH_NAMES.map((m) => (
                   <option key={m} value={m}>
                     {m}
                   </option>
                 ))}
-              </select>
-              <span className="text-gray-500 text-xs select-none">📅</span>
+              </Select>
+            }
+          >
+            <div className="flex h-full flex-col">
+              <div className="mb-3 flex items-center justify-end gap-4 text-xs text-ink-secondary">
+                <div className="flex items-center gap-1.5">
+                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-error-main" />
+                  <span className="font-medium">Pending Hours</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="inline-block h-2.5 w-2.5 rounded-full bg-info-main" />
+                  <span className="font-medium">Worked Hours</span>
+                </div>
+              </div>
+              <div className="min-h-0 w-full flex-1">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={hoursChartData} barSize={46}>
+                    <CartesianGrid {...theme.grid} />
+                    <XAxis dataKey="name" interval={0} tick={theme.tick} {...AXIS_PROPS} />
+                    <YAxis ticks={[0, 100, 200, 300, 400]} domain={[0, 450]} tick={theme.tick} {...AXIS_PROPS} />
+                    <Tooltip content={hoursTooltip('Department: ')} cursor={theme.cursor} />
+                    {/* STACKED BARS: pendingHours at bottom, workedHours on top */}
+                    <Bar dataKey="pendingHours" name="Pending Hours" stackId="hours" fill="rgb(var(--error-main))" />
+                    <Bar dataKey="workedHours" name="Worked Hours" stackId="hours" fill="rgb(var(--info-main))" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-          </div>
-
-          {/* Legend matching screenshot: Pending Hours (Pink), Worked Hours (Cyan) */}
-          <div className="flex items-center justify-end gap-4 mb-2 text-[11px] text-gray-600">
-            <div className="flex items-center gap-1.5">
-              <span className="w-5 h-2.5 rounded-2xs inline-block bg-[#ffa1b5]" />
-              <span className="font-medium">Pending Hours</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-5 h-2.5 rounded-2xs inline-block bg-[#93d9d9]" />
-              <span className="font-medium">Worked Hours</span>
-            </div>
-          </div>
-
-          {/* Stacked Bar Chart with exact 0-400 tick range for IT and IT Support */}
-          <div className="flex-1 w-full min-h-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={hoursChartData}
-                margin={{ top: 10, right: 20, left: -15, bottom: 20 }}
-                barSize={46}
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis
-                  dataKey="name"
-                  interval={0}
-                  tick={{ fontSize: 11, fill: '#475569', fontWeight: 600 }}
-                  axisLine={{ stroke: '#cbd5e1' }}
-                />
-                <YAxis
-                  ticks={[0, 100, 200, 300, 400]}
-                  domain={[0, 450]}
-                  tick={{ fontSize: 10, fill: '#64748b' }}
-                  axisLine={{ stroke: '#cbd5e1' }}
-                />
-                <Tooltip
-                  formatter={(val: unknown, name: unknown) => [
-                    `${typeof val === 'number' ? val : 0} hrs`,
-                    name === 'pendingHours' ? 'Pending Hours' : 'Worked Hours',
-                  ]}
-                  labelFormatter={(label) => `Department: ${label}`}
-                  contentStyle={{
-                    backgroundColor: '#ffffff',
-                    borderRadius: '6px',
-                    border: '1px solid #e2e8f0',
-                    fontSize: '11px',
-                  }}
-                />
-                {/* STACKED BARS: pendingHours at bottom, workedHours on top */}
-                <Bar dataKey="pendingHours" name="pendingHours" stackId="hours" fill="#ffa1b5" />
-                <Bar dataKey="workedHours" name="workedHours" stackId="hours" fill="#93d9d9" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          </ChartCard>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }
