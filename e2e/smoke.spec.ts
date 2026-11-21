@@ -40,6 +40,45 @@ const ROUTES: Array<[slug: string, path: string]> = [
   ['policies', '/policies'],
   ['helpdesk-faqs', '/helpdesk/faqs'],
   ['holiday-lists', '/holiday-lists'],
+  ['designations', '/designations'],
+  ['branches', '/branches'],
+  ['attendance-dashboard', '/attendance/dashboard'],
+  ['my-attendance', '/my-attendance'],
+  ['shifts', '/shifts'],
+  ['payroll-dashboard', '/payroll/dashboard'],
+  ['salary-components', '/salary-components'],
+  ['recruitment-dashboard', '/recruitment/dashboard'],
+  ['recruitment-candidates', '/recruitment/candidates'],
+  ['expenses-new', '/expenses/new'],
+  ['expenses-approvals', '/expenses/approvals'],
+  ['onboarding', '/onboarding'],
+  ['onboarding-templates', '/onboarding-templates'],
+  ['training', '/training'],
+  ['grievances', '/grievances'],
+  ['travel', '/travel'],
+  ['overtime', '/overtime'],
+  ['settlements', '/settlements'],
+  ['tax-benefits', '/tax-benefits'],
+  ['fleet', '/fleet'],
+  ['reports', '/reports'],
+  ['compliance', '/compliance'],
+  ['staffing', '/staffing'],
+  ['leave-policies', '/leave-policies'],
+  ['loss-of-pay', '/loss-of-pay'],
+  ['kras', '/kras'],
+  ['goals', '/goals'],
+  ['transfers', '/transfers'],
+  ['promotions', '/promotions'],
+  ['hr-settings', '/hr-settings'],
+  ['settings-mail-server', '/settings/mail-server'],
+  ['helpdesk', '/helpdesk'],
+  ['permissions-dashboard', '/permissions/dashboard'],
+  ['admin-roles', '/admin/roles'],
+  ['admin-roles-create', '/admin/roles/create'],
+  ['audit-logs', '/audit-logs'],
+  ['skills', '/skills'],
+  ['health-insurance', '/health-insurance'],
+  ['document-types', '/document-types'],
 ]
 
 async function shot(page: import('@playwright/test').Page, slug: string) {
@@ -72,3 +111,16 @@ test('departments create modal', async ({ app: page }) => {
   await freezeAnimations(page)
   await shot(page, 'departments-create-modal')
 })
+
+for (const [slug, path] of [
+  ['login', '/login'],
+  ['careers', '/careers'],
+]) {
+  test(`public ${path}`, async ({ app: page }) => {
+    await page.goto(path)
+    await expect(page.getByText('Something went wrong')).toHaveCount(0)
+    await page.waitForLoadState('networkidle')
+    await freezeAnimations(page)
+    await shot(page, slug)
+  })
+}

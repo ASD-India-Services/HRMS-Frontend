@@ -981,8 +981,9 @@ export function RecruitmentStages() {
             <div className="mt-4 rounded-xl border border-divider bg-surface-neutral p-3.5 text-xs text-ink-primary">
               Are you sure you want to delete stage <span className="font-semibold text-ink-primary">"{deleteStageTarget.name}"</span>?
               {getStageApplicantCount(deleteStageTarget) > 0 && (
-                <p className="mt-2 text-error-main font-semibold">
-                  ⚠️ Note: There are currently {getStageApplicantCount(deleteStageTarget)} candidate(s) in this stage. You must move them to another stage before deleting.
+                <p className="mt-2 flex items-start gap-1.5 text-error-main font-semibold">
+                  <Iconify icon="warning" width={16} className="mt-0.5 shrink-0" />
+                  <span>Note: There are currently {getStageApplicantCount(deleteStageTarget)} candidate(s) in this stage. You must move them to another stage before deleting.</span>
                 </p>
               )}
             </div>
