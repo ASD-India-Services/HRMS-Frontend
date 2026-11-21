@@ -423,7 +423,7 @@ export default function AttendanceDashboard() {
                   type="date"
                   inputSize="small"
                   aria-label="Attendance analytic date"
-                  className="w-36"
+                  className="!w-36"
                   value={analyticDate}
                   onChange={(e) => setAnalyticDate(e.target.value)}
                 />
@@ -487,7 +487,7 @@ export default function AttendanceDashboard() {
                   type="date"
                   inputSize="small"
                   aria-label="Overtime date"
-                  className="w-36"
+                  className="!w-36"
                   value={overtimeDate}
                   onChange={(e) => setOvertimeDate(e.target.value)}
                 />
