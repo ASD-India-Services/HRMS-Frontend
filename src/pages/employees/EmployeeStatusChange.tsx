@@ -16,6 +16,10 @@ import api from '@/lib/api';
 import { Can } from '@/components/Can/Can';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -177,7 +181,7 @@ export function EmployeeStatusChange({
 
   return (
     <Can permissions={['employees.edit']}>
-      <div className="rounded-lg border border-divider bg-surface-paper p-4 shadow-sm">
+      <Card className="p-6">
         {/* Header with current status badge */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
@@ -220,21 +224,9 @@ export function EmployeeStatusChange({
 
         {/* Success message */}
         {successMessage && (
-          <div className="mt-3 rounded-md bg-success-lighter p-3" role="status">
+          <div className="mt-3 rounded-card bg-success-lighter p-3" role="status">
             <div className="flex items-center">
-              <svg
-                className="h-4 w-4 text-success-light"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <Iconify icon="success" width={18} className="text-success-main" />
               <p className="ml-2 text-sm font-medium text-success-dark">{successMessage}</p>
             </div>
           </div>
@@ -258,7 +250,7 @@ export function EmployeeStatusChange({
               >
                 Reason <span className="text-error-main">*</span>
               </label>
-              <textarea
+              <Textarea
                 id="status-reason"
                 value={reason}
                 onChange={(e) => {
@@ -274,11 +266,7 @@ export function EmployeeStatusChange({
                 rows={3}
                 placeholder="Enter reason for status change..."
                 disabled={statusMutation.isPending}
-                className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 ${
-                  validationErrors.reason
-                    ? 'border-error-light focus:border-error-main focus:ring-error-main'
-                    : 'border-divider focus:border-primary-main focus:ring-primary-main'
-                }`}
+                className="mt-1"
                 aria-invalid={!!validationErrors.reason}
                 aria-describedby={validationErrors.reason ? 'reason-error' : undefined}
               />
@@ -297,7 +285,7 @@ export function EmployeeStatusChange({
               >
                 Effective Date <span className="text-error-main">*</span>
               </label>
-              <input
+              <Input
                 type="date"
                 id="status-effective-date"
                 value={effectiveDate}
@@ -312,11 +300,7 @@ export function EmployeeStatusChange({
                   }
                 }}
                 disabled={statusMutation.isPending}
-                className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50 ${
-                  validationErrors.effectiveDate
-                    ? 'border-error-light focus:border-error-main focus:ring-error-main'
-                    : 'border-divider focus:border-primary-main focus:ring-primary-main'
-                }`}
+                className="mt-1"
                 aria-invalid={!!validationErrors.effectiveDate}
                 aria-describedby={
                   validationErrors.effectiveDate ? 'effective-date-error' : undefined
@@ -331,7 +315,7 @@ export function EmployeeStatusChange({
 
             {/* Backend error */}
             {backendError && (
-              <div className="rounded-md bg-error-lighter p-3" role="alert">
+              <div className="rounded-card bg-error-lighter p-3" role="alert">
                 <p className="text-sm text-error-dark">{backendError}</p>
               </div>
             )}
@@ -340,39 +324,11 @@ export function EmployeeStatusChange({
             <div className="flex items-center gap-3">
               <Button
                 type="submit"
-                disabled={statusMutation.isPending}
+                loading={statusMutation.isPending}
               >
-                {statusMutation.isPending ? (
-                  <>
-                    <svg
-                      className="mr-2 h-4 w-4 animate-spin"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                      />
-                    </svg>
-                    Updating...
-                  </>
-                ) : (
-                  'Confirm'
-                )}
+                {statusMutation.isPending ? 'Updating...' : 'Confirm'}
               </Button>
               <Button variant="outlined" color="inherit"
-                type="button"
                 onClick={handleCancel}
                 disabled={statusMutation.isPending}
               >
@@ -381,7 +337,7 @@ export function EmployeeStatusChange({
             </div>
           </form>
         )}
-      </div>
+      </Card>
     </Can>
   );
 }

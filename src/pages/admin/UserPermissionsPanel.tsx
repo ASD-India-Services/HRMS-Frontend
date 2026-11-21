@@ -15,8 +15,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { Can } from '@/components/Can/Can';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -183,7 +185,7 @@ export function UserPermissionsPanel({
 
   if (rolesLoading || permissionsLoading || assignmentLoading) {
     return (
-      <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+      <Card className="p-6">
         <div className="animate-pulse space-y-4">
           <div className="h-6 w-32 rounded bg-grey-200" />
           <div className="h-10 w-full rounded bg-grey-200" />
@@ -200,14 +202,14 @@ export function UserPermissionsPanel({
             ))}
           </div>
         </div>
-      </div>
+      </Card>
     );
   }
 
   // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
-    <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+    <Card className="p-6">
       {/* Header */}
       <h2 className="mb-4 text-lg font-semibold text-ink-primary">Permissions</h2>
 
@@ -311,26 +313,14 @@ export function UserPermissionsPanel({
             )}
           </h3>
           <Can permissions={['roles.manage']}>
-            <button
-              type="button"
+            <Button
+              variant="soft"
+              size="small"
               onClick={() => setShowAddOverride(!showAddOverride)}
-              className="inline-flex items-center rounded-md bg-primary-lighter px-2.5 py-1.5 text-xs font-medium text-primary-dark hover:bg-primary-lighter focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-1"
+              startIcon={<Iconify icon="plus" />}
             >
-              <svg
-                className="mr-1 h-3.5 w-3.5"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 4.5v15m7.5-7.5h-15"
-                />
-              </svg>
               Add Override
-            </button>
+            </Button>
           </Can>
         </div>
 
@@ -346,26 +336,13 @@ export function UserPermissionsPanel({
                   override
                 </span>
                 <Can permissions={['roles.manage']}>
-                  <button
-                    type="button"
+                  <IconButton
+                    icon="close"
+                    size="small"
                     onClick={() => handleRemoveOverride(perm)}
-                    className="ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full text-primary-light hover:bg-primary-lighter hover:text-primary-main focus:outline-none"
+                    className="ml-1 !h-5 !w-5 text-primary-main"
                     aria-label={`Remove override ${perm}`}
-                  >
-                    <svg
-                      className="h-3 w-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2}
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M6 18 18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
+                  />
                 </Can>
               </span>
             ))}
@@ -377,7 +354,7 @@ export function UserPermissionsPanel({
 
       {/* Add Override Dropdown */}
       {showAddOverride && canManage && (
-        <div className="mb-6 rounded-lg border border-divider bg-surface-neutral p-4">
+        <div className="mb-6 rounded-card bg-surface-neutral p-4">
           <label
             htmlFor="add-override-select"
             className="mb-2 block text-sm font-medium text-ink-primary"
@@ -418,13 +395,9 @@ export function UserPermissionsPanel({
               All available permissions are already assigned (inherited or override).
             </p>
           )}
-          <button
-            type="button"
-            onClick={() => setShowAddOverride(false)}
-            className="mt-2 text-xs text-ink-secondary hover:text-ink-primary"
-          >
+          <Button variant="text" color="inherit" size="small" className="mt-2" onClick={() => setShowAddOverride(false)}>
             Cancel
-          </button>
+          </Button>
         </div>
       )}
 
@@ -464,17 +437,13 @@ export function UserPermissionsPanel({
                 'Save Overrides'
               )}
             </Button>
-            <button
-              type="button"
-              onClick={() => setOverrides(currentOverrides)}
-              className="text-sm text-ink-secondary hover:text-ink-primary"
-            >
+            <Button variant="text" color="inherit" onClick={() => setOverrides(currentOverrides)}>
               Reset
-            </button>
+            </Button>
           </div>
         )}
       </Can>
-    </div>
+    </Card>
   );
 }
 

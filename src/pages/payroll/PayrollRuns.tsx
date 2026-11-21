@@ -32,6 +32,9 @@ import { BulkActions } from '@/components/BulkActions';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Iconify } from '@/components/Iconify';
 
 // Create CRUD hooks from the payroll entries config
 const payrollEntriesCrud = createCrudHooks<PayrollEntry>({
@@ -228,41 +231,22 @@ function PayrollRunsContent() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      {/* Page Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Payroll Runs</h1>
-          <p className="mt-1 text-sm text-ink-secondary">
-            Create, review, and manage payroll runs. Submit for approval and mark as disbursed.
-          </p>
-        </div>
-        <Can permissions={['payroll.create']}>
-          <Button
-            type="button"
-            onClick={() => setShowCreateForm(true)}
-          >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Create Payroll Run
-          </Button>
-        </Can>
-      </div>
-
+    <PageContainer>
+      <PageHeader
+        title="Payroll Runs"
+        subtitle="Create, review, and manage payroll runs. Submit for approval and mark as disbursed."
+        actions={
+          <Can permissions={['payroll.create']}>
+            <Button onClick={() => setShowCreateForm(true)} startIcon={<Iconify icon="plus" />}>
+              Create Payroll Run
+            </Button>
+          </Can>
+        }
+      />
       {/* Payroll Schedule Info */}
-      <div className="mb-6 rounded-md border border-primary-light bg-primary-lighter p-3" role="note">
+      <div className="mb-6 rounded-card bg-primary-lighter p-4" role="note">
         <div className="flex items-start gap-2">
-          <svg className="h-5 w-5 text-primary-main flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-          </svg>
+          <Iconify icon="info" width={20} className="mt-0.5 shrink-0 text-primary-main" />
           <p className="text-sm text-primary-dark">
             Payroll can only be run for the <strong>previous month</strong>. Ensure all attendance, leaves, and deductions are finalized before processing.
           </p>
@@ -271,7 +255,7 @@ function PayrollRunsContent() {
 
       {/* Active Auto-Payslip Generation Rules from Settings */}
       {activeAutoRules.length > 0 && (
-        <div className="mb-6 rounded-lg border border-success-light bg-success-lighter/80 p-3.5 shadow-2xs">
+        <div className="mb-6 rounded-card bg-success-lighter/80 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="flex h-2.5 w-2.5 rounded-full bg-success-main animate-pulse" />
@@ -287,11 +271,11 @@ function PayrollRunsContent() {
             {activeAutoRules.map((rule: any) => (
               <span
                 key={rule.id}
-                className="inline-flex items-center gap-1.5 rounded-md border border-success-light bg-surface-paper px-2.5 py-1 text-xs font-medium text-success-darker shadow-2xs"
+                className="inline-flex items-center gap-1.5 rounded-md bg-surface-paper px-2.5 py-1 text-xs font-medium text-success-darker shadow-z1"
               >
-                <span>🏢 {rule.company}</span>
-                <span className="text-grey-300">|</span>
-                <span>📅 Auto-generates on {rule.generate_day}</span>
+                <span className="inline-flex items-center gap-1"><Iconify icon="departments" width={14} /> {rule.company}</span>
+                <span className="text-ink-disabled">|</span>
+                <span className="inline-flex items-center gap-1"><Iconify icon="holidayLists" width={14} /> Auto-generates on {rule.generate_day}</span>
               </span>
             ))}
           </div>
@@ -309,21 +293,8 @@ function PayrollRunsContent() {
       {/* Summary badge */}
       {queryResult.data && (
         <div className="mb-4 flex items-center gap-4">
-          <div className="inline-flex items-center gap-2 rounded-lg bg-primary-lighter border border-primary-light px-4 py-2">
-            <svg
-              className="h-5 w-5 text-primary-main"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"
-              />
-            </svg>
+          <div className="inline-flex items-center gap-2 rounded-lg bg-primary-lighter px-4 py-2">
+            <Iconify icon="payroll" width={20} className="text-primary-main" />
             <span className="text-sm font-medium text-primary-dark">
               {queryResult.data.count} payroll run{queryResult.data.count !== 1 ? 's' : ''}{' '}
               {filterValues.status ? `with status "${filterValues.status}"` : 'total'}
@@ -363,7 +334,7 @@ function PayrollRunsContent() {
           <div className="mx-4 p-6 min-h-0 flex-1 overflow-y-auto">
             <h2 id="PayrollRuns-modal-title-1" className="mb-4 text-lg font-semibold text-ink-primary">Create Payroll Run</h2>
             {createError && (
-              <div className="mb-4 rounded-md bg-error-lighter border border-error-light p-3">
+              <div className="mb-4 rounded-card bg-error-lighter p-3">
                 <p className="text-sm text-error-dark">{createError}</p>
               </div>
             )}
@@ -377,6 +348,6 @@ function PayrollRunsContent() {
           </div>
         </Modal>
       )}
-    </div>
+    </PageContainer>
   );
 }

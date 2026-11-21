@@ -8,12 +8,15 @@ import { useState } from 'react';
 import { useOnboardingTasks, useUpdateOnboardingTask } from '@/hooks/useOnboarding';
 import type { OnboardingTask, OnboardingTaskStatus } from '@/types/onboarding';
 import { Select } from '@/components/ui/Select';
+import { IconButton } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { EmptyState } from '@/components/EmptyState';
 
-const STATUS_STYLES: Record<OnboardingTaskStatus, { label: string; className: string; icon: string }> = {
-  pending: { label: 'Pending', className: 'bg-surface-neutral text-ink-primary', icon: '○' },
-  in_progress: { label: 'In Progress', className: 'bg-primary-lighter text-primary-dark', icon: '◐' },
-  completed: { label: 'Completed', className: 'bg-success-lighter text-success-dark', icon: '✓' },
-  skipped: { label: 'Skipped', className: 'bg-warning-lighter text-warning-dark', icon: '—' },
+const STATUS_STYLES: Record<OnboardingTaskStatus, { label: string; className: string }> = {
+  pending: { label: 'Pending', className: 'bg-surface-neutral text-ink-primary' },
+  in_progress: { label: 'In Progress', className: 'bg-primary-lighter text-primary-dark' },
+  completed: { label: 'Completed', className: 'bg-success-lighter text-success-dark' },
+  skipped: { label: 'Skipped', className: 'bg-warning-lighter text-warning-dark' },
 };
 
 interface OnboardingChecklistProps {
@@ -105,7 +108,7 @@ export function OnboardingChecklist({ employeeId }: OnboardingChecklistProps) {
 
       {/* Error */}
       {isError && (
-        <div className="rounded-md bg-error-lighter p-4" role="alert">
+        <div className="rounded-card bg-error-lighter p-4" role="alert">
           <p className="text-sm text-error-dark">
             Failed to load onboarding tasks. {error instanceof Error ? error.message : 'Please try again.'}
           </p>
@@ -114,12 +117,9 @@ export function OnboardingChecklist({ employeeId }: OnboardingChecklistProps) {
 
       {/* Empty state */}
       {!isLoading && !isError && tasks.length === 0 && (
-        <div className="py-12 text-center">
-          <svg className="mx-auto h-12 w-12 text-grey-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <p className="mt-4 text-ink-secondary">No onboarding tasks found.</p>
-        </div>
+        <Card>
+          <EmptyState module="onboarding" title="No onboarding tasks found" description="Onboarding checklists will appear here for new hires." />
+        </Card>
       )}
 
       {/* Task groups */}
@@ -134,21 +134,21 @@ export function OnboardingChecklist({ employeeId }: OnboardingChecklistProps) {
               return (
                 <li
                   key={task.id}
-                  className="flex items-center gap-3 rounded-lg border border-divider bg-surface-paper px-4 py-3 shadow-sm transition-colors hover:bg-surface-neutral"
+                  className="flex items-center gap-3 rounded-card bg-surface-paper px-4 py-3 shadow-card transition-colors hover:bg-surface-neutral"
                 >
                   {/* Checkbox */}
-                  <button
+                  <IconButton
+                    icon={task.status === 'completed' ? 'check' : undefined}
+                    size="small"
                     onClick={() => handleToggleComplete(task)}
                     disabled={updateTask.isPending}
-                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold transition-colors ${
+                    className={`!h-6 !w-6 shrink-0 border-2 ${
                       task.status === 'completed'
-                        ? 'border-success-main bg-success-main text-primary-contrast'
-                        : 'border-divider text-ink-disabled hover:border-success-main'
+                        ? 'border-success-main bg-success-main !text-primary-contrast hover:!bg-success-dark'
+                        : 'border-grey-500/30 hover:border-success-main'
                     }`}
                     aria-label={`Mark "${task.title}" as ${task.status === 'completed' ? 'pending' : 'completed'}`}
-                  >
-                    {task.status === 'completed' ? '✓' : ''}
-                  </button>
+                  />
 
                   {/* Task details */}
                   <div className="min-w-0 flex-1">

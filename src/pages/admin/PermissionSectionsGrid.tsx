@@ -199,7 +199,7 @@ export function PermissionSectionsGrid({
         const someSelected = !allSelected && selectedCount > 0;
 
         return (
-          <div key={section.module} className="rounded-lg border border-divider bg-surface-paper p-4">
+          <div key={section.module} className="rounded-card bg-surface-paper p-4 shadow-card">
             {/* ── Section heading ───────────────────────────────────────── */}
             <div className="mb-3 flex items-center gap-3 border-b border-divider pb-3">
               <label className="flex cursor-pointer items-center gap-2">

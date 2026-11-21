@@ -4,6 +4,7 @@
  */
 
 import type { LeaveBalance } from '@/types/leave';
+import { Card } from '@/components/ui/Card';
 
 interface LeaveBalanceCardProps {
   balance: LeaveBalance;
@@ -17,7 +18,7 @@ export function LeaveBalanceCard({ balance }: LeaveBalanceCardProps) {
   const usagePercent = allocated_days > 0 ? (used_days / allocated_days) * 100 : 0;
 
   return (
-    <div className="rounded-lg border border-divider bg-surface-paper p-4 shadow-sm">
+    <Card className="p-4">
       <h4 className="text-sm font-semibold text-ink-primary">{leave_type_name}</h4>
 
       <div className="mt-3 flex items-end justify-between">
@@ -43,6 +44,6 @@ export function LeaveBalanceCard({ balance }: LeaveBalanceCardProps) {
           aria-label={`${leave_type_name} usage: ${used_days} of ${allocated_days} days used`}
         />
       </div>
-    </div>
+    </Card>
   );
 }

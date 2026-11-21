@@ -16,6 +16,9 @@ import type { EmploymentStatus, EmploymentType } from '@/types/employee';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Iconify } from '@/components/Iconify';
 
 const PAGE_SIZE = 12;
 
@@ -86,51 +89,35 @@ export function EmployeeDirectory() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      {/* Header — title left, actions right (same row) */}
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Employee Directory</h1>
-          <p className="mt-0.5 text-sm text-ink-secondary">
-            Browse and search employees across your organization
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <BulkActions
-            exportEndpoint="/api/v1/employees/export/"
-            importEndpoint="/api/v1/employees/import/"
-            csvHeaders="employee_id,first_name,last_name,email,phone,department,designation,employment_type,date_of_joining,status"
-            exportFilename="employees_export.csv"
-            exportPermission="employees.view"
-            importPermission="employees.create"
-            onImportSuccess={() => queryClient.invalidateQueries({ queryKey: ['employees'] })}
-          />
-          <CreateButton
-            label="Add Employee"
-            onClick={() => navigate('/employees/new')}
-            permission="employees.create"
-          />
-        </div>
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Employee Directory"
+        subtitle="Browse and search employees across your organization"
+        actions={
+          <>
+            <BulkActions
+              exportEndpoint="/api/v1/employees/export/"
+              importEndpoint="/api/v1/employees/import/"
+              csvHeaders="employee_id,first_name,last_name,email,phone,department,designation,employment_type,date_of_joining,status"
+              exportFilename="employees_export.csv"
+              exportPermission="employees.view"
+              importPermission="employees.create"
+              onImportSuccess={() => queryClient.invalidateQueries({ queryKey: ['employees'] })}
+            />
+            <CreateButton
+              label="Add Employee"
+              onClick={() => navigate('/employees/new')}
+              permission="employees.create"
+            />
+          </>
+        }
+      />
 
       {/* Search and Filters */}
       <div className="mb-6 space-y-4">
         {/* Search Bar */}
         <div className="relative">
-          <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-disabled"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
+          <Iconify icon="search" width={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-disabled" />
           <Input
             type="text"
             value={search}
@@ -192,13 +179,13 @@ export function EmployeeDirectory() {
             Page {page} of {totalPages}
           </p>
           <div className="flex gap-2">
-            <Button type="button" variant="outlined" color="inherit"
+            <Button variant="outlined" color="inherit"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
             >
               Previous
             </Button>
-            <Button type="button" variant="outlined" color="inherit"
+            <Button variant="outlined" color="inherit"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >
@@ -207,6 +194,6 @@ export function EmployeeDirectory() {
           </div>
         </nav>
       )}
-    </div>
+    </PageContainer>
   );
 }

@@ -10,6 +10,10 @@ import { formatDate, formatCurrency } from '@/utils/formatters';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { EmptyState } from '@/components/EmptyState';
 
 interface ApprovalModalProps {
   claim: ExpenseClaim;
@@ -38,7 +42,7 @@ function ApprovalModal({ claim, action, onClose, onConfirm, isPending }: Approva
 
         {/* Show description */}
         {claim.description && (
-          <div className="mt-3 rounded-md bg-surface-neutral p-3">
+          <div className="mt-3 rounded-lg bg-surface-neutral p-3">
             <p className="text-xs font-medium text-ink-secondary">Description</p>
             <p className="mt-1 text-sm text-ink-primary">{claim.description}</p>
           </div>
@@ -87,18 +91,13 @@ function ApprovalModal({ claim, action, onClose, onConfirm, isPending }: Approva
           >
             Cancel
           </Button>
-          <button
-            type="button"
+          <Button
+            color={action === 'approve' ? 'success' : 'error'}
             onClick={() => onConfirm(comments)}
             disabled={isPending}
-            className={`rounded-md px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm disabled:opacity-50 ${
-              action === 'approve'
-                ? 'bg-success-main hover:bg-success-dark focus:ring-success-main'
-                : 'bg-error-main hover:bg-error-dark focus:ring-error-main'
-            } focus:outline-none focus:ring-2 focus:ring-offset-2`}
           >
             {isPending ? 'Processing...' : action === 'approve' ? 'Approve' : 'Reject'}
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>
@@ -132,21 +131,18 @@ export function ExpenseApproval() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">Expense Approvals</h1>
-        <p className="mt-1 text-sm text-ink-secondary">Review and approve pending expense claims from your team</p>
-      </div>
+    <PageContainer maxWidth="lg">
+      <PageHeader title="Expense Approvals" subtitle="Review and approve pending expense claims from your team" />
 
       {/* Content */}
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 animate-pulse rounded-lg bg-surface-neutral" />
+            <div key={i} className="h-24 animate-pulse rounded-card bg-surface-neutral" />
           ))}
         </div>
       ) : isError ? (
-        <div className="rounded-md bg-error-lighter p-4 text-sm text-error-dark" role="alert">
+        <div className="rounded-card bg-error-lighter p-4 text-sm text-error-dark" role="alert">
           Failed to load pending expense claims. Please try again.
         </div>
       ) : data && data.results.length > 0 ? (
@@ -155,9 +151,9 @@ export function ExpenseApproval() {
             {data.results.map((claim) => {
               const employeeName = `${claim.employee.first_name} ${claim.employee.last_name}`;
               return (
-                <div
+                <Card
                   key={claim.id}
-                  className="rounded-lg border border-divider bg-surface-paper p-4 shadow-sm"
+                  className="p-6"
                 >
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     {/* Employee & Expense Details */}
@@ -191,20 +187,15 @@ export function ExpenseApproval() {
 
                     {/* Action Buttons */}
                     <div className="flex shrink-0 gap-2">
-                      <button
-                        onClick={() => openModal(claim, 'approve')}
-                        className="rounded-md bg-success-main px-3 py-1.5 text-sm font-medium text-primary-contrast shadow-sm hover:bg-success-dark focus:outline-none focus:ring-2 focus:ring-success-main focus:ring-offset-2"
-                      >
+                      <Button color="success" onClick={() => openModal(claim, 'approve')}>
                         Approve
-                      </button>
-                      <Button type="button" color="error"
-                        onClick={() => openModal(claim, 'reject')}
-                      >
+                      </Button>
+                      <Button variant="outlined" color="error" onClick={() => openModal(claim, 'reject')}>
                         Reject
                       </Button>
                     </div>
                   </div>
-                </div>
+                </Card>
               );
             })}
           </div>
@@ -215,13 +206,13 @@ export function ExpenseApproval() {
               {data.count} pending claim{data.count !== 1 ? 's' : ''}
             </p>
             <div className="flex gap-2">
-              <Button type="button" variant="outlined" color="inherit"
+              <Button variant="outlined" color="inherit"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!data.previous}
               >
                 Previous
               </Button>
-              <Button type="button" variant="outlined" color="inherit"
+              <Button variant="outlined" color="inherit"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data.next}
               >
@@ -231,9 +222,9 @@ export function ExpenseApproval() {
           </div>
         </>
       ) : (
-        <div className="rounded-lg border border-divider bg-surface-paper p-8 text-center">
-          <p className="text-sm text-ink-secondary">No pending expense claims to review.</p>
-        </div>
+        <Card>
+          <EmptyState module="expenses" title="No pending claims" description="No pending expense claims to review." />
+        </Card>
       )}
 
       {/* Approval/Rejection Modal */}
@@ -246,6 +237,6 @@ export function ExpenseApproval() {
           isPending={approveClaim.isPending}
         />
       )}
-    </div>
+    </PageContainer>
   );
 }

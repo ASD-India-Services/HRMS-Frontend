@@ -47,7 +47,7 @@ export function ShiftCard({ shiftType, compact = false }: ShiftCardProps) {
   }
 
   return (
-    <div className="rounded-lg border border-divider bg-surface-paper p-4 shadow-sm">
+    <div className="rounded-card bg-surface-paper p-4 shadow-card">
       <div className="flex items-center gap-2">
         <div
           className={`h-3 w-3 rounded-full ${

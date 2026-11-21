@@ -18,8 +18,12 @@ import { CrudModal } from '@/components/CrudModal';
 import type { FieldConfig } from '@/components/CrudModal';
 import { formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 const statusColors: Record<string, string> = {
   active: 'bg-success-lighter text-success-dark',
@@ -100,20 +104,17 @@ export function EmployeeDetail() {
 
   if (isError) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-md bg-error-lighter p-4">
+      <PageContainer maxWidth="lg">
+        <div className="rounded-card bg-error-lighter p-4">
           <p className="text-sm text-error-dark">
             Failed to load employee details.{' '}
             {error instanceof Error ? error.message : 'Please try again.'}
           </p>
         </div>
-        <Link
-          to="/employees"
-          className="mt-4 inline-flex items-center text-sm text-primary-main hover:text-primary-dark"
-        >
-          ← Back to Employee Directory
-        </Link>
-      </div>
+        <ButtonLink to="/employees" variant="text" size="small" className="mt-4 -ml-2.5" startIcon={<Iconify icon="arrow-left" />}>
+          Back to Employee Directory
+        </ButtonLink>
+      </PageContainer>
     );
   }
 
@@ -124,48 +125,46 @@ export function EmployeeDetail() {
   const statusLabel = statusLabels[employee.status] ?? employee.status;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
-      {/* Breadcrumb */}
-      <nav className="mb-6 text-sm text-ink-secondary" aria-label="Breadcrumb">
-        <Link to="/employees" className="hover:text-primary-main">
-          Employees
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="text-ink-primary">{fullName}</span>
-      </nav>
-
-      {/* Header Card */}
-      <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
-        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-          {employee.photo ? (
-            <img
-              src={employee.photo}
-              alt={fullName}
-              className="h-20 w-20 rounded-full object-cover"
-            />
-          ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary-lighter text-xl font-semibold text-primary-dark">
-              {getInitials(employee.first_name, employee.last_name)}
-            </div>
-          )}
-          <div className="flex-1">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-ink-primary">{fullName}</h1>
-              <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColor}`}
-              >
-                {statusLabel}
+    <PageContainer maxWidth="lg">
+      <PageHeader
+        breadcrumb={
+          <nav aria-label="Breadcrumb">
+            <Link to="/employees" className="hover:text-primary-main">
+              Employees
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-ink-primary">{fullName}</span>
+          </nav>
+        }
+        title={
+          <span className="flex items-center gap-3">
+            {employee.photo ? (
+              <img
+                src={employee.photo}
+                alt={fullName}
+                className="h-14 w-14 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary-lighter text-lg font-semibold text-primary-dark">
+                {getInitials(employee.first_name, employee.last_name)}
               </span>
-            </div>
-            <p className="mt-1 text-sm text-ink-secondary">
-              {employee.designation?.title || 'No Designation'} · {employee.department?.name || 'No Department'}
-            </p>
-            <p className="mt-0.5 text-xs text-ink-disabled">
-              Employee ID: {employee.employee_id}
-            </p>
-          </div>
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2">
+            )}
+            <span>{fullName}</span>
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColor}`}
+            >
+              {statusLabel}
+            </span>
+          </span>
+        }
+        subtitle={
+          <>
+            {employee.designation?.title || 'No Designation'} · {employee.department?.name || 'No Department'}
+            <span className="mt-0.5 block text-xs text-ink-disabled">Employee ID: {employee.employee_id}</span>
+          </>
+        }
+        actions={
+          <>
             <Can permissions={['roles.manage']}>
               <ActionButton
                 label="Create Login"
@@ -181,16 +180,16 @@ export function EmployeeDetail() {
               onClick={() => setShowPromote(true)}
               permission="employees.edit"
             />
-            <Link
+            <ButtonLink
               to={`/org-chart?employee=${employee.id}`}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-divider bg-surface-paper px-3 py-1.5 text-xs font-semibold text-ink-primary shadow-xs hover:bg-surface-neutral transition-colors"
+              variant="outlined"
+              color="inherit"
+              size="small"
               title="View this employee's reporting hierarchy in the Org Chart"
+              startIcon={<Iconify icon="orgChart" />}
             >
-              <svg className="h-3.5 w-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v1.5a1.5 1.5 0 0 0 1.5 1.5h1.5A1.5 1.5 0 0 0 10.5 6.75v-1.5A1.5 1.5 0 0 0 9 3.75h-1.5ZM12 8.25v3.75m0 0H6.75A2.25 2.25 0 0 0 4.5 14.25v1.5a1.5 1.5 0 0 0 1.5 1.5h1.5a1.5 1.5 0 0 0 1.5-1.5v-1.5A2.25 2.25 0 0 0 6.75 12H12m0 0h5.25A2.25 2.25 0 0 1 19.5 14.25v1.5a1.5 1.5 0 0 1-1.5 1.5h-1.5a1.5 1.5 0 0 1-1.5-1.5v-1.5a2.25 2.25 0 0 1-2.25-2.25" />
-              </svg>
-              <span>Org Chart</span>
-            </Link>
+              Org Chart
+            </ButtonLink>
             <EditButton
               label="Edit"
               onClick={() => navigate(`/employees/${employee.id}/edit`)}
@@ -203,12 +202,12 @@ export function EmployeeDetail() {
               permission="employees.delete"
               size="sm"
             />
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Employee Status Change — visible to users with employees.edit permission */}
-      <div className="mt-4">
+      <div>
         <EmployeeStatusChange
           employeeId={employee.id}
           currentStatus={employee.status as any}
@@ -219,8 +218,9 @@ export function EmployeeDetail() {
       {/* Detail Sections */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Personal Information */}
-        <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-ink-primary">Personal Information</h2>
+        <Card>
+          <CardHeader title="Personal Information" className="pb-4" />
+          <CardContent className="pt-4">
           <dl className="space-y-3">
             <DetailRow label="Email" value={employee.email} />
             <DetailRow label="Phone" value={employee.phone} />
@@ -231,11 +231,13 @@ export function EmployeeDetail() {
             <DetailRow label="Blood Group" value={employee.blood_group} />
             <DetailRow label="Nationality" value={employee.nationality} />
           </dl>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Employment Details */}
-        <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-ink-primary">Employment Details</h2>
+        <Card>
+          <CardHeader title="Employment Details" className="pb-4" />
+          <CardContent className="pt-4">
           <dl className="space-y-3">
             <DetailRow label="Department" value={employee.department?.name} />
             <DetailRow label="Designation" value={employee.designation?.title} />
@@ -262,11 +264,13 @@ export function EmployeeDetail() {
               <DetailRow label="Date of Leaving" value={formatDate(employee.date_of_leaving)} />
             )}
           </dl>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Address */}
-        <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-ink-primary">Address</h2>
+        <Card>
+          <CardHeader title="Address" className="pb-4" />
+          <CardContent className="pt-4">
           <dl className="space-y-3">
             <DetailRow label="Address" value={employee.address} />
             <DetailRow label="City" value={employee.city} />
@@ -274,21 +278,25 @@ export function EmployeeDetail() {
             <DetailRow label="Country" value={employee.country} />
             <DetailRow label="PIN Code" value={employee.pincode} />
           </dl>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Emergency Contact */}
-        <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-ink-primary">Emergency Contact</h2>
+        <Card>
+          <CardHeader title="Emergency Contact" className="pb-4" />
+          <CardContent className="pt-4">
           <dl className="space-y-3">
             <DetailRow label="Name" value={employee.emergency_contact_name} />
             <DetailRow label="Phone" value={employee.emergency_contact_phone} />
             <DetailRow label="Relation" value={employee.emergency_contact_relation} capitalize />
           </dl>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Reporting Hierarchy */}
-        <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm lg:col-span-2">
-          <h2 className="mb-4 text-lg font-semibold text-ink-primary">Reporting Hierarchy</h2>
+        <Card className="lg:col-span-2">
+          <CardHeader title="Reporting Hierarchy" className="pb-4" />
+          <CardContent className="pt-4">
           {employee.reporting_manager ? (
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-neutral text-sm font-semibold text-ink-secondary">
@@ -312,7 +320,8 @@ export function EmployeeDetail() {
           ) : (
             <p className="text-sm text-ink-secondary">No reporting manager assigned.</p>
           )}
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Permissions Panel — visible only to admins with roles.manage permission */}
         <Can permissions={['roles.manage']}>
@@ -369,7 +378,7 @@ export function EmployeeDetail() {
             {provisionResult ? (
               /* Success result view */
               <div className="mt-4">
-                <div className="rounded-md bg-success-lighter p-4">
+                <div className="rounded-card bg-success-lighter p-4">
                   <p className="text-sm font-medium text-success-dark">
                     {provisionResult.message}
                   </p>
@@ -416,7 +425,7 @@ export function EmployeeDetail() {
                 </p>
 
                 {provisionMutation.isError && (
-                  <div className="mt-3 rounded-md bg-error-lighter p-3">
+                  <div className="mt-3 rounded-card bg-error-lighter p-3">
                     <p className="text-sm text-error-dark">
                       {(provisionMutation.error as any)?.response?.data?.error ||
                         'Failed to provision account. Please try again.'}
@@ -433,32 +442,9 @@ export function EmployeeDetail() {
                     Cancel
                   </Button>
                   <Button
-                    type="button"
                     onClick={() => provisionMutation.mutate()}
-                    disabled={provisionMutation.isPending}
+                    loading={provisionMutation.isPending}
                   >
-                    {provisionMutation.isPending && (
-                      <svg
-                        className="mr-2 h-4 w-4 animate-spin"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                        />
-                      </svg>
-                    )}
                     Send Setup Link
                   </Button>
                 </div>
@@ -467,7 +453,7 @@ export function EmployeeDetail() {
           </div>
         </Modal>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

@@ -1,8 +1,14 @@
 import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import api from '@/lib/api';
 import { Select } from '@/components/ui/Select';
+import { Input } from '@/components/ui/Input';
+import { Button, ButtonLink, IconButton } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Iconify } from '@/components/Iconify';
 
 // ─── Interfaces ─────────────────────────────────────────────────────────────
 
@@ -440,14 +446,16 @@ export default function OrgChart() {
 
           {/* Expand / Collapse Button if has reports */}
           {hasChildren && (
-            <button
-              type="button"
+            <IconButton
+              icon={isCollapsed ? 'plus' : 'minus'}
+              size="small"
+              variant="soft"
+              color="error"
               onClick={(e) => toggleCollapse(node.id, e)}
-              className="relative z-10 -ml-2.5 inline-flex items-center justify-center h-5 w-5 rounded-full border border-error-light bg-surface-paper text-error-light shadow-xs hover:bg-error-lighter hover:text-error-dark transition-all text-xs font-bold shrink-0"
+              className="relative z-10 -ml-2.5 !h-5 !w-5 bg-surface-paper shadow-z1"
+              aria-label={isCollapsed ? 'Expand Direct Reports' : 'Collapse Direct Reports'}
               title={isCollapsed ? 'Expand Direct Reports' : 'Collapse Direct Reports'}
-            >
-              {isCollapsed ? '+' : '−'}
-            </button>
+            />
           )}
 
           {/* Children Sub-tree with Connectors (Horizontal L-to-R) */}
@@ -500,14 +508,16 @@ export default function OrgChart() {
         {/* Expand / Collapse Button if has reports */}
         {hasChildren && (
           <div className="relative z-10 -mt-2">
-            <button
-              type="button"
+            <IconButton
+              icon={isCollapsed ? 'plus' : 'minus'}
+              size="small"
+              variant="soft"
+              color="error"
               onClick={(e) => toggleCollapse(node.id, e)}
-              className="inline-flex items-center justify-center h-6 w-6 rounded-full border border-error-light bg-surface-paper text-error-light shadow-xs hover:bg-error-lighter hover:text-error-dark transition-all text-xs font-bold"
+              className="!h-6 !w-6 bg-surface-paper shadow-z1"
+              aria-label={isCollapsed ? 'Expand Direct Reports' : 'Collapse Direct Reports'}
               title={isCollapsed ? 'Expand Direct Reports' : 'Collapse Direct Reports'}
-            >
-              {isCollapsed ? '+' : '−'}
-            </button>
+            />
           </div>
         )}
 
@@ -601,20 +611,21 @@ export default function OrgChart() {
           <p className="text-[10px] text-ink-secondary font-normal truncate leading-snug w-full">
             {dept.head?.designation || (dept.head ? 'Department Head' : 'Department')}
           </p>
-          <button
-            type="button"
+          <Button
+            size="small"
+            variant="soft"
+            color={isDeptExpanded ? 'error' : 'inherit'}
             onClick={(e) => {
               e.stopPropagation();
               toggleDeptExpand(dept.id);
             }}
-            className={`mt-1.5 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold transition-all ${isDeptExpanded
-              ? 'bg-error-lighter text-error-dark border border-error-light'
-              : 'bg-surface-neutral text-ink-primary hover:bg-grey-200 border border-divider'
-              }`}
+            className="mt-1.5 !h-6 !rounded-full !px-2.5 !text-[10px]"
+            startIcon={<Iconify icon="employees" />}
+            endIcon={<Iconify icon={isDeptExpanded ? 'chevron-up' : 'chevron-down'} />}
           >
-            <span>👥 {dept.employee_count} {dept.employee_count === 1 ? 'Member' : 'Members'}</span>
-            <span>{isDeptExpanded ? '▲ Hide' : '▼ View Employees'}</span>
-          </button>
+            <span>{dept.employee_count} {dept.employee_count === 1 ? 'Member' : 'Members'}</span>
+            <span>{isDeptExpanded ? 'Hide' : 'View Employees'}</span>
+          </Button>
         </div>
       </div>
     );
@@ -708,250 +719,189 @@ export default function OrgChart() {
   };
 
   return (
-    <div className="space-y-4 w-full max-w-full min-w-0 overflow-x-hidden">
-      {/* ─── Top Control Bar ─────────────────────────────────────────────── */}
-      <div className="flex flex-col gap-3 rounded-2xl border border-divider bg-surface-paper p-3.5 shadow-xs w-full max-w-full min-w-0">
-        {/* Row 1: Title & Main View Switcher */}
-        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between min-w-0">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-ink-primary">Organization Chart</h1>
-
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
+    <PageContainer className="min-w-0 max-w-full space-y-4 overflow-x-hidden">
+      {/* ─── Header: title, view switcher, orientation ────────────────────── */}
+      <PageHeader
+        className="!mb-0"
+        title="Organization Chart"
+        actions={
+          <>
             {/* Mode Switcher */}
-            <div className="inline-flex rounded-xl bg-surface-neutral p-1 shrink-0">
-              <button
-                type="button"
+            <div className="inline-flex gap-1 rounded bg-grey-500/10 p-1">
+              <Button
+                size="small"
+                variant={viewMode === 'reporting' ? 'soft' : 'text'}
+                color={viewMode === 'reporting' ? 'primary' : 'inherit'}
                 onClick={() => setViewMode('reporting')}
-                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${viewMode === 'reporting'
-                  ? 'bg-surface-paper text-ink-primary shadow-xs'
-                  : 'text-ink-secondary hover:text-ink-primary'
-                  }`}
               >
                 Reporting Tree
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                size="small"
+                variant={viewMode === 'departments' ? 'soft' : 'text'}
+                color={viewMode === 'departments' ? 'primary' : 'inherit'}
                 onClick={() => setViewMode('departments')}
-                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${viewMode === 'departments'
-                  ? 'bg-surface-paper text-ink-primary shadow-xs'
-                  : 'text-ink-secondary hover:text-ink-primary'
-                  }`}
               >
                 Department View
-              </button>
+              </Button>
             </div>
 
             {/* Rotate Tree Orientation */}
-            <button
-              type="button"
+            <Button
+              variant="outlined"
+              color="inherit"
               onClick={() => {
                 setOrientation((prev) => (prev === 'horizontal' ? 'vertical' : 'horizontal'));
                 setPan({ x: 0, y: 0 });
               }}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-divider bg-surface-paper px-3 py-1.5 text-xs font-semibold text-ink-primary hover:bg-surface-neutral shadow-2xs transition-all active:scale-95 shrink-0"
               title="Rotate between Horizontal (Left-to-Right) and Vertical (Top-to-Bottom)"
-            >
-              <svg
-                className={`h-3.5 w-3.5 text-primary-main transition-transform duration-300 ${orientation === 'horizontal' ? 'rotate-90' : ''
-                  }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              startIcon={
+                <Iconify
+                  icon="refresh"
+                  className={`transition-transform duration-300 ${orientation === 'horizontal' ? 'rotate-90' : ''}`}
                 />
-              </svg>
-              <span>{orientation === 'horizontal' ? 'Horizontal ↔' : 'Vertical ↕'}</span>
-            </button>
-          </div>
-        </div>
+              }
+            >
+              {orientation === 'horizontal' ? 'Horizontal' : 'Vertical'}
+            </Button>
+          </>
+        }
+      />
 
-        {/* Row 2: Search, Filters & Zoom Controls */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-divider pt-2.5 min-w-0">
-          <div className="flex flex-wrap items-center gap-2 min-w-0 flex-1">
-            {/* Select Employee to Focus Dropdown */}
-            {viewMode === 'reporting' && (
-              <div className="flex items-center gap-1.5">
-                <label htmlFor="focus-employee-select" className="text-xs font-semibold text-ink-primary whitespace-nowrap">
-                  Employee:
-                </label>
-                <Select selectSize="small"
-                  id="focus-employee-select"
-                  value={focusedEmployeeId || 'all'}
-                  onChange={(e) => handleFocusEmployee(e.target.value === 'all' ? null : e.target.value)} className="max-w-[200px]">
-                  <option value="all">Entire Company</option>
-                  <optgroup label="Select Employee (View Hierarchy Under Them)">
-                    {allEmployees.map((emp) => (
-                      <option key={emp.id} value={emp.id}>
-                        {emp.name} ({getDesignation(emp)}{emp.direct_reports_count > 0 ? ` • ${emp.direct_reports_count} reports` : ''})
-                      </option>
-                    ))}
-                  </optgroup>
-                </Select>
-              </div>
-            )}
-
-            {/* Search Input */}
-            <div className="relative min-w-[160px] max-w-[220px]">
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search name, designation..."
-                className="w-full rounded-xl border border-divider bg-surface-paper py-1.5 pl-8 pr-3 text-xs text-ink-primary placeholder-ink-disabled focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main shadow-2xs"
-              />
-              <svg
-                className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-ink-disabled"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              {search && (
-                <button
-                  type="button"
-                  onClick={() => setSearch('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink-disabled hover:text-ink-secondary"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-
-            {/* Department Filter (Only for Reporting view) */}
-            {viewMode === 'reporting' && (
+      {/* ─── Toolbar: search, filters & zoom controls ───────────────────── */}
+      <Card className="flex min-w-0 max-w-full flex-wrap items-center justify-between gap-2 p-3">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+          {/* Select Employee to Focus Dropdown */}
+          {viewMode === 'reporting' && (
+            <div className="flex items-center gap-1.5">
+              <label htmlFor="focus-employee-select" className="whitespace-nowrap text-xs font-semibold text-ink-primary">
+                Employee:
+              </label>
               <Select selectSize="small"
-                value={selectedDept}
-                onChange={(e) => setSelectedDept(e.target.value)}
-                aria-label="Filter by department" className="max-w-[170px]">
-                <option value="all">All Departments</option>
-                {departmentOptions.map((dept) => (
-                  <option key={dept} value={dept}>
-                    {dept}
-                  </option>
-                ))}
+                id="focus-employee-select"
+                value={focusedEmployeeId || 'all'}
+                onChange={(e) => handleFocusEmployee(e.target.value === 'all' ? null : e.target.value)} className="max-w-[200px]">
+                <option value="all">Entire Company</option>
+                <optgroup label="Select Employee (View Hierarchy Under Them)">
+                  {allEmployees.map((emp) => (
+                    <option key={emp.id} value={emp.id}>
+                      {emp.name} ({getDesignation(emp)}{emp.direct_reports_count > 0 ? ` • ${emp.direct_reports_count} reports` : ''})
+                    </option>
+                  ))}
+                </optgroup>
               </Select>
+            </div>
+          )}
+
+          {/* Search Input */}
+          <div className="relative min-w-[160px] max-w-[220px]">
+            <Iconify icon="search" width={16} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-disabled" />
+            <Input
+              inputSize="small"
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search name, designation..."
+              aria-label="Search organization chart"
+              className="pl-8 pr-8"
+            />
+            {search && (
+              <IconButton
+                icon="close"
+                size="small"
+                aria-label="Clear search"
+                onClick={() => setSearch('')}
+                className="absolute right-1 top-1/2 -translate-y-1/2 !h-6 !w-6"
+              />
             )}
           </div>
 
-          {/* Minimal Zoom Controls */}
-          <div className="flex items-center gap-0.5 rounded-xl border border-divider bg-surface-paper p-1 shadow-2xs shrink-0">
-            <button
-              type="button"
-              onClick={handleZoomOut}
-              className="h-7 w-7 rounded-lg text-ink-secondary hover:bg-surface-neutral flex items-center justify-center text-sm font-bold"
-              title="Zoom out"
-            >
-              −
-            </button>
-            <button
-              type="button"
-              onClick={handleZoomIn}
-              className="h-7 w-7 rounded-lg text-ink-secondary hover:bg-surface-neutral flex items-center justify-center text-sm font-bold"
-              title="Zoom in"
-            >
-              +
-            </button>
-          </div>
+          {/* Department Filter (Only for Reporting view) */}
+          {viewMode === 'reporting' && (
+            <Select selectSize="small"
+              value={selectedDept}
+              onChange={(e) => setSelectedDept(e.target.value)}
+              aria-label="Filter by department" className="max-w-[170px]">
+              <option value="all">All Departments</option>
+              {departmentOptions.map((dept) => (
+                <option key={dept} value={dept}>
+                  {dept}
+                </option>
+              ))}
+            </Select>
+          )}
         </div>
-      </div>
+
+        {/* Minimal Zoom Controls */}
+        <div className="flex shrink-0 items-center gap-0.5">
+          <IconButton icon="minus" size="small" onClick={handleZoomOut} aria-label="Zoom out" title="Zoom out" />
+          <IconButton icon="plus" size="small" onClick={handleZoomIn} aria-label="Zoom in" title="Zoom in" />
+        </div>
+      </Card>
 
       {/* ─── Focused Sub-Tree Breadcrumb Bar ─────────────────────────────── */}
       {focusedNode && viewMode === 'reporting' && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-secondary-lighter border border-secondary-light px-5 py-3 shadow-2xs">
-          <div className="flex items-center gap-2 flex-wrap text-xs">
-            <span className="font-semibold text-secondary-darker flex items-center gap-1.5">
-              <svg className="h-4 w-4 text-secondary-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-secondary-lighter px-5 py-3">
+          <div className="flex flex-wrap items-center gap-1 text-xs">
+            <span className="mr-1 flex items-center gap-1.5 font-semibold text-secondary-darker">
+              <Iconify icon="orgChart" width={18} className="text-secondary-main" />
               Hierarchy Under:
             </span>
 
-            <button
-              type="button"
-              onClick={() => handleFocusEmployee(null)}
-              className="font-medium text-secondary-main hover:text-secondary-dark hover:underline"
-            >
+            <Button variant="text" color="secondary" size="small" onClick={() => handleFocusEmployee(null)}>
               Entire Company
-            </button>
+            </Button>
 
             {ancestors.map((anc) => (
               <React.Fragment key={anc.id}>
-                <span className="text-secondary-light font-bold">&rarr;</span>
-                <button
-                  type="button"
-                  onClick={() => handleFocusEmployee(anc.id)}
-                  className="font-medium text-secondary-main hover:text-secondary-dark hover:underline"
-                >
+                <Iconify icon="arrow-right" width={14} className="text-secondary-main" />
+                <Button variant="text" color="secondary" size="small" onClick={() => handleFocusEmployee(anc.id)}>
                   {anc.name}
-                </button>
+                </Button>
               </React.Fragment>
             ))}
 
-            <span className="text-secondary-light font-bold">&rarr;</span>
-            <span className="font-bold text-secondary-darker bg-surface-paper px-2.5 py-0.5 rounded-md shadow-2xs border border-secondary-light">
+            <Iconify icon="arrow-right" width={14} className="text-secondary-main" />
+            <span className="rounded bg-surface-paper px-2.5 py-0.5 font-bold text-secondary-darker shadow-z1">
               {focusedNode.name} ({focusedNode.direct_reports_count} direct {focusedNode.direct_reports_count === 1 ? 'report' : 'reports'})
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={() => handleFocusEmployee(null)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-surface-paper border border-secondary-light px-3 py-1.5 text-xs font-semibold text-secondary-dark hover:bg-secondary-lighter transition-colors shadow-2xs"
-          >
-            <span>✕ View Full Company Chart</span>
-          </button>
+          <Button variant="outlined" color="secondary" size="small" onClick={() => handleFocusEmployee(null)} startIcon={<Iconify icon="close" />}>
+            View Full Company Chart
+          </Button>
         </div>
       )}
 
       {/* ─── Unassigned Staff Notice Bar ─────────────────────────────────── */}
       {unassigned.length > 0 && viewMode === 'reporting' && !focusedNode && (
-        <div className="flex items-center justify-between rounded-xl bg-warning-lighter border border-warning-light px-4 py-2.5 text-xs text-warning-dark">
+        <div className="flex items-center justify-between rounded-card bg-warning-lighter px-4 py-2.5 text-xs text-warning-dark">
           <div className="flex items-center gap-2">
-            <svg className="h-4 w-4 text-warning-main flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
+            <Iconify icon="warning" width={18} className="shrink-0 text-warning-main" />
             <span>
               <strong>{unassigned.length}</strong> active employee{unassigned.length !== 1 ? 's do' : ' does'} not have an assigned reporting manager.
             </span>
           </div>
-          <button
-            type="button"
-            onClick={() => setShowUnassignedDrawer(true)}
-            className="font-bold underline text-warning-darker hover:text-warning-dark"
-          >
-            View Unassigned Staff &rarr;
-          </button>
+          <Button variant="text" color="warning" size="small" onClick={() => setShowUnassignedDrawer(true)} endIcon={<Iconify icon="arrow-right" />}>
+            View Unassigned Staff
+          </Button>
         </div>
       )}
 
       {/* ─── Search Active Notice Bar ─────────────────────────────────────── */}
       {search.trim() && viewMode === 'reporting' && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-warning-lighter border border-warning-light px-4 py-2 text-xs text-warning-darker">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-card bg-warning-lighter px-4 py-2 text-xs text-warning-darker">
           <div className="flex items-center gap-2">
-            <span className="font-semibold flex items-center gap-1.5 text-warning-dark">
-              🔍 Search Active:
+            <span className="flex items-center gap-1.5 font-semibold text-warning-dark">
+              <Iconify icon="search" width={16} /> Search Active:
             </span>
             <span>
               Showing only searched employee and their reporter. Delete letters in search bar to show the full company chart.
             </span>
           </div>
-          <button
-            type="button"
-            onClick={() => setSearch('')}
-            className="inline-flex items-center gap-1 rounded-lg bg-surface-paper border border-warning-light px-2.5 py-1 text-xs font-bold text-warning-dark hover:bg-warning-lighter transition-colors shadow-2xs"
-          >
-            ✕ Show Full Company Chart
-          </button>
+          <Button variant="outlined" color="warning" size="small" onClick={() => setSearch('')} startIcon={<Iconify icon="close" />}>
+            Show Full Company Chart
+          </Button>
         </div>
       )}
 
@@ -962,7 +912,7 @@ export default function OrgChart() {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        className={`relative h-[720px] w-full overflow-hidden rounded-2xl border border-divider bg-error-lighter/20 select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'
+        className={`relative h-[720px] w-full overflow-hidden rounded-card bg-error-lighter/20 select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'
           }`}
       >
         {/* Background Grid Pattern (Matching pink graph paper grid from screenshot) */}
@@ -970,8 +920,8 @@ export default function OrgChart() {
           className="absolute inset-0 pointer-events-none"
           style={{
             backgroundImage: `
-              linear-gradient(to right, rgba(239, 68, 68, 0.12) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(239, 68, 68, 0.12) 1px, transparent 1px)
+              linear-gradient(to right, rgb(var(--error-main) / 0.12) 1px, transparent 1px),
+              linear-gradient(to bottom, rgb(var(--error-main) / 0.12) 1px, transparent 1px)
             `,
             backgroundSize: '16px 16px',
           }}
@@ -980,10 +930,7 @@ export default function OrgChart() {
         {/* Loading State */}
         {isLoading && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-paper/70 backdrop-blur-xs z-20">
-            <svg className="h-8 w-8 text-primary-main animate-spin" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-            </svg>
+            <Iconify icon="refresh" width={32} className="animate-spin text-primary-main" />
             <span className="mt-3 text-xs font-semibold text-ink-secondary">Building organization tree...</span>
           </div>
         )}
@@ -992,22 +939,17 @@ export default function OrgChart() {
         {isError && (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-20">
             <p className="text-sm font-semibold text-error-main">Failed to load organization hierarchy.</p>
-            <button
-              onClick={() => refetch()}
-              className="mt-3 rounded-lg bg-primary-main px-4 py-2 text-xs font-bold text-primary-contrast hover:bg-primary-dark"
-            >
+            <Button className="mt-3" onClick={() => refetch()}>
               Retry
-            </button>
+            </Button>
           </div>
         )}
 
         {/* Empty Tree State */}
         {!isLoading && !isError && activeReportingRoots.length === 0 && (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center z-20">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-grey-200 text-ink-secondary mb-3">
-              <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
+            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-grey-500/10 text-ink-disabled">
+              <Iconify icon="employees" width={28} />
             </div>
             <h3 className="text-base font-bold text-ink-primary">No Hierarchy Available</h3>
             <p className="mt-1 text-xs text-ink-secondary max-w-sm">
@@ -1016,20 +958,13 @@ export default function OrgChart() {
                 : 'Add active employees and assign reporting managers in the Employees module.'}
             </p>
             {focusedNode ? (
-              <button
-                type="button"
-                onClick={() => handleFocusEmployee(null)}
-                className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-primary-main px-4 py-2 text-xs font-bold text-primary-contrast shadow-sm hover:bg-primary-dark"
-              >
-                &larr; View Full Company Chart
-              </button>
+              <Button className="mt-4" onClick={() => handleFocusEmployee(null)} startIcon={<Iconify icon="arrow-left" />}>
+                View Full Company Chart
+              </Button>
             ) : (
-              <Link
-                to="/employees/new"
-                className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-primary-main px-4 py-2 text-xs font-bold text-primary-contrast shadow-sm hover:bg-primary-dark"
-              >
-                + Add First Employee
-              </Link>
+              <ButtonLink to="/employees/new" className="mt-4" startIcon={<Iconify icon="plus" />}>
+                Add First Employee
+              </ButtonLink>
             )}
           </div>
         )}
@@ -1072,31 +1007,26 @@ export default function OrgChart() {
         )}
 
         {/* Floating Canvas Navigation Hints */}
-        <div className="absolute bottom-4 left-4 rounded-lg bg-surface-paper/90 backdrop-blur-xs border border-divider px-3 py-1.5 text-[11px] text-ink-secondary shadow-xs pointer-events-none flex items-center gap-3">
-          <span>🖱️ Click & Drag canvas to pan</span>
+        <div className="pointer-events-none absolute bottom-4 left-4 flex items-center gap-3 rounded-lg bg-surface-paper/90 px-3 py-1.5 text-[11px] text-ink-secondary shadow-z8 backdrop-blur-xs">
+          <Iconify icon="info" width={14} />
+          <span>Click & Drag canvas to pan</span>
           <span>•</span>
-          <span>🔍 Zoom +/-</span>
+          <span>Zoom +/-</span>
           <span>•</span>
-          <span>🎯 Click Focus ↗ to view anyone's team</span>
+          <span>Click Focus to view anyone's team</span>
         </div>
       </div>
 
       {/* ─── Employee Detail Slide-over Drawer ────────────────────────────── */}
       {selectedEmployee && (
         <div className="fixed inset-0 z-50 overflow-hidden bg-grey-900/40 backdrop-blur-xs flex justify-end animate-fadeIn">
-          <div className="w-full max-w-md bg-surface-paper shadow-2xl h-full flex flex-col border-l border-divider">
+          <div className="w-full max-w-md bg-surface-paper shadow-dialog h-full flex flex-col">
             {/* Drawer Header */}
             <div className="flex items-center justify-between border-b border-divider px-6 py-4 bg-surface-neutral">
               <span className="text-xs font-bold uppercase tracking-wider text-ink-secondary">
                 Employee Profile Summary
               </span>
-              <button
-                type="button"
-                onClick={() => setSelectedEmployee(null)}
-                className="rounded-lg p-1.5 text-ink-disabled hover:bg-grey-200 hover:text-ink-secondary transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setSelectedEmployee(null)} />
             </div>
 
             {/* Drawer Body */}
@@ -1137,23 +1067,22 @@ export default function OrgChart() {
 
               {/* Action Button: Focus Chart on this Employee */}
               {selectedEmployee.direct_reports_count > 0 && (
-                <button
-                  type="button"
+                <Button
+                  variant="soft"
+                  color="secondary"
+                  className="w-full"
                   onClick={() => {
                     handleFocusEmployee(selectedEmployee.id);
                     setSelectedEmployee(null);
                   }}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-secondary-lighter border border-secondary-light px-4 py-2.5 text-xs font-bold text-secondary-dark hover:bg-secondary-lighter transition-colors shadow-2xs"
+                  startIcon={<Iconify icon="orgChart" />}
                 >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                  <span>Focus Chart on {selectedEmployee.name}'s Team ({selectedEmployee.direct_reports_count} Reports)</span>
-                </button>
+                  Focus Chart on {selectedEmployee.name}'s Team ({selectedEmployee.direct_reports_count} Reports)
+                </Button>
               )}
 
               {/* Contact & Designation Info */}
-              <div className="rounded-xl bg-surface-neutral p-4 border border-divider space-y-3">
+              <div className="space-y-3 rounded-card bg-surface-neutral p-4">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-ink-secondary">Designation:</span>
                   <strong className="text-ink-primary">{getDesignation(selectedEmployee)}</strong>
@@ -1199,7 +1128,7 @@ export default function OrgChart() {
                       <div
                         key={sub.id}
                         onClick={() => setSelectedEmployee(sub)}
-                        className="flex items-center justify-between rounded-xl border border-divider p-2.5 hover:bg-surface-neutral cursor-pointer transition-colors"
+                        className="flex cursor-pointer items-center justify-between rounded-lg bg-surface-neutral p-2.5 transition-colors hover:bg-grey-500/10"
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
                           <div
@@ -1216,7 +1145,7 @@ export default function OrgChart() {
                             </p>
                           </div>
                         </div>
-                        <span className="text-xs text-primary-main font-semibold">&rarr;</span>
+                        <Iconify icon="arrow-right" width={16} className="text-primary-main" />
                       </div>
                     ))}
                   </div>
@@ -1228,20 +1157,12 @@ export default function OrgChart() {
 
             {/* Drawer Footer */}
             <div className="border-t border-divider p-4 bg-surface-neutral flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setSelectedEmployee(null)}
-                className="rounded-lg border border-divider bg-surface-paper px-4 py-2 text-xs font-medium text-ink-primary hover:bg-surface-neutral"
-              >
+              <Button variant="outlined" color="inherit" onClick={() => setSelectedEmployee(null)}>
                 Close
-              </button>
-              <Link
-                to={`/employees/${selectedEmployee.id}`}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-primary-main px-4 py-2 text-xs font-bold text-primary-contrast shadow-sm hover:bg-primary-dark transition-colors"
-              >
-                <span>View Full Profile</span>
-                <span aria-hidden="true">&rarr;</span>
-              </Link>
+              </Button>
+              <ButtonLink to={`/employees/${selectedEmployee.id}`} endIcon={<Iconify icon="arrow-right" />}>
+                View Full Profile
+              </ButtonLink>
             </div>
           </div>
         </div>
@@ -1250,7 +1171,7 @@ export default function OrgChart() {
       {/* ─── Unassigned Staff Drawer ─────────────────────────────────────── */}
       {showUnassignedDrawer && (
         <div className="fixed inset-0 z-50 overflow-hidden bg-grey-900/40 backdrop-blur-xs flex justify-end animate-fadeIn">
-          <div className="w-full max-w-md bg-surface-paper shadow-2xl h-full flex flex-col border-l border-divider">
+          <div className="w-full max-w-md bg-surface-paper shadow-dialog h-full flex flex-col">
             <div className="flex items-center justify-between border-b border-divider px-6 py-4 bg-warning-lighter">
               <div>
                 <h3 className="text-sm font-bold text-warning-darker">Unassigned Staff ({unassigned.length})</h3>
@@ -1258,20 +1179,14 @@ export default function OrgChart() {
                   Employees without a designated reporting manager.
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowUnassignedDrawer(false)}
-                className="rounded-lg p-1.5 text-ink-disabled hover:bg-grey-200 hover:text-ink-secondary"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setShowUnassignedDrawer(false)} />
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-3">
               {unassigned.map((emp) => (
                 <div
                   key={emp.id}
-                  className="flex items-center justify-between rounded-xl border border-divider p-3 hover:border-primary-main transition-colors"
+                  className="flex items-center justify-between rounded-lg bg-surface-neutral p-3"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div
@@ -1288,24 +1203,17 @@ export default function OrgChart() {
                       </p>
                     </div>
                   </div>
-                  <Link
-                    to={`/employees/${emp.id}/edit`}
-                    className="rounded-lg bg-surface-neutral hover:bg-primary-lighter hover:text-primary-main px-2.5 py-1 text-xs font-medium text-ink-primary transition-colors"
-                  >
+                  <ButtonLink to={`/employees/${emp.id}/edit`} variant="soft" color="inherit" size="small">
                     Assign Manager
-                  </Link>
+                  </ButtonLink>
                 </div>
               ))}
             </div>
 
             <div className="border-t border-divider p-4 bg-surface-neutral">
-              <button
-                type="button"
-                onClick={() => setShowUnassignedDrawer(false)}
-                className="w-full rounded-lg border border-divider bg-surface-paper py-2 text-xs font-medium text-ink-primary hover:bg-surface-neutral"
-              >
+              <Button variant="outlined" color="inherit" className="w-full" onClick={() => setShowUnassignedDrawer(false)}>
                 Close
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -1314,13 +1222,13 @@ export default function OrgChart() {
       {/* ─── Department Detail Slide-over Drawer (Shows Employees) ──────── */}
       {selectedDepartment && (
         <div className="fixed inset-0 z-50 overflow-hidden bg-grey-900/40 backdrop-blur-xs flex justify-end animate-fadeIn">
-          <div className="w-full max-w-md bg-surface-paper shadow-2xl h-full flex flex-col border-l border-divider">
+          <div className="w-full max-w-md bg-surface-paper shadow-dialog h-full flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-divider px-6 py-4 bg-surface-neutral">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center h-6 w-6 rounded-lg bg-primary-lighter text-primary-dark text-xs font-bold">
-                    🏢
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-primary-lighter text-primary-dark">
+                    <Iconify icon="departments" width={16} />
                   </span>
                   <h3 className="text-base font-bold text-ink-primary">{selectedDepartment.name} Department</h3>
                 </div>
@@ -1329,43 +1237,39 @@ export default function OrgChart() {
                   {selectedDepartment.head ? ` • Head: ${selectedDepartment.head.name}` : ''}
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => setSelectedDepartment(null)}
-                className="rounded-lg p-1.5 text-ink-disabled hover:bg-grey-200 hover:text-ink-secondary transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setSelectedDepartment(null)} />
             </div>
 
             {/* Body */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
               {selectedDepartment.description && (
-                <div className="p-3 bg-surface-neutral border border-divider rounded-xl text-xs text-ink-secondary">
+                <div className="rounded-card bg-surface-neutral p-3 text-xs text-ink-secondary">
                   {selectedDepartment.description}
                 </div>
               )}
 
               {/* Department Head Card if present */}
               {selectedDepartment.head && (
-                <div className="rounded-xl border border-error-light bg-error-lighter/60 p-3">
+                <div className="rounded-card bg-error-lighter/60 p-3">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-error-dark">Department Head</span>
                   <div className="flex items-center justify-between mt-1.5">
                     <div>
                       <p className="text-xs font-bold text-ink-primary">{selectedDepartment.head.name}</p>
                       <p className="text-[11px] text-ink-secondary">{selectedDepartment.head.designation || 'Department Head'}</p>
                     </div>
-                    <button
-                      type="button"
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      size="small"
                       onClick={() => {
                         setSelectedDepartment(null);
                         handleFocusEmployee(selectedDepartment.head!.id);
                         setViewMode('reporting');
                       }}
-                      className="rounded-lg bg-surface-paper border border-error-light px-2.5 py-1 text-xs font-bold text-error-dark hover:bg-error-lighter shadow-2xs"
+                      endIcon={<Iconify icon="external" />}
                     >
-                      Focus Tree ↗
-                    </button>
+                      Focus Tree
+                    </Button>
                   </div>
                 </div>
               )}
@@ -1374,13 +1278,14 @@ export default function OrgChart() {
                 <h4 className="text-xs font-bold uppercase tracking-wider text-ink-secondary">
                   Department Members ({selectedDepartment.employees?.length || 0})
                 </h4>
-                <button
-                  type="button"
+                <Button
+                  variant="text"
+                  size="small"
                   onClick={() => toggleDeptExpand(selectedDepartment.id)}
-                  className="text-xs text-primary-main hover:text-primary-dark font-semibold"
+                  startIcon={<Iconify icon={expandedDeptIds.has(selectedDepartment.id) ? 'chevron-up' : 'chevron-down'} />}
                 >
-                  {expandedDeptIds.has(selectedDepartment.id) ? '▲ Hide in Tree' : '▼ Branch in Tree'}
-                </button>
+                  {expandedDeptIds.has(selectedDepartment.id) ? 'Hide in Tree' : 'Branch in Tree'}
+                </Button>
               </div>
 
               {selectedDepartment.employees && selectedDepartment.employees.length > 0 ? (
@@ -1388,7 +1293,7 @@ export default function OrgChart() {
                   {selectedDepartment.employees.map((emp) => (
                     <div
                       key={emp.id}
-                      className="flex items-center justify-between p-3 rounded-xl border border-divider hover:border-primary-main transition-colors bg-surface-paper shadow-2xs"
+                      className="flex items-center justify-between rounded-lg bg-surface-neutral p-3"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         {emp.profile_picture ? (
@@ -1406,29 +1311,32 @@ export default function OrgChart() {
                       </div>
 
                       <div className="flex items-center gap-1.5 shrink-0">
-                        <button
-                          type="button"
+                        <Button
+                          variant="soft"
+                          color="secondary"
+                          size="small"
                           onClick={() => {
                             setSelectedDepartment(null);
                             handleFocusEmployee(emp.id);
                             setViewMode('reporting');
                           }}
-                          className="rounded-lg bg-secondary-lighter border border-secondary-light px-2 py-1 text-[11px] font-bold text-secondary-dark hover:bg-secondary-lighter transition-colors"
                           title="View reporting tree under this employee"
+                          endIcon={<Iconify icon="external" />}
                         >
-                          Focus ↗
-                        </button>
-                        <button
-                          type="button"
+                          Focus
+                        </Button>
+                        <Button
+                          variant="soft"
+                          color="inherit"
+                          size="small"
                           onClick={() => {
                             setSelectedDepartment(null);
                             setSelectedEmployee(emp);
                           }}
-                          className="rounded-lg bg-surface-neutral hover:bg-grey-200 px-2 py-1 text-[11px] font-medium text-ink-primary transition-colors"
                           title="View quick details"
                         >
                           Details
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   ))}
@@ -1442,13 +1350,9 @@ export default function OrgChart() {
 
             {/* Footer */}
             <div className="border-t border-divider p-4 bg-surface-neutral flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setSelectedDepartment(null)}
-                className="w-full rounded-lg border border-divider bg-surface-paper py-2 text-xs font-medium text-ink-primary hover:bg-surface-neutral"
-              >
+              <Button variant="outlined" color="inherit" className="w-full" onClick={() => setSelectedDepartment(null)}>
                 Close
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -1457,65 +1361,57 @@ export default function OrgChart() {
       {/* ─── Employee Picker Modal ────────────────────────────────────── */}
       {showEmployeePicker && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-grey-900/50 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
-          <div className="w-full max-w-lg rounded-2xl bg-surface-paper shadow-2xl border border-divider overflow-hidden flex flex-col max-h-[85vh]">
+          <div className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-card bg-surface-paper shadow-dialog">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-divider px-6 py-4 bg-surface-neutral">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-lighter text-primary-main">
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
+                  <Iconify icon="user" width={20} />
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-ink-primary">Select Specific Employee</h3>
                   <p className="text-xs text-ink-secondary">Pick any employee to view their reporting tree.</p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowEmployeePicker(false)}
-                className="rounded-lg p-1.5 text-ink-disabled hover:bg-grey-200 hover:text-ink-secondary"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setShowEmployeePicker(false)} />
             </div>
 
             {/* Search Input & Reset Button */}
             <div className="p-4 border-b border-divider space-y-3">
               <div className="relative">
-                <input
+                <Iconify icon="search" width={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-disabled" />
+                <Input
                   type="text"
                   autoFocus
                   value={pickerSearch}
                   onChange={(e) => setPickerSearch(e.target.value)}
                   placeholder="Search by employee name, designation, department, or ID..."
-                  className="w-full rounded-xl border border-divider py-2 pl-9 pr-4 text-xs text-ink-primary placeholder-ink-disabled focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main shadow-2xs"
+                  aria-label="Search employees"
+                  className="pl-9 pr-9"
                 />
-                <svg className="absolute left-3 top-2.5 h-4 w-4 text-ink-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
                 {pickerSearch && (
-                  <button
-                    type="button"
+                  <IconButton
+                    icon="close"
+                    size="small"
+                    aria-label="Clear search"
                     onClick={() => setPickerSearch('')}
-                    className="absolute right-3 top-2 text-xs text-ink-disabled hover:text-ink-secondary"
-                  >
-                    ✕
-                  </button>
+                    className="absolute right-1 top-1/2 -translate-y-1/2"
+                  />
                 )}
               </div>
 
               {focusedEmployeeId && (
-                <button
-                  type="button"
+                <Button
+                  variant="soft"
+                  className="w-full"
                   onClick={() => {
                     handleFocusEmployee(null);
                     setShowEmployeePicker(false);
                   }}
-                  className="w-full py-2 px-3 text-xs font-semibold text-primary-dark bg-primary-lighter border border-primary-light rounded-xl hover:bg-primary-lighter transition-colors flex items-center justify-center gap-1.5"
+                  startIcon={<Iconify icon="refresh" />}
                 >
-                  <span>🔄 Reset to View Entire Company</span>
-                </button>
+                  Reset to View Entire Company
+                </Button>
               )}
             </div>
 
@@ -1536,9 +1432,9 @@ export default function OrgChart() {
                         setViewMode('reporting');
                         setShowEmployeePicker(false);
                       }}
-                      className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${isCurrent
-                        ? 'border-primary-main bg-primary-lighter/60 ring-1 ring-primary-main'
-                        : 'border-divider hover:border-primary-light hover:bg-surface-neutral'
+                      className={`flex cursor-pointer items-center justify-between rounded-lg p-3 transition-all ${isCurrent
+                        ? 'bg-primary-lighter/60 ring-1 ring-primary-main'
+                        : 'bg-surface-neutral hover:bg-grey-500/10'
                         }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
@@ -1560,13 +1456,13 @@ export default function OrgChart() {
 
                       <div className="flex items-center gap-2 shrink-0">
                         {emp.direct_reports_count > 0 ? (
-                          <span className="rounded-full bg-success-lighter px-2.5 py-0.5 text-[10px] font-bold text-success-dark border border-success-light">
+                          <span className="rounded-full bg-success-lighter px-2.5 py-0.5 text-[10px] font-bold text-success-dark">
                             {emp.direct_reports_count} {emp.direct_reports_count === 1 ? 'Report' : 'Reports'}
                           </span>
                         ) : (
                           <span className="text-[10px] text-ink-disabled">Individual</span>
                         )}
-                        <span className="text-primary-main text-xs font-bold">&rarr;</span>
+                        <Iconify icon="arrow-right" width={16} className="text-primary-main" />
                       </div>
                     </div>
                   );
@@ -1577,17 +1473,13 @@ export default function OrgChart() {
             {/* Modal Footer */}
             <div className="border-t border-divider px-6 py-3 bg-surface-neutral flex items-center justify-between text-xs text-ink-secondary">
               <span>Showing {filteredPickerEmployees.length} of {allEmployees.length} employees</span>
-              <button
-                type="button"
-                onClick={() => setShowEmployeePicker(false)}
-                className="rounded-lg border border-divider bg-surface-paper px-3 py-1.5 font-medium text-ink-primary hover:bg-surface-neutral"
-              >
+              <Button variant="outlined" color="inherit" size="small" onClick={() => setShowEmployeePicker(false)}>
                 Cancel
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }

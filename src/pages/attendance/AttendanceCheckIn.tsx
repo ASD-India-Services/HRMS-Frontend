@@ -2,6 +2,8 @@ import { useAttendanceToday } from '@/hooks/useAttendance'
 import { CheckInButton } from './components/CheckInButton'
 import { AttendanceStatus } from './components/AttendanceStatus'
 import { CardSkeleton, ErrorState } from '@/components/Skeleton'
+import { PageContainer } from '@/components/ui/PageContainer'
+import { PageHeader } from '@/components/ui/PageHeader'
 
 /**
  * Attendance Check-In/Check-Out page.
@@ -17,14 +19,9 @@ export function AttendanceCheckIn() {
   const { data: record, isLoading, error, refetch } = useAttendanceToday()
 
   return (
-    <div>
-      {/* Page heading */}
-      <h1 className="text-2xl font-semibold text-ink-primary">Attendance</h1>
-      <p className="mt-1 text-sm text-ink-secondary">
-        Mark your daily attendance with location verification
-      </p>
-
-      <div className="mt-6 max-w-lg space-y-8">
+    <PageContainer>
+      <PageHeader title="Attendance" subtitle="Mark your daily attendance with location verification" />
+      <div className="max-w-lg space-y-8">
         {/* Loading state */}
         {isLoading && <CardSkeleton count={1} />}
 
@@ -47,6 +44,6 @@ export function AttendanceCheckIn() {
           </section>
         )}
       </div>
-    </div>
+    </PageContainer>
   )
 }

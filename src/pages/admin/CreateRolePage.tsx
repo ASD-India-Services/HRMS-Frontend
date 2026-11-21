@@ -10,7 +10,7 @@
  */
 
 import { useState, useMemo, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import {
@@ -18,9 +18,13 @@ import {
   type PermissionItem,
   type PermissionSection,
 } from './PermissionSectionsGrid';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -49,7 +53,7 @@ function PermissionGridSkeleton() {
       {Array.from({ length: 4 }).map((_, groupIdx) => (
         <div
           key={groupIdx}
-          className="rounded-lg border border-divider bg-surface-paper p-4"
+          className="rounded-card bg-surface-paper p-4 shadow-card"
         >
           <div className="mb-3 flex items-center gap-3">
             <div className="h-5 w-32 animate-pulse rounded bg-grey-200" />
@@ -168,70 +172,54 @@ export default function CreateRolePage() {
 
   if (permsLoading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <PageContainer>
         <div className="mb-4 h-4 w-28 animate-pulse rounded bg-grey-200" />
         <div className="mb-2 h-7 w-48 animate-pulse rounded bg-grey-200" />
         <div className="mb-6 h-4 w-64 animate-pulse rounded bg-grey-200" />
         <PermissionGridSkeleton />
-      </div>
+      </PageContainer>
     );
   }
 
   if (permsError) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <Link
-          to="/admin/roles"
-          className="mb-4 inline-flex items-center text-sm text-primary-main hover:text-primary-dark"
-        >
-          <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+      <PageContainer>
+        <ButtonLink to="/admin/roles" variant="text" color="inherit" size="small" className="mb-4 -ml-2.5" startIcon={<Iconify icon="arrow-left" />}>
           Back to Roles
-        </Link>
-        <div className="rounded-md bg-error-lighter p-4">
+        </ButtonLink>
+        <div className="rounded-card bg-error-lighter p-4">
           <p className="text-sm text-error-dark">Failed to load permissions. Please try again.</p>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
   if (!allPermissions) return null;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <PageContainer>
       {/* Back link */}
-      <Link
-        to="/admin/roles"
-        className="mb-4 inline-flex items-center text-sm text-primary-main hover:text-primary-dark"
-      >
-        <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
+      <ButtonLink to="/admin/roles" variant="text" color="inherit" size="small" className="mb-4 -ml-2.5" startIcon={<Iconify icon="arrow-left" />}>
         Back to Roles
-      </Link>
+      </ButtonLink>
 
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">Create Role</h1>
-        <p className="mt-1 text-sm text-ink-secondary">
-          Define a new role, set its data access scope, and configure permissions.
-        </p>
-      </div>
+      <PageHeader
+        title="Create Role"
+        subtitle="Define a new role, set its data access scope, and configure permissions."
+      />
 
       {/* Error notification */}
       {submitError && (
-        <div className="mb-6 flex items-center gap-2 rounded-md border border-error-light bg-error-lighter p-4">
-          <svg className="h-5 w-5 flex-shrink-0 text-error-main" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m9.303 3.376c-.866 1.5-.217 3.374-1.948 3.374H4.645c-1.73 0-2.813-1.874-1.948-3.374L10.051 3.378c.866-1.5 3.032-1.5 3.898 0l7.354 12.748ZM12 15.75h.007v.008H12v-.008Z" />
-          </svg>
+        <div className="mb-6 flex items-center gap-2 rounded-card bg-error-lighter p-4">
+          <Iconify icon="warning" width={20} className="shrink-0 text-error-main" />
           <p className="text-sm text-error-dark">{submitError}</p>
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
         {/* Name & Description Fields */}
-        <div className="mb-6 space-y-4 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+        <Card className="mb-6 space-y-4 p-6">
           <div>
             <label htmlFor="role-name" className="block text-sm font-medium text-ink-primary">
               Role Name <span className="text-error-main">*</span>
@@ -259,12 +247,12 @@ export default function CreateRolePage() {
               className="mt-1"
             />
           </div>
-        </div>
+        </Card>
 
         {/* Data Scope Selection Box */}
-        <div className="mb-8 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+        <Card className="mb-8 p-6">
           <div className="mb-3">
-            <h2 className="text-base font-semibold text-ink-primary">Data Access Scope</h2>
+            <h2 className="text-lg font-semibold text-ink-primary">Data Access Scope</h2>
             <p className="text-sm text-ink-secondary">
               Define what employee data and records this role can view, edit, and approve.
             </p>
@@ -373,11 +361,11 @@ export default function CreateRolePage() {
               </p>
             </label>
           </div>
-        </div>
+        </Card>
 
         {/* Permission Grid */}
         <div className="mb-8 space-y-4">
-          <h2 className="text-base font-semibold text-ink-primary">Module Permissions</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Module Permissions</h2>
           <PermissionSectionsGrid
             sections={sections}
             selectedIds={selectedIds}
@@ -404,6 +392,6 @@ export default function CreateRolePage() {
           </Button>
         </div>
       </form>
-    </div>
+    </PageContainer>
   );
 }

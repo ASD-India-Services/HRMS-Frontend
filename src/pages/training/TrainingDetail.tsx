@@ -8,6 +8,10 @@ import { useTrainingEvent, useEnrollInEvent, useCompleteEnrollment } from '@/hoo
 import type { TrainingEventStatus, EnrollmentStatus } from '@/types/training';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 const STATUS_BADGES: Record<string, { label: string; className: string }> = {
   draft: { label: 'Draft', className: 'bg-surface-neutral text-ink-primary' },
@@ -84,20 +88,22 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <PageContainer className="flex items-center justify-center py-12">
         <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-main border-t-transparent" />
         <span className="ml-3 text-sm text-ink-secondary">Loading event details...</span>
-      </div>
+      </PageContainer>
     );
   }
 
   if (isError) {
     return (
-      <div className="rounded-md bg-error-lighter p-4" role="alert">
-        <p className="text-sm text-error-dark">
-          Failed to load event. {error instanceof Error ? error.message : 'Please try again.'}
-        </p>
-      </div>
+      <PageContainer>
+        <div className="rounded-card bg-error-lighter p-4" role="alert">
+          <p className="text-sm text-error-dark">
+            Failed to load event. {error instanceof Error ? error.message : 'Please try again.'}
+          </p>
+        </div>
+      </PageContainer>
     );
   }
 
@@ -111,33 +117,25 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
   const canComplete = myEnrollment?.status === 'enrolled' && event.status !== 'cancelled';
 
   return (
-    <div>
-      {/* Back button */}
-      {onBack && (
-        <button
-          onClick={onBack}
-          className="mb-4 inline-flex items-center gap-1 text-sm text-ink-secondary hover:text-ink-primary focus:outline-none focus:underline"
-        >
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to Events
-        </button>
-      )}
-
-      {/* Event header */}
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <h2 className="text-xl font-semibold text-ink-primary">{event.name}</h2>
-          <p className="mt-1 text-sm text-ink-secondary capitalize">{event.event_type || event.type || '—'}</p>
-        </div>
-        <span className={`rounded-full px-3 py-1 text-xs font-medium ${badge.className}`}>
-          {badge.label}
-        </span>
-      </div>
-
+    <PageContainer>
+      <PageHeader
+        breadcrumb={
+          onBack && (
+            <Button variant="text" color="inherit" size="small" className="-ml-2.5" onClick={onBack} startIcon={<Iconify icon="arrow-left" />}>
+              Back to Events
+            </Button>
+          )
+        }
+        title={event.name}
+        subtitle={<span className="capitalize">{event.event_type || event.type || '—'}</span>}
+        actions={
+          <span className={`rounded-full px-3 py-1 text-xs font-medium ${badge.className}`}>
+            {badge.label}
+          </span>
+        }
+      />
       {/* Event details card */}
-      <div className="mb-6 rounded-lg border border-divider bg-surface-paper p-5 shadow-sm">
+      <Card className="mb-6 p-6">
         <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wider text-ink-secondary">Trainer</dt>
@@ -191,11 +189,11 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
             </ul>
           </div>
         )}
-      </div>
-
+      </Card>
       {/* Enrollment status / action */}
-      <div className="mb-6 rounded-lg border border-divider bg-surface-paper p-5 shadow-sm">
-        <h3 className="mb-3 text-sm font-semibold text-ink-primary">My Enrollment</h3>
+      <Card className="mb-6">
+        <CardHeader title="My Enrollment" className="pb-4" />
+        <CardContent className="pt-0">
 
         {myEnrollment ? (
           <div className="space-y-3">
@@ -215,7 +213,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
 
             {/* Completed feedback display */}
             {myEnrollment.status === 'completed' && myEnrollment.feedback_score !== null && (
-              <div className="rounded-md bg-success-lighter p-3">
+              <div className="rounded-lg bg-success-lighter p-3">
                 <p className="text-sm text-success-dark">
                   <span className="font-medium">Rating:</span> {myEnrollment.feedback_score}/5
                 </p>
@@ -227,17 +225,14 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
 
             {/* Complete with feedback */}
             {canComplete && !showFeedbackForm && (
-              <button
-                onClick={() => setShowFeedbackForm(true)}
-                className="rounded-md bg-success-main px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-success-dark focus:outline-none focus:ring-2 focus:ring-success-main focus:ring-offset-1"
-              >
+              <Button color="success" onClick={() => setShowFeedbackForm(true)}>
                 Mark as Completed
-              </button>
+              </Button>
             )}
 
             {/* Feedback form */}
             {showFeedbackForm && (
-              <div className="space-y-3 rounded-md border border-divider bg-surface-neutral p-4">
+              <div className="space-y-3 rounded-lg bg-surface-neutral p-4">
                 <h4 className="text-sm font-medium text-ink-primary">Completion Feedback</h4>
 
                 <div>
@@ -274,14 +269,14 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
                 </div>
 
                 <div className="flex gap-2">
-                  <button
+                  <Button
+                    color="success"
                     onClick={handleComplete}
                     disabled={completeMutation.isPending}
-                    className="rounded-md bg-success-main px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-success-dark focus:outline-none focus:ring-2 focus:ring-success-main focus:ring-offset-1 disabled:opacity-50"
                   >
                     {completeMutation.isPending ? 'Submitting...' : 'Submit & Complete'}
-                  </button>
-                  <Button type="button" variant="outlined" color="inherit"
+                  </Button>
+                  <Button variant="outlined" color="inherit"
                     onClick={() => setShowFeedbackForm(false)}
                   >
                     Cancel
@@ -294,7 +289,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
           <div className="flex items-center gap-3">
             <p className="text-sm text-ink-secondary">You are not enrolled in this event.</p>
             {canEnroll && (
-              <Button type="button"
+              <Button
                 onClick={handleEnroll}
                 disabled={enrollMutation.isPending}
                 aria-label={`Enroll in ${event.name}`}
@@ -307,15 +302,14 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
             )}
           </div>
         )}
-      </div>
-
+        </CardContent>
+      </Card>
       {/* Enrollments list */}
       {Array.isArray(event.enrollments) && event.enrollments.length > 0 && (
-        <div className="rounded-lg border border-divider bg-surface-paper p-5 shadow-sm">
-          <h3 className="mb-3 text-sm font-semibold text-ink-primary">
-            Participants ({event.enrollments.length})
-          </h3>
-          <div className="overflow-hidden rounded-md border border-divider">
+        <Card>
+          <CardHeader title={`Participants (${event.enrollments.length})`} className="pb-4" />
+          <CardContent className="pt-0">
+          <div className="overflow-hidden rounded-lg">
             <table className="min-w-full divide-y divide-divider">
               <thead className="bg-surface-neutral">
                 <tr>
@@ -350,8 +344,9 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
               </tbody>
             </table>
           </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }

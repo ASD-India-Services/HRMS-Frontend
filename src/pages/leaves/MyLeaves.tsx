@@ -18,7 +18,12 @@ import api from '@/lib/api';
 import type { LeaveApplicationStatus } from '@/types/leave';
 import { formatDate } from '@/utils/formatters';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Tabs } from '@/components/ui/Tabs';
+import { Iconify } from '@/components/Iconify';
 
 const STATUS_TABS: { label: string; value: LeaveApplicationStatus | '' }[] = [
   { label: 'All', value: '' },
@@ -73,33 +78,23 @@ function MyLeavesContent() {
   const [cancelId, setCancelId] = useState<string | null>(null);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      {/* Header */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">My Leaves</h1>
-          <p className="mt-1 text-sm text-ink-secondary">
-            View your leave balances, track request statuses, and apply for leaves.
-          </p>
-        </div>
-        <Button
-          type="button"
-          onClick={() => setIsApplyModalOpen(true)}
-        >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          Apply for Leave
-        </Button>
-      </div>
-
+    <PageContainer>
+      <PageHeader
+        title="My Leaves"
+        subtitle="View your leave balances, track request statuses, and apply for leaves."
+        actions={
+          <Button onClick={() => setIsApplyModalOpen(true)} startIcon={<Iconify icon="plus" />}>
+            Apply for Leave
+          </Button>
+        }
+      />
       {/* Leave Balances Section */}
       <section className="mb-8" aria-label="My Leave Balances">
         <h2 className="mb-3 text-sm font-semibold text-ink-primary uppercase tracking-wider">Leave Balances</h2>
         {balancesLoading ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-28 animate-pulse rounded-lg bg-surface-neutral" />
+              <div key={i} className="h-28 animate-pulse rounded-card bg-surface-neutral" />
             ))}
           </div>
         ) : balances && balances.length > 0 ? (
@@ -109,41 +104,25 @@ function MyLeavesContent() {
             ))}
           </div>
         ) : (
-          <div className="rounded-lg border border-dashed border-divider p-4 text-center text-sm text-ink-secondary">
-            No leave balance information available for the current period.
-          </div>
+          <Card>
+            <EmptyState module="leaves" title="No leave balances" description="No leave balance information available for the current period." />
+          </Card>
         )}
       </section>
 
       {/* History Section Header & Tabs */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-ink-primary">My Leave Applications</h2>
-      </div>
+      <h2 className="mb-4 text-lg font-semibold text-ink-primary">My Leave Applications</h2>
 
       {/* Status Filter Tabs */}
-      <div className="mb-4 border-b border-divider" role="tablist" aria-label="Filter applications by status">
-        <nav className="-mb-px flex gap-4">
-          {STATUS_TABS.map((tab) => (
-            <button
-              key={tab.value}
-              role="tab"
-              aria-selected={activeStatus === tab.value}
-              onClick={() => {
-                setActiveStatus(tab.value);
-                setPage(1);
-              }}
-              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-                activeStatus === tab.value
-                  ? 'border-primary-main text-primary-main'
-                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-      </div>
-
+      <Tabs
+        aria-label="Filter applications by status"
+        items={STATUS_TABS}
+        value={activeStatus}
+        onChange={(value) => {
+          setActiveStatus(value);
+          setPage(1);
+        }}
+      />
       {/* Applications Table */}
       {isLoading ? (
         <TableSkeleton columns={7} rows={5} />
@@ -151,7 +130,7 @@ function MyLeavesContent() {
         <ErrorState onRetry={refetch} />
       ) : data && data.results.length > 0 ? (
         <>
-          <div className="overflow-hidden rounded-lg border border-divider bg-surface-paper shadow-sm">
+          <Card className="overflow-hidden">
             <table className="min-w-full divide-y divide-divider">
               <thead className="bg-surface-neutral">
                 <tr>
@@ -198,13 +177,15 @@ function MyLeavesContent() {
                         const canCancel = !hasStarted && (application.status === 'pending' || application.status === 'approved');
                         if (canCancel) {
                           return (
-                            <button
+                            <Button
+                              variant="text"
+                              color="error"
+                              size="small"
                               onClick={() => setCancelId(application.id)}
-                              className="rounded px-2.5 py-1 text-xs font-medium text-error-main hover:bg-error-lighter border border-error-light transition-colors"
                               disabled={cancelLeave.isPending}
                             >
                               Cancel
-                            </button>
+                            </Button>
                           );
                         }
                         if (hasStarted && (application.status === 'approved' || application.status === 'pending')) {
@@ -217,21 +198,20 @@ function MyLeavesContent() {
                 ))}
               </tbody>
             </table>
-          </div>
-
+          </Card>
           {/* Pagination */}
           <div className="mt-4 flex items-center justify-between">
             <p className="text-sm text-ink-secondary">
               Showing {data.results.length} of {data.count} applications
             </p>
             <div className="flex gap-2">
-              <Button type="button" variant="outlined" color="inherit"
+              <Button variant="outlined" color="inherit"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!data.previous}
               >
                 Previous
               </Button>
-              <Button type="button" variant="outlined" color="inherit"
+              <Button variant="outlined" color="inherit"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data.next}
               >
@@ -252,17 +232,9 @@ function MyLeavesContent() {
       {isApplyModalOpen && (
         <Modal open onClose={() => setIsApplyModalOpen(false)} labelledBy="MyLeaves-modal-title-1" size="lg" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
-            <div className="mb-4 flex items-center justify-between border-b pb-3">
+            <div className="mb-4 flex items-center justify-between border-b border-divider pb-3">
               <h2 id="MyLeaves-modal-title-1" className="text-xl font-bold text-ink-primary">Apply for Leave</h2>
-              <button
-                type="button"
-                onClick={() => setIsApplyModalOpen(false)}
-                className="rounded-lg p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary"
-              >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setIsApplyModalOpen(false)} />
             </div>
 
             <LeaveApply
@@ -294,6 +266,6 @@ function MyLeavesContent() {
         variant="destructive"
         isLoading={cancelLeave.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

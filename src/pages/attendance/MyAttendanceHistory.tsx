@@ -7,6 +7,12 @@ import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { StatCard } from '@/components/ui/StatCard';
+import { EmptyState } from '@/components/EmptyState';
+import { Iconify } from '@/components/Iconify';
 
 export default function MyAttendanceHistory() {
   const [monthOffset, setMonthOffset] = useState(0);
@@ -57,69 +63,47 @@ export default function MyAttendanceHistory() {
   }, 0);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">My Attendance</h1>
-        <p className="mt-1 text-sm text-ink-secondary">View your attendance history by month</p>
-      </div>
+    <PageContainer maxWidth="lg">
+      <PageHeader title="My Attendance" subtitle="View your attendance history by month" />
 
       {/* Month Navigation */}
       <div className="flex items-center justify-between mb-6">
-        <Button type="button" variant="outlined" color="inherit"
+        <Button variant="outlined" color="inherit"
           onClick={() => setMonthOffset(o => o - 1)}
+          startIcon={<Iconify icon="arrow-left" />}
         >
-          <svg className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
           Prev
         </Button>
         <h2 className="text-lg font-semibold text-ink-primary">{monthLabel}</h2>
-        <Button type="button" variant="outlined" color="inherit"
+        <Button variant="outlined" color="inherit"
           onClick={() => setMonthOffset(o => o + 1)}
           disabled={monthOffset >= 0}
+          endIcon={<Iconify icon="arrow-right" />}
         >
           Next
-          <svg className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-5 gap-4 mb-6">
-        <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
-          <p className="text-2xl font-bold text-secondary-main">{presentDays}</p>
-          <p className="text-xs text-ink-secondary mt-1">Present</p>
-        </div>
-        <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
-          <p className="text-2xl font-bold text-error-main">{absentDays}</p>
-          <p className="text-xs text-ink-secondary mt-1">Absent</p>
-        </div>
-        <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
-          <p className="text-2xl font-bold text-primary-main">{onLeaveDays}</p>
-          <p className="text-xs text-ink-secondary mt-1">On Leave</p>
-        </div>
-        <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
-          <p className="text-2xl font-bold text-warning-main">{lateDays}</p>
-          <p className="text-xs text-ink-secondary mt-1">Late</p>
-        </div>
-        <div className="rounded-lg border border-divider bg-surface-paper p-4 text-center">
-          <p className="text-2xl font-bold text-success-main">{totalHours.toFixed(1)}h</p>
-          <p className="text-xs text-ink-secondary mt-1">Hours</p>
-        </div>
+      <div className="mb-6 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
+        <StatCard title="Present" value={presentDays} icon="success" />
+        <StatCard title="Absent" value={absentDays} icon="error" />
+        <StatCard title="On Leave" value={onLeaveDays} icon="leaves" />
+        <StatCard title="Late" value={lateDays} icon="warning" />
+        <StatCard title="Hours" value={`${totalHours.toFixed(1)}h`} icon="attendance" />
       </div>
 
       {/* Table */}
       {isLoading ? (
         <div className="flex justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-secondary-light border-t-indigo-600" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-light border-t-primary-main" />
         </div>
       ) : records.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-ink-secondary">No attendance records for this month</p>
-        </div>
+        <Card>
+          <EmptyState module="attendance" title="No attendance records" description="No attendance records for this month" />
+        </Card>
       ) : (
-        <div className="overflow-x-auto border border-divider rounded-lg">
+        <Card className="overflow-x-auto">
           <table className="min-w-full divide-y divide-divider">
             <thead className="bg-surface-neutral">
               <tr>
@@ -148,16 +132,16 @@ export default function MyAttendanceHistory() {
                       <div className="flex items-center gap-1.5">
                         <span>{formatHours(r.working_hours, r.check_in, r.check_out)}</span>
                         {sessionCount > 1 && (
-                          <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-secondary-lighter text-secondary-dark border border-secondary-lighter">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-secondary-lighter text-secondary-dark">
                             {sessionCount} sessions
                           </span>
                         )}
                         {hasAuto && (
                           <span
                             title="Contains auto check-out session"
-                            className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-warning-lighter text-warning-dark border border-warning-light"
+                            className="inline-flex items-center px-1.5 gap-0.5 py-0.5 rounded text-[10px] font-semibold bg-warning-lighter text-warning-dark"
                           >
-                            ⚡ Auto
+                            <Iconify icon="refresh" width={12} /> Auto
                           </span>
                         )}
                       </div>
@@ -180,9 +164,9 @@ export default function MyAttendanceHistory() {
               })}
             </tbody>
           </table>
-        </div>
+        </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

@@ -2,6 +2,7 @@
  * StatCard — neutral summary card: title, large value, optional trend and a single tinted icon badge.
  * Renders as a react-router Link when `href` is given.
  */
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Iconify, type IconName } from '@/components/Iconify';
 import { Card } from '../Card';
@@ -17,6 +18,8 @@ export interface StatCardProps {
   value: number | string | null;
   icon?: IconName;
   trend?: StatTrend;
+  /** Small supporting text under the value. */
+  caption?: ReactNode;
   href?: string;
   isLoading?: boolean;
   className?: string;
@@ -50,7 +53,7 @@ function StatCardSkeleton({ className }: { className?: string }) {
   );
 }
 
-export function StatCard({ title, value, icon, trend, href, isLoading, className }: StatCardProps) {
+export function StatCard({ title, value, icon, trend, caption, href, isLoading, className }: StatCardProps) {
   if (isLoading) return <StatCardSkeleton className={className} />;
 
   const body = (
@@ -63,6 +66,7 @@ export function StatCard({ title, value, icon, trend, href, isLoading, className
             <Trend {...trend} />
           </div>
         )}
+        {caption && <p className="mt-1 text-xs text-ink-secondary">{caption}</p>}
       </div>
       {icon && (
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary-main/10 text-primary-main">

@@ -86,6 +86,7 @@ import {
   mapPointDuotone,
   medalRibbonStarDuotone,
   menuDotsLinear,
+  minusLinear,
   minimizeLinear,
   moneyBagDuotone,
   notebookBookmarkDuotone,
@@ -262,6 +263,7 @@ const ICONS = {
   'row-below': listDownLinear,
   'row-above': listUpLinear,
   home: homeLinear,
+  minus: minusLinear,
 } as const;
 
 export type IconName = keyof typeof ICONS;

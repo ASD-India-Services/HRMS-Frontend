@@ -8,6 +8,8 @@ import { useState, useMemo } from 'react';
 import { useShiftAssignments } from '@/hooks/useShifts';
 import { ShiftCard } from './components/ShiftCard';
 import type { ShiftAssignment } from '@/types/shift';
+import { Card } from '@/components/ui/Card';
+import { WeekNavigator } from './components/WeekNavigator';
 
 /** Get the Monday of the week containing a given date. */
 function getWeekStart(date: Date): Date {
@@ -96,26 +98,11 @@ export function ShiftSchedule() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => navigateWeek(-1)}
-            className="rounded-md border border-divider px-3 py-1.5 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
-            aria-label="Previous week"
-          >
-            ← Prev
-          </button>
-          <button
-            onClick={goToCurrentWeek}
-            className="rounded-md bg-primary-lighter px-3 py-1.5 text-sm font-medium text-primary-dark hover:bg-primary-lighter"
-          >
-            Today
-          </button>
-          <button
-            onClick={() => navigateWeek(1)}
-            className="rounded-md border border-divider px-3 py-1.5 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
-            aria-label="Next week"
-          >
-            Next →
-          </button>
+          <WeekNavigator
+            onPrevious={() => navigateWeek(-1)}
+            onToday={goToCurrentWeek}
+            onNext={() => navigateWeek(1)}
+          />
         </div>
       </div>
 
@@ -126,11 +113,11 @@ export function ShiftSchedule() {
             <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-main border-t-transparent" />
           </div>
         ) : isForbidden ? (
-          <div className="rounded-lg border border-divider bg-surface-paper p-8 text-center text-sm text-ink-secondary">
+          <Card className="p-8 text-center text-sm text-ink-secondary">
             You don&apos;t have permission to view your shift schedule.
-          </div>
+          </Card>
         ) : isError ? (
-          <div className="rounded-lg border border-error-light bg-error-lighter p-4 text-center text-sm text-error-dark">
+          <div className="rounded-card bg-error-lighter p-4 text-center text-sm text-error-dark">
             Failed to load shift schedule. Please try again later.
           </div>
         ) : (
@@ -165,8 +152,8 @@ export function ShiftSchedule() {
               return (
                 <div
                   key={`cell-${dateStr}`}
-                  className={`min-h-[100px] rounded-b-lg border p-1.5 ${
-                    isToday ? 'border-primary-light bg-primary-lighter/30' : 'border-divider bg-surface-paper'
+                  className={`min-h-[100px] rounded-b-lg p-1.5 ${
+                    isToday ? 'bg-primary-lighter/30' : 'bg-surface-neutral'
                   }`}
                 >
                   {dayAssignments.length === 0 ? (
@@ -191,8 +178,8 @@ export function ShiftSchedule() {
 
       {/* Shift legend */}
       {assignments.length > 0 && (
-        <div className="mt-6 rounded-lg border border-divider bg-surface-paper p-4">
-          <h3 className="text-sm font-medium text-ink-primary">Active Shifts This Week</h3>
+        <Card className="mt-6 p-6">
+          <h3 className="text-lg font-semibold text-ink-primary">Active Shifts This Week</h3>
           <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {/* Deduplicate by shift type ID */}
             {Array.from(
@@ -201,7 +188,7 @@ export function ShiftSchedule() {
               <ShiftCard key={shiftType.id} shiftType={shiftType} />
             ))}
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );

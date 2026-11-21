@@ -1,5 +1,3 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   AreaChart,
@@ -13,6 +11,14 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { ButtonLink } from '@/components/ui/Button';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { StatCard } from '@/components/ui/StatCard';
+import { ChartCard, ChartTooltip, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
+import { EmptyState } from '@/components/EmptyState';
+import { Iconify } from '@/components/Iconify';
 import api from '@/lib/api';
 import { ATTENDANCE } from '@/lib/endpoints';
 
@@ -106,272 +112,188 @@ export default function AttendanceDashboard() {
 
   const recentRecords = records.slice(0, 6);
 
+  const theme = getChartTheme();
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Attendance Dashboard</h1>
-          <p className="mt-1 text-sm text-ink-secondary">
-            Workforce attendance tracking, punctuality metrics, and daily working hours overview.
-          </p>
+    <PageContainer>
+      <PageHeader
+        title="Attendance Dashboard"
+        subtitle="Workforce attendance tracking, punctuality metrics, and daily working hours overview."
+        actions={
+          <>
+            <ButtonLink to="/attendance/hour-account" variant="outlined" color="inherit" startIcon={<Iconify icon="attendance" />}>
+              Hour Account
+            </ButtonLink>
+            <ButtonLink to="/attendance/work-records" startIcon={<Iconify icon="attendanceRegister" />}>
+              Work Records
+            </ButtonLink>
+          </>
+        }
+      />
+      <div className="space-y-6">
+        {/* Metric Cards */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="Attendance Rate"
+            value={`${attendanceRate}%`}
+            icon="success"
+            isLoading={todayLoading}
+            caption={`${presentCount} of ${totalEmployees} employees present`}
+          />
+          <StatCard
+            title="Present Today"
+            value={presentCount}
+            icon="employees"
+            href="/attendance-register"
+            isLoading={todayLoading}
+            caption="Checked-in · Open attendance register"
+          />
+          <StatCard
+            title="Late Arrivals"
+            value={lateCount}
+            icon="attendance"
+            isLoading={todayLoading}
+            caption="After grace period"
+          />
+          <StatCard
+            title="On Leave / Absent"
+            value={onLeaveCount + absentCount}
+            icon="leaves"
+            href="/leaves/approvals"
+            isLoading={todayLoading}
+            caption={`${onLeaveCount} on approved leave · Check leave records`}
+          />
         </div>
-        <div className="flex items-center gap-3">
-          <Link
-            to="/attendance/hour-account"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md border border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral shadow-sm transition-colors"
+
+        {/* Visual Charts */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {/* Weekly Attendance Trend */}
+          <ChartCard
+            title="7-Day Attendance Trend"
+            subtitle="Daily present employee volume over the past week"
+            isLoading={trendLoading}
+            isEmpty={chartTrend.length === 0}
           >
-            <svg className="w-4 h-4 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Hour Account
-          </Link>
-          <Link
-            to="/attendance/work-records"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-primary-contrast bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartTrend}>
+                <defs>
+                  <linearGradient id="attendGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="rgb(var(--info-main))" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="rgb(var(--info-main))" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid {...theme.grid} />
+                <XAxis dataKey="label" tick={theme.tick} {...AXIS_PROPS} />
+                <YAxis allowDecimals={false} tick={theme.tick} {...AXIS_PROPS} />
+                <Tooltip content={<ChartTooltip />} cursor={theme.cursor} />
+                <Area type="monotone" dataKey="value" name="Employees" stroke="rgb(var(--info-main))" strokeWidth={2} fillOpacity={1} fill="url(#attendGrad)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </ChartCard>
+
+          {/* Status Distribution */}
+          <ChartCard
+            title="Today's Attendance Breakdown"
+            subtitle={`Distribution of present, late, on-leave and absent · ${totalEmployees} total`}
+            isEmpty={statusPieData.length === 0}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            Work Records
-          </Link>
-        </div>
-      </div>
-
-      {/* Metric Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Attendance Rate */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-              Attendance Rate
-            </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success-lighter text-success-main">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl font-bold text-ink-primary">{todayLoading ? '...' : `${attendanceRate}%`}</span>
-            <span className="ml-2 text-xs text-success-main font-medium">overall workforce</span>
-          </div>
-          <div className="mt-2 text-xs text-ink-secondary">
-            {presentCount} of {totalEmployees} employees present
-          </div>
-        </div>
-
-        {/* Present Today */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-              Present Today
-            </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-lighter text-primary-main">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl font-bold text-ink-primary">{todayLoading ? '...' : presentCount}</span>
-            <span className="ml-2 text-xs text-primary-main font-medium">Checked-in</span>
-          </div>
-          <div className="mt-2 text-xs text-primary-main font-medium">
-            <Link to="/attendance-register" className="hover:underline">Open attendance register →</Link>
-          </div>
-        </div>
-
-        {/* Late Check-ins */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-              Late Arrivals
-            </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-lighter text-warning-main">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl font-bold text-ink-primary">{todayLoading ? '...' : lateCount}</span>
-            <span className="ml-2 text-xs text-warning-main font-medium">after grace period</span>
-          </div>
-          <div className="mt-2 text-xs text-ink-secondary">
-            <span>Punctuality check</span>
-          </div>
-        </div>
-
-        {/* Absent / Leave */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-              On Leave / Absent
-            </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-error-lighter text-error-main">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl font-bold text-ink-primary">{todayLoading ? '...' : onLeaveCount + absentCount}</span>
-            <span className="ml-2 text-xs text-ink-secondary">({onLeaveCount} on approved leave)</span>
-          </div>
-          <div className="mt-2 text-xs text-error-main font-medium">
-            <Link to="/leaves/approvals" className="hover:underline">Check leave records →</Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Visual Charts */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Weekly Attendance Trend */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-base font-semibold text-ink-primary">7-Day Attendance Trend</h2>
-              <p className="text-xs text-ink-secondary">Daily present employee volume over the past week</p>
-            </div>
-            <span className="text-xs font-medium text-ink-secondary">Live summary</span>
-          </div>
-          <div className="h-64 w-full">
-            {trendLoading ? (
-              <div className="flex h-full items-center justify-center text-sm text-ink-disabled">Loading trend...</div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartTrend} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
-                  <defs>
-                    <linearGradient id="attendGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="rgb(var(--info-main))" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="rgb(var(--info-main))" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--grey-200))" />
-                  <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-                  <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
-                  <Tooltip
-                    formatter={(val: unknown) => [typeof val === 'number' ? val : 0, 'Employees']}
-                    contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
-                  />
-                  <Area type="monotone" dataKey="value" stroke="rgb(var(--info-main))" strokeWidth={2} fillOpacity={1} fill="url(#attendGrad)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </div>
-
-        {/* Status Distribution */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-base font-semibold text-ink-primary">Today's Attendance Breakdown</h2>
-              <p className="text-xs text-ink-secondary">Distribution of present, late, on-leave and absent</p>
-            </div>
-            <span className="text-xs font-medium text-ink-secondary">{totalEmployees} Total</span>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center justify-around h-64">
-            <div className="w-full sm:w-1/2 h-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={statusPieData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={45}
-                    outerRadius={75}
-                    paddingAngle={3}
-                  >
-                    {statusPieData.map((entry, index) => (
-                      <Cell key={`status-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(val: unknown) => [typeof val === 'number' ? val : 0, 'Employees']}
-                    contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="w-full sm:w-1/2 space-y-2.5 text-xs">
-              {statusPieData.map((item) => (
-                <div key={item.name} className="flex items-center justify-between">
-                  <span className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className="text-ink-primary">{item.name}</span>
-                  </span>
-                  <span className="font-semibold text-ink-primary">{item.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Today's Activity Table */}
-      <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-base font-semibold text-ink-primary">Today's Attendance Activity</h2>
-            <p className="text-xs text-ink-secondary">Real-time check-ins and time logs</p>
-          </div>
-          <Link to="/attendance-register" className="text-xs font-semibold text-primary-main hover:underline">
-            View full register →
-          </Link>
-        </div>
-        {recentRecords.length === 0 ? (
-          <div className="py-8 text-center text-sm text-ink-disabled">
-            No check-in activity recorded today yet.
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-divider bg-surface-neutral text-xs font-semibold text-ink-secondary uppercase tracking-wider">
-                <tr>
-                  <th className="px-4 py-3">Employee</th>
-                  <th className="px-4 py-3">Check In</th>
-                  <th className="px-4 py-3">Check Out</th>
-                  <th className="px-4 py-3">Worked Hours</th>
-                  <th className="px-4 py-3">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-divider">
-                {recentRecords.map((rec) => (
-                  <tr key={rec.id} className="hover:bg-surface-neutral/60 transition-colors">
-                    <td className="px-4 py-3 font-medium text-ink-primary">
-                      {rec.employee_name || 'Staff Member'}
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs text-ink-secondary">
-                      {rec.check_in ? rec.check_in.slice(0, 5) : '—'}
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs text-ink-secondary">
-                      {rec.check_out ? rec.check_out.slice(0, 5) : '—'}
-                    </td>
-                    <td className="px-4 py-3 font-mono text-xs text-ink-primary">
-                      {rec.working_hours ? String(rec.working_hours) : '—'}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize"
-                        style={{
-                          backgroundColor: `color-mix(in srgb, ${STATUS_COLORS[rec.status || 'present'] || 'rgb(var(--success-main))'} 8%, transparent)`,
-                          color: STATUS_COLORS[rec.status || 'present'] || 'rgb(var(--success-main))',
-                        }}
-                      >
-                        {rec.is_late ? 'Late' : rec.status || 'Present'}
-                      </span>
-                    </td>
-                  </tr>
+            <div className="flex h-full flex-col items-center justify-around sm:flex-row">
+              <div className="h-full w-full sm:w-1/2">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={statusPieData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={45}
+                      outerRadius={75}
+                      paddingAngle={3}
+                    >
+                      {statusPieData.map((entry, index) => (
+                        <Cell key={`status-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<ChartTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="w-full space-y-2.5 text-xs sm:w-1/2">
+                {statusPieData.map((item) => (
+                  <div key={item.name} className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span className="text-ink-primary">{item.name}</span>
+                    </span>
+                    <span className="font-semibold text-ink-primary">{item.value}</span>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              </div>
+            </div>
+          </ChartCard>
+        </div>
+
+        {/* Today's Activity Table */}
+        <Card>
+          <CardHeader
+            title="Today's Attendance Activity"
+            subtitle="Real-time check-ins and time logs"
+            action={
+              <ButtonLink to="/attendance-register" variant="text" size="small" endIcon={<Iconify icon="arrow-right" />}>
+                View full register
+              </ButtonLink>
+            }
+          />
+          <CardContent>
+            {recentRecords.length === 0 ? (
+              <EmptyState module="attendance" title="No activity yet" description="No check-in activity recorded today yet." />
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-surface-neutral text-xs font-semibold uppercase tracking-wider text-ink-secondary">
+                    <tr>
+                      <th className="px-4 py-3">Employee</th>
+                      <th className="px-4 py-3">Check In</th>
+                      <th className="px-4 py-3">Check Out</th>
+                      <th className="px-4 py-3">Worked Hours</th>
+                      <th className="px-4 py-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-divider">
+                    {recentRecords.map((rec) => (
+                      <tr key={rec.id} className="transition-colors hover:bg-surface-neutral/60">
+                        <td className="px-4 py-3 font-medium text-ink-primary">
+                          {rec.employee_name || 'Staff Member'}
+                        </td>
+                        <td className="px-4 py-3 font-mono text-xs text-ink-secondary">
+                          {rec.check_in ? rec.check_in.slice(0, 5) : '—'}
+                        </td>
+                        <td className="px-4 py-3 font-mono text-xs text-ink-secondary">
+                          {rec.check_out ? rec.check_out.slice(0, 5) : '—'}
+                        </td>
+                        <td className="px-4 py-3 font-mono text-xs text-ink-primary">
+                          {rec.working_hours ? String(rec.working_hours) : '—'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className="inline-flex items-center rounded px-2 py-0.5 text-xs font-medium capitalize"
+                            style={{
+                              backgroundColor: `color-mix(in srgb, ${STATUS_COLORS[rec.status || 'present'] || 'rgb(var(--success-main))'} 8%, transparent)`,
+                              color: STATUS_COLORS[rec.status || 'present'] || 'rgb(var(--success-main))',
+                            }}
+                          >
+                            {rec.is_late ? 'Late' : rec.status || 'Present'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </PageContainer>
   );
 }
-

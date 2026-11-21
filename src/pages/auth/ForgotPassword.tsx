@@ -7,9 +7,10 @@
  */
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
+import { AuthLayout } from './AuthLayout';
 import { Input } from '@/components/ui/Input';
 
 const IC_URL = import.meta.env.VITE_IDENTITY_CENTER_URL;
@@ -35,8 +36,7 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface-neutral px-4 py-12">
-      <div className="w-full max-w-md rounded-xl border border-divider bg-surface-paper p-8 shadow-sm">
+    <AuthLayout>
         {!submitted ? (
           <>
             <div className="text-center">
@@ -74,16 +74,14 @@ export default function ForgotPassword() {
 
             <p className="mt-6 text-center text-sm text-ink-secondary">
               Remember your password?{' '}
-              <Link to="/auth/callback" className="font-medium text-primary-main hover:text-primary-dark">
+              <ButtonLink to="/auth/callback" variant="text" size="small">
                 Sign in
-              </Link>
+              </ButtonLink>
             </p>
           </>
         ) : (
           <div className="text-center">
-            <svg className="mx-auto h-12 w-12 text-success-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-            </svg>
+            <Iconify icon="success" width={48} className="mx-auto text-success-main" />
             <h2 className="mt-4 text-lg font-semibold text-ink-primary">Check Your Email</h2>
             <p className="mt-2 text-sm text-ink-secondary">
               If an account exists for <strong>{email}</strong>, you'll receive a password reset link shortly.
@@ -91,15 +89,11 @@ export default function ForgotPassword() {
             <p className="mt-4 text-xs text-ink-disabled">
               Didn't receive an email? Check your spam folder or try again.
             </p>
-            <button
-              onClick={() => setSubmitted(false)}
-              className="mt-6 text-sm font-medium text-primary-main hover:text-primary-dark"
-            >
+            <Button variant="text" className="mt-6" onClick={() => setSubmitted(false)}>
               Try a different email
-            </button>
+            </Button>
           </div>
         )}
-      </div>
-    </div>
+    </AuthLayout>
   );
 }

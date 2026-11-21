@@ -23,6 +23,10 @@ import type { WorkflowConfig } from '@/types/workflow';
 import type { FieldSchema } from '@/types/form';
 import type { Employee } from '@/types/employee';
 import { Button } from '@/components/ui/Button';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 // Workflow config for employee lifecycle timeline display
 const employeeLifecycleConfig: WorkflowConfig = {
@@ -234,15 +238,15 @@ export function EmployeeLifecycle() {
 
   if (!employeeId) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
+      <PageContainer maxWidth="lg">
         <p className="text-sm text-error-main">Employee ID is required.</p>
-      </div>
+      </PageContainer>
     );
   }
 
   if (isLoadingEmployee) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
+      <PageContainer maxWidth="lg">
         <div className="animate-pulse space-y-4">
           <div className="h-8 w-48 rounded bg-grey-200" />
           <div className="h-4 w-64 rounded bg-grey-200" />
@@ -258,7 +262,7 @@ export function EmployeeLifecycle() {
             ))}
           </div>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -271,17 +275,12 @@ export function EmployeeLifecycle() {
   const isOnNotice = employeeStatus === 'on_notice';
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
-      {/* Page header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">
-          Employee Lifecycle — {employeeName}
-        </h1>
-        <p className="mt-1 text-sm text-ink-secondary">
-          View the complete lifecycle timeline and manage status transitions.
-        </p>
-        {/* Current status badge */}
-        <div className="mt-2">
+    <PageContainer maxWidth="lg">
+      <PageHeader
+        title={`Employee Lifecycle — ${employeeName}`}
+        subtitle="View the complete lifecycle timeline and manage status transitions."
+        actions={
+          /* Current status badge */
           <span
             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
               employeeStatus === 'active'
@@ -295,26 +294,13 @@ export function EmployeeLifecycle() {
           >
             {employeeStatus.replace('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
           </span>
-        </div>
-      </div>
-
+        }
+      />
       {/* Success toast */}
       {successMessage && (
-        <div className="mb-4 rounded-md bg-success-lighter p-3" role="status">
+        <div className="mb-4 rounded-card bg-success-lighter p-3" role="status">
           <div className="flex items-center">
-            <svg
-              className="h-4 w-4 text-success-light"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <Iconify icon="success" width={18} className="text-success-main" />
             <p className="ml-2 text-sm font-medium text-success-dark">{successMessage}</p>
           </div>
         </div>
@@ -325,35 +311,28 @@ export function EmployeeLifecycle() {
         <Can permissions={['employees.edit']}>
           {isActive && (
             <>
-              <button
-                type="button"
+              <Button
+                color="secondary"
                 onClick={() => setActiveAction('promote')}
                 disabled={isActionPending}
-                className="inline-flex items-center gap-2 rounded-md bg-secondary-main px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-secondary-main focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                startIcon={<Iconify icon="trend-up" />}
               >
-                <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clipRule="evenodd" />
-                </svg>
                 Promote
-              </button>
+              </Button>
               <Button
-                type="button"
                 onClick={() => setActiveAction('transfer')}
                 disabled={isActionPending}
+                startIcon={<Iconify icon="arrow-right" />}
               >
-                <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
-                </svg>
                 Transfer
               </Button>
-              <Button color="error"
-                type="button"
+              <Button
+                variant="outlined"
+                color="error"
                 onClick={() => setActiveAction('separate')}
                 disabled={isActionPending}
+                startIcon={<Iconify icon="logout" />}
               >
-                <svg className="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
-                </svg>
                 Initiate Separation
               </Button>
             </>
@@ -368,8 +347,9 @@ export function EmployeeLifecycle() {
 
       {/* Action form dialog (inline expansion) */}
       {activeAction && (
-        <div className="mb-8 rounded-lg border border-divider bg-surface-paper p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-ink-primary">{getActiveTitle()}</h2>
+        <Card className="mb-8">
+          <CardHeader title={getActiveTitle()} className="pb-4" />
+          <CardContent className="pt-0">
           <FormBuilder
             fields={getActiveFields()}
             onSubmit={handleActionSubmit}
@@ -379,7 +359,7 @@ export function EmployeeLifecycle() {
 
           {/* Error messages from mutations */}
           {(promotionMutation.isError || transferMutation.isError || statusMutation.isError) && (
-            <div className="mt-4 rounded-md bg-error-lighter p-3" role="alert">
+            <div className="mt-4 rounded-card bg-error-lighter p-3" role="alert">
               <p className="text-sm text-error-dark">
                 {activeAction === 'promote' && 'Failed to record promotion. Please try again.'}
                 {activeAction === 'transfer' && 'Failed to record transfer. Please try again.'}
@@ -387,18 +367,20 @@ export function EmployeeLifecycle() {
               </p>
             </div>
           )}
-        </div>
+          </CardContent>
+        </Card>
       )}
-
       {/* Lifecycle Timeline */}
-      <div className="rounded-lg border border-divider bg-surface-paper p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-ink-primary">Lifecycle Timeline</h2>
-        <WorkflowTimeline
-          recordId={employeeId}
-          endpoint={EMPLOYEES.PROPERTY_HISTORY}
-          config={employeeLifecycleConfig}
-        />
-      </div>
-    </div>
+      <Card>
+        <CardHeader title="Lifecycle Timeline" className="pb-4" />
+        <CardContent className="pt-0">
+          <WorkflowTimeline
+            recordId={employeeId}
+            endpoint={EMPLOYEES.PROPERTY_HISTORY}
+            config={employeeLifecycleConfig}
+          />
+        </CardContent>
+      </Card>
+    </PageContainer>
   );
 }

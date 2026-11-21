@@ -5,6 +5,7 @@
 
 import type { SalarySlipSummary } from '@/types/payroll';
 import { formatCurrency } from '@/utils/formatters';
+import { Button } from '@/components/ui/Button';
 
 interface PayslipCardProps {
   slip: SalarySlipSummary;
@@ -21,13 +22,14 @@ const statusStyles: Record<string, string> = {
 
 export function PayslipCard({ slip, isSelected, onSelect }: PayslipCardProps) {
   return (
-    <button
-      type="button"
+    <Button
+      variant="text"
+      color="inherit"
       onClick={() => onSelect(slip.id)}
-      className={`w-full rounded-lg border p-4 text-left transition-all hover:shadow-md ${
+      className={`!h-auto !w-full !flex-col !items-stretch !justify-start !rounded-card !p-5 !font-normal text-left shadow-card transition-shadow hover:shadow-z8 ${
         isSelected
-          ? 'border-primary-main bg-primary-lighter ring-1 ring-primary-main'
-          : 'border-divider bg-surface-paper hover:border-divider'
+          ? 'bg-primary-lighter ring-2 ring-primary-main hover:!bg-primary-lighter'
+          : 'bg-surface-paper hover:!bg-surface-paper'
       }`}
       aria-pressed={isSelected}
       aria-label={`Payslip for ${slip.employee.first_name} ${slip.employee.last_name}`}
@@ -63,6 +65,6 @@ export function PayslipCard({ slip, isSelected, onSelect }: PayslipCardProps) {
           <p className="text-sm font-bold text-primary-dark">{formatCurrency(slip.net_pay)}</p>
         </div>
       </div>
-    </button>
+    </Button>
   );
 }

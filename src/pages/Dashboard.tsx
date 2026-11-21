@@ -24,6 +24,10 @@ import { ManagerDashboard } from './dashboard/ManagerDashboard';
 import { EmployeeDashboard } from './dashboard/EmployeeDashboard';
 import { DateRangeFilter, getDefaultDateRange } from './dashboard/DateRangeFilter';
 import type { DateRange } from './dashboard/DateRangeFilter';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { ButtonLink, IconButton } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
 
 /** Roles that see the full organisation-wide admin/HR dashboard */
 const ADMIN_ROLES = ['org_admin', 'hr_manager'];
@@ -59,66 +63,50 @@ export default function Dashboard() {
     : "Here's your personal HR overview for today.";
 
   return (
-    <div className="space-y-6">
+    <PageContainer>
       {/* Org Setup Banner — shown to first-time org admins only */}
       {showSetupBanner && (
-        <div className="relative rounded-lg border border-primary-light bg-primary-lighter p-4">
-          <div className="flex items-start gap-3">
-            <svg className="h-5 w-5 shrink-0 text-primary-main mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div className="flex-1">
-              <h3 className="text-sm font-semibold text-primary-dark">Complete Your Organization Setup</h3>
-              <p className="mt-1 text-sm text-primary-dark">
-                Set up your company details, SMTP configuration, and HR policies to get the most out of your HRMS.
-              </p>
-              <a
-                href="/hr-settings"
-                className="mt-2 inline-flex items-center text-sm font-medium text-primary-dark hover:text-primary-darker"
-              >
-                Go to HR Settings →
-              </a>
-            </div>
-            <button
-              onClick={dismissBanner}
-              className="shrink-0 rounded p-1 text-primary-light hover:bg-primary-lighter hover:text-primary-main"
-              aria-label="Dismiss banner"
+        <div className="mb-8 flex items-start gap-3 rounded-card bg-primary-lighter p-4 text-primary-darker">
+          <Iconify icon="info" width={20} className="mt-0.5 shrink-0 text-primary-main" />
+          <div className="flex-1">
+            <h3 className="text-sm font-semibold">Complete Your Organization Setup</h3>
+            <p className="mt-1 text-sm">
+              Set up your company details, SMTP configuration, and HR policies to get the most out of your HRMS.
+            </p>
+            <ButtonLink
+              href="/hr-settings"
+              variant="text"
+              size="small"
+              className="mt-2 -ml-2.5"
+              endIcon={<Iconify icon="arrow-right" />}
             >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+              Go to HR Settings
+            </ButtonLink>
           </div>
+          <IconButton icon="close" size="small" aria-label="Dismiss banner" onClick={dismissBanner} />
         </div>
       )}
-
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-ink-primary">Dashboard</h1>
-          <p className="mt-1 text-sm text-ink-secondary">
-            Welcome back{name ? `, ${name}` : ''}. {subtitle}
-          </p>
-        </div>
-        {/* Show date range filter only for admin/manager views that use charts */}
-        {(isAdmin || isManager) && (
-          <DateRangeFilter value={dateRange} onChange={setDateRange} />
-        )}
-      </div>
-
+      <PageHeader
+        title="Dashboard"
+        subtitle={`Welcome back${name ? `, ${name}` : ''}. ${subtitle}`}
+        actions={
+          /* Show date range filter only for admin/manager views that use charts */
+          (isAdmin || isManager) && <DateRangeFilter value={dateRange} onChange={setDateRange} />
+        }
+      />
       {/* Loading state while permissions are being fetched */}
       {permLoading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-xl bg-surface-neutral" />
+            <div key={i} className="h-28 animate-pulse rounded-card bg-surface-neutral" />
           ))}
         </div>
       ) : isAdmin ? (
         /* ── Admin / HR Manager View ───────────────────────────────────────── */
-        <>
+        <div className="space-y-6">
           <MetricsSection />
           <ChartsGrid dateRange={dateRange} />
-        </>
+        </div>
       ) : isManager ? (
         /* ── Manager / Team Lead View ──────────────────────────────────────── */
         <ManagerDashboard dateRange={dateRange} />
@@ -126,6 +114,6 @@ export default function Dashboard() {
         /* ── Employee Self-Service View ────────────────────────────────────── */
         <EmployeeDashboard />
       )}
-    </div>
+    </PageContainer>
   );
 }

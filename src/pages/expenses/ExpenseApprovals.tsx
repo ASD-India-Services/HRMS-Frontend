@@ -17,6 +17,9 @@ import { WorkflowEngine } from '@/components/WorkflowEngine/WorkflowEngine';
 import { Can } from '@/components/Can';
 import type { ColumnDef } from '@/types/datatable';
 import { formatCurrency, formatDate } from '@/utils/formatters';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { IconButton } from '@/components/ui/Button';
 
 /** Expense claim record shape for the approvals view */
 interface ExpenseClaimRecord {
@@ -115,24 +118,22 @@ export function ExpenseApprovals() {
     <Can
       permissions={['expenses.view']}
       fallback={
-        <div className="mx-auto max-w-5xl px-4 py-8">
-          <div className="rounded-lg border border-error-light bg-error-lighter p-8 text-center">
+        <PageContainer maxWidth="lg">
+          <div className="rounded-card bg-error-lighter p-8 text-center">
             <h2 className="text-lg font-semibold text-error-dark">Access Denied</h2>
             <p className="mt-2 text-sm text-error-main">
               You do not have permission to view expense approvals.
             </p>
           </div>
-        </div>
+        </PageContainer>
       }
     >
-      <div className="mx-auto max-w-7xl px-4 py-8">
+      <PageContainer>
         {/* Page header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-ink-primary">Expense Approvals</h1>
-          <p className="mt-1 text-sm text-ink-secondary">
-            Review and approve or reject pending expense claims
-          </p>
-        </div>
+        <PageHeader
+          title="Expense Approvals"
+          subtitle="Review and approve or reject pending expense claims"
+        />
 
         {/* Filter bar */}
         <FilterBar
@@ -168,7 +169,7 @@ export function ExpenseApprovals() {
             onPageSizeChange={setPageSize}
           />
         )}
-      </div>
+      </PageContainer>
     </Can>
   );
 }
@@ -188,7 +189,7 @@ function ExpandedClaimDetail({ claimId, claims, onCollapse }: ExpandedClaimDetai
   const formattedDate = formatDate(claim.expense_date);
 
   return (
-    <div className="mt-4 rounded-lg border border-secondary-light bg-secondary-lighter/30 p-5 shadow-sm">
+    <div className="mt-4 rounded-card bg-secondary-lighter/30 p-6">
       <div className="flex items-start justify-between">
         <div>
           <h3 className="text-sm font-semibold text-ink-primary">
@@ -215,15 +216,7 @@ function ExpandedClaimDetail({ claimId, claims, onCollapse }: ExpandedClaimDetai
             <p className="mt-2 text-sm text-ink-secondary">{claim.description}</p>
           )}
         </div>
-        <button
-          onClick={onCollapse}
-          className="rounded-md p-1 text-ink-disabled hover:bg-grey-200 hover:text-ink-secondary transition-colors"
-          aria-label="Close detail panel"
-        >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+        <IconButton icon="close" size="small" onClick={onCollapse} aria-label="Close detail panel" />
       </div>
 
       {/* Workflow actions */}

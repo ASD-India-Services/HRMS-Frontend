@@ -18,6 +18,8 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Iconify } from '@/components/Iconify';
+import { AuthLayout } from './AuthLayout';
 
 const IC_URL = import.meta.env.VITE_IDENTITY_CENTER_URL;
 
@@ -123,49 +125,45 @@ export default function SetupPassword() {
 
   if (tokenValid === null) {
     return (
-      <AuthPageWrapper>
+      <AuthLayout>
         <div className="flex items-center justify-center py-12">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-main border-t-transparent" />
           <span className="ml-3 text-sm text-ink-secondary">Validating your setup link...</span>
         </div>
-      </AuthPageWrapper>
+      </AuthLayout>
     );
   }
 
   if (tokenValid === false) {
     return (
-      <AuthPageWrapper>
-        <div className="rounded-md bg-error-lighter p-6 text-center">
-          <svg className="mx-auto h-12 w-12 text-error-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-          </svg>
+      <AuthLayout>
+        <div className="rounded-card bg-error-lighter p-6 text-center">
+          <Iconify icon="error" width={48} className="mx-auto text-error-main" />
           <h2 className="mt-4 text-lg font-semibold text-error-dark">Unable to Set Up Password</h2>
           <p className="mt-2 text-sm text-error-dark">{tokenError}</p>
         </div>
-      </AuthPageWrapper>
+      </AuthLayout>
     );
   }
 
   if (success) {
     return (
-      <AuthPageWrapper>
-        <div className="rounded-md bg-success-lighter p-6 text-center">
-          <svg className="mx-auto h-12 w-12 text-success-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+      <AuthLayout>
+        <div className="rounded-card bg-success-lighter p-6 text-center">
+          <Iconify icon="success" width={48} className="mx-auto text-success-main" />
           <h2 className="mt-4 text-lg font-semibold text-success-dark">Password Set Successfully!</h2>
           <p className="mt-2 text-sm text-success-dark">
             Your account is ready. Redirecting to login...
           </p>
         </div>
-      </AuthPageWrapper>
+      </AuthLayout>
     );
   }
 
   // ─── Password form ───────────────────────────────────────────────────────
 
   return (
-    <AuthPageWrapper>
+    <AuthLayout>
       <div className="text-center">
         <h1 className="text-2xl font-bold text-ink-primary">Set Up Your Password</h1>
         <p className="mt-2 text-sm text-ink-secondary">
@@ -251,18 +249,9 @@ export default function SetupPassword() {
           {submitting ? 'Setting password...' : 'Set Password'}
         </Button>
       </form>
-    </AuthPageWrapper>
+    </AuthLayout>
   );
 }
 
 // ─── Shared auth page layout ─────────────────────────────────────────────────
 
-function AuthPageWrapper({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-surface-neutral px-4 py-12">
-      <div className="w-full max-w-md rounded-xl border border-divider bg-surface-paper p-8 shadow-sm">
-        {children}
-      </div>
-    </div>
-  );
-}

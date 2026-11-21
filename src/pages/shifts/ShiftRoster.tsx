@@ -9,6 +9,9 @@ import { useShiftAssignments } from '@/hooks/useShifts';
 import { ShiftCard } from './components/ShiftCard';
 import type { ShiftAssignment } from '@/types/shift';
 import { Input } from '@/components/ui/Input';
+import { Card } from '@/components/ui/Card';
+import { EmptyState } from '@/components/EmptyState';
+import { WeekNavigator } from './components/WeekNavigator';
 
 /** Get the Monday of the week containing a given date. */
 function getWeekStart(date: Date): Date {
@@ -117,26 +120,11 @@ export function ShiftRoster() {
             onChange={(e) => setDepartment(e.target.value)}
             placeholder="Filter by department..."
           />
-          <button
-            onClick={() => navigateWeek(-1)}
-            className="rounded-md border border-divider px-3 py-1.5 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
-            aria-label="Previous week"
-          >
-            ← Prev
-          </button>
-          <button
-            onClick={goToCurrentWeek}
-            className="rounded-md bg-primary-lighter px-3 py-1.5 text-sm font-medium text-primary-dark hover:bg-primary-lighter"
-          >
-            Today
-          </button>
-          <button
-            onClick={() => navigateWeek(1)}
-            className="rounded-md border border-divider px-3 py-1.5 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
-            aria-label="Next week"
-          >
-            Next →
-          </button>
+          <WeekNavigator
+            onPrevious={() => navigateWeek(-1)}
+            onToday={goToCurrentWeek}
+            onNext={() => navigateWeek(1)}
+          />
         </div>
       </div>
 
@@ -147,17 +135,17 @@ export function ShiftRoster() {
             <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-main border-t-transparent" />
           </div>
         ) : isForbidden ? (
-          <div className="rounded-lg border border-divider bg-surface-paper p-8 text-center text-sm text-ink-secondary">
+          <Card className="p-8 text-center text-sm text-ink-secondary">
             You don&apos;t have permission to view the team roster.
-          </div>
+          </Card>
         ) : isError ? (
-          <div className="rounded-lg border border-error-light bg-error-lighter p-4 text-center text-sm text-error-dark">
+          <div className="rounded-card bg-error-lighter p-4 text-center text-sm text-error-dark">
             Failed to load roster data. Please try again later.
           </div>
         ) : employees.length === 0 ? (
-          <div className="rounded-lg border border-divider bg-surface-paper p-8 text-center text-sm text-ink-secondary">
-            No shift assignments found for this period.
-          </div>
+          <Card>
+            <EmptyState module="shifts" title="No shift assignments" description="No shift assignments found for this period." />
+          </Card>
         ) : (
           <table className="min-w-full border-collapse">
             <thead>

@@ -1,5 +1,3 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   AreaChart,
@@ -15,6 +13,14 @@ import {
 } from 'recharts';
 import api from '@/lib/api';
 import { PAYROLL } from '@/lib/endpoints';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { ButtonLink } from '@/components/ui/Button';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { StatCard } from '@/components/ui/StatCard';
+import { ChartCard, ChartTooltip, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
+import { EmptyState } from '@/components/EmptyState';
+import { Iconify } from '@/components/Iconify';
 
 interface SalarySlip {
   id: string;
@@ -48,7 +54,6 @@ interface SalaryStructure {
   is_active?: boolean;
 }
 
-const COST_COLORS = ['rgb(var(--info-main))', 'rgb(var(--success-main))', 'rgb(var(--warning-main))', 'rgb(var(--secondary-main))'];
 
 export default function PayrollDashboard() {
   // Fetch salary slips
@@ -145,269 +150,188 @@ export default function PayrollDashboard() {
 
   const isLoading = slipsLoading || runsLoading || trendLoading;
 
+  const theme = getChartTheme();
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Payroll Dashboard</h1>
-          <p className="mt-1 text-sm text-ink-secondary">
-            Payroll cycles, net disbursement trends, salary slip generation, and compensation analytics.
-          </p>
+    <PageContainer>
+      <PageHeader
+        title="Payroll Dashboard"
+        subtitle="Payroll cycles, net disbursement trends, salary slip generation, and compensation analytics."
+        actions={
+          <>
+            <ButtonLink to="/payroll" variant="outlined" color="inherit" startIcon={<Iconify icon="salarySlips" />}>
+              Salary Slips
+            </ButtonLink>
+            <ButtonLink to="/payroll/runs" startIcon={<Iconify icon="plus" />}>
+              Payroll Runs
+            </ButtonLink>
+          </>
+        }
+      />
+      <div className="space-y-6">
+        {/* Top Metric Cards */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard
+            title="Disbursed Net Pay"
+            value={formatCurrency(totalNetPay || 0)}
+            icon="payroll"
+            isLoading={isLoading}
+            caption="Current period total"
+          />
+          <StatCard
+            title="Processed Payslips"
+            value={totalSlipsCount}
+            icon="salarySlips"
+            href="/payroll"
+            isLoading={isLoading}
+            caption="Slips generated · View all salary slips"
+          />
+          <StatCard
+            title="Payroll Cycles"
+            value={totalRunsCount}
+            icon="refresh"
+            href="/payroll/runs"
+            isLoading={isLoading}
+            caption="Total runs · Manage payroll runs"
+          />
+          <StatCard
+            title="Salary Structures"
+            value={activeStructuresCount}
+            icon="documentTypes"
+            href="/salary-structures"
+            isLoading={isLoading}
+            caption="Active plans · Configure structures"
+          />
         </div>
-        <div className="flex items-center gap-3">
-          <Link
-            to="/payroll"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md border border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral shadow-sm transition-colors"
+
+        {/* Visual Charts Grid */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {/* 6-Month Payroll Expense Trend */}
+          <ChartCard
+            title="6-Month Payroll Expense Trend"
+            subtitle="Monthly net compensation disbursement trajectory (INR ₹)"
+            isLoading={trendLoading}
+            isEmpty={chartTrend.length === 0}
           >
-            <svg className="w-4 h-4 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            Salary Slips
-          </Link>
-          <Link
-            to="/payroll/runs"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold rounded-md text-primary-contrast bg-primary-main hover:bg-primary-dark shadow-sm transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Payroll Runs
-          </Link>
-        </div>
-      </div>
-
-      {/* Top Metric Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Total Payroll Cost */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-              Disbursed Net Pay
-            </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success-lighter text-success-main">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl font-bold text-ink-primary">
-              {isLoading ? '...' : formatCurrency(totalNetPay || 0)}
-            </span>
-          </div>
-          <div className="mt-2 text-xs text-success-main font-medium">
-            <span>Current period total</span>
-          </div>
-        </div>
-
-        {/* Processed Payslips */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-              Processed Payslips
-            </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-lighter text-primary-main">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : totalSlipsCount}</span>
-            <span className="ml-2 text-xs text-primary-main font-medium">slips generated</span>
-          </div>
-          <div className="mt-2 text-xs text-primary-main font-medium">
-            <Link to="/payroll" className="hover:underline">View all salary slips →</Link>
-          </div>
-        </div>
-
-        {/* Payroll Runs */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-              Payroll Cycles
-            </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-main">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : totalRunsCount}</span>
-            <span className="ml-2 text-xs text-ink-secondary">total runs</span>
-          </div>
-          <div className="mt-2 text-xs text-secondary-main font-medium">
-            <Link to="/payroll/runs" className="hover:underline">Manage payroll runs →</Link>
-          </div>
-        </div>
-
-        {/* Salary Structures */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-5 shadow-xs transition-all hover:shadow-md">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-              Salary Structures
-            </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-main">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
-            </div>
-          </div>
-          <div className="mt-3">
-            <span className="text-2xl font-bold text-ink-primary">{isLoading ? '...' : activeStructuresCount}</span>
-            <span className="ml-2 text-xs text-secondary-main font-medium">Active Plans</span>
-          </div>
-          <div className="mt-2 text-xs text-secondary-main font-medium">
-            <Link to="/salary-structures" className="hover:underline">Configure structures →</Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Visual Charts Grid */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* 6-Month Payroll Expense Trend */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-base font-semibold text-ink-primary">6-Month Payroll Expense Trend</h2>
-              <p className="text-xs text-ink-secondary">Monthly net compensation disbursement trajectory</p>
-            </div>
-            <span className="text-xs font-medium text-ink-secondary">INR (₹)</span>
-          </div>
-          <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartTrend} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
+              <AreaChart data={chartTrend}>
                 <defs>
                   <linearGradient id="payrollGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="rgb(var(--success-main))" stopOpacity={0.4} />
                     <stop offset="95%" stopColor="rgb(var(--success-main))" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--grey-200))" />
-                <XAxis dataKey="label" tick={{ fontSize: 11 }} />
+                <CartesianGrid {...theme.grid} />
+                <XAxis dataKey="label" tick={theme.tick} {...AXIS_PROPS} />
                 <YAxis
-                  tick={{ fontSize: 11 }}
+                  tick={theme.tick}
+                  {...AXIS_PROPS}
                   tickFormatter={(val) => (val >= 1000 ? `${Math.round(val / 1000)}k` : val)}
                 />
-                <Tooltip
-                  formatter={(val: unknown) => [typeof val === 'number' ? formatCurrency(val) : '₹0', 'Net Disbursement']}
-                  contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
-                />
-                <Area type="monotone" dataKey="value" stroke="rgb(var(--success-main))" strokeWidth={2} fillOpacity={1} fill="url(#payrollGrad)" />
+                <Tooltip content={<ChartTooltip />} cursor={theme.cursor} />
+                <Area type="monotone" dataKey="value" name="Net Disbursement" stroke="rgb(var(--success-main))" strokeWidth={2} fillOpacity={1} fill="url(#payrollGrad)" />
               </AreaChart>
             </ResponsiveContainer>
-          </div>
-        </div>
+          </ChartCard>
 
-        {/* Salary Cost Breakdown */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-base font-semibold text-ink-primary">Compensation Cost Breakdown</h2>
-              <p className="text-xs text-ink-secondary">Net pay vs statutory deductions and benefits</p>
-            </div>
-            <span className="text-xs font-medium text-ink-secondary">Overview</span>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center justify-around h-64">
-            <div className="w-full sm:w-1/2 h-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={costBreakdownData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={45}
-                    outerRadius={75}
-                    paddingAngle={3}
-                  >
-                    {costBreakdownData.map((entry, index) => (
-                      <Cell key={`cost-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(val: unknown) => [typeof val === 'number' ? formatCurrency(val) : '₹0', 'Amount']}
-                    contentStyle={{ backgroundColor: 'rgb(var(--surface-paper))', borderRadius: '8px', border: '1px solid rgb(var(--grey-300))' }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="w-full sm:w-1/2 space-y-2.5 text-xs">
-              {costBreakdownData.map((item) => (
-                <div key={item.name} className="flex items-center justify-between">
-                  <span className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                    <span className="text-ink-primary truncate max-w-[130px]">{item.name}</span>
-                  </span>
-                  <span className="font-semibold text-ink-primary">{formatCurrency(item.value)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Payroll Runs Table */}
-      <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-xs">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-base font-semibold text-ink-primary">Recent Payroll Runs</h2>
-            <p className="text-xs text-ink-secondary">Latest executed and pending payroll processing batches</p>
-          </div>
-          <Link to="/payroll/runs" className="text-xs font-semibold text-primary-main hover:underline">
-            View all runs →
-          </Link>
-        </div>
-        {recentRuns.length === 0 ? (
-          <p className="py-8 text-center text-sm text-ink-disabled">No payroll runs found.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-divider bg-surface-neutral text-xs font-semibold text-ink-secondary uppercase tracking-wider">
-                <tr>
-                  <th className="px-4 py-3">Cycle Title / Period</th>
-                  <th className="px-4 py-3">Employees</th>
-                  <th className="px-4 py-3">Posting Date</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-divider">
-                {recentRuns.map((run) => (
-                  <tr key={run.id} className="hover:bg-surface-neutral/60 transition-colors">
-                    <td className="px-4 py-3 font-medium text-ink-primary">
-                      {run.title || run.name || `Payroll Run #${run.id.slice(0, 6)}`}
-                    </td>
-                    <td className="px-4 py-3 text-ink-secondary text-xs">
-                      {run.number_of_employees || '—'} staff
-                    </td>
-                    <td className="px-4 py-3 text-ink-secondary font-mono text-xs">
-                      {run.posting_date || run.start_date || '—'}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-success-lighter text-success-dark capitalize">
-                        {run.status || 'Completed'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <Link
-                        to="/payroll/runs"
-                        className="text-xs font-semibold text-primary-main hover:underline"
-                      >
-                        Details
-                      </Link>
-                    </td>
-                  </tr>
+          {/* Salary Cost Breakdown */}
+          <ChartCard
+            title="Compensation Cost Breakdown"
+            subtitle="Net pay vs statutory deductions and benefits"
+          >
+            <div className="flex h-full flex-col items-center justify-around sm:flex-row">
+              <div className="h-full w-full sm:w-1/2">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={costBreakdownData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={45}
+                      outerRadius={75}
+                      paddingAngle={3}
+                    >
+                      {costBreakdownData.map((entry, index) => (
+                        <Cell key={`cost-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<ChartTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="w-full space-y-2.5 text-xs sm:w-1/2">
+                {costBreakdownData.map((item) => (
+                  <div key={item.name} className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span className="max-w-[130px] truncate text-ink-primary">{item.name}</span>
+                    </span>
+                    <span className="font-semibold text-ink-primary">{formatCurrency(item.value)}</span>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              </div>
+            </div>
+          </ChartCard>
+        </div>
+
+        {/* Recent Payroll Runs Table */}
+        <Card>
+          <CardHeader
+            title="Recent Payroll Runs"
+            subtitle="Latest executed and pending payroll processing batches"
+            action={
+              <ButtonLink to="/payroll/runs" variant="text" size="small" endIcon={<Iconify icon="arrow-right" />}>
+                View all runs
+              </ButtonLink>
+            }
+          />
+          <CardContent>
+            {recentRuns.length === 0 ? (
+              <EmptyState module="payroll" title="No payroll runs found" description="Payroll runs will appear here once processed." />
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-surface-neutral text-xs font-semibold uppercase tracking-wider text-ink-secondary">
+                    <tr>
+                      <th className="px-4 py-3">Cycle Title / Period</th>
+                      <th className="px-4 py-3">Employees</th>
+                      <th className="px-4 py-3">Posting Date</th>
+                      <th className="px-4 py-3">Status</th>
+                      <th className="px-4 py-3 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-divider">
+                    {recentRuns.map((run) => (
+                      <tr key={run.id} className="transition-colors hover:bg-surface-neutral/60">
+                        <td className="px-4 py-3 font-medium text-ink-primary">
+                          {run.title || run.name || `Payroll Run #${run.id.slice(0, 6)}`}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-ink-secondary">
+                          {run.number_of_employees || '—'} staff
+                        </td>
+                        <td className="px-4 py-3 font-mono text-xs text-ink-secondary">
+                          {run.posting_date || run.start_date || '—'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="inline-flex items-center rounded bg-success-lighter px-2 py-0.5 text-xs font-semibold capitalize text-success-dark">
+                            {run.status || 'Completed'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <ButtonLink to="/payroll/runs" variant="text" size="small">
+                            Details
+                          </ButtonLink>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </PageContainer>
   );
 }
-

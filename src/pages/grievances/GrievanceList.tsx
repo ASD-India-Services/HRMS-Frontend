@@ -12,6 +12,11 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createCrudHooks } from '@/hooks/useCrud';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Button } from '@/components/ui/Button';
+import { Tabs } from '@/components/ui/Tabs';
+import { Iconify } from '@/components/Iconify';
 import {
   grievancesCrudConfig,
   type Grievance,
@@ -166,107 +171,49 @@ function GrievanceListContent() {
   const activeFields = canManage ? adminCreateFields : employeeCreateFields;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Grievances</h1>
-          <p className="mt-1 text-sm text-ink-secondary">
-            Submit, track, and manage workplace issues and grievances through investigation and resolution.
-          </p>
-        </div>
-        <CreateButton permission="grievances.create" label="File Grievance" onClick={() => setShowCreate(true)} />
-      </div>
-
+    <PageContainer>
+      <PageHeader
+        title="Grievances"
+        subtitle="Submit, track, and manage workplace issues and grievances through investigation and resolution."
+        actions={<CreateButton permission="grievances.create" label="File Grievance" onClick={() => setShowCreate(true)} />}
+      />
       {canManage && (
-        <div className="mb-4 border-b border-divider" role="tablist">
-          <nav className="-mb-px flex gap-4">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={viewTab === 'mine'}
-              onClick={() => { setViewTab('mine'); setPage(1); }}
-              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-                viewTab === 'mine'
-                  ? 'border-primary-main text-primary-main font-semibold'
-                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
-              }`}
-            >
-              My Grievances
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={viewTab === 'all'}
-              onClick={() => { setViewTab('all'); setPage(1); }}
-              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-                viewTab === 'all'
-                  ? 'border-primary-main text-primary-main font-semibold'
-                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
-              }`}
-            >
-              All Grievances
-            </button>
-          </nav>
-        </div>
+        <Tabs
+          items={[
+            { value: 'mine', label: 'My Grievances' },
+            { value: 'all', label: 'All Grievances' },
+          ]}
+          value={viewTab}
+          onChange={(tab) => { setViewTab(tab); setPage(1); }}
+        />
       )}
-
-      {/* KPI Summary Cards */}
+      {/* KPI Summary Cards — each card filters the list by status */}
       {summary && (
-        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <button
-            type="button"
-            onClick={() => { setFilter('status', ''); setPage(1); }}
-            className={`flex flex-col rounded-xl border p-4 text-left transition-all ${
-              !filterValues.status
-                ? 'border-primary-main bg-primary-lighter/40 ring-1 ring-primary-main shadow-sm'
-                : 'border-divider bg-surface-paper hover:border-divider hover:shadow-sm'
-            }`}
-          >
-            <span className="text-xs font-medium text-ink-secondary">Total Grievances</span>
-            <span className="mt-1 text-2xl font-bold text-ink-primary">{summary.total}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => { setFilter('status', 'open'); setPage(1); }}
-            className={`flex flex-col rounded-xl border p-4 text-left transition-all ${
-              filterValues.status === 'open'
-                ? 'border-warning-main bg-warning-lighter/40 ring-1 ring-warning-main shadow-sm'
-                : 'border-divider bg-surface-paper hover:border-divider hover:shadow-sm'
-            }`}
-          >
-            <span className="text-xs font-medium text-warning-dark">Open</span>
-            <span className="mt-1 text-2xl font-bold text-warning-darker">{summary.open}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => { setFilter('status', 'investigating'); setPage(1); }}
-            className={`flex flex-col rounded-xl border p-4 text-left transition-all ${
-              filterValues.status === 'investigating'
-                ? 'border-primary-main bg-primary-lighter/40 ring-1 ring-primary-main shadow-sm'
-                : 'border-divider bg-surface-paper hover:border-divider hover:shadow-sm'
-            }`}
-          >
-            <span className="text-xs font-medium text-primary-dark">Investigating</span>
-            <span className="mt-1 text-2xl font-bold text-primary-darker">{summary.investigating}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => { setFilter('status', 'resolved'); setPage(1); }}
-            className={`flex flex-col rounded-xl border p-4 text-left transition-all ${
-              filterValues.status === 'resolved'
-                ? 'border-success-main bg-success-lighter/40 ring-1 ring-success-main shadow-sm'
-                : 'border-divider bg-surface-paper hover:border-divider hover:shadow-sm'
-            }`}
-          >
-            <span className="text-xs font-medium text-success-dark">Resolved</span>
-            <span className="mt-1 text-2xl font-bold text-success-darker">{summary.resolved}</span>
-          </button>
+        <div className="mb-6 grid grid-cols-2 gap-6 sm:grid-cols-4">
+          {[
+            { status: '', label: 'Total Grievances', value: summary.total },
+            { status: 'open', label: 'Open', value: summary.open },
+            { status: 'investigating', label: 'Investigating', value: summary.investigating },
+            { status: 'resolved', label: 'Resolved', value: summary.resolved },
+          ].map((kpi) => {
+            const active = (filterValues.status || '') === kpi.status;
+            return (
+              <Button
+                key={kpi.label}
+                variant="text"
+                color="inherit"
+                onClick={() => { setFilter('status', kpi.status); setPage(1); }}
+                className={`!h-auto !flex-col !items-start !justify-start !rounded-card bg-surface-paper !p-6 text-left shadow-card transition-shadow hover:!bg-surface-paper hover:shadow-z8 ${
+                  active ? 'ring-2 ring-primary-main' : ''
+                }`}
+              >
+                <span className="text-sm font-normal text-ink-secondary">{kpi.label}</span>
+                <span className="mt-2 text-3xl font-bold text-ink-primary">{kpi.value}</span>
+              </Button>
+            );
+          })}
         </div>
       )}
-
       {/* Dynamic Status Indicator */}
       {queryResult.data && (
         <div className="mb-4 flex items-center gap-4">
@@ -274,10 +221,8 @@ function GrievanceListContent() {
             const currentStatus = filterValues.status;
             if (currentStatus === 'resolved') {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-success-lighter border border-success-light px-4 py-2">
-                  <svg className="h-4 w-4 text-success-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                  </svg>
+                <div className="inline-flex items-center gap-2 rounded-lg bg-success-lighter px-4 py-2">
+                  <Iconify icon="check" width={16} className="text-success-main" />
                   <span className="text-sm font-medium text-success-dark">
                     {queryResult.data.count} grievance{queryResult.data.count !== 1 ? 's' : ''} resolved
                   </span>
@@ -286,7 +231,7 @@ function GrievanceListContent() {
             }
             if (currentStatus === 'closed') {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-surface-neutral border border-divider px-4 py-2">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-surface-neutral px-4 py-2">
                   <span className="text-sm font-medium text-ink-primary">
                     {queryResult.data.count} grievance{queryResult.data.count !== 1 ? 's' : ''} closed
                   </span>
@@ -295,7 +240,7 @@ function GrievanceListContent() {
             }
             if (currentStatus === 'investigating') {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-primary-lighter border border-primary-light px-4 py-2">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-primary-lighter px-4 py-2">
                   <span className="text-sm font-medium text-primary-dark">
                     {queryResult.data.count} grievance{queryResult.data.count !== 1 ? 's' : ''} under investigation
                   </span>
@@ -304,7 +249,7 @@ function GrievanceListContent() {
             }
             if (currentStatus === 'open') {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-warning-lighter border border-warning-light px-4 py-2">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-warning-lighter px-4 py-2">
                   <span className="text-sm font-medium text-warning-dark">
                     {queryResult.data.count} open grievance{queryResult.data.count !== 1 ? 's' : ''} pending review
                   </span>
@@ -316,7 +261,7 @@ function GrievanceListContent() {
             const pendingCount = summary?.pending ?? 0;
             if (pendingCount > 0) {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-warning-lighter border border-warning-light px-4 py-2">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-warning-lighter px-4 py-2">
                   <span className="text-sm font-medium text-warning-dark">
                     {pendingCount} grievance{pendingCount !== 1 ? 's' : ''} pending review
                   </span>
@@ -327,10 +272,8 @@ function GrievanceListContent() {
 
             if (queryResult.data.count > 0) {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-success-lighter border border-success-light px-4 py-2">
-                  <svg className="h-4 w-4 text-success-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                  </svg>
+                <div className="inline-flex items-center gap-2 rounded-lg bg-success-lighter px-4 py-2">
+                  <Iconify icon="check" width={16} className="text-success-main" />
                   <span className="text-sm font-medium text-success-dark">
                     All grievances resolved ({queryResult.data.count} total)
                   </span>
@@ -380,6 +323,6 @@ function GrievanceListContent() {
         }}
         isLoading={createMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

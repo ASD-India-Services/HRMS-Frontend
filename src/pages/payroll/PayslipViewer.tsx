@@ -11,6 +11,11 @@ import { formatCurrency } from '@/utils/formatters';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { EmptyState } from '@/components/EmptyState';
+import { Iconify } from '@/components/Iconify';
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -47,7 +52,7 @@ function ComponentTable({ title, components, variant }: {
   const headerBg = variant === 'earnings' ? 'bg-success-lighter' : 'bg-error-lighter';
 
   return (
-    <div className="overflow-hidden rounded-lg border border-divider">
+    <div className="overflow-hidden rounded-lg bg-surface-neutral/40">
       <div className={`px-4 py-2.5 ${headerBg}`}>
         <h4 className="text-sm font-semibold text-ink-primary">{title}</h4>
       </div>
@@ -107,12 +112,9 @@ export function PayslipViewer() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <PageContainer>
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">Payslip Viewer</h1>
-        <p className="mt-1 text-sm text-ink-secondary">View and download your salary slips</p>
-      </div>
+      <PageHeader title="Payslip Viewer" subtitle="View and download your salary slips" />
 
       {/* Month/Year Selector */}
       <div className="mb-6 flex flex-wrap items-center gap-3">
@@ -154,11 +156,11 @@ export function PayslipViewer() {
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-28 animate-pulse rounded-lg bg-surface-neutral" />
+                <div key={i} className="h-28 animate-pulse rounded-card bg-surface-neutral" />
               ))}
             </div>
           ) : isError ? (
-            <div className="rounded-md bg-error-lighter p-4 text-sm text-error-dark" role="alert">
+            <div className="rounded-card bg-error-lighter p-4 text-sm text-error-dark" role="alert">
               Failed to load salary slips. Please try again.
             </div>
           ) : slipsData && slipsData.results.length > 0 ? (
@@ -188,18 +190,19 @@ export function PayslipViewer() {
                       />
                       {/* Correction slip cards */}
                       {correctionSlips.map((cs) => (
-                        <button
+                        <Button
                           key={cs.id}
-                          type="button"
+                          variant="text"
+                          color="warning"
                           onClick={() => setSelectedSlipId(cs.id)}
-                          className={`w-full ml-4 rounded-lg border p-3 text-left transition-all hover:shadow-sm ${
+                          className={`!ml-4 !h-auto !w-[calc(100%-1rem)] !flex-col !items-stretch !justify-start !rounded-lg !p-3 !font-normal text-left ${
                             selectedSlipId === cs.id
-                              ? 'border-warning-main bg-warning-lighter ring-1 ring-warning-main'
-                              : 'border-warning-light bg-warning-lighter/50 hover:border-warning-light'
+                              ? 'bg-warning-lighter ring-2 ring-warning-main'
+                              : 'bg-warning-lighter/50'
                           }`}
                         >
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-medium text-warning-dark">↳ Correction Slip</span>
+                            <span className="inline-flex items-center gap-1 text-xs font-medium text-warning-dark"><Iconify icon="arrow-right" width={12} /> Correction Slip</span>
                             <span className="inline-flex items-center rounded-full bg-warning-lighter px-2 py-0.5 text-xs font-medium text-warning-dark">
                               Supplementary
                             </span>
@@ -207,11 +210,11 @@ export function PayslipViewer() {
                           <div className="mt-1 flex gap-4 text-xs">
                             <span className="text-ink-secondary">Net: <span className="font-semibold text-warning-dark">{formatCurrency(cs.net_pay)}</span></span>
                           </div>
-                        </button>
+                        </Button>
                       ))}
                       {/* Total row if corrections exist */}
                       {hasCorrections && (
-                        <div className="ml-4 rounded-md bg-primary-lighter border border-primary-light px-3 py-2">
+                        <div className="ml-4 rounded-lg bg-primary-lighter px-3 py-2">
                           <div className="flex justify-between items-center">
                             <span className="text-xs font-medium text-primary-dark">Total Net for Month</span>
                             <span className="text-sm font-bold text-primary-dark">{formatCurrency(totalNet)}</span>
@@ -224,9 +227,9 @@ export function PayslipViewer() {
               })()}
             </div>
           ) : (
-            <div className="rounded-lg border border-divider bg-surface-paper p-6 text-center">
-              <p className="text-sm text-ink-secondary">No salary slips for this period.</p>
-            </div>
+            <Card>
+              <EmptyState module="payroll" title="No salary slips" description="No salary slips for this period." />
+            </Card>
           )}
         </div>
 
@@ -235,9 +238,9 @@ export function PayslipViewer() {
           {selectedSlipId ? (
             isDetailLoading ? (
               <div className="space-y-4">
-                <div className="h-10 animate-pulse rounded-lg bg-surface-neutral" />
-                <div className="h-48 animate-pulse rounded-lg bg-surface-neutral" />
-                <div className="h-48 animate-pulse rounded-lg bg-surface-neutral" />
+                <div className="h-10 animate-pulse rounded-card bg-surface-neutral" />
+                <div className="h-48 animate-pulse rounded-card bg-surface-neutral" />
+                <div className="h-48 animate-pulse rounded-card bg-surface-neutral" />
               </div>
             ) : slipDetail ? (
               (() => {
@@ -264,7 +267,7 @@ export function PayslipViewer() {
                   : slipDetail.net_pay;
 
                 return (
-              <div className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+              <Card className="p-6">
                 {/* Detail Header */}
                 <div className="flex items-start justify-between border-b border-divider pb-4">
                   <div>
@@ -286,14 +289,11 @@ export function PayslipViewer() {
                     )}
                   </div>
                   <Button
-                    type="button"
                     onClick={handleDownloadPdf}
                     disabled={isDownloading}
                     aria-label="Download payslip as PDF"
+                    startIcon={<Iconify icon="download" />}
                   >
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
                     {isDownloading ? 'Downloading...' : 'Download PDF'}
                   </Button>
                 </div>
@@ -318,7 +318,7 @@ export function PayslipViewer() {
                     </div>
 
                     {/* Original slip breakdown */}
-                    <div className="mt-5 rounded-lg border border-divider p-4">
+                    <div className="mt-5 rounded-lg bg-surface-neutral p-4">
                       <h4 className="text-sm font-semibold text-ink-primary mb-3">Original Salary Slip</h4>
                       <div className="grid grid-cols-3 gap-3 text-center text-sm">
                         <div><span className="text-ink-secondary">Gross</span> <span className="font-medium">{formatCurrency(originalSlip.gross_pay)}</span></div>
@@ -328,7 +328,7 @@ export function PayslipViewer() {
                     </div>
 
                     {/* Correction adjustment */}
-                    <div className="mt-3 rounded-lg border border-warning-light bg-warning-lighter p-4">
+                    <div className="mt-3 rounded-lg bg-warning-lighter p-4">
                       <h4 className="text-sm font-semibold text-warning-dark mb-3">Correction Adjustment</h4>
                       <div className="grid grid-cols-3 gap-3 text-center text-sm">
                         <div><span className="text-ink-secondary">Added</span> <span className="font-medium text-success-dark">+{formatCurrency(slipDetail.gross_pay)}</span></div>
@@ -375,7 +375,7 @@ export function PayslipViewer() {
 
                     {/* Working Days Info */}
                     {slipDetail.days_worked != null && slipDetail.total_working_days != null && (
-                      <div className="mt-4 rounded-md bg-surface-neutral px-4 py-2 text-sm text-ink-secondary">
+                      <div className="mt-4 rounded-lg bg-surface-neutral px-4 py-2 text-sm text-ink-secondary">
                         Days Worked: <span className="font-medium text-ink-primary">{slipDetail.days_worked}</span> / {slipDetail.total_working_days}
                       </div>
                     )}
@@ -395,17 +395,17 @@ export function PayslipViewer() {
                     </div>
                   </>
                 )}
-              </div>
+              </Card>
                 );
               })()
             ) : null
           ) : (
-            <div className="flex h-64 items-center justify-center rounded-xl border border-dashed border-divider bg-surface-neutral">
+            <div className="flex h-64 items-center justify-center rounded-card bg-surface-neutral">
               <p className="text-sm text-ink-secondary">Select a salary slip to view details</p>
             </div>
           )}
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

@@ -15,6 +15,10 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 interface LopPolicy {
   is_active: boolean;
@@ -126,13 +130,8 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
   }
 
   return (
-    <div className={hideHeader ? 'w-full' : 'mx-auto max-w-4xl px-4 py-8'}>
-      {!hideHeader && (
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-ink-primary">Apply for Leave</h1>
-          <p className="mt-1 text-sm text-ink-secondary">Submit a new leave application</p>
-        </div>
-      )}
+    <PageContainer maxWidth="lg" className={hideHeader ? '!max-w-none' : undefined}>
+      {!hideHeader && <PageHeader title="Apply for Leave" subtitle="Submit a new leave application" />}
 
       {/* Leave Balances */}
       <section className="mb-6" aria-label="Leave balances">
@@ -140,7 +139,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
         {balancesLoading ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 animate-pulse rounded-lg bg-surface-neutral" />
+              <div key={i} className="h-24 animate-pulse rounded-card bg-surface-neutral" />
             ))}
           </div>
         ) : balances && balances.length > 0 ? (
@@ -149,7 +148,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
               <LeaveBalanceCard key={balance.leave_type_id ?? balance.id} balance={balance} />
             ))}
             {lopPolicy && (
-              <div className="rounded-lg border border-warning-light bg-warning-lighter p-4 shadow-sm">
+              <div className="rounded-card bg-warning-lighter p-4">
                 <h4 className="text-sm font-semibold text-warning-darker">Loss of Pay</h4>
                 <div className="mt-3 flex items-end justify-between">
                   <div>
@@ -175,7 +174,8 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
       </section>
 
       {/* Application Form */}
-      <form onSubmit={handleSubmit} className="rounded-lg border border-divider bg-surface-paper p-6 shadow-sm">
+      <Card className="p-6">
+      <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {/* Leave Type */}
           <div className="sm:col-span-2">
@@ -221,7 +221,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
 
           {/* Restrict Past Leave policy indicator & error */}
           {isPastLeaveRestricted && (
-            <div className="sm:col-span-2 flex items-center gap-2 rounded-lg border border-primary-light bg-primary-lighter/70 p-3 text-xs text-primary-darker shadow-2xs">
+            <div className="sm:col-span-2 flex items-center gap-2 rounded-lg bg-primary-lighter/70 p-3 text-xs text-primary-darker">
               <span className="flex h-2 w-2 rounded-full bg-primary-main animate-pulse" />
               <span>
                 <strong>HR Policy Active:</strong> Restrict Past Leave is ON. Backdated leave applications are not permitted.
@@ -230,7 +230,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
           )}
 
           {policyError && (
-            <div className="sm:col-span-2 rounded-lg border border-error-light bg-error-lighter p-3 text-xs text-error-dark shadow-2xs">
+            <div className="sm:col-span-2 rounded-lg bg-error-lighter p-3 text-xs text-error-dark">
               {policyError}
             </div>
           )}
@@ -276,7 +276,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
 
           {/* Real-time Leave Calculation Breakdown */}
           {fromDate && toDate && fromDate <= toDate && (
-            <div className="sm:col-span-2 rounded-xl border border-primary-light bg-primary-lighter/70 p-4 shadow-2xs">
+            <div className="sm:col-span-2 rounded-card bg-primary-lighter/70 p-4">
               {calcLoading ? (
                 <div className="flex items-center gap-2 text-xs text-primary-dark">
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-main border-t-transparent" />
@@ -309,10 +309,10 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
                         {calcResult.breakdown.map((item) => (
                           <div
                             key={item.date}
-                            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium border ${
+                            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium ${
                               item.is_working_day
-                                ? 'bg-surface-paper border-primary-light text-primary-darker shadow-2xs'
-                                : 'bg-warning-lighter/90 border-warning-light text-warning-darker'
+                                ? 'bg-surface-paper text-primary-darker shadow-z1'
+                                : 'bg-warning-lighter/90 text-warning-darker'
                             }`}
                             title={item.reason || 'Working day'}
                           >
@@ -325,8 +325,8 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
                   )}
 
                   {calcResult.total_days === 0 && (
-                    <div className="rounded-lg bg-warning-lighter border border-warning-light p-2.5 text-xs text-warning-dark">
-                      ⚠️ The selected dates consist entirely of non-working days or company week-offs. No leave days will be deducted.
+                    <div className="rounded-lg bg-warning-lighter p-2.5 text-xs text-warning-dark">
+                      <Iconify icon="warning" width={14} className="mr-1 inline align-text-bottom" />The selected dates consist entirely of non-working days or company week-offs. No leave days will be deducted.
                     </div>
                   )}
                 </div>
@@ -353,7 +353,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
 
         {/* Error message */}
         {applyLeave.isError && (
-          <div className="mt-4 rounded-md bg-error-lighter border border-error-light p-3 text-sm text-error-dark" role="alert">
+          <div className="mt-4 rounded-card bg-error-lighter p-3 text-sm text-error-dark" role="alert">
             {(() => {
               const err = applyLeave.error as { response?: { data?: Record<string, unknown> } } | null;
               const data = err?.response?.data;
@@ -371,7 +371,6 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
         {/* Actions */}
         <div className="mt-6 flex items-center justify-end gap-3">
           <Button variant="outlined" color="inherit"
-            type="button"
             onClick={handleCancel}
           >
             Cancel
@@ -384,6 +383,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
           </Button>
         </div>
       </form>
-    </div>
+      </Card>
+    </PageContainer>
   );
 }

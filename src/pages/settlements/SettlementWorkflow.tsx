@@ -24,6 +24,8 @@ import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { CrudEndpoints } from '@/hooks/useCrud';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const createFields: FieldConfig[] = [
   { key: 'employee_id', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name', required: true },
@@ -171,16 +173,14 @@ function SettlementWorkflowContent() {
   const queryResult = settlementCrud.useList(apiParams);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Full & Final Settlements</h1>
-          <p className="mt-1 text-sm text-ink-secondary">
-            Manage employee exit settlements — submit, approve, or reject final payouts.
-          </p>
-        </div>
-        <CreateButton permission="settlements.create" label="Create Settlement" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Full & Final Settlements"
+        subtitle="Manage employee exit settlements — submit, approve, or reject final payouts."
+        actions={
+          <CreateButton permission="settlements.create" label="Create Settlement" onClick={() => setShowCreate(true)} />
+        }
+      />
 
       <FilterBar
         filters={settlementFilters}
@@ -212,6 +212,6 @@ function SettlementWorkflowContent() {
         onSubmit={(data) => createMutation.mutate(data)}
         isLoading={createMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

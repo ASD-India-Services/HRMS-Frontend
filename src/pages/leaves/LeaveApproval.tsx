@@ -12,6 +12,10 @@ import { formatDate } from '@/utils/formatters';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { EmptyState } from '@/components/EmptyState';
 
 interface ApprovalModalProps {
   application: LeaveApplication;
@@ -53,24 +57,18 @@ function ApprovalModal({ application, action, onClose, onConfirm, isPending }: A
 
         <div className="mt-5 flex justify-end gap-3">
           <Button variant="outlined" color="inherit"
-            type="button"
             onClick={onClose}
             disabled={isPending}
           >
             Cancel
           </Button>
-          <button
-            type="button"
+          <Button
+            color={action === 'approve' ? 'success' : 'error'}
             onClick={() => onConfirm(comments)}
             disabled={isPending}
-            className={`rounded-md px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm disabled:opacity-50 ${
-              action === 'approve'
-                ? 'bg-success-main hover:bg-success-dark focus:ring-success-main'
-                : 'bg-error-main hover:bg-error-dark focus:ring-error-main'
-            } focus:outline-none focus:ring-2 focus:ring-offset-2`}
           >
             {isPending ? 'Processing...' : action === 'approve' ? 'Approve' : 'Reject'}
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>
@@ -114,21 +112,18 @@ export function LeaveApproval() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">Leave Approvals</h1>
-        <p className="mt-1 text-sm text-ink-secondary">Review and approve pending leave applications from your team</p>
-      </div>
+    <PageContainer maxWidth="lg">
+      <PageHeader title="Leave Approvals" subtitle="Review and approve pending leave applications from your team" />
 
       {/* Content */}
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 animate-pulse rounded-lg bg-surface-neutral" />
+            <div key={i} className="h-24 animate-pulse rounded-card bg-surface-neutral" />
           ))}
         </div>
       ) : isError ? (
-        <div className="rounded-md bg-error-lighter p-4 text-sm text-error-dark" role="alert">
+        <div className="rounded-card bg-error-lighter p-4 text-sm text-error-dark" role="alert">
           Failed to load pending leave applications. Please try again.
         </div>
       ) : data && data.results.length > 0 ? (
@@ -143,9 +138,9 @@ export function LeaveApproval() {
               );
 
               return (
-                <div
+                <Card
                   key={application.id}
-                  className="rounded-lg border border-divider bg-surface-paper p-4 shadow-sm"
+                  className="p-6"
                 >
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     {/* Employee & Leave Details */}
@@ -175,27 +170,22 @@ export function LeaveApproval() {
                     {/* Action Buttons */}
                     <div className="flex shrink-0 gap-2 items-center">
                       {isOwn ? (
-                        <span className="inline-flex items-center rounded-md bg-warning-lighter px-2.5 py-1 text-xs font-medium text-warning-dark border border-warning-light">
+                        <span className="inline-flex items-center rounded bg-warning-lighter px-2.5 py-1 text-xs font-medium text-warning-dark">
                           Own Request (Cannot self-approve)
                         </span>
                       ) : (
                         <>
-                          <button
-                            onClick={() => openModal(application, 'approve')}
-                            className="rounded-md bg-success-main px-3 py-1.5 text-sm font-medium text-primary-contrast shadow-sm hover:bg-success-dark focus:outline-none focus:ring-2 focus:ring-success-main focus:ring-offset-2"
-                          >
+                          <Button color="success" onClick={() => openModal(application, 'approve')}>
                             Approve
-                          </button>
-                          <Button type="button" color="error"
-                            onClick={() => openModal(application, 'reject')}
-                          >
+                          </Button>
+                          <Button variant="outlined" color="error" onClick={() => openModal(application, 'reject')}>
                             Reject
                           </Button>
                         </>
                       )}
                     </div>
                   </div>
-                </div>
+                </Card>
               );
             })}
           </div>
@@ -206,13 +196,13 @@ export function LeaveApproval() {
               {data.count} pending application{data.count !== 1 ? 's' : ''}
             </p>
             <div className="flex gap-2">
-              <Button type="button" variant="outlined" color="inherit"
+              <Button variant="outlined" color="inherit"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!data.previous}
               >
                 Previous
               </Button>
-              <Button type="button" variant="outlined" color="inherit"
+              <Button variant="outlined" color="inherit"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data.next}
               >
@@ -222,9 +212,9 @@ export function LeaveApproval() {
           </div>
         </>
       ) : (
-        <div className="rounded-lg border border-divider bg-surface-paper p-8 text-center">
-          <p className="text-sm text-ink-secondary">No pending leave applications to review.</p>
-        </div>
+        <Card>
+          <EmptyState module="leaves" title="No pending applications" description="No pending leave applications to review." />
+        </Card>
       )}
 
       {/* Approval/Rejection Modal */}
@@ -237,6 +227,6 @@ export function LeaveApproval() {
           isPending={approveLeave.isPending || rejectLeave.isPending}
         />
       )}
-    </div>
+    </PageContainer>
   );
 }

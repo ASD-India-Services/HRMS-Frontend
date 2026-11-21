@@ -10,9 +10,14 @@ import {
 import type { FAQCategory } from '@/types/helpdesk';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { EmptyState } from '@/components/EmptyState';
+import { Iconify } from '@/components/Iconify';
 
 export default function FAQCategories() {
   const { showToast } = useToast();
@@ -102,51 +107,47 @@ export default function FAQCategories() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Breadcrumb & Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-1.5 text-xs text-ink-secondary mb-1">
+    <PageContainer>
+      <PageHeader
+        breadcrumb={
+          <span className="flex items-center gap-1.5">
             <span>Help Desk</span>
-            <span>&gt;</span>
-            <span className="text-ink-primary font-medium">FAQ</span>
-          </div>
-          <h1 className="text-2xl font-bold text-ink-primary">FAQ Categories</h1>
-        </div>
-
-        <div className="flex items-center gap-3">
-          {/* Search bar */}
-          <div className="relative">
-            <Input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search..."
-              className="w-48 sm:w-64"
-            />
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-disabled hover:text-ink-secondary text-sm"
-              >
-                &times;
-              </button>
+            <Iconify icon="chevron-right" width={14} />
+            <span className="font-medium text-ink-primary">FAQ</span>
+          </span>
+        }
+        title="FAQ Categories"
+        actions={
+          <>
+            {/* Search bar */}
+            <div className="relative">
+              <Input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search..."
+                aria-label="Search FAQ categories"
+                className="w-48 pr-9 sm:w-64"
+              />
+              {searchTerm && (
+                <IconButton
+                  icon="close"
+                  size="small"
+                  aria-label="Clear search"
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-1 top-1/2 -translate-y-1/2"
+                />
+              )}
+            </div>
+            {/* Create Button */}
+            {canCreate && (
+              <Button onClick={handleOpenCreateModal} startIcon={<Iconify icon="plus" />}>
+                Create
+              </Button>
             )}
-          </div>
-
-          {/* Create Button */}
-          {canCreate && (
-            <Button
-              type="button"
-              onClick={handleOpenCreateModal}
-            >
-              <span className="text-base font-bold leading-none">+</span>
-              <span>Create</span>
-            </Button>
-          )}
-        </div>
-      </div>
-
+          </>
+        }
+      />
       {/* Loading & Error States */}
       {isLoading && (
         <div className="flex items-center justify-center py-20">
@@ -156,44 +157,35 @@ export default function FAQCategories() {
       )}
 
       {isError && (
-        <div className="rounded-xl border border-error-light bg-error-lighter p-4 text-xs text-error-dark">
+        <div className="rounded-card bg-error-lighter p-4 text-xs text-error-dark">
           Failed to load FAQ categories. {error instanceof Error ? error.message : 'Please try again.'}
         </div>
       )}
 
       {/* Empty State */}
       {!isLoading && !isError && categories.length === 0 && (
-        <div className="rounded-2xl border-2 border-dashed border-divider bg-surface-paper py-16 text-center shadow-xs">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-lighter text-primary-main">
-            <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm0 5.25h.007v.008H3.75V12Zm0 5.25h.007v.008H3.75v-.008Z" />
-            </svg>
-          </div>
-          <h3 className="mt-3 text-sm font-bold text-ink-primary">No FAQ Categories Found</h3>
-          <p className="mt-1 text-xs text-ink-secondary max-w-sm mx-auto">
-            {searchTerm
-              ? 'No categories match your search. Try a different query.'
-              : 'Create categories like Leave, Payroll, Asset, and Recruitment to organize help topics.'}
-          </p>
-          {canCreate && (
-            <Button size="small"
-              type="button"
-              onClick={handleOpenCreateModal}
-              className="mt-4"
-            >
-              + Create Category
-            </Button>
-          )}
-        </div>
+        <Card>
+          <EmptyState
+            module="helpdesk"
+            title="No FAQ Categories Found"
+            description={
+              searchTerm
+                ? 'No categories match your search. Try a different query.'
+                : 'Create categories like Leave, Payroll, Asset, and Recruitment to organize help topics.'
+            }
+            ctaLabel="Create Category"
+            onCtaClick={canCreate ? handleOpenCreateModal : undefined}
+          />
+        </Card>
       )}
 
       {/* Cards Grid */}
       {!isLoading && !isError && categories.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((cat) => (
-            <div
+            <Card
               key={cat.id}
-              className="rounded-lg border border-divider bg-surface-paper p-6 shadow-xs hover:shadow-md transition flex flex-col justify-between relative"
+              className="relative flex flex-col justify-between p-6 transition-shadow hover:shadow-z8"
             >
               {/* Card Header */}
               <div>
@@ -203,49 +195,46 @@ export default function FAQCategories() {
                   {/* 3 dots menu button */}
                   {(canEdit || canDelete) && (
                     <div className="relative">
-                      <button
-                        type="button"
+                      <IconButton
+                        icon="more-vertical"
+                        size="small"
                         onClick={() => setActiveMenuId(activeMenuId === cat.id ? null : cat.id)}
-                        className="p-1 text-ink-disabled hover:text-ink-secondary rounded transition"
+                        aria-label="Actions"
                         title="Actions"
-                      >
-                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                        </svg>
-                      </button>
+                      />
 
                       {/* Dropdown Menu */}
                       {activeMenuId === cat.id && (
                         <div
-                          className="absolute right-0 top-full mt-1 w-32 rounded-md bg-surface-paper py-1 shadow-lg border border-divider z-20 animate-in fade-in zoom-in-95"
+                          className="absolute right-0 top-full z-20 mt-1 w-36 rounded-lg bg-surface-paper p-1 shadow-dropdown animate-in fade-in zoom-in-95"
                           onMouseLeave={() => setActiveMenuId(null)}
                         >
                           {canEdit && (
-                            <button
-                              type="button"
+                            <Button
+                              variant="text"
+                              color="inherit"
+                              size="small"
+                              className="!w-full !justify-start"
                               onClick={() => handleOpenEditModal(cat)}
-                              className="w-full text-left px-3 py-1.5 text-xs text-ink-primary hover:bg-surface-neutral flex items-center gap-2"
+                              startIcon={<Iconify icon="pencil" />}
                             >
-                              <svg className="h-3.5 w-3.5 text-ink-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                              <span>Edit</span>
-                            </button>
+                              Edit
+                            </Button>
                           )}
                           {canDelete && (
-                            <button
-                              type="button"
+                            <Button
+                              variant="text"
+                              color="error"
+                              size="small"
+                              className="!w-full !justify-start"
                               onClick={() => {
                                 setActiveMenuId(null);
                                 setDeletingCategory(cat);
                               }}
-                              className="w-full text-left px-3 py-1.5 text-xs text-error-main hover:bg-error-lighter flex items-center gap-2"
+                              startIcon={<Iconify icon="trash" />}
                             >
-                              <svg className="h-3.5 w-3.5 text-error-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                              <span>Delete</span>
-                            </button>
+                              Delete
+                            </Button>
                           )}
                         </div>
                       )}
@@ -262,14 +251,13 @@ export default function FAQCategories() {
               {/* View FAQs Button */}
               <div className="mt-6 pt-2">
                 <Button
-                  type="button"
                   onClick={() => navigate(`/helpdesk/faq-view/${cat.id}`)}
                   className="w-full"
                 >
                   View FAQs
                 </Button>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}
@@ -283,17 +271,11 @@ export default function FAQCategories() {
               <h3 id="FAQCategories-modal-title-1" className="text-lg font-medium text-ink-primary">
                 {editingCategory ? 'Edit FAQ Category' : 'Create FAQ Category'}
               </h3>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="text-ink-disabled hover:text-ink-secondary text-lg leading-none p-1"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setIsModalOpen(false)} />
             </div>
 
             {formError && (
-              <div className="mt-3 rounded-md bg-error-lighter p-2.5 text-xs text-error-dark border border-error-light">
+              <div className="mt-3 rounded-card bg-error-lighter p-2.5 text-xs text-error-dark">
                 {formError}
               </div>
             )}
@@ -349,24 +331,16 @@ export default function FAQCategories() {
               Are you sure you want to delete <span className="font-semibold text-ink-primary">{deletingCategory.title}</span>? All FAQs under this category will also be deleted.
             </p>
             <div className="mt-5 flex justify-end gap-2.5">
-              <Button variant="outlined" color="inherit" size="small"
-                type="button"
-                onClick={() => setDeletingCategory(null)}
-              >
+              <Button variant="outlined" color="inherit" onClick={() => setDeletingCategory(null)}>
                 Cancel
               </Button>
-              <button
-                type="button"
-                onClick={handleDeleteConfirm}
-                disabled={deleteMutation.isPending}
-                className="rounded bg-error-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-error-dark disabled:opacity-50"
-              >
+              <Button color="error" onClick={handleDeleteConfirm} disabled={deleteMutation.isPending}>
                 {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
-              </button>
+              </Button>
             </div>
           </div>
         </Modal>
       )}
-    </div>
+    </PageContainer>
   );
 }

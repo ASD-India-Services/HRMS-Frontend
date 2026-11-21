@@ -7,15 +7,19 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import {
   PermissionSectionsGrid,
   type PermissionSection,
 } from './PermissionSectionsGrid';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -68,7 +72,7 @@ function PermissionGridSkeleton() {
   return (
     <div className="space-y-4">
       {Array.from({ length: 4 }).map((_, groupIdx) => (
-        <div key={groupIdx} className="rounded-lg border border-divider bg-surface-paper p-4">
+        <div key={groupIdx} className="rounded-card bg-surface-paper p-4 shadow-card">
           <div className="mb-3 flex items-center gap-3">
             <div className="h-5 w-32 animate-pulse rounded bg-grey-200" />
             <div className="h-4 w-20 animate-pulse rounded bg-grey-200" />
@@ -224,113 +228,96 @@ export default function RoleDetailPage() {
 
   if (roleLoading || permsLoading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <PageContainer>
         <div className="mb-4 h-4 w-28 animate-pulse rounded bg-grey-200" />
         <div className="mb-2 h-7 w-48 animate-pulse rounded bg-grey-200" />
         <div className="mb-6 h-4 w-64 animate-pulse rounded bg-grey-200" />
         <PermissionGridSkeleton />
-      </div>
+      </PageContainer>
     );
   }
 
   if (roleError || permsError) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <Link to="/admin/roles" className="mb-4 inline-flex items-center text-sm text-primary-main hover:text-primary-dark">
-          <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+      <PageContainer>
+        <ButtonLink to="/admin/roles" variant="text" color="inherit" size="small" className="mb-4 -ml-2.5" startIcon={<Iconify icon="arrow-left" />}>
           Back to Roles
-        </Link>
-        <div className="rounded-md bg-error-lighter p-4">
+        </ButtonLink>
+        <div className="rounded-card bg-error-lighter p-4">
           <p className="text-sm text-error-dark">
             Failed to load role details.{' '}
             {roleErrorObj instanceof Error ? roleErrorObj.message : 'Please try again.'}
           </p>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
   if (!role || !allPermissions) return null;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <PageContainer>
       {/* Header with Save Button — sticky so it stays visible while scrolling */}
-      <div className="sticky top-0 z-30 -mx-4 mb-6 bg-surface-neutral/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-        {/* Back link */}
-        <Link
-          to="/admin/roles"
-          className="mb-2 inline-flex items-center text-sm text-primary-main hover:text-primary-dark"
-        >
-          <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to Roles
-        </Link>
-
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <h1 className="truncate text-2xl font-bold text-ink-primary">{role.name}</h1>
-            {role.description && (
-              <p className="mt-1 truncate text-sm text-ink-secondary">{role.description}</p>
-            )}
-          </div>
-          <div className="flex items-center gap-3">
-            {/* Permission search */}
-            <div className="relative">
-              <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-ink-disabled">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
-                </svg>
-              </span>
-              <Input
-                type="text"
-                value={permSearch}
-                onChange={(e) => setPermSearch(e.target.value)}
-                placeholder="Search permissions…"
-                aria-label="Search permissions"
-                className="w-48 pl-9 pr-8 sm:w-64"
-              />
-              {permSearch && (
-                <button
-                  type="button"
-                  onClick={() => setPermSearch('')}
-                  aria-label="Clear search"
-                  className="absolute inset-y-0 right-0 flex items-center pr-2 text-ink-disabled hover:text-ink-secondary"
-                >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              )}
-            </div>
-            {hasChanges && <span className="hidden text-sm font-medium text-warning-main sm:inline">Unsaved changes</span>}
-            <Button type="button"
-              onClick={() => saveMutation.mutate()}
-              disabled={!hasChanges || saveMutation.isPending}
-            >
-              {saveMutation.isPending ? (
-                <>
-                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-surface-paper border-t-transparent" />
-                  Saving…
-                </>
-              ) : (
-                'Save Changes'
-              )}
-            </Button>
-          </div>
-        </div>
+      <div className="sticky top-0 z-30 -mx-4 mb-6 bg-surface-neutral/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
+        <PageHeader
+          className="!mb-0 items-center"
+          breadcrumb={
+            <ButtonLink to="/admin/roles" variant="text" color="inherit" size="small" className="-ml-2.5" startIcon={<Iconify icon="arrow-left" />}>
+              Back to Roles
+            </ButtonLink>
+          }
+          title={<span className="block truncate">{role.name}</span>}
+          subtitle={role.description || undefined}
+          actions={
+            <>
+              {/* Permission search */}
+              <div className="relative">
+                <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-ink-disabled">
+                  <Iconify icon="search" width={16} />
+                </span>
+                <Input
+                  type="text"
+                  value={permSearch}
+                  onChange={(e) => setPermSearch(e.target.value)}
+                  placeholder="Search permissions…"
+                  aria-label="Search permissions"
+                  className="w-48 pl-9 pr-8 sm:w-64"
+                />
+                {permSearch && (
+                  <IconButton
+                    icon="close"
+                    size="small"
+                    aria-label="Clear search"
+                    onClick={() => setPermSearch('')}
+                    className="absolute right-1 top-1/2 -translate-y-1/2"
+                  />
+                )}
+              </div>
+              {hasChanges && <span className="hidden text-sm font-medium text-warning-main sm:inline">Unsaved changes</span>}
+              <Button
+                onClick={() => saveMutation.mutate()}
+                disabled={!hasChanges || saveMutation.isPending}
+              >
+                {saveMutation.isPending ? (
+                  <>
+                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-surface-paper border-t-transparent" />
+                    Saving…
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
+              </Button>
+            </>
+          }
+        />
       </div>
 
       {/* Toast notification for save success */}
       {saveSuccess && (
         <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top-2 fade-in duration-300">
-          <div className="flex items-center gap-3 rounded-lg border border-success-light bg-surface-paper px-4 py-3 shadow-lg">
+          <div className="flex items-center gap-3 rounded-card bg-surface-paper px-4 py-3 shadow-dropdown">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success-lighter">
-              <svg className="h-5 w-5 text-success-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
+              <Iconify icon="check" width={20} className="text-success-main" />
             </div>
             <div>
               <p className="text-sm font-semibold text-ink-primary">Settings saved</p>
@@ -341,11 +328,9 @@ export default function RoleDetailPage() {
       )}
       {saveError && (
         <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top-2 fade-in duration-300">
-          <div className="flex items-center gap-3 rounded-lg border border-error-light bg-surface-paper px-4 py-3 shadow-lg">
+          <div className="flex items-center gap-3 rounded-card bg-surface-paper px-4 py-3 shadow-dropdown">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-error-lighter">
-              <svg className="h-5 w-5 text-error-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <Iconify icon="close" width={20} className="text-error-main" />
             </div>
             <div>
               <p className="text-sm font-semibold text-ink-primary">Save failed</p>
@@ -357,18 +342,16 @@ export default function RoleDetailPage() {
 
       {/* System role warning */}
       {role.is_system && (
-        <div className="mb-6 flex items-start gap-3 rounded-md border border-warning-light bg-warning-lighter p-4">
-          <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-warning-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-          </svg>
+        <div className="mb-6 flex items-start gap-3 rounded-card bg-warning-lighter p-4">
+          <Iconify icon="warning" width={20} className="mt-0.5 shrink-0 text-warning-main" />
           <p className="text-sm text-warning-dark">This is a system role. Changes may affect core functionality.</p>
         </div>
       )}
 
       {/* Data Scope Selection Box (Top) */}
-      <div className="mb-8 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+      <Card className="mb-8 p-6">
         <div className="mb-3">
-          <h2 className="text-base font-semibold text-ink-primary">Data Access Scope</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Data Access Scope</h2>
           <p className="text-sm text-ink-secondary">
             Define the reach of this role when viewing, editing, and managing employee records, attendance, leaves, and approvals.
           </p>
@@ -477,15 +460,15 @@ export default function RoleDetailPage() {
             </p>
           </label>
         </div>
-      </div>
+      </Card>
 
       {/* Permission Grid */}
       <div className="space-y-4">
-        <h2 className="text-base font-semibold text-ink-primary">Module Permissions</h2>
+        <h2 className="text-lg font-semibold text-ink-primary">Module Permissions</h2>
         {filteredSections.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-divider bg-surface-paper p-8 text-center text-sm text-ink-secondary">
+          <Card className="p-8 text-center text-sm text-ink-secondary">
             No permissions match &ldquo;{permSearch}&rdquo;.
-          </div>
+          </Card>
         ) : (
           <PermissionSectionsGrid
             sections={filteredSections}
@@ -496,6 +479,6 @@ export default function RoleDetailPage() {
         )}
       </div>
 
-    </div>
+    </PageContainer>
   );
 }

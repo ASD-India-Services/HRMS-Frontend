@@ -17,6 +17,9 @@ import { Can } from '@/components/Can';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { CrudEndpoints } from '@/hooks/useCrud';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
 
 export interface OnboardingTask {
   id: string;
@@ -149,35 +152,32 @@ function OnboardingTrackingContent() {
   }, [queryResult.data]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Onboarding Tracking</h1>
-          <p className="mt-1 text-sm text-ink-secondary">
-            Track employee onboarding task progress and completion.
-          </p>
-        </div>
-        {queryResult.data && (
-          <div className="flex items-center gap-3 rounded-lg border border-divider bg-surface-paper px-4 py-2 shadow-sm">
-            <div className="text-right">
-              <p className="text-lg font-semibold text-ink-primary">{progress}%</p>
-              <p className="text-xs text-ink-secondary">Completed</p>
-            </div>
-            <div
-              className="h-10 w-10 rounded-full"
-              style={{
-                background: `conic-gradient(rgb(var(--success-main)) ${progress * 3.6}deg, rgb(var(--grey-300)) ${progress * 3.6}deg)`,
-              }}
-              role="progressbar"
-              aria-valuenow={progress}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`Onboarding progress: ${progress}%`}
-            />
-          </div>
-        )}
-      </div>
-
+    <PageContainer>
+      <PageHeader
+        title="Onboarding Tracking"
+        subtitle="Track employee onboarding task progress and completion."
+        actions={
+          queryResult.data && (
+            <Card className="flex items-center gap-3 px-4 py-2">
+              <div className="text-right">
+                <p className="text-lg font-semibold text-ink-primary">{progress}%</p>
+                <p className="text-xs text-ink-secondary">Completed</p>
+              </div>
+              <div
+                className="h-10 w-10 rounded-full"
+                style={{
+                  background: `conic-gradient(rgb(var(--success-main)) ${progress * 3.6}deg, rgb(var(--grey-300)) ${progress * 3.6}deg)`,
+                }}
+                role="progressbar"
+                aria-valuenow={progress}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`Onboarding progress: ${progress}%`}
+              />
+            </Card>
+          )
+        }
+      />
       <FilterBar
         filters={trackingFilters}
         values={filterValues}
@@ -199,6 +199,6 @@ function OnboardingTrackingContent() {
           onPageSizeChange={setPageSize}
         />
       )}
-    </div>
+    </PageContainer>
   );
 }

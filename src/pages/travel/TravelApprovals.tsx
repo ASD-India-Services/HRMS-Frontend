@@ -13,6 +13,10 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createCrudHooks } from '@/hooks/useCrud';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Tabs } from '@/components/ui/Tabs';
+import { Iconify } from '@/components/Iconify';
 import {
   travelRequestsCrudConfig,
   type TravelRequest,
@@ -171,50 +175,22 @@ function TravelApprovalsContent() {
   const pendingCount = pendingQueryResult.data?.count ?? 0;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Travel Approvals</h1>
-          <p className="mt-1 text-sm text-ink-secondary">
-            Review and approve or reject pending travel requests.
-          </p>
-        </div>
-        <CreateButton permission="travel.create" label="Create Travel Request" onClick={() => setShowCreate(true)} />
-      </div>
-
+    <PageContainer>
+      <PageHeader
+        title="Travel Approvals"
+        subtitle="Review and approve or reject pending travel requests."
+        actions={<CreateButton permission="travel.create" label="Create Travel Request" onClick={() => setShowCreate(true)} />}
+      />
       {isApproverOrAdmin && (
-        <div className="mb-4 border-b border-divider" role="tablist">
-          <nav className="-mb-px flex gap-4">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={viewTab === 'mine'}
-              onClick={() => { setViewTab('mine'); setPage(1); }}
-              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-                viewTab === 'mine'
-                  ? 'border-primary-main text-primary-main font-semibold'
-                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
-              }`}
-            >
-              My Requests
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={viewTab === 'approvals'}
-              onClick={() => { setViewTab('approvals'); setPage(1); }}
-              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-                viewTab === 'approvals'
-                  ? 'border-primary-main text-primary-main font-semibold'
-                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
-              }`}
-            >
-              Team Approvals
-            </button>
-          </nav>
-        </div>
+        <Tabs
+          items={[
+            { value: 'mine', label: 'My Requests' },
+            { value: 'approvals', label: 'Team Approvals' },
+          ]}
+          value={viewTab}
+          onChange={(tab) => { setViewTab(tab); setPage(1); }}
+        />
       )}
-
       {queryResult.data && (
         <div className="mb-4 flex items-center gap-4">
           {(() => {
@@ -222,7 +198,7 @@ function TravelApprovalsContent() {
               if (filterValues.status === 'submitted' || filterValues.status === 'pending' || filterValues.status === 'pending_approval') {
                 if (queryResult.data.count > 0) {
                   return (
-                    <div className="inline-flex items-center gap-2 rounded-lg bg-warning-lighter border border-warning-light px-4 py-2">
+                    <div className="inline-flex items-center gap-2 rounded-lg bg-warning-lighter px-4 py-2">
                       <span className="text-sm font-medium text-warning-dark">
                         {queryResult.data.count} request{queryResult.data.count !== 1 ? 's' : ''} pending review
                       </span>
@@ -230,7 +206,7 @@ function TravelApprovalsContent() {
                   );
                 }
                 return (
-                  <div className="inline-flex items-center gap-2 rounded-lg bg-success-lighter border border-success-light px-4 py-2">
+                  <div className="inline-flex items-center gap-2 rounded-lg bg-success-lighter px-4 py-2">
                     <span className="text-sm font-medium text-success-dark">
                       No requests pending review
                     </span>
@@ -240,7 +216,7 @@ function TravelApprovalsContent() {
 
               if (filterValues.status === 'approved') {
                 return (
-                  <div className="inline-flex items-center gap-2 rounded-lg bg-success-lighter border border-success-light px-4 py-2">
+                  <div className="inline-flex items-center gap-2 rounded-lg bg-success-lighter px-4 py-2">
                     <span className="text-sm font-medium text-success-dark">
                       {queryResult.data.count} request{queryResult.data.count !== 1 ? 's' : ''} approved
                     </span>
@@ -250,7 +226,7 @@ function TravelApprovalsContent() {
 
               if (filterValues.status === 'rejected') {
                 return (
-                  <div className="inline-flex items-center gap-2 rounded-lg bg-error-lighter border border-error-light px-4 py-2">
+                  <div className="inline-flex items-center gap-2 rounded-lg bg-error-lighter px-4 py-2">
                     <span className="text-sm font-medium text-error-dark">
                       {queryResult.data.count} request{queryResult.data.count !== 1 ? 's' : ''} rejected
                     </span>
@@ -259,7 +235,7 @@ function TravelApprovalsContent() {
               }
 
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-surface-neutral border border-divider px-4 py-2">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-surface-neutral px-4 py-2">
                   <span className="text-sm font-medium text-ink-primary">
                     {queryResult.data.count} request{queryResult.data.count !== 1 ? 's' : ''} found
                   </span>
@@ -270,7 +246,7 @@ function TravelApprovalsContent() {
             // All requests view (no status filter)
             if (pendingCount > 0) {
               return (
-                <div className="inline-flex items-center gap-2 rounded-lg bg-warning-lighter border border-warning-light px-4 py-2">
+                <div className="inline-flex items-center gap-2 rounded-lg bg-warning-lighter px-4 py-2">
                   <span className="text-sm font-medium text-warning-dark">
                     {pendingCount} request{pendingCount !== 1 ? 's' : ''} pending review
                   </span>
@@ -280,10 +256,8 @@ function TravelApprovalsContent() {
             }
 
             return (
-              <div className="inline-flex items-center gap-2 rounded-lg bg-success-lighter border border-success-light px-4 py-2">
-                <svg className="h-4 w-4 text-success-main" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                </svg>
+              <div className="inline-flex items-center gap-2 rounded-lg bg-success-lighter px-4 py-2">
+                <Iconify icon="check" width={16} className="text-success-main" />
                 <span className="text-sm font-medium text-success-dark">
                   No requests pending review
                 </span>
@@ -333,6 +307,6 @@ function TravelApprovalsContent() {
         }}
         isLoading={createMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

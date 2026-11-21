@@ -23,8 +23,11 @@ import type { LeaveApplication } from '@/types/leave';
 import type { ColumnDef } from '@/types/datatable';
 import { formatDate } from '@/utils/formatters';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Iconify } from '@/components/Iconify';
 
 // Create CRUD hooks from the leave applications config
 const leaveAppsCrud = createCrudHooks<LeaveApplication>({
@@ -220,17 +223,7 @@ function LeaveApprovalsContent() {
         header: 'View',
         sortable: false,
         render: (_value: unknown, row: LeaveApplication) => (
-          <button
-            type="button"
-            onClick={() => setSelectedApplicant(row)}
-            className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-primary-dark hover:bg-primary-lighter border border-primary-light"
-          >
-            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            View
-          </button>
+          <IconButton icon="eye" size="small" aria-label="View" title="View" onClick={() => setSelectedApplicant(row)} />
         ),
       },
       {
@@ -261,33 +254,18 @@ function LeaveApprovalsContent() {
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <PageContainer>
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">Leave Approvals</h1>
-        <p className="mt-1 text-sm text-ink-secondary">
-          Review leave applicants, inspect full application details, and approve or reject leave requests.
-        </p>
-      </div>
+      <PageHeader
+        title="Leave Approvals"
+        subtitle="Review leave applicants, inspect full application details, and approve or reject leave requests."
+      />
 
       {/* Total count summary */}
       {queryResult.data && (
         <div className="mb-4 flex items-center gap-4">
-          <div className="inline-flex items-center gap-2 rounded-lg bg-primary-lighter border border-primary-light px-4 py-2">
-            <svg
-              className="h-5 w-5 text-primary-main"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              />
-            </svg>
+          <div className="inline-flex items-center gap-2 rounded-lg bg-primary-lighter px-4 py-2">
+            <Iconify icon="success" width={20} className="text-primary-main" />
             <span className="text-sm font-medium text-primary-dark">
               Total {queryResult.data.count} employee leave application{queryResult.data.count !== 1 ? 's' : ''}{' '}
               {filterValues.status ? `(${filterValues.status})` : 'listed'}
@@ -325,24 +303,21 @@ function LeaveApprovalsContent() {
       {selectedApplicant && (
         <Modal open onClose={() => { setSelectedApplicant(null); setActionComments(''); }} labelledBy="LeaveApprovals-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
-            <div className="flex items-center justify-between border-b pb-4">
+            <div className="flex items-center justify-between border-b border-divider pb-4">
               <div>
                 <h3 id="LeaveApprovals-modal-title-1" className="text-lg font-bold text-ink-primary">Leave Applicant Details</h3>
                 <p className="text-xs text-ink-secondary">ID: {selectedApplicant.id}</p>
               </div>
-              <button
-                type="button"
+              <IconButton
+                icon="close"
+                size="small"
+                aria-label="Close"
                 onClick={() => { setSelectedApplicant(null); setActionComments(''); }}
-                className="rounded-lg p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary"
-              >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              />
             </div>
 
             {/* Applicant Profile Card */}
-            <div className="mt-4 flex items-center gap-4 rounded-lg bg-surface-neutral p-4 border border-divider">
+            <div className="mt-4 flex items-center gap-4 rounded-lg bg-surface-neutral p-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-main font-bold text-primary-contrast text-lg">
                 {selectedApplicant.employee.first_name?.[0] || 'E'}{selectedApplicant.employee.last_name?.[0] || ''}
               </div>
@@ -392,18 +367,16 @@ function LeaveApprovalsContent() {
             {/* Reason */}
             <div className="mt-4">
               <span className="text-xs font-medium text-ink-secondary uppercase block mb-1">Reason for Leave</span>
-              <div className="rounded-md bg-surface-neutral p-3 text-sm text-ink-primary border border-divider">
+              <div className="rounded-lg bg-surface-neutral p-3 text-sm text-ink-primary">
                 {selectedApplicant.reason || 'No reason provided.'}
               </div>
             </div>
 
             {/* Action Section for Pending Applications */}
             {selectedApplicant.status === 'pending' && isOwnApplication(selectedApplicant) && (
-              <div className="mt-5 rounded-lg bg-warning-lighter p-4 border border-warning-light">
+              <div className="mt-5 rounded-card bg-warning-lighter p-4">
                 <div className="flex items-center gap-2 text-sm font-semibold text-warning-dark">
-                  <svg className="h-5 w-5 text-warning-main shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
+                  <Iconify icon="warning" width={20} className="shrink-0 text-warning-main" />
                   Self-Approval Not Allowed
                 </div>
                 <p className="mt-1 text-xs text-warning-dark">
@@ -413,7 +386,7 @@ function LeaveApprovalsContent() {
             )}
 
             {selectedApplicant.status === 'pending' && !isOwnApplication(selectedApplicant) && (
-              <div className="mt-5 border-t pt-4">
+              <div className="mt-5 border-t border-divider pt-4">
                 <label className="block text-xs font-medium text-ink-primary uppercase mb-1">
                   Manager Comments (Optional)
                 </label>
@@ -425,8 +398,7 @@ function LeaveApprovalsContent() {
                 />
 
                 <div className="mt-4 flex items-center justify-end gap-3">
-                  <Button color="error"
-                    type="button"
+                  <Button variant="outlined" color="error"
                     disabled={rejectMutation.isPending || approveMutation.isPending}
                     onClick={() => {
                       rejectMutation.mutate(
@@ -443,8 +415,8 @@ function LeaveApprovalsContent() {
                   >
                     {rejectMutation.isPending ? 'Rejecting...' : 'Reject Leave'}
                   </Button>
-                  <button
-                    type="button"
+                  <Button
+                    color="success"
                     disabled={approveMutation.isPending || rejectMutation.isPending}
                     onClick={() => {
                       approveMutation.mutate(
@@ -458,10 +430,9 @@ function LeaveApprovalsContent() {
                         }
                       );
                     }}
-                    className="rounded-md bg-success-main px-4 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-success-dark disabled:opacity-50"
                   >
                     {approveMutation.isPending ? 'Approving...' : 'Approve Leave'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -470,7 +441,6 @@ function LeaveApprovalsContent() {
             {selectedApplicant.status !== 'pending' && (
               <div className="mt-6 flex justify-end">
                 <Button variant="outlined" color="inherit"
-                  type="button"
                   onClick={() => setSelectedApplicant(null)}
                 >
                   Close
@@ -480,6 +450,6 @@ function LeaveApprovalsContent() {
           </div>
         </Modal>
       )}
-    </div>
+    </PageContainer>
   );
 }

@@ -6,6 +6,7 @@ import type { AttendanceRecord } from '@/hooks/useAttendance'
 import api from '@/lib/api'
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
 
 interface CheckInButtonProps {
   /** Current attendance record for today */
@@ -147,11 +148,9 @@ export function CheckInButton({ record }: CheckInButtonProps) {
     <div className="text-center">
       {/* Non-working day message (holiday or on leave) */}
       {isNonWorkingDay && workingDayCheck.reason && (
-        <div className="mb-4 mx-auto max-w-sm rounded-md bg-primary-lighter border border-primary-light p-3" role="alert">
+        <div className="mb-4 mx-auto max-w-sm rounded-card bg-primary-lighter p-3" role="alert">
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-primary-main flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-            </svg>
+            <Iconify icon="info" width={20} className="shrink-0 text-primary-main" />
             <p className="text-sm text-primary-dark">{workingDayCheck.reason}. Attendance can only be entered on working days.</p>
           </div>
         </div>
@@ -159,18 +158,17 @@ export function CheckInButton({ record }: CheckInButtonProps) {
 
       {/* Shift time restriction message */}
       {!isNonWorkingDay && isDisabledByShift && shiftTimeStatus.message && (
-        <div className="mb-4 mx-auto max-w-sm rounded-md bg-warning-lighter border border-warning-light p-3" role="alert">
+        <div className="mb-4 mx-auto max-w-sm rounded-card bg-warning-lighter p-3" role="alert">
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-warning-main flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-            </svg>
+            <Iconify icon="attendance" width={20} className="shrink-0 text-warning-main" />
             <p className="text-sm text-warning-dark">{shiftTimeStatus.message}</p>
           </div>
         </div>
       )}
 
-      <button
-        type="button"
+      <Button
+        color={isCheckIn ? 'success' : 'error'}
+        size="large"
         onClick={() => {
           if (!isCheckIn) {
             // Show confirmation dialog before checkout
@@ -181,47 +179,23 @@ export function CheckInButton({ record }: CheckInButtonProps) {
         }}
         disabled={isDisabled}
         aria-label={isCheckIn ? 'Check in for attendance' : 'Check out from attendance'}
-        className={`
-          inline-flex items-center justify-center
-          w-36 h-36 rounded-full
-          text-primary-contrast font-semibold text-lg
-          shadow-lg transition-all duration-200
-          focus:outline-none focus:ring-4
-          disabled:opacity-40 disabled:cursor-not-allowed disabled:blur-[1px]
-          ${isCheckIn
-            ? 'bg-success-main hover:bg-success-main focus:ring-success-light active:scale-95'
-            : 'bg-error-main hover:bg-error-main focus:ring-error-light active:scale-95'
-          }
-          ${isProcessing ? 'animate-pulse' : ''}
-        `}
+        className={`!h-36 !w-36 !rounded-full !px-0 !text-lg shadow-z8 transition-transform duration-200 active:scale-95 disabled:blur-[1px] ${isProcessing ? 'animate-pulse' : ''}`}
       >
         {actionState === 'locating' && (
           <span className="flex flex-col items-center">
-            <svg className="w-8 h-8 mb-1 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            </svg>
+            <Iconify icon="geoLocations" width={32} className="mb-1 animate-spin" />
             <span className="text-sm">Locating...</span>
           </span>
         )}
         {actionState === 'submitting' && (
           <span className="flex flex-col items-center">
-            <svg className="w-8 h-8 mb-1 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
+            <Iconify icon="refresh" width={32} className="mb-1 animate-spin" />
             <span className="text-sm">Submitting...</span>
           </span>
         )}
         {actionState === 'idle' && (
           <span className="flex flex-col items-center">
-            {isCheckIn ? (
-              <svg className="w-10 h-10 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-              </svg>
-            ) : (
-              <svg className="w-10 h-10 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            )}
+            <Iconify icon={isCheckIn ? 'arrow-right' : 'logout'} width={40} className="mb-1" />
             <span>
               {isCheckIn
                 ? (hasPriorSessions ? 'Check In Again' : 'Check In')
@@ -230,8 +204,7 @@ export function CheckInButton({ record }: CheckInButtonProps) {
             </span>
           </span>
         )}
-      </button>
-
+      </Button>
       {/* Current date display */}
       <p className="mt-4 text-sm text-ink-secondary">
         {new Date().toLocaleDateString(undefined, {
@@ -245,9 +218,7 @@ export function CheckInButton({ record }: CheckInButtonProps) {
       {/* Coordinates display */}
       {coordinates && (
         <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-neutral text-xs text-ink-secondary">
-          <svg className="w-3.5 h-3.5 text-secondary-main" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-          </svg>
+          <Iconify icon="geoLocations" width={14} className="text-secondary-main" />
           <span>
             {coordinates.latitude.toFixed(5)}, {coordinates.longitude.toFixed(5)}
           </span>
@@ -259,11 +230,9 @@ export function CheckInButton({ record }: CheckInButtonProps) {
 
       {/* Error message */}
       {error && (
-        <div className="mt-4 mx-auto max-w-sm rounded-md bg-error-lighter border border-error-light p-3" role="alert">
+        <div className="mt-4 mx-auto max-w-sm rounded-card bg-error-lighter p-3" role="alert">
           <div className="flex items-start gap-2">
-            <svg className="w-5 h-5 text-error-light flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            </svg>
+            <Iconify icon="error" width={20} className="mt-0.5 shrink-0 text-error-main" />
             <p className="text-sm text-error-dark">{error}</p>
           </div>
         </div>
@@ -271,11 +240,9 @@ export function CheckInButton({ record }: CheckInButtonProps) {
 
       {/* Geo-fence warning (check-in allowed but outside radius) */}
       {geofenceWarning && !error && (
-        <div className="mt-4 mx-auto max-w-sm rounded-md bg-warning-lighter border border-warning-light p-3" role="alert">
+        <div className="mt-4 mx-auto max-w-sm rounded-card bg-warning-lighter p-3" role="alert">
           <div className="flex items-start gap-2">
-            <svg className="w-5 h-5 text-warning-main flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
+            <Iconify icon="warning" width={20} className="mt-0.5 shrink-0 text-warning-main" />
             <p className="text-sm text-warning-dark">{geofenceWarning}</p>
           </div>
         </div>
@@ -287,9 +254,7 @@ export function CheckInButton({ record }: CheckInButtonProps) {
           <div className="mx-4 p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center gap-3 mb-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-error-lighter">
-                <svg className="h-5 w-5 text-error-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
+                <Iconify icon="warning" width={20} className="text-error-main" />
               </div>
               <h3 id="CheckInButton-modal-title-1" className="text-lg font-semibold text-ink-primary">Confirm Check Out</h3>
             </div>

@@ -5,6 +5,7 @@
 
 import { Link } from 'react-router-dom';
 import type { Employee } from '@/types/employee';
+import { Iconify } from '@/components/Iconify';
 
 interface EmployeeCardProps {
   employee: Employee;
@@ -60,7 +61,7 @@ export function EmployeeCard({ employee }: EmployeeCardProps) {
   return (
     <Link
       to={`/employees/${employee.id}`}
-      className="block rounded-lg border border-divider bg-surface-paper p-4 shadow-sm transition-shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2"
+      className="block rounded-card bg-surface-paper p-5 shadow-card transition-shadow hover:shadow-z8 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-main focus-visible:ring-offset-2"
     >
       <div className="flex items-start gap-3">
         {/* Avatar */}
@@ -104,8 +105,8 @@ export function EmployeeCard({ employee }: EmployeeCardProps) {
           {/* Onboarding status badge */}
           <OnboardingBadge status={(employee as Record<string, unknown>).onboarding_status as string | undefined} />
           {(employee as Record<string, unknown>).branch_name && (
-            <span className="inline-flex items-center rounded-full bg-primary-lighter px-2 py-0.5 text-xs font-medium text-primary-dark">
-              📍 {(employee as Record<string, unknown>).branch_name as string}
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary-lighter px-2 py-0.5 text-xs font-medium text-primary-dark">
+              <Iconify icon="geoLocations" width={12} /> {(employee as Record<string, unknown>).branch_name as string}
             </span>
           )}
           <span className="text-xs text-ink-disabled">

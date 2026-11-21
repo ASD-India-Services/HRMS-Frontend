@@ -3,9 +3,15 @@
  * Requirements: 20.2, 20.3
  */
 
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAppraisalDetail } from '@/hooks/useAppraisals';
 import type { AppraisalStatus } from '@/types/appraisal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { ButtonLink } from '@/components/ui/Button';
+import { Card, CardHeader } from '@/components/ui/Card';
+import { EmptyState } from '@/components/EmptyState';
+import { Iconify } from '@/components/Iconify';
 
 const statusStyles: Record<AppraisalStatus, string> = {
   draft: 'bg-surface-neutral text-ink-primary',
@@ -35,29 +41,26 @@ export function AppraisalDetail() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
+      <PageContainer maxWidth="lg">
         <div className="space-y-4">
           <div className="h-8 w-48 animate-pulse rounded bg-surface-neutral" />
-          <div className="h-32 animate-pulse rounded-lg bg-surface-neutral" />
-          <div className="h-64 animate-pulse rounded-lg bg-surface-neutral" />
+          <div className="h-32 animate-pulse rounded-card bg-surface-neutral" />
+          <div className="h-64 animate-pulse rounded-card bg-surface-neutral" />
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
   if (isError || !appraisal) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-md bg-error-lighter p-4 text-sm text-error-dark" role="alert">
+      <PageContainer maxWidth="lg">
+        <div className="rounded-card bg-error-lighter p-4 text-sm text-error-dark" role="alert">
           Failed to load appraisal details. Please try again.
         </div>
-        <Link
-          to="/appraisals"
-          className="mt-4 inline-block text-sm font-medium text-primary-main hover:text-primary-dark"
-        >
-          ← Back to Appraisals
-        </Link>
-      </div>
+        <ButtonLink to="/appraisals" variant="text" size="small" className="mt-4 -ml-2.5" startIcon={<Iconify icon="arrow-left" />}>
+          Back to Appraisals
+        </ButtonLink>
+      </PageContainer>
     );
   }
 
@@ -68,38 +71,32 @@ export function AppraisalDetail() {
       : null;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
-      {/* Breadcrumb */}
-      <nav className="mb-4">
-        <Link
-          to="/appraisals"
-          className="text-sm font-medium text-primary-main hover:text-primary-dark"
-        >
-          ← Back to Appraisals
-        </Link>
-      </nav>
-
-      {/* Header */}
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">
-            {appraisal.employee.first_name} {appraisal.employee.last_name}
-          </h1>
-          <p className="mt-1 text-sm text-ink-secondary">
+    <PageContainer maxWidth="lg">
+      <PageHeader
+        breadcrumb={
+          <ButtonLink to="/appraisals" variant="text" size="small" className="-ml-2.5" startIcon={<Iconify icon="arrow-left" />}>
+            Back to Appraisals
+          </ButtonLink>
+        }
+        title={`${appraisal.employee.first_name} ${appraisal.employee.last_name}`}
+        subtitle={
+          <>
             {appraisal.employee.employee_id}
             {appraisal.employee.department && ` • ${appraisal.employee.department.name}`}
             {appraisal.employee.designation && ` • ${appraisal.employee.designation.name}`}
-          </p>
-        </div>
-        <span
-          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${statusStyles[appraisal.status]}`}
-        >
-          {statusLabels[appraisal.status]}
-        </span>
-      </div>
+          </>
+        }
+        actions={
+          <span
+            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${statusStyles[appraisal.status]}`}
+          >
+            {statusLabels[appraisal.status]}
+          </span>
+        }
+      />
 
       {/* Appraisal Info Card */}
-      <div className="mb-6 rounded-lg border border-divider bg-surface-paper p-6 shadow-sm">
+      <Card className="mb-6 p-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div>
             <p className="text-xs font-medium uppercase text-ink-secondary">Cycle</p>
@@ -128,17 +125,14 @@ export function AppraisalDetail() {
             <p className="mt-1 text-sm text-ink-primary">{appraisal.remarks}</p>
           </div>
         )}
-      </div>
-
+      </Card>
       {/* Goals Table */}
-      <div className="rounded-lg border border-divider bg-surface-paper shadow-sm">
-        <div className="border-b border-divider px-6 py-4">
-          <h2 className="text-lg font-semibold text-ink-primary">Goals</h2>
-          <p className="mt-0.5 text-sm text-ink-secondary">
-            {appraisal.goals.length} goal{appraisal.goals.length !== 1 ? 's' : ''} defined for this appraisal
-          </p>
-        </div>
-
+      <Card>
+        <CardHeader
+          title="Goals"
+          subtitle={`${appraisal.goals.length} goal${appraisal.goals.length !== 1 ? 's' : ''} defined for this appraisal`}
+          className="pb-4"
+        />
         {appraisal.goals.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-divider">
@@ -188,16 +182,14 @@ export function AppraisalDetail() {
             </table>
           </div>
         ) : (
-          <div className="p-6 text-center text-sm text-ink-secondary">
-            No goals have been defined for this appraisal yet.
-          </div>
+          <EmptyState module="appraisals" title="No goals yet" description="No goals have been defined for this appraisal yet." />
         )}
-      </div>
+      </Card>
 
       {/* Metadata */}
       <div className="mt-4 text-xs text-ink-disabled">
         Created {formatDate(appraisal.created_at)} • Last updated {formatDate(appraisal.updated_at)}
       </div>
-    </div>
+    </PageContainer>
   );
 }

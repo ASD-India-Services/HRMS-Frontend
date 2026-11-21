@@ -20,6 +20,10 @@ import { useAuth } from '@platform/auth-sdk';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
+import { Input } from '@/components/ui/Input';
+import { Card } from '@/components/ui/Card';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { Iconify } from '@/components/Iconify';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -261,16 +265,14 @@ export default function SelfOnboarding() {
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="px-4 py-8 sm:px-6 lg:px-10">
+    <PageContainer className="!max-w-2xl">
       {/* Logout button */}
       <div className="mb-4 flex justify-end">
         <Button variant="outlined" color="inherit"
-          type="button"
           onClick={() => void logout()}
+          startIcon={<Iconify icon="logout" />}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-          </svg>
           Sign out
         </Button>
       </div>
@@ -286,7 +288,7 @@ export default function SelfOnboarding() {
       <StepIndicator currentStep={currentStep} steps={STEPS} />
 
       {/* Step Content */}
-      <div className="mt-8 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+      <Card className="mt-8 p-6">
         <h2 className="mb-6 text-lg font-semibold text-ink-primary">
           Step {currentStep}: {STEPS[currentStep - 1].name}
         </h2>
@@ -317,23 +319,22 @@ export default function SelfOnboarding() {
 
         {/* Global error message */}
         {errors.non_field_errors && (
-          <div className="mt-4 rounded-md bg-error-lighter p-3">
+          <div className="mt-4 rounded-card bg-error-lighter p-3">
             <p className="text-sm text-error-dark">{errors.non_field_errors.join(', ')}</p>
           </div>
         )}
         {errors.detail && (
-          <div className="mt-4 rounded-md bg-error-lighter p-3">
+          <div className="mt-4 rounded-card bg-error-lighter p-3">
             <p className="text-sm text-error-dark">
               {Array.isArray(errors.detail) ? errors.detail.join(', ') : String(errors.detail)}
             </p>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Navigation Buttons */}
       <div className="mt-6 flex items-center justify-between">
         <Button variant="outlined" color="inherit"
-          type="button"
           onClick={handleBack}
           disabled={currentStep === 1}
         >
@@ -342,23 +343,22 @@ export default function SelfOnboarding() {
 
         {currentStep < 5 ? (
           <Button
-            type="button"
             onClick={handleSaveAndContinue}
             disabled={saveStepMutation.isPending}
           >
             {saveStepMutation.isPending ? 'Saving...' : 'Next'}
           </Button>
         ) : (
-          <button
-            type="button"
+          <Button
+            color="success"
             onClick={handleComplete}
             disabled={saveStepMutation.isPending || completeMutation.isPending}
-            className="rounded-md bg-success-main px-6 py-2 text-sm font-medium text-primary-contrast shadow-sm hover:bg-success-dark disabled:opacity-50"
           >
             {completeMutation.isPending ? 'Completing...' : 'Complete Onboarding'}
-          </button>
+          </Button>
         )}
       </div>
+    </PageContainer>
     </div>
   );
 }
@@ -391,7 +391,7 @@ function StepIndicator({
                         : 'bg-grey-200 text-ink-secondary'
                   }`}
                 >
-                  {isCompleted ? '✓' : step.number}
+                  {isCompleted ? <Iconify icon="check" width={18} /> : step.number}
                 </div>
               </div>
               <span
@@ -435,12 +435,13 @@ function PersonalDetailsForm({
         <label htmlFor="date_of_birth" className="block text-sm font-medium text-ink-primary">
           Date of Birth<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="date_of_birth"
           type="date"
           value={data.date_of_birth}
           onChange={(e) => onChange({ ...data, date_of_birth: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.date_of_birth ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
+          className="mt-1"
+          aria-invalid={errors.date_of_birth ? true : undefined}
         />
         <FieldError errors={errors} field="date_of_birth" />
       </div>
@@ -464,13 +465,14 @@ function PersonalDetailsForm({
         <label htmlFor="phone" className="block text-sm font-medium text-ink-primary">
           Phone Number<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="phone"
           type="tel"
           value={data.phone}
           onChange={(e) => onChange({ ...data, phone: e.target.value })}
           placeholder="+91 98765 43210"
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.phone ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
+          className="mt-1"
+          aria-invalid={errors.phone ? true : undefined}
         />
         <FieldError errors={errors} field="phone" />
       </div>
@@ -493,12 +495,13 @@ function AddressForm({
         <label htmlFor="address_line_1" className="block text-sm font-medium text-ink-primary">
           Address Line 1<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="address_line_1"
           type="text"
           value={data.address_line_1}
           onChange={(e) => onChange({ ...data, address_line_1: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.address_line_1 ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
+          className="mt-1"
+          aria-invalid={errors.address_line_1 ? true : undefined}
         />
         <FieldError errors={errors} field="address_line_1" />
       </div>
@@ -506,12 +509,13 @@ function AddressForm({
         <label htmlFor="city" className="block text-sm font-medium text-ink-primary">
           City<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="city"
           type="text"
           value={data.city}
           onChange={(e) => onChange({ ...data, city: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.city ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
+          className="mt-1"
+          aria-invalid={errors.city ? true : undefined}
         />
         <FieldError errors={errors} field="city" />
       </div>
@@ -519,12 +523,13 @@ function AddressForm({
         <label htmlFor="state" className="block text-sm font-medium text-ink-primary">
           State<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="state"
           type="text"
           value={data.state}
           onChange={(e) => onChange({ ...data, state: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.state ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
+          className="mt-1"
+          aria-invalid={errors.state ? true : undefined}
         />
         <FieldError errors={errors} field="state" />
       </div>
@@ -532,12 +537,13 @@ function AddressForm({
         <label htmlFor="postal_code" className="block text-sm font-medium text-ink-primary">
           Postal Code<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="postal_code"
           type="text"
           value={data.postal_code}
           onChange={(e) => onChange({ ...data, postal_code: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.postal_code ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
+          className="mt-1"
+          aria-invalid={errors.postal_code ? true : undefined}
         />
         <FieldError errors={errors} field="postal_code" />
       </div>
@@ -545,13 +551,14 @@ function AddressForm({
         <label htmlFor="country" className="block text-sm font-medium text-ink-primary">
           Country<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="country"
           type="text"
           value={data.country}
           onChange={(e) => onChange({ ...data, country: e.target.value })}
           placeholder="India"
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.country ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
+          className="mt-1"
+          aria-invalid={errors.country ? true : undefined}
         />
         <FieldError errors={errors} field="country" />
       </div>
@@ -574,12 +581,13 @@ function EmergencyContactForm({
         <label htmlFor="emergency_contact_name" className="block text-sm font-medium text-ink-primary">
           Contact Name<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="emergency_contact_name"
           type="text"
           value={data.emergency_contact_name}
           onChange={(e) => onChange({ ...data, emergency_contact_name: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.emergency_contact_name ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
+          className="mt-1"
+          aria-invalid={errors.emergency_contact_name ? true : undefined}
         />
         <FieldError errors={errors} field="emergency_contact_name" />
       </div>
@@ -587,12 +595,13 @@ function EmergencyContactForm({
         <label htmlFor="emergency_contact_phone" className="block text-sm font-medium text-ink-primary">
           Contact Phone<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="emergency_contact_phone"
           type="tel"
           value={data.emergency_contact_phone}
           onChange={(e) => onChange({ ...data, emergency_contact_phone: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.emergency_contact_phone ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
+          className="mt-1"
+          aria-invalid={errors.emergency_contact_phone ? true : undefined}
         />
         <FieldError errors={errors} field="emergency_contact_phone" />
       </div>
@@ -632,12 +641,13 @@ function BankDetailsForm({
         <label htmlFor="bank_name" className="block text-sm font-medium text-ink-primary">
           Bank Name<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="bank_name"
           type="text"
           value={data.bank_name}
           onChange={(e) => onChange({ ...data, bank_name: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.bank_name ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
+          className="mt-1"
+          aria-invalid={errors.bank_name ? true : undefined}
         />
         <FieldError errors={errors} field="bank_name" />
       </div>
@@ -645,12 +655,13 @@ function BankDetailsForm({
         <label htmlFor="account_number" className="block text-sm font-medium text-ink-primary">
           Account Number<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="account_number"
           type="text"
           value={data.account_number}
           onChange={(e) => onChange({ ...data, account_number: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.account_number ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
+          className="mt-1"
+          aria-invalid={errors.account_number ? true : undefined}
         />
         <FieldError errors={errors} field="account_number" />
       </div>
@@ -658,13 +669,14 @@ function BankDetailsForm({
         <label htmlFor="ifsc_code" className="block text-sm font-medium text-ink-primary">
           IFSC Code<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="ifsc_code"
           type="text"
           value={data.ifsc_code}
           onChange={(e) => onChange({ ...data, ifsc_code: e.target.value.toUpperCase() })}
           placeholder="e.g. SBIN0001234"
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.ifsc_code ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
+          className="mt-1"
+          aria-invalid={errors.ifsc_code ? true : undefined}
         />
         <FieldError errors={errors} field="ifsc_code" />
       </div>
