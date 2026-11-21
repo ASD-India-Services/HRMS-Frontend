@@ -12,9 +12,10 @@ export interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, actions, breadcrumb, className }: PageHeaderProps) {
   return (
-    <div className={cx('mb-8 flex flex-wrap items-start justify-between gap-4', className)}>
+    <div className={cx('relative mb-8 flex flex-wrap items-start justify-between gap-4', className)}>
       <div className="min-w-0">
-        {breadcrumb && <div className="mb-2 text-sm text-ink-secondary">{breadcrumb}</div>}
+        {/* Breadcrumb floats above the title so the title sits at the same y on every page. */}
+        {breadcrumb && <div className="absolute -top-6 left-0 text-sm text-ink-secondary">{breadcrumb}</div>}
         <h1 className="text-2xl font-bold text-ink-primary">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-ink-secondary">{subtitle}</p>}
       </div>

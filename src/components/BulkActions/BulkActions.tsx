@@ -162,7 +162,7 @@ export function BulkActions({
 
         {/* Template Link */}
         {showImport && (
-          <Button variant="text" size="small" onClick={handleDownloadTemplate}>
+          <Button variant="outlined" color="inherit" startIcon={<Iconify icon="download" />} onClick={handleDownloadTemplate}>
             Download Template
           </Button>
         )}

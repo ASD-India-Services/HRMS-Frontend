@@ -43,7 +43,7 @@ function Trend({ direction, percentage }: StatTrend) {
 
 function StatCardSkeleton({ className }: { className?: string }) {
   return (
-    <Card className={cx('flex items-center justify-between gap-4 p-6', className)} aria-busy="true" aria-label="Loading metric">
+    <Card className={cx('flex h-full items-start justify-between gap-4 p-6', className)} aria-busy="true" aria-label="Loading metric">
       <div className="space-y-3">
         <div className="h-4 w-28 animate-pulse rounded bg-surface-neutral" />
         <div className="h-8 w-20 animate-pulse rounded bg-surface-neutral" />
@@ -75,7 +75,7 @@ export function StatCard({ title, value, icon, trend, caption, href, isLoading, 
       )}
     </>
   );
-  const classes = cx('flex items-center justify-between gap-4 p-6', className);
+  const classes = cx('flex h-full items-start justify-between gap-4 p-6', className);
 
   if (href) {
     return (

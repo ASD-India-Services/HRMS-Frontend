@@ -2,9 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import {
   AreaChart,
   Area,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -18,7 +15,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { ButtonLink } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { StatCard } from '@/components/ui/StatCard';
-import { ChartCard, ChartTooltip, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
+import { DonutChart, ChartCard, ChartTooltip, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
 import { EmptyState } from '@/components/EmptyState';
 import { Iconify } from '@/components/Iconify';
 
@@ -238,40 +235,10 @@ export default function PayrollDashboard() {
             title="Compensation Cost Breakdown"
             subtitle="Net pay vs statutory deductions and benefits"
           >
-            <div className="flex h-full flex-col items-center justify-around sm:flex-row">
-              <div className="h-full w-full sm:w-1/2">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={costBreakdownData}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={45}
-                      outerRadius={75}
-                      paddingAngle={3}
-                    >
-                      {costBreakdownData.map((entry, index) => (
-                        <Cell key={`cost-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip content={<ChartTooltip />} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="w-full space-y-2.5 text-xs sm:w-1/2">
-                {costBreakdownData.map((item) => (
-                  <div key={item.name} className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                      <span className="max-w-[130px] truncate text-ink-primary">{item.name}</span>
-                    </span>
-                    <span className="font-semibold text-ink-primary">{formatCurrency(item.value)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <DonutChart
+              data={costBreakdownData}
+              formatValue={(item) => formatCurrency(item.value)}
+            />
           </ChartCard>
         </div>
 

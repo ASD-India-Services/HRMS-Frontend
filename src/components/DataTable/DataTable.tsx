@@ -323,11 +323,13 @@ export function DataTable<T extends Record<string, unknown>>({
   if (rawData.length === 0) {
     return (
       <div className="w-full">
-        <EmptyState
-          module=""
-          title="No records found"
-          description="Try adjusting your filters or adding new data."
-        />
+        <Card>
+          <EmptyState
+            module=""
+            title="No records found"
+            description="Try adjusting your filters or adding new data."
+          />
+        </Card>
       </div>
     );
   }
@@ -337,11 +339,13 @@ export function DataTable<T extends Record<string, unknown>>({
     return (
       <div className="w-full">
         {renderToolbar()}
-        <EmptyState
-          module=""
-          title="No results found"
-          description="No results match your search. Try a different term."
-        />
+        <Card>
+          <EmptyState
+            module=""
+            title="No results found"
+            description="No results match your search. Try a different term."
+          />
+        </Card>
       </div>
     );
   }

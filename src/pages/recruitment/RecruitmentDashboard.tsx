@@ -1,8 +1,6 @@
 import {
   BarChart,
   Bar,
-  PieChart,
-  Pie,
   Cell,
   XAxis,
   YAxis,
@@ -14,7 +12,7 @@ import { useJobOpenings, useApplicants, useInterviews } from '@/hooks/useRecruit
 import { Iconify } from '@/components/Iconify';
 import { ButtonLink } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
-import { ChartCard, ChartTooltip, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
+import { DonutChart, ChartCard, ChartTooltip, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatCard } from '@/components/ui/StatCard';
@@ -160,6 +158,7 @@ export default function RecruitmentDashboard() {
               </ButtonLink>
             }
             isLoading={isLoading}
+            isEmpty={applicants.length === 0}
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={pipelineChartData}>
@@ -183,43 +182,10 @@ export default function RecruitmentDashboard() {
             isLoading={isLoading}
             isEmpty={deptChartData.length === 0}
           >
-            <div className="flex h-full flex-col items-center justify-around sm:flex-row">
-              <div className="h-full w-full sm:w-1/2">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={deptChartData}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={45}
-                      outerRadius={75}
-                      paddingAngle={3}
-                    >
-                      {deptChartData.map((_, index) => (
-                        <Cell key={`dept-${index}`} fill={theme.colors[index % theme.colors.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip content={<ChartTooltip />} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="w-full space-y-2 text-xs sm:w-1/2">
-                {deptChartData.slice(0, 5).map((item, idx) => (
-                  <div key={item.name} className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <span
-                        className="h-2.5 w-2.5 rounded-full"
-                        style={{ backgroundColor: theme.colors[idx % theme.colors.length] }}
-                      />
-                      <span className="max-w-[140px] truncate text-ink-primary">{item.name}</span>
-                    </span>
-                    <span className="font-semibold text-ink-primary">{item.value} openings</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <DonutChart
+              data={deptChartData.slice(0, 5).map((item, idx) => ({ ...item, color: theme.colors[idx % theme.colors.length] }))}
+              formatValue={(item) => `${item.value} openings`}
+            />
           </ChartCard>
         </div>
 

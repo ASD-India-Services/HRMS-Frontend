@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
 import { Iconify } from '@/components/Iconify';
 
 const PAGE_SIZE = 12;
@@ -156,11 +157,13 @@ export function EmployeeDirectory() {
 
       {/* Empty State */}
       {data && data.results.length === 0 && (
-        <EmptyState
-          module="employees"
-          ctaPermission="employees.create"
-          onCtaClick={() => navigate('/employees/new')}
-        />
+        <Card>
+          <EmptyState
+            module="employees"
+            ctaPermission="employees.create"
+            onCtaClick={() => navigate('/employees/new')}
+          />
+        </Card>
       )}
 
       {/* Employee Grid */}

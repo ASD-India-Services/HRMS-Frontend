@@ -554,7 +554,7 @@ export function ApplicantDetailDrawer({ applicant, onClose, onApplicantUpdated }
               </h3>
               {!isEditingNotes && (
                 <Button variant="text" size="small" onClick={() => setIsEditingNotes(true)}>
-                  {applicant.notes ? 'Edit Notes' : 'Add Notes'}
+                  {applicant.notes ? 'Edit Notes' : '+ Add Notes'}
                 </Button>
               )}
             </div>

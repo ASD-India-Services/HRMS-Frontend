@@ -46,8 +46,12 @@ export function ChartCard({
     body = <StateView icon="chart" title="No data to display" className="py-0" role="status" />;
   }
   return (
-    <Card>
-      <CardHeader title={title} subtitle={subtitle} action={action} />
+    <Card className="h-full">
+      <CardHeader
+        title={title}
+        subtitle={subtitle ? <span className="block truncate" title={subtitle}>{subtitle}</span> : undefined}
+        action={action}
+      />
       <div className="px-6 pb-6 pt-4">
         <div style={{ height }} className={showState ? 'flex items-center justify-center' : undefined}>
           {body}

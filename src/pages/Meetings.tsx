@@ -456,44 +456,35 @@ export default function Meetings() {
     <PageContainer>
       <PageHeader
         title="Meetings"
+        subtitle="Schedule, run and review team meetings."
         actions={
-        <>
-          {/* Search Box */}
-          <div className="relative">
-            <Input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search meetings..."
-              className="w-48 sm:w-56 pl-8 pr-3"
-            />
-            <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
-          </div>
-
-          {/* Status Filter */}
-          <Select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="">All Statuses</option>
-            <option value="scheduled">Scheduled</option>
-            <option value="in_progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
-          </Select>
-
-          {/* Blue + Create Button matching requirement & permissions */}
-          {canCreate && (
-            <Button size="small"
-              startIcon={<Iconify icon="plus" />}
-              onClick={handleOpenCreate}
-            >
+          canCreate && (
+            <Button startIcon={<Iconify icon="plus" />} onClick={handleOpenCreate}>
               Create
             </Button>
-          )}
-        </>
+          )
         }
       />
+
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <div className="relative">
+          <Input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search meetings..."
+            className="w-56 pl-8 pr-3 sm:w-72"
+          />
+          <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
+        </div>
+        <Select className="w-48" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="">All Statuses</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="in_progress">In Progress</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </Select>
+      </div>
 
       {/* Main Content Area */}
       <Card className="overflow-hidden">

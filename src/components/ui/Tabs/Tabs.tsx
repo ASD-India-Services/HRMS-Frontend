@@ -29,6 +29,7 @@ export function Tabs<T extends string>({ items, value, onChange, className, ...r
             key={item.value}
             role="tab"
             aria-selected={selected}
+            aria-current={selected ? 'page' : undefined}
             variant="text"
             color="inherit"
             onClick={() => onChange(item.value)}

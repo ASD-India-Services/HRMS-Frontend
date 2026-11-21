@@ -28,20 +28,24 @@ export default function Reports() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {REPORTS.map((report) => (
-          <Card key={report.name} className="relative">
-            <CardContent>
-              {/* Coming Soon badge */}
-              <span className="absolute right-4 top-4 rounded-full bg-warning-lighter px-2 py-0.5 text-xs font-medium text-warning-dark">
-                Coming Soon
-              </span>
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-lighter text-primary-main">
-                <Iconify icon={report.icon} width={24} />
+          <Card key={report.name} className="flex h-full flex-col">
+            <CardContent className="flex flex-1 flex-col">
+              <div className="mb-4 flex items-start justify-between gap-2">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-main/10 text-primary-main">
+                  <Iconify icon={report.icon} width={24} />
+                </span>
+                {/* Coming Soon badge */}
+                <span className="rounded-full bg-warning-lighter px-2 py-0.5 text-xs font-medium text-warning-dark">
+                  Coming Soon
+                </span>
               </div>
               <h3 className="text-sm font-semibold text-ink-primary">{report.name}</h3>
               <p className="mt-1 text-xs text-ink-secondary">{report.description}</p>
-              <Button variant="outlined" color="inherit" size="small" disabled className="mt-4">
-                View Report
-              </Button>
+              <div className="mt-auto pt-4">
+                <Button variant="outlined" color="inherit" size="small" disabled>
+                  View Report
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}

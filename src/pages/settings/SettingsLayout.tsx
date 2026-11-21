@@ -126,7 +126,9 @@ export function SettingsLayout() {
   };
 
   // Extract current subpath for breadcrumb
-  const currentPathSegment = location.pathname.split('/').pop() || 'general-settings';
+  const currentPathSegment = (location.pathname.split('/').pop() || 'general-settings')
+    .replace(/-/g, ' ')
+    .replace(/^\w/, (c) => c.toUpperCase());
 
   return (
     <PageContainer>
@@ -138,7 +140,7 @@ export function SettingsLayout() {
               DigiHRMS
             </Link>
             <Iconify icon="chevron-right" width={14} />
-            <span>settings</span>
+            <span>Settings</span>
             <Iconify icon="chevron-right" width={14} />
             <span className="font-semibold text-ink-primary">{currentPathSegment}</span>
           </nav>
