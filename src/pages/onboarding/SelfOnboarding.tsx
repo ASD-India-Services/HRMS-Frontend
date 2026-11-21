@@ -19,6 +19,7 @@ import { useOnboardingStatus } from '@/hooks/useOnboardingStatus';
 import { useAuth } from '@platform/auth-sdk';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -447,18 +448,16 @@ function PersonalDetailsForm({
         <label htmlFor="gender" className="block text-sm font-medium text-ink-primary">
           Gender<span className="text-error-main ml-0.5">*</span>
         </label>
-        <select
+        <Select
           id="gender"
           value={data.gender}
-          onChange={(e) => onChange({ ...data, gender: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.gender ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
-        >
+          onChange={(e) => onChange({ ...data, gender: e.target.value })} className="mt-1" aria-invalid={errors.gender ? true : undefined}>
           <option value="">Select Gender</option>
           <option value="male">Male</option>
           <option value="female">Female</option>
           <option value="other">Other</option>
           <option value="prefer_not_to_say">Prefer Not to Say</option>
-        </select>
+        </Select>
         <FieldError errors={errors} field="gender" />
       </div>
       <div className="sm:col-span-2">
@@ -601,19 +600,17 @@ function EmergencyContactForm({
         <label htmlFor="emergency_contact_relationship" className="block text-sm font-medium text-ink-primary">
           Relationship<span className="text-error-main ml-0.5">*</span>
         </label>
-        <select
+        <Select
           id="emergency_contact_relationship"
           value={data.emergency_contact_relationship}
-          onChange={(e) => onChange({ ...data, emergency_contact_relationship: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-main ${errors.emergency_contact_relationship ? 'border-error-main focus:border-error-main focus:ring-error-main' : 'border-divider focus:border-primary-main'}`}
-        >
+          onChange={(e) => onChange({ ...data, emergency_contact_relationship: e.target.value })} className="mt-1" aria-invalid={errors.emergency_contact_relationship ? true : undefined}>
           <option value="">Select Relationship</option>
           <option value="spouse">Spouse</option>
           <option value="parent">Parent</option>
           <option value="sibling">Sibling</option>
           <option value="friend">Friend</option>
           <option value="other">Other</option>
-        </select>
+        </Select>
         <FieldError errors={errors} field="emergency_contact_relationship" />
       </div>
     </div>

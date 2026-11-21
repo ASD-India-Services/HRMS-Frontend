@@ -26,6 +26,8 @@ export interface NavItem {
 export interface NavGroup {
   /** Section title displayed above the group items */
   label: string;
+  /** Icon name (Iconify registry) shown beside the section title */
+  icon?: string;
   /** Navigation items in this group */
   items: NavItem[];
 }
@@ -100,17 +102,21 @@ const ICONS = {
   policies: 'policies',
   meetings: 'meetings',
   bonusPoints: 'bonusPoints',
+  summary: 'summary',
+  compliance: 'compliance',
 } as const;
 
 export const navigationConfig: NavGroup[] = [
   {
     label: 'Overview',
+    icon: ICONS.dashboard,
     items: [
       { label: 'Dashboard', href: '/dashboard', icon: ICONS.dashboard, requiredPermission: 'dashboard.view', featureFlag: null },
     ],
   },
   {
     label: 'People',
+    icon: ICONS.employees,
     items: [
       { label: 'Employees', href: '/employees', icon: ICONS.employees, requiredPermission: 'employees.view', featureFlag: 'employees_enabled' },
       { label: 'Org Chart', href: '/org-chart', icon: ICONS.orgChart, requiredPermission: 'employees.view', featureFlag: 'employees_enabled' },
@@ -127,6 +133,7 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     label: 'Leaves',
+    icon: ICONS.leaves,
     items: [
       { label: 'Dashboard', href: '/leaves/dashboard', icon: ICONS.dashboard, requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
       { label: 'My Leaves', href: '/my-leaves', icon: ICONS.leaves, requiredPermission: 'leaves.view', featureFlag: 'leaves_enabled' },
@@ -143,6 +150,7 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     label: 'Attendance',
+    icon: ICONS.attendance,
     items: [
       { label: 'Dashboard', href: '/attendance/dashboard', icon: ICONS.dashboard, requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
       { label: 'Attendance', href: '/attendance', icon: ICONS.attendance, requiredPermission: 'attendance.view', featureFlag: 'attendance_enabled' },
@@ -161,6 +169,7 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     label: 'Payroll',
+    icon: ICONS.payroll,
     items: [
       { label: 'Dashboard', href: '/payroll/dashboard', icon: ICONS.dashboard, requiredPermission: 'payroll.view', featureFlag: 'payroll_enabled' },
       { label: 'Payroll Runs', href: '/payroll/runs', icon: ICONS.payroll, requiredPermission: 'payroll_runs.view', featureFlag: 'payroll_enabled' },
@@ -176,6 +185,7 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     label: 'Recruitment',
+    icon: ICONS.recruitment,
     items: [
       { label: 'Dashboard', href: '/recruitment/dashboard', icon: ICONS.dashboard, requiredPermission: 'recruitment.view', featureFlag: 'recruitment_enabled' },
       { label: 'Job Openings', href: '/recruitment/job-openings', icon: ICONS.recruitment, requiredPermission: 'job_openings.view', featureFlag: 'recruitment_enabled' },
@@ -188,6 +198,7 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     label: 'Performance',
+    icon: ICONS.appraisals,
     items: [
       { label: 'Appraisals', href: '/appraisals', icon: ICONS.appraisals, requiredPermission: 'appraisals.view', featureFlag: 'appraisals_enabled' },
       { label: 'KRAs', href: '/kras', icon: ICONS.kras, requiredPermission: 'kras.view', featureFlag: 'appraisals_enabled' },
@@ -198,6 +209,7 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     label: 'Expenses',
+    icon: ICONS.expenses,
     items: [
       { label: 'My Expenses', href: '/expenses', icon: ICONS.expenses, requiredPermission: 'expenses.view', featureFlag: 'expenses_enabled' },
       { label: 'Expense Approvals', href: '/expenses/approvals', icon: ICONS.expenseApprovals, requiredPermission: 'expense_approvals.view', featureFlag: 'expenses_enabled' },
@@ -207,6 +219,7 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     label: 'Learning',
+    icon: ICONS.training,
     items: [
       { label: 'Onboarding', href: '/onboarding', icon: ICONS.onboarding, requiredPermission: 'onboarding.view' },
       { label: 'Onboarding Templates', href: '/onboarding-templates', icon: ICONS.onboardingTemplates, requiredPermission: 'onboarding_templates.view' },
@@ -218,6 +231,7 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     label: 'More',
+    icon: ICONS.summary,
     items: [
       { label: 'Grievances', href: '/grievances', icon: ICONS.grievances, requiredPermission: 'grievances.view', requiredAnyPermission: ['grievances.view', 'grievances.create'], featureFlag: null },
       { label: 'Grievance Types', href: '/grievance-types', icon: ICONS.grievanceTypes, requiredPermission: 'grievance_types.view' },
@@ -240,6 +254,7 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     label: 'Help Desk',
+    icon: ICONS.helpdesk,
     items: [
       {
         label: 'Helpdesk Tags',
@@ -253,6 +268,7 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     label: 'Permissions',
+    icon: ICONS.compliance,
     items: [
       { label: 'Dashboard', href: '/permissions/dashboard', icon: ICONS.dashboard, requiredPermission: 'roles.manage', featureFlag: null },
       { label: 'Roles & Permissions', href: '/admin/roles', icon: ICONS.settings, requiredPermission: 'roles.manage', featureFlag: null },
@@ -260,6 +276,7 @@ export const navigationConfig: NavGroup[] = [
   },
   {
     label: 'Admin',
+    icon: ICONS.settings,
     items: [
       { label: 'Dashboard', href: '/admin/permissions/dashboard', icon: ICONS.dashboard, requiredPermission: 'roles.manage', featureFlag: null },
       { label: 'Roles & Permissions', href: '/admin/roles', icon: ICONS.settings, requiredPermission: 'roles.manage', featureFlag: null },

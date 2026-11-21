@@ -19,6 +19,11 @@ import { ColumnVisibilityMenu } from './ColumnVisibilityMenu';
 import { BulkActionToolbar } from './BulkActionToolbar';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
+import { Iconify } from '@/components/Iconify';
+import { Button, IconButton } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Card } from '@/components/ui/Card';
 
 export type SortDirection = 'asc' | 'desc' | null;
 
@@ -190,49 +195,44 @@ export function DataTable<T extends Record<string, unknown>>({
   // Sort control bar rendered above the table
   const renderToolbar = () => {
     return (
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+      <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 px-4 py-3">
         {/* Left side: Search + Sort */}
         <div className="flex items-center gap-3">
           {/* Search input */}
           <div className="relative">
-            <svg
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-ink-disabled"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-            </svg>
-            <input
+            <Iconify
+              icon="search"
+              width={16}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-disabled"
+            />
+            <Input
               type="text"
+              inputSize="small"
               value={tableSearch}
               onChange={(e) => setTableSearch(e.target.value)}
               placeholder="Search in table..."
-              className="w-48 rounded border border-grey-500/30 bg-surface-paper pl-8 pr-3 py-1 text-xs text-ink-secondary shadow-card placeholder:text-ink-disabled focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+              className="w-56 pl-9 pr-9"
             />
             {tableSearch && (
-              <button
-                type="button"
+              <IconButton
+                icon="close"
+                size="small"
                 onClick={() => setTableSearch('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-ink-disabled hover:text-ink-secondary"
+                className="absolute right-1 top-1/2 -translate-y-1/2"
                 aria-label="Clear search"
-              >
-                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-              </button>
+              />
             )}
           </div>
-
           {/* Sort controls */}
           {sortableColumns.length > 0 && (
             <div className="flex items-center gap-2">
               <label className="text-xs text-ink-secondary font-medium">Sort:</label>
-              <select
+              <Select
+                selectSize="small"
                 value={sort.key}
                 onChange={(e) => handleSortColumnChange(e.target.value)}
-                className="rounded border border-grey-500/30 bg-surface-paper px-2 py-1 text-xs text-ink-secondary shadow-card focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                aria-label="Sort by"
+                className="w-40"
               >
                 <option value="">None</option>
                 {sortableColumns.map((col) => (
@@ -240,30 +240,18 @@ export function DataTable<T extends Record<string, unknown>>({
                     {col.header}
                   </option>
                 ))}
-              </select>
+              </Select>
               {sort.key && (
-                <button
-                  type="button"
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  size="small"
+                  startIcon={<Iconify icon={sort.direction === 'asc' ? 'chevron-up' : 'chevron-down'} />}
                   onClick={handleSortDirectionToggle}
-                  className="inline-flex items-center gap-1 rounded border border-grey-500/30 bg-surface-paper px-2 py-1 text-xs text-ink-secondary shadow-card hover:bg-surface-neutral focus:outline-none focus:ring-1 focus:ring-primary-main"
                   aria-label={sort.direction === 'asc' ? 'Sort ascending' : 'Sort descending'}
                 >
-                  {sort.direction === 'asc' ? (
-                    <>
-                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                      </svg>
-                      A→Z
-                    </>
-                  ) : (
-                    <>
-                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                      </svg>
-                      Z→A
-                    </>
-                  )}
-                </button>
+                  {sort.direction === 'asc' ? 'A→Z' : 'Z→A'}
+                </Button>
               )}
             </div>
           )}
@@ -275,7 +263,7 @@ export function DataTable<T extends Record<string, unknown>>({
           hiddenColumns={hiddenColumns}
           onToggle={handleColumnVisibilityChange}
         />
-      </div>
+      </Card>
     );
   };
 
@@ -371,7 +359,7 @@ export function DataTable<T extends Record<string, unknown>>({
         />
       )}
 
-      <div className="overflow-x-auto border border-divider rounded-lg shadow-card">
+      <Card className="overflow-x-auto">
         <table className="min-w-full divide-y divide-divider">
           <thead className="bg-surface-neutral">
             <tr>
@@ -420,7 +408,7 @@ export function DataTable<T extends Record<string, unknown>>({
             })}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }

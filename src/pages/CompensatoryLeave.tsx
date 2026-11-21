@@ -903,16 +903,13 @@ export default function CompensatoryLeave() {
                 <label className="block text-xs font-semibold text-ink-primary mb-1.5">
                   Employee *
                 </label>
-                <select
+                <Select selectSize="small"
                   value={selectedEmployee}
                   disabled={!isApproverOrAdmin}
                   onChange={(e) => {
                     setSelectedEmployee(e.target.value);
                     setSelectedAttendance('');
                   }}
-                  className={`w-full text-xs px-3 py-2 border border-divider rounded bg-surface-paper focus:outline-none focus:ring-1 focus:ring-primary-main ${
-                    !isApproverOrAdmin ? 'bg-surface-neutral cursor-not-allowed opacity-90' : ''
-                  }`}
                 >
                   {!isApproverOrAdmin && currentEmployee ? (
                     <option value={currentEmployee.id}>
@@ -928,7 +925,7 @@ export default function CompensatoryLeave() {
                       ))}
                     </>
                   )}
-                </select>
+                </Select>
                 {!isApproverOrAdmin && (
                   <p className="text-[11px] text-ink-disabled mt-1">
                     Logged-in employee is automatically selected.

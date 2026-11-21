@@ -11,6 +11,9 @@
  */
 
 import { useMemo } from 'react';
+import { Button } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
+import { Select } from '@/components/ui/Select';
 
 export interface PaginationProps {
   /** Current page number (1-based) */
@@ -95,45 +98,35 @@ export function Pagination({
           <label htmlFor="page-size-select" className="text-sm text-ink-secondary">
             Rows per page:
           </label>
-          <select
+          <Select
             id="page-size-select"
+            selectSize="small"
             value={pageSize}
             onChange={handlePageSizeChange}
-            className="rounded border border-grey-500/30 bg-surface-paper px-2 py-1 text-sm text-ink-secondary shadow-card focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+            className="w-20"
           >
             {pageSizeOptions.map((size) => (
               <option key={size} value={size}>
                 {size}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {/* Page navigation */}
         <nav className="flex items-center gap-1" aria-label="Pagination">
           {/* Previous button */}
-          <button
+          <Button
+            variant="text"
+            color="inherit"
+            size="small"
+            startIcon={<Iconify icon="arrow-left" />}
             onClick={() => onPageChange(page - 1)}
             disabled={isFirstPage}
             aria-label="Previous page"
-            className={`inline-flex items-center rounded px-2 py-1.5 text-sm font-medium transition-colors ${
-              isFirstPage
-                ? 'cursor-not-allowed text-ink-disabled'
-                : 'text-ink-secondary hover:bg-grey-500/10'
-            }`}
           >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-            </svg>
-            <span className="sr-only sm:not-sr-only sm:ml-1">Prev</span>
-          </button>
+            <span className="sr-only sm:not-sr-only">Prev</span>
+          </Button>
 
           {/* Page number buttons */}
           {pageNumbers.map((pageNum, idx) =>
@@ -146,45 +139,33 @@ export function Pagination({
                 …
               </span>
             ) : (
-              <button
+              <Button
                 key={pageNum}
+                variant={pageNum === page ? 'contained' : 'text'}
+                color={pageNum === page ? 'primary' : 'inherit'}
+                size="small"
                 onClick={() => onPageChange(pageNum)}
                 aria-label={`Page ${pageNum}`}
                 aria-current={pageNum === page ? 'page' : undefined}
-                className={`inline-flex items-center justify-center rounded px-3 py-1.5 text-sm font-medium transition-colors min-w-[2rem] ${
-                  pageNum === page
-                    ? 'bg-primary-main text-primary-contrast shadow-card'
-                    : 'text-ink-secondary hover:bg-grey-500/10'
-                }`}
+                className="min-w-[2rem]"
               >
                 {pageNum}
-              </button>
+              </Button>
             )
           )}
 
           {/* Next button */}
-          <button
+          <Button
+            variant="text"
+            color="inherit"
+            size="small"
+            endIcon={<Iconify icon="arrow-right" />}
             onClick={() => onPageChange(page + 1)}
             disabled={isLastPage}
             aria-label="Next page"
-            className={`inline-flex items-center rounded px-2 py-1.5 text-sm font-medium transition-colors ${
-              isLastPage
-                ? 'cursor-not-allowed text-ink-disabled'
-                : 'text-ink-secondary hover:bg-grey-500/10'
-            }`}
           >
-            <span className="sr-only sm:not-sr-only sm:mr-1">Next</span>
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-            </svg>
-          </button>
+            <span className="sr-only sm:not-sr-only">Next</span>
+          </Button>
         </nav>
       </div>
     </div>

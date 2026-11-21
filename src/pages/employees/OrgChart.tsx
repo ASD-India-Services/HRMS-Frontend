@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query';
 import { Link, useSearchParams } from 'react-router-dom';
 import api from '@/lib/api';
+import { Select } from '@/components/ui/Select';
 
 // ─── Interfaces ─────────────────────────────────────────────────────────────
 
@@ -782,12 +783,10 @@ export default function OrgChart() {
                 <label htmlFor="focus-employee-select" className="text-xs font-semibold text-ink-primary whitespace-nowrap">
                   Employee:
                 </label>
-                <select
+                <Select selectSize="small"
                   id="focus-employee-select"
                   value={focusedEmployeeId || 'all'}
-                  onChange={(e) => handleFocusEmployee(e.target.value === 'all' ? null : e.target.value)}
-                  className="rounded-xl border border-divider bg-surface-paper py-1.5 px-3 text-xs text-ink-primary focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main shadow-2xs max-w-[200px] truncate"
-                >
+                  onChange={(e) => handleFocusEmployee(e.target.value === 'all' ? null : e.target.value)} className="max-w-[200px]">
                   <option value="all">Entire Company</option>
                   <optgroup label="Select Employee (View Hierarchy Under Them)">
                     {allEmployees.map((emp) => (
@@ -796,7 +795,7 @@ export default function OrgChart() {
                       </option>
                     ))}
                   </optgroup>
-                </select>
+                </Select>
               </div>
             )}
 
@@ -830,19 +829,17 @@ export default function OrgChart() {
 
             {/* Department Filter (Only for Reporting view) */}
             {viewMode === 'reporting' && (
-              <select
+              <Select selectSize="small"
                 value={selectedDept}
                 onChange={(e) => setSelectedDept(e.target.value)}
-                aria-label="Filter by department"
-                className="rounded-xl border border-divider bg-surface-paper py-1.5 px-3 text-xs text-ink-primary focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main shadow-2xs max-w-[170px] truncate"
-              >
+                aria-label="Filter by department" className="max-w-[170px]">
                 <option value="all">All Departments</option>
                 {departmentOptions.map((dept) => (
                   <option key={dept} value={dept}>
                     {dept}
                   </option>
                 ))}
-              </select>
+              </Select>
             )}
           </div>
 

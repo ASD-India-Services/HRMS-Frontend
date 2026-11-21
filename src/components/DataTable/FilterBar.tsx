@@ -10,6 +10,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { FilterConfig } from '@/types/datatable';
+import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
 
 export interface FilterBarProps {
   /** Filter configuration array */
@@ -71,12 +73,9 @@ export function FilterBar({ filters, values, onChange, onClearAll }: FilterBarPr
       ))}
 
       {hasActiveFilters && onClearAll && (
-        <button
-          onClick={onClearAll}
-          className="text-sm text-ink-secondary hover:text-ink-secondary underline transition-colors"
-        >
+        <Button variant="text" color="inherit" size="small" onClick={onClearAll}>
           Clear all
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -105,11 +104,11 @@ function FilterInput({ config, value, onChange }: FilterInputProps) {
     case 'select':
       return (
         <div className="flex flex-col">
-          <select
+          <Select
+            selectSize="small"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             aria-label={config.label}
-            className="rounded border border-grey-500/30 bg-surface-paper px-3 py-1.5 text-sm text-ink-secondary shadow-card focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
           >
             <option value="">{config.label}</option>
             {config.options?.map((opt) => (
@@ -117,18 +116,18 @@ function FilterInput({ config, value, onChange }: FilterInputProps) {
                 {opt.label}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       );
 
     case 'multi-select':
       return (
         <div className="flex flex-col">
-          <select
+          <Select
+            selectSize="small"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             aria-label={config.label}
-            className="rounded border border-grey-500/30 bg-surface-paper px-3 py-1.5 text-sm text-ink-secondary shadow-card focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
           >
             <option value="">{config.label}</option>
             {config.options?.map((opt) => (
@@ -136,7 +135,7 @@ function FilterInput({ config, value, onChange }: FilterInputProps) {
                 {opt.label}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       );
 

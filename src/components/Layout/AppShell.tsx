@@ -49,7 +49,7 @@ export function AppShell() {
           This ensures lazy-loaded route components properly trigger the 
           fallback during navigation transitions (React Router v7 + React 19).
         */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:px-10 lg:py-8 min-w-0">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-10 min-w-0">
           <Suspense fallback={<PageLoader />}>
             <Outlet />
           </Suspense>

@@ -13,8 +13,18 @@ import { useAuth, useUser } from '@platform/auth-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { ProductSwitcher } from '@/components/ProductSwitcher';
 import { useNotifications } from '@/hooks/useNotifications';
-import { Iconify } from '@/components/Iconify';
+import { Iconify, type IconName } from '@/components/Iconify';
+import { Button, IconButton } from '@/components/ui/Button';
 import api from '@/lib/api';
+
+/** Registry icon per notification type. */
+const NOTIFICATION_ICONS: Record<string, IconName> = {
+  leave_approval: 'leaves',
+  expense_approval: 'expenses',
+  travel_approval: 'travel',
+  overtime_approval: 'overtime',
+  onboarding_task: 'training',
+};
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -68,14 +78,12 @@ export function Header({ onMenuToggle }: HeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex h-header w-full max-w-full min-w-0 shrink-0 items-center gap-4 bg-surface-default/80 px-4 backdrop-blur-md sm:px-6 lg:px-10">
       {/* Mobile menu toggle */}
-      <button
-        type="button"
+      <IconButton
+        icon="menu"
         onClick={onMenuToggle}
-        className="md:hidden -ml-2 rounded-full p-2 text-ink-secondary hover:bg-grey-500/10"
+        className="-ml-2 md:hidden"
         aria-label="Toggle sidebar"
-      >
-        <Iconify icon="menu" width={24} />
-      </button>
+      />
 
       {/* Spacer */}
       <div className="flex-1 min-w-0" />
@@ -84,21 +92,20 @@ export function Header({ onMenuToggle }: HeaderProps) {
       <div className="flex items-center gap-2 shrink-0">
         {/* Notification bell */}
         <div className="relative" ref={notificationRef}>
-          <button
-            type="button"
+          <IconButton
+            icon="bell"
             onClick={() => setIsNotificationsOpen((prev) => !prev)}
-            className="relative rounded-full p-2 text-ink-secondary hover:bg-grey-500/10 transition-colors"
+            className="relative"
             aria-label="Notifications"
             aria-expanded={isNotificationsOpen}
             aria-haspopup="true"
           >
-            <Iconify icon="bell" width={24} />
             {pendingCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-error-main text-[10px] font-bold text-error-contrast">
                 {pendingCount > 9 ? '9+' : pendingCount}
               </span>
             )}
-          </button>
+          </IconButton>
 
           {/* Notification dropdown */}
           {isNotificationsOpen && (
@@ -121,28 +128,25 @@ export function Header({ onMenuToggle }: HeaderProps) {
                 )}
                 {!notificationsLoading &&
                   notifications.map((item) => (
-                    <button
+                    <Button
                       key={item.id}
-                      type="button"
+                      variant="text"
+                      color="inherit"
                       onClick={() => {
                         setIsNotificationsOpen(false);
                         navigate(item.link);
                       }}
-                      className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-grey-500/10 transition-colors"
+                      className="!h-auto w-full !items-start !justify-start gap-3 !rounded-none px-4 py-3 text-left !font-normal"
                       role="menuitem"
                     >
-                      <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary-lighter text-xs">
-                        {item.type === 'leave_approval' && '🏖️'}
-                        {item.type === 'expense_approval' && '🧾'}
-                        {item.type === 'travel_approval' && '✈️'}
-                        {item.type === 'overtime_approval' && '⏱️'}
-                        {item.type === 'onboarding_task' && '🎓'}
+                      <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary-lighter text-primary-main">
+                        {NOTIFICATION_ICONS[item.type] && <Iconify icon={NOTIFICATION_ICONS[item.type]} width={16} />}
                       </span>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-ink-primary truncate">{item.title}</p>
                         <p className="text-xs text-ink-secondary truncate">{item.description}</p>
                       </div>
-                    </button>
+                    </Button>
                   ))}
               </div>
             </div>
@@ -150,25 +154,23 @@ export function Header({ onMenuToggle }: HeaderProps) {
         </div>
 
         {/* Settings button */}
-        <button
-          type="button"
+        <IconButton
+          icon="settings"
           onClick={() => navigate('/settings/general-settings')}
-          className="rounded-full p-2 text-ink-secondary hover:bg-grey-500/10 transition-colors"
           title="Settings"
           aria-label="Settings"
-        >
-          <Iconify icon="settings" width={24} />
-        </button>
+        />
 
         {/* Product Switcher */}
         <ProductSwitcher />
 
         {/* Profile dropdown */}
         <div className="relative" ref={profileRef}>
-          <button
-            type="button"
+          <Button
+            variant="text"
+            color="inherit"
             onClick={() => setIsProfileOpen((prev) => !prev)}
-            className="flex items-center gap-2 rounded-full p-1.5 hover:bg-grey-500/10 transition-colors"
+            className="!h-auto gap-2 !rounded-full !p-1.5 !font-normal"
             aria-label="User menu"
             aria-expanded={isProfileOpen}
             aria-haspopup="true"
@@ -181,7 +183,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
               <p className="text-xs text-ink-secondary leading-tight capitalize whitespace-nowrap">{displayRole}</p>
             </div>
             <Iconify icon="chevron-down" width={16} className="hidden sm:block text-ink-disabled shrink-0" />
-          </button>
+          </Button>
 
           {/* Dropdown menu */}
           {isProfileOpen && (
@@ -202,18 +204,19 @@ export function Header({ onMenuToggle }: HeaderProps) {
                 <Iconify icon="user" width={18} />
                 My Profile
               </a>
-              <button
-                type="button"
+              <Button
+                variant="text"
+                color="error"
+                startIcon={<Iconify icon="logout" width={18} />}
                 onClick={() => {
                   setIsProfileOpen(false);
                   void logout();
                 }}
-                className="flex w-full items-center gap-2 px-4 py-2 text-sm text-error-main hover:bg-error-main/10"
+                className="w-full !justify-start !rounded-none px-4 !font-normal"
                 role="menuitem"
               >
-                <Iconify icon="logout" width={18} />
                 Sign out
-              </button>
+              </Button>
             </div>
           )}
         </div>

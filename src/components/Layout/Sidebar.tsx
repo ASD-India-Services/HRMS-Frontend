@@ -21,6 +21,7 @@ import { usePermissions } from '@platform/auth-sdk';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { getFilteredNavigation, type NavGroup } from '@/config/navigation';
 import { Iconify } from '@/components/Iconify';
+import { Button, IconButton } from '@/components/ui/Button';
 import { NavIcon } from './NavIcon';
 
 interface SidebarProps {
@@ -121,28 +122,26 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
             )}
           </div>
           {!isCollapsed && (
-            <button
-              type="button"
+            <IconButton
+              icon="collapse"
+              size="small"
               onClick={onToggleCollapse}
-              className="hidden md:flex h-8 w-8 items-center justify-center rounded-full text-ink-secondary hover:bg-grey-500/10 transition-colors"
+              className="hidden md:inline-flex"
               aria-label="Collapse sidebar"
-            >
-              <Iconify icon="collapse" width={18} />
-            </button>
+            />
           )}
         </div>
 
         {/* Expand button when collapsed */}
         {isCollapsed && (
           <div className="flex justify-center pb-2">
-            <button
-              type="button"
+            <IconButton
+              icon="expand"
+              size="small"
               onClick={onToggleCollapse}
-              className="hidden md:flex h-8 w-8 items-center justify-center rounded-full text-ink-secondary hover:bg-grey-500/10 transition-colors"
+              className="hidden md:inline-flex"
               aria-label="Expand sidebar"
-            >
-              <Iconify icon="expand" width={18} />
-            </button>
+            />
           </div>
         )}
 
@@ -162,14 +161,18 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
 
                   {/* Group caption — only show in expanded mode */}
                   {!isCollapsed && (
-                    <button
-                      type="button"
+                    <Button
+                      variant="text"
+                      color="inherit"
                       onClick={() => toggleGroup(group.label)}
-                      className="flex w-full items-center justify-between px-3 pb-1 pt-2 text-[11px] font-bold uppercase tracking-wider text-ink-disabled hover:text-ink-primary transition-colors"
+                      className="!h-auto w-full !justify-between !rounded-none !px-3 pb-1 pt-2 !text-[11px] uppercase tracking-wider !text-ink-disabled hover:!text-ink-primary"
                     >
-                      <span>{group.label}</span>
+                      <span className="flex items-center gap-2">
+                        {group.icon && <NavIcon name={group.icon} className="h-4 w-4 flex-shrink-0" />}
+                        {group.label}
+                      </span>
                       <ChevronIcon expanded={groupExpanded} />
-                    </button>
+                    </Button>
                   )}
 
                   {/* Group items */}

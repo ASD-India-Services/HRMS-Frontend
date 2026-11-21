@@ -1,11 +1,11 @@
 /**
  * DataTableEmpty — Empty state for DataTable
  *
- * Renders a centered empty state with an icon and descriptive text
- * when no records match the current filters.
+ * Renders the shared empty state when no records match the current filters.
  *
  * Requirements: 17.4
  */
+import { StateView } from '@/components/ui/StateView';
 
 interface DataTableEmptyProps {
   /** Primary message (default: "No records found") */
@@ -18,25 +18,5 @@ export function DataTableEmpty({
   message = 'No records found',
   description,
 }: DataTableEmptyProps) {
-  return (
-    <div className="border border-divider rounded-lg p-8 text-center bg-surface-neutral">
-      {/* Empty state icon */}
-      <svg
-        className="mx-auto h-12 w-12 text-ink-disabled"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-        />
-      </svg>
-      <p className="mt-3 text-ink-secondary font-medium">{message}</p>
-      {description && <p className="text-ink-disabled text-sm mt-1">{description}</p>}
-    </div>
-  );
+  return <StateView icon="inbox" title={message} description={description} />;
 }

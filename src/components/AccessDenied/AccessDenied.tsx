@@ -10,6 +10,8 @@
  */
 
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
 
 export function AccessDenied() {
   const navigate = useNavigate();
@@ -67,27 +69,9 @@ export function AccessDenied() {
       </p>
 
       {/* Go Back button */}
-      <button
-        type="button"
-        onClick={handleGoBack}
-        className="inline-flex items-center gap-2 rounded-lg bg-primary-main px-5 py-2.5 text-sm font-medium text-primary-contrast shadow-card transition-colors hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M19 12H5" />
-          <polyline points="12 19 5 12 12 5" />
-        </svg>
+      <Button startIcon={<Iconify icon="arrow-left" />} onClick={handleGoBack}>
         Go Back
-      </button>
+      </Button>
     </div>
   );
 }

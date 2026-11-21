@@ -14,6 +14,8 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import type { FieldSchema } from '@/types/form';
+import { Switch } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
 
 export interface FormFieldProps {
   field: FieldSchema;
@@ -158,11 +160,10 @@ export function FormField({
 
       case 'select':
         return (
-          <select
+          <Select
             id={fieldId}
             name={field.name}
             value={String(value ?? '')}
-            className={`${baseInputClasses} pr-8 appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236b7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.23%207.21a.75.75%200%20011.06.02L10%2011.168l3.71-3.938a.75.75%200%20111.08%201.04l-4.25%204.5a.75.75%200%2001-1.08%200l-4.25-4.5a.75.75%200%2001.02-1.06z%22%20clip-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25rem] bg-[right_0.5rem_center] bg-no-repeat`}
             onChange={(e) => onChange(field.name, e.target.value)}
             onBlur={() => onBlur(field.name)}
             aria-invalid={showError ? true : undefined}
@@ -176,7 +177,7 @@ export function FormField({
                 {opt.label}
               </option>
             ))}
-          </select>
+          </Select>
         );
 
       case 'multi-select':
@@ -251,26 +252,15 @@ export function FormField({
 
       case 'toggle':
         return (
-          <button
+          <Switch
             id={fieldId}
-            type="button"
-            role="switch"
-            aria-checked={Boolean(value)}
+            checked={Boolean(value)}
             aria-describedby={describedBy || undefined}
-            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
-              value ? 'bg-primary-main' : 'bg-surface-neutral'
-            }`}
             onClick={() => {
               onChange(field.name, !value);
               onBlur(field.name);
             }}
-          >
-            <span
-              className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-surface-paper shadow ring-0 transition duration-200 ease-in-out ${
-                value ? 'translate-x-5' : 'translate-x-0'
-              }`}
-            />
-          </button>
+          />
         );
 
       default:

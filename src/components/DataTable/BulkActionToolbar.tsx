@@ -12,6 +12,7 @@ import { useState, useCallback } from 'react';
 import type { BulkAction } from '@/types/datatable';
 import { Button } from '@/components/ui/Button';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
+import { Iconify } from '@/components/Iconify';
 
 interface BulkActionToolbarProps {
   selectedIds: string[];
@@ -80,71 +81,32 @@ export function BulkActionToolbar({
 
         <div className="flex items-center gap-2 ml-2">
           {bulkActions.map((action) => (
-            <button
+            <Button
               key={action.key}
-              type="button"
+              variant={action.variant === 'destructive' ? 'soft' : 'outlined'}
+              color={action.variant === 'destructive' ? 'error' : 'inherit'}
+              size="small"
               onClick={() => handleActionClick(action)}
               disabled={executingKey !== null}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                action.variant === 'destructive'
-                  ? 'text-error-dark bg-error-lighter hover:bg-error-main/20 border border-error-main/30'
-                  : 'text-ink-secondary bg-surface-paper hover:bg-grey-500/10 border border-grey-500/30'
-              }`}
+              loading={executingKey === action.key}
+              startIcon={action.icon && !executingKey ? <span aria-hidden="true">{action.icon}</span> : undefined}
               aria-label={action.label}
             >
-              {executingKey === action.key && (
-                <svg
-                  className="animate-spin h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
-                </svg>
-              )}
-              {action.icon && !executingKey && (
-                <span className="text-base" aria-hidden="true">
-                  {action.icon}
-                </span>
-              )}
               {action.label}
-            </button>
+            </Button>
           ))}
         </div>
 
-        <button
-          type="button"
+        <Button
+          variant="text"
+          color="inherit"
+          size="small"
+          startIcon={<Iconify icon="close" />}
           onClick={onClear}
-          className="ml-auto inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-ink-secondary hover:text-ink-primary hover:bg-grey-500/10 rounded transition-colors"
+          className="ml-auto"
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
           Clear selection
-        </button>
+        </Button>
       </div>
 
       {/* Confirmation Dialog */}

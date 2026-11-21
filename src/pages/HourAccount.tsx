@@ -14,6 +14,7 @@ import {
 import { useEmployees } from '@/hooks/useEmployees';
 import { useCompanyLeaves, type CompanyLeave } from '@/hooks/useCompanyLeaves';
 import type { HourAccount, HourAccountFilterParams } from '@/types/hourAccount';
+import { Select } from '@/components/ui/Select';
 
 const MONTH_NAMES = [
   'January',
@@ -1214,10 +1215,9 @@ export default function HourAccountPage() {
                       {/* Employee */}
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1.5">Employee</label>
-                        <select
+                        <Select selectSize="small"
                           value={filterEmployee}
                           onChange={(e) => setFilterEmployee(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Employees</option>
                           {employeesList.map((emp) => (
@@ -1225,16 +1225,15 @@ export default function HourAccountPage() {
                               {emp.first_name} {emp.last_name} {emp.employee_id ? `(${emp.employee_id})` : ''}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Company */}
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1.5">Company</label>
-                        <select
+                        <Select selectSize="small"
                           value={filterCompany}
                           onChange={(e) => setFilterCompany(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Companies</option>
                           {companyOptions.map((comp) => (
@@ -1242,16 +1241,15 @@ export default function HourAccountPage() {
                               {comp}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Department */}
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1.5">Department</label>
-                        <select
+                        <Select selectSize="small"
                           value={filterDepartment}
                           onChange={(e) => setFilterDepartment(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Departments</option>
                           {departmentsList.map((dept) => (
@@ -1259,16 +1257,15 @@ export default function HourAccountPage() {
                               {dept.name}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Job Position */}
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1.5">Job Position</label>
-                        <select
+                        <Select selectSize="small"
                           value={filterJobPosition}
                           onChange={(e) => setFilterJobPosition(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Job Positions</option>
                           {designationsList.map((desig) => {
@@ -1279,16 +1276,15 @@ export default function HourAccountPage() {
                               </option>
                             );
                           })}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Shift */}
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1.5">Shift</label>
-                        <select
+                        <Select selectSize="small"
                           value={filterShift}
                           onChange={(e) => setFilterShift(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Shifts</option>
                           {shiftsList.map((shift) => (
@@ -1296,16 +1292,15 @@ export default function HourAccountPage() {
                               {shift.name}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Work Type */}
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1.5">Work Type</label>
-                        <select
+                        <Select selectSize="small"
                           value={filterWorkType}
                           onChange={(e) => setFilterWorkType(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Work Types</option>
                           {WORK_TYPES.map((wt) => (
@@ -1313,16 +1308,15 @@ export default function HourAccountPage() {
                               {wt}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Reporting Manager */}
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1.5">Reporting Manager</label>
-                        <select
+                        <Select selectSize="small"
                           value={filterReportingManager}
                           onChange={(e) => setFilterReportingManager(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Reporting Managers</option>
                           {reportingManagersList.map((mgr) => (
@@ -1330,16 +1324,15 @@ export default function HourAccountPage() {
                               {mgr.name}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Work Location */}
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1.5">Work Location</label>
-                        <select
+                        <Select selectSize="small"
                           value={filterWorkLocation}
                           onChange={(e) => setFilterWorkLocation(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All Locations</option>
                           {branchesList.map((b) => (
@@ -1347,7 +1340,7 @@ export default function HourAccountPage() {
                               {b.name}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
                     </div>
                   )}
@@ -1387,10 +1380,9 @@ export default function HourAccountPage() {
                       {/* Batch */}
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1.5">Batch</label>
-                        <select
+                        <Select selectSize="small"
                           value={filterBatch}
                           onChange={(e) => setFilterBatch(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">Select</option>
                           <option value="Batch A">Batch A</option>
@@ -1398,7 +1390,7 @@ export default function HourAccountPage() {
                           <option value="Morning Batch">Morning Batch</option>
                           <option value="Evening Batch">Evening Batch</option>
                           <option value="General Batch">General Batch</option>
-                        </select>
+                        </Select>
                       </div>
 
                       {/* In Time */}
@@ -1426,29 +1418,27 @@ export default function HourAccountPage() {
                       {/* Validated? */}
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1.5">Validated?</label>
-                        <select
+                        <Select selectSize="small"
                           value={filterValidated}
                           onChange={(e) => setFilterValidated(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">Unknown</option>
                           <option value="true">Yes</option>
                           <option value="false">No</option>
-                        </select>
+                        </Select>
                       </div>
 
                       {/* OT Approved? */}
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1.5">OT Approved?</label>
-                        <select
+                        <Select selectSize="small"
                           value={filterOtApproved}
                           onChange={(e) => setFilterOtApproved(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">Unknown</option>
                           <option value="true">Yes</option>
                           <option value="false">No</option>
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Min Hour */}
@@ -1630,16 +1620,15 @@ export default function HourAccountPage() {
                       {/* Month */}
                       <div>
                         <label className="block text-xs font-semibold text-ink-primary mb-1.5">Month</label>
-                        <select
+                        <Select selectSize="small"
                           value={filterMonth}
                           onChange={(e) => setFilterMonth(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main cursor-pointer"
                         >
                           <option value="">All</option>
                           {MONTH_NAMES.map((m) => (
                             <option key={m} value={m}>{m}</option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Year */}
@@ -1692,20 +1681,19 @@ export default function HourAccountPage() {
               <div className="absolute right-0 mt-2 w-64 bg-surface-paper border border-divider rounded-lg shadow-xl z-50 p-4">
                 <h4 className="text-sm font-semibold text-ink-primary mb-2">Group By</h4>
                 <label className="block text-xs font-medium text-ink-secondary mb-1">Field</label>
-                <select
+                <Select selectSize="small"
                   value={groupByField}
                   onChange={(e) => {
                     setGroupByField(e.target.value);
                     setShowGroupByPopover(false);
                   }}
-                  className="w-full px-2.5 py-1.5 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main"
                 >
                   {GROUP_BY_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
             )}
           </div>
@@ -2589,11 +2577,10 @@ export default function HourAccountPage() {
                     <label className="block text-xs font-medium text-ink-primary mb-1">
                       Employee *
                     </label>
-                    <select
+                    <Select selectSize="small"
                       value={formData.employee}
                       onChange={(e) => setFormData({ ...formData, employee: e.target.value })}
                       required
-                      className="w-full px-3 py-2 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main"
                     >
                       <option value="">Select an employee</option>
                       {employeesList.map((emp) => (
@@ -2601,7 +2588,7 @@ export default function HourAccountPage() {
                           {emp.first_name} {emp.last_name} ({emp.employee_id || 'No ID'})
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   {/* Month */}
@@ -2609,16 +2596,15 @@ export default function HourAccountPage() {
                     <label className="block text-xs font-medium text-ink-primary mb-1">
                       Month *
                     </label>
-                    <select
+                    <Select selectSize="small"
                       value={formData.month}
                       onChange={(e) => setFormData({ ...formData, month: e.target.value })}
                       required
-                      className="w-full px-3 py-2 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main"
                     >
                       {MONTH_NAMES.map((m) => (
                         <option key={m} value={m}>{m}</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   {/* Year */}

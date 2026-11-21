@@ -1,9 +1,10 @@
 /**
  * Self-fetching chart widget that renders various chart types using Recharts.
  * Each widget owns its data fetch via TanStack Query and has its own error boundary.
+ * Rendering is delegated to ChartCard and the shared chart theme (ui/Chart).
  *
  * Supported chart types:
- *  - 'line'   → LineChart with Area fill
+ *  - 'line'   → AreaChart
  *  - 'bar'    → BarChart
  *  - 'pie'    → PieChart
  *  - 'donut'  → PieChart with innerRadius
@@ -11,7 +12,6 @@
  *
  * Requirements: 1.2, 1.5
  */
-
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -24,29 +24,20 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
   AreaChart,
   Area,
 } from 'recharts';
 import api from '@/lib/api';
 import type { ChartWidgetProps, ChartDataPoint, ChartResponse } from '@/types/dashboard';
-import { ChartSkeleton } from './ChartSkeleton';
-import { ChartError } from './ChartError';
-
-const CHART_TOKENS = [
-  'primary-main', 'info-main', 'warning-main', 'error-main', 'secondary-main',
-  'success-main', 'primary-dark', 'info-dark', 'warning-dark', 'secondary-dark',
-];
-
-/** Chart colours resolved from the design-token CSS variables (RGB channels in index.css). */
-function getChartColors(): string[] {
-  const style = getComputedStyle(document.documentElement);
-  return CHART_TOKENS.map((t) => `rgb(${style.getPropertyValue(`--${t}`).trim()})`);
-}
+import { ChartCard, ChartTooltip, AXIS_PROPS, CHART_HEIGHT, LEGEND_PROPS, getChartTheme } from '@/components/ui/Chart';
 
 // --- Error Boundary ---
 
 interface ErrorBoundaryProps {
+  title: string;
+  height: number;
   children: ReactNode;
   onReset?: () => void;
 }
@@ -72,8 +63,10 @@ class ChartErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryStat
   render() {
     if (this.state.hasError) {
       return (
-        <ChartError
-          message="An unexpected error occurred while rendering this chart."
+        <ChartCard
+          title={this.props.title}
+          height={this.props.height}
+          error="An unexpected error occurred while rendering this chart."
           onRetry={() => {
             this.setState({ hasError: false });
             this.props.onReset?.();
@@ -85,21 +78,23 @@ class ChartErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryStat
   }
 }
 
-// --- Chart Renderers ---
+// --- Chart Renderers (all styling comes from the shared chart theme) ---
 
 function renderLineChart(data: ChartDataPoint[], height: number) {
+  const theme = getChartTheme();
   return (
     <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-        <YAxis tick={{ fontSize: 12 }} />
-        <Tooltip />
+        <CartesianGrid {...theme.grid} />
+        <XAxis dataKey="label" tick={theme.tick} {...AXIS_PROPS} />
+        <YAxis tick={theme.tick} {...AXIS_PROPS} />
+        <Tooltip content={<ChartTooltip />} cursor={theme.cursor} />
         <Area
           type="monotone"
           dataKey="value"
-          stroke={getChartColors()[0]}
-          fill={getChartColors()[0]}
+          name="Value"
+          stroke={theme.colors[0]}
+          fill={theme.colors[0]}
           fillOpacity={0.2}
         />
       </AreaChart>
@@ -108,20 +103,22 @@ function renderLineChart(data: ChartDataPoint[], height: number) {
 }
 
 function renderBarChart(data: ChartDataPoint[], height: number) {
+  const theme = getChartTheme();
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-        <YAxis tick={{ fontSize: 12 }} />
-        <Tooltip />
-        <Bar dataKey="value" fill={getChartColors()[0]} radius={[4, 4, 0, 0]} />
+        <CartesianGrid {...theme.grid} />
+        <XAxis dataKey="label" tick={theme.tick} {...AXIS_PROPS} />
+        <YAxis tick={theme.tick} {...AXIS_PROPS} />
+        <Tooltip content={<ChartTooltip />} cursor={theme.cursor} />
+        <Bar dataKey="value" name="Value" fill={theme.colors[0]} radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
 }
 
 function renderPieChart(data: ChartDataPoint[], height: number, innerRadius = 0) {
+  const theme = getChartTheme();
   return (
     <ResponsiveContainer width="100%" height={height}>
       <PieChart>
@@ -130,16 +127,17 @@ function renderPieChart(data: ChartDataPoint[], height: number, innerRadius = 0)
           dataKey="value"
           nameKey="label"
           cx="50%"
-          cy="50%"
+          cy="45%"
           innerRadius={innerRadius}
-          outerRadius="80%"
+          outerRadius="75%"
           paddingAngle={2}
         >
           {data.map((_entry, index) => (
-            <Cell key={`cell-${index}`} fill={getChartColors()[index % getChartColors().length]} />
+            <Cell key={`cell-${index}`} fill={theme.colors[index % theme.colors.length]} />
           ))}
         </Pie>
-        <Tooltip />
+        <Tooltip content={<ChartTooltip />} />
+        <Legend {...LEGEND_PROPS} />
       </PieChart>
     </ResponsiveContainer>
   );
@@ -147,16 +145,17 @@ function renderPieChart(data: ChartDataPoint[], height: number, innerRadius = 0)
 
 function renderFunnelChart(data: ChartDataPoint[], height: number) {
   // Recharts doesn't have a native Funnel chart — use a vertical BarChart
+  const theme = getChartTheme();
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} layout="vertical">
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis type="number" tick={{ fontSize: 12 }} />
-        <YAxis type="category" dataKey="label" tick={{ fontSize: 12 }} width={100} />
-        <Tooltip />
-        <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+        <CartesianGrid {...theme.grid} vertical horizontal={false} />
+        <XAxis type="number" tick={theme.tick} {...AXIS_PROPS} />
+        <YAxis type="category" dataKey="label" tick={theme.tick} width={100} {...AXIS_PROPS} />
+        <Tooltip content={<ChartTooltip />} cursor={theme.cursor} />
+        <Bar dataKey="value" name="Value" radius={[0, 4, 4, 0]}>
           {data.map((_entry, index) => (
-            <Cell key={`cell-${index}`} fill={getChartColors()[index % getChartColors().length]} />
+            <Cell key={`cell-${index}`} fill={theme.colors[index % theme.colors.length]} />
           ))}
         </Bar>
       </BarChart>
@@ -167,14 +166,15 @@ function renderFunnelChart(data: ChartDataPoint[], height: number) {
 // --- Main Component ---
 
 function ChartWidgetInner({
+  title,
   queryKey,
   endpoint,
   type,
   dateRange,
   extraParams,
-  height = 300,
+  height = CHART_HEIGHT,
   onSegmentClick: _onSegmentClick,
-}: Omit<ChartWidgetProps, 'title'>) {
+}: ChartWidgetProps) {
   const { data, isLoading, isError, error, refetch } = useQuery<ChartResponse>({
     queryKey: [...queryKey, dateRange, extraParams],
     queryFn: async () => {
@@ -185,19 +185,6 @@ function ChartWidgetInner({
       return response.data;
     },
   });
-
-  if (isLoading) {
-    return <ChartSkeleton height={height} />;
-  }
-
-  if (isError) {
-    return (
-      <ChartError
-        message={error instanceof Error ? error.message : 'Failed to load chart data'}
-        onRetry={() => { refetch(); }}
-      />
-    );
-  }
 
   const chartData = data?.data ?? [];
 
@@ -219,21 +206,23 @@ function ChartWidgetInner({
   };
 
   return (
-    <div>
+    <ChartCard
+      title={title}
+      height={height}
+      isLoading={isLoading}
+      error={isError ? (error instanceof Error ? error.message : 'Failed to load chart data') : null}
+      onRetry={() => { refetch(); }}
+      isEmpty={chartData.length === 0}
+    >
       {renderChart()}
-    </div>
+    </ChartCard>
   );
 }
 
 export function ChartWidget(props: ChartWidgetProps) {
-  const { title } = props;
-
   return (
-    <div className="rounded-lg border border-divider bg-surface-paper p-4 shadow-card">
-      <h3 className="mb-3 text-sm font-semibold text-ink-secondary">{title}</h3>
-      <ChartErrorBoundary>
-        <ChartWidgetInner {...props} />
-      </ChartErrorBoundary>
-    </div>
+    <ChartErrorBoundary title={props.title} height={props.height ?? CHART_HEIGHT}>
+      <ChartWidgetInner {...props} />
+    </ChartErrorBoundary>
   );
 }

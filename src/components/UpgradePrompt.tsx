@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
 
 interface UpgradePromptProps {
   /** Name of the module that requires an upgrade */
@@ -31,16 +33,14 @@ export function UpgradePrompt({ moduleName }: UpgradePromptProps) {
         </p>
 
         <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <button
-            type="button"
+          <Button
+            variant="outlined"
+            color="inherit"
+            startIcon={<Iconify icon="arrow-left" />}
             onClick={() => navigate('/dashboard')}
-            className="inline-flex items-center gap-2 rounded-lg border border-grey-500/30 bg-surface-paper px-4 py-2 text-sm font-medium text-ink-secondary hover:bg-surface-neutral transition-colors"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-            </svg>
             Back to Dashboard
-          </button>
+          </Button>
           <a
             href="mailto:support@digihrms.com?subject=Upgrade%20Request"
             className="inline-flex items-center gap-2 rounded-lg bg-primary-main px-4 py-2 text-sm font-medium text-primary-contrast hover:bg-primary-dark transition-colors"

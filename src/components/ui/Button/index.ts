@@ -1,2 +1,10 @@
 export { Button } from './Button';
-export type { ButtonProps, ButtonVariant, ButtonColor, ButtonSize } from './Button';
+export type { ButtonProps } from './Button';
+export { ButtonLink } from './ButtonLink';
+export type { ButtonLinkProps } from './ButtonLink';
+export { IconButton } from './IconButton';
+export type { IconButtonProps } from './IconButton';
+export { buttonClasses } from './buttonClasses';
+export type { ButtonVariant, ButtonColor, ButtonSize } from './buttonClasses';
+export { Switch } from './Switch';
+export type { SwitchProps } from './Switch';

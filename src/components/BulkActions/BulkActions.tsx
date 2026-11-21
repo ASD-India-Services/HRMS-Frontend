@@ -9,6 +9,7 @@ import { useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { Button } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
 
 interface ImportResult {
   created: number;
@@ -130,73 +131,40 @@ export function BulkActions({
       <div className="flex flex-wrap items-center gap-2">
         {/* Export Button */}
         {canExport && (
-          <Button variant="outlined" color="inherit"
-            type="button"
+          <Button
+            variant="outlined"
+            color="inherit"
+            startIcon={<Iconify icon="download" />}
             onClick={handleExport}
             disabled={exporting}
             aria-label="Export CSV"
           >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-              />
-            </svg>
             {exporting ? 'Exporting...' : 'Export CSV'}
           </Button>
         )}
 
         {/* Import Button */}
         {showImport && (
-          <button
-            type="button"
+          <Button
+            variant={showImportPanel ? 'soft' : 'outlined'}
+            color={showImportPanel ? 'primary' : 'inherit'}
+            startIcon={<Iconify icon="upload" />}
             onClick={() => {
               setShowImportPanel((v) => !v);
               setImportResult(null);
             }}
-            className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium shadow-sm ${
-              showImportPanel
-                ? 'border-primary-light bg-primary-lighter text-primary-dark'
-                : 'border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral'
-            }`}
             aria-expanded={showImportPanel}
             aria-label="Import CSV"
           >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
-              />
-            </svg>
             Import CSV
-          </button>
+          </Button>
         )}
 
         {/* Template Link */}
         {showImport && (
-          <button
-            type="button"
-            onClick={handleDownloadTemplate}
-            className="text-sm font-medium text-primary-main hover:text-primary-dark underline"
-          >
+          <Button variant="text" size="small" onClick={handleDownloadTemplate}>
             Download Template
-          </button>
+          </Button>
         )}
 
         {/* Export Error */}

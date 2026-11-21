@@ -3,8 +3,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Button, IconButton } from '@/components/ui/Button';
 
 export interface LeaveTypeItem {
   id: string;
@@ -199,31 +199,20 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
               Create, edit, and configure custom leave types for your organization
             </p>
           </div>
-          <button
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-ink-disabled hover:text-ink-secondary hover:bg-surface-neutral transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <IconButton icon="close" size="small" onClick={onClose} aria-label="Close" />
         </div>
 
         {/* Alerts */}
         {errorMsg && (
           <div className="mx-6 mt-4 p-3 rounded-lg bg-error-lighter border border-error-light text-sm text-error-dark flex items-center justify-between">
             <span>{errorMsg}</span>
-            <button onClick={() => setErrorMsg(null)} className="text-error-main hover:text-error-dark ml-2 font-bold">
-              ✕
-            </button>
+            <IconButton icon="close" size="small" color="error" onClick={() => setErrorMsg(null)} aria-label="Dismiss" className="ml-2" />
           </div>
         )}
         {successMsg && (
           <div className="mx-6 mt-4 p-3 rounded-lg bg-success-lighter border border-success-light text-sm text-success-dark flex items-center justify-between">
             <span>{successMsg}</span>
-            <button onClick={() => setSuccessMsg(null)} className="text-success-main hover:text-success-dark ml-2 font-bold">
-              ✕
-            </button>
+            <IconButton icon="close" size="small" color="success" onClick={() => setSuccessMsg(null)} aria-label="Dismiss" className="ml-2" />
           </div>
         )}
 
@@ -236,13 +225,9 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
                 <h3 className="text-base font-semibold text-ink-primary">
                   {editingId ? `Edit Leave Type: ${form.name}` : 'Create New Leave Type'}
                 </h3>
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="text-xs text-ink-secondary hover:text-ink-primary underline"
-                >
+                <Button variant="text" size="small" onClick={resetForm}>
                   Cancel
-                </button>
+                </Button>
               </div>
 
               <form onSubmit={handleSave} className="space-y-4">
@@ -463,23 +448,20 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-1">
                           {canEdit && (
-                            <button
-                              type="button"
-                              onClick={() => handleStartEdit(item)}
-                              className="px-2 py-1 text-xs font-medium rounded text-primary-dark hover:bg-primary-lighter transition-colors"
-                            >
+                            <Button variant="text" size="small" onClick={() => handleStartEdit(item)}>
                               Edit
-                            </button>
+                            </Button>
                           )}
                           {canDelete && (
-                            <button
-                              type="button"
+                            <Button
+                              variant="text"
+                              color="error"
+                              size="small"
                               disabled={deletingId === item.id}
                               onClick={() => handleDelete(item)}
-                              className="px-2 py-1 text-xs font-medium rounded text-error-main hover:bg-error-lighter disabled:opacity-50 transition-colors"
                             >
                               {deletingId === item.id ? 'Deleting...' : 'Delete'}
-                            </button>
+                            </Button>
                           )}
                         </div>
                       </td>

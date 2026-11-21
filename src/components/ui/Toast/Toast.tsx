@@ -6,6 +6,7 @@ import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 import { ToastContext, type ToastSeverity } from './ToastContext';
+import { IconButton } from '../Button';
 
 interface ToastItem {
   id: number;
@@ -53,14 +54,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               className={`pointer-events-auto flex items-start justify-between gap-3 rounded px-4 py-3 text-sm shadow-z20 ${SEVERITY_CLASSES[t.severity]}`}
             >
               <span>{t.message}</span>
-              <button
-                type="button"
+              <IconButton
+                icon="close"
+                size="small"
                 onClick={() => dismiss(t.id)}
                 aria-label="Dismiss"
-                className="shrink-0 font-bold opacity-70 hover:opacity-100"
-              >
-                ×
-              </button>
+                className="shrink-0 !text-current opacity-70 hover:opacity-100"
+              />
             </div>
           ))}
         </div>,

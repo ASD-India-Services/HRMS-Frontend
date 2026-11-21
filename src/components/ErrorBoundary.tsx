@@ -1,4 +1,5 @@
 import { useRouteError, isRouteErrorResponse, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/Button';
 
 /**
  * Custom error boundary for React Router.
@@ -39,18 +40,12 @@ export function RouteErrorBoundary() {
         <h1 className="mt-4 text-2xl font-semibold text-ink-primary">{title}</h1>
         <p className="mt-2 text-sm text-ink-secondary">{message}</p>
         <div className="mt-6 flex items-center justify-center gap-3">
-          <button
-            onClick={() => navigate(-1)}
-            className="rounded border border-grey-500/30 px-4 py-2 text-sm font-medium text-ink-secondary hover:bg-surface-neutral"
-          >
+          <Button variant="outlined" color="inherit" onClick={() => navigate(-1)}>
             Go back
-          </button>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="rounded bg-primary-main px-4 py-2 text-sm font-medium text-primary-contrast hover:bg-primary-dark"
-          >
+          </Button>
+          <Button onClick={() => navigate('/dashboard')}>
             Dashboard
-          </button>
+          </Button>
         </div>
       </div>
     </div>

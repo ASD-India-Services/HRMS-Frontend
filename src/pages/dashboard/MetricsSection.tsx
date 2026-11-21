@@ -26,7 +26,7 @@ export function MetricsSection() {
         <MetricCard
           title="Total Active Employees"
           value={data?.total_active_employees ?? null}
-          icon="👥"
+          icon="employees"
           href="/employees"
           isLoading={false}
         />
@@ -35,7 +35,7 @@ export function MetricsSection() {
         <MetricCard
           title="On Leave Today"
           value={data?.employees_on_leave_today ?? null}
-          icon="🏖️"
+          icon="leaves"
           href="/my-leaves"
           isLoading={false}
         />
@@ -44,7 +44,7 @@ export function MetricsSection() {
         <MetricCard
           title="Pending Approvals"
           value={data?.pending_approvals ?? null}
-          icon="⏳"
+          icon="attendance"
           href="/leaves/approvals"
           isLoading={false}
         />
@@ -53,7 +53,7 @@ export function MetricsSection() {
         <MetricCard
           title="Open Positions"
           value={data?.open_positions ?? null}
-          icon="💼"
+          icon="recruitment"
           href="/recruitment"
           isLoading={false}
         />

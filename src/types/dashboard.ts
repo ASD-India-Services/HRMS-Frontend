@@ -7,6 +7,8 @@
  * Requirements: 1.1, 1.2
  */
 
+import type { IconName } from '@/components/Iconify';
+
 export interface DashboardMetrics {
   total_active_employees: number;
   employees_on_leave_today: number;
@@ -29,7 +31,7 @@ export interface ChartResponse {
 export interface MetricCardProps {
   title: string;
   value: number | string | null;
-  icon: string;
+  icon: IconName;
   /** Link to navigate on click */
   href: string;
   /** Loading state */
