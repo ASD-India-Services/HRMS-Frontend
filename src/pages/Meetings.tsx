@@ -473,11 +473,12 @@ export default function Meetings() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search meetings..."
+            inputSize="small"
             className="w-56 pl-8 pr-3 sm:w-72"
           />
           <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
         </div>
-        <Select className="w-48" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+        <Select selectSize="small" className="w-48" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="">All Statuses</option>
           <option value="scheduled">Scheduled</option>
           <option value="in_progress">In Progress</option>
@@ -495,7 +496,7 @@ export default function Meetings() {
           </div>
         ) : meetings.length === 0 ? (
           /* Empty State matching Screenshot 1 */
-          <StateView icon="search" title="No Records found." description="There is no meetings has been created." />
+          <StateView icon="search" title="No records found" description="No meetings have been created yet." />
         ) : (
           /* Meetings Table */
           <div className="overflow-x-auto">

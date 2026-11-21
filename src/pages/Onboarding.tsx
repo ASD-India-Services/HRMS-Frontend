@@ -13,6 +13,7 @@ import { Select } from '@/components/ui/Select';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card } from '@/components/ui/Card';
+import { StateView } from '@/components/ui/StateView';
 
 export default function Onboarding() {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>('');
@@ -70,9 +71,9 @@ export default function Onboarding() {
         {activeEmployeeId ? (
           <OnboardingChecklist employeeId={activeEmployeeId} />
         ) : (
-          <div className="flex h-32 items-center justify-center rounded-lg bg-surface-neutral text-sm text-ink-secondary">
-            Loading checklist...
-          </div>
+          <Card>
+            <StateView icon="attendance" title="Loading checklist..." role="status" />
+          </Card>
         )}
       </div>
     </PageContainer>

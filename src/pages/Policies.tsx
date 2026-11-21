@@ -243,6 +243,7 @@ export default function Policies() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search..."
+              inputSize="small"
               className="w-48 sm:w-64"
             />
             {searchTerm && (
@@ -287,7 +288,7 @@ export default function Policies() {
             }
             action={
               canCreate && (
-                <Button size="small" startIcon={<Iconify icon="plus" />} onClick={handleOpenCreateModal}>
+                <Button startIcon={<Iconify icon="plus" />} onClick={handleOpenCreateModal}>
                   Create Policy
                 </Button>
               )

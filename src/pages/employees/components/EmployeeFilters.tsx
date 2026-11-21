@@ -28,6 +28,7 @@ export function EmployeeFilters({
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
       {/* Status Filter */}
       <Select
+        selectSize="small"
         value={status}
         onChange={(e) => onStatusChange(e.target.value as EmploymentStatus | '')}
         aria-label="Filter by status"
@@ -41,6 +42,7 @@ export function EmployeeFilters({
 
       {/* Department Filter */}
       <Select
+        selectSize="small"
         value={department}
         onChange={(e) => onDepartmentChange(e.target.value)}
         aria-label="Filter by department"
@@ -55,6 +57,7 @@ export function EmployeeFilters({
 
       {/* Employment Type Filter */}
       <Select
+        selectSize="small"
         value={employmentType}
         onChange={(e) => onEmploymentTypeChange(e.target.value as EmploymentType | '')}
         aria-label="Filter by employment type"

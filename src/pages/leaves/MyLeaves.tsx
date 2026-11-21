@@ -90,7 +90,7 @@ function MyLeavesContent() {
       />
       {/* Leave Balances Section */}
       <section className="mb-8" aria-label="My Leave Balances">
-        <h2 className="mb-3 text-sm font-semibold text-ink-primary uppercase tracking-wider">Leave Balances</h2>
+        <h2 className="mb-4 text-lg font-semibold text-ink-primary">Leave Balances</h2>
         {balancesLoading ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[1, 2, 3, 4].map((i) => (

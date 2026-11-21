@@ -87,6 +87,13 @@ interface FilterInputProps {
   onChange: (value: string) => void;
 }
 
+/** "Status" -> "All Statuses": one placeholder pattern for every filter select. */
+function allLabel(label: string): string {
+  if (/^all\b/i.test(label)) return label;
+  if (/s$/i.test(label)) return `All ${label}`;
+  if (/[^aeiou]y$/i.test(label)) return `All ${label.slice(0, -1)}ies`;
+  return `All ${label}${/(ss|x|ch|sh)$/i.test(label) ? 'es' : 's'}`;
+}
 function FilterInput({ config, value, onChange }: FilterInputProps) {
   const debounceMs = config.debounceMs ?? 300;
 
@@ -110,7 +117,7 @@ function FilterInput({ config, value, onChange }: FilterInputProps) {
             onChange={(e) => onChange(e.target.value)}
             aria-label={config.label}
           >
-            <option value="">{config.label}</option>
+            <option value="">{allLabel(config.label)}</option>
             {config.options?.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
@@ -129,7 +136,7 @@ function FilterInput({ config, value, onChange }: FilterInputProps) {
             onChange={(e) => onChange(e.target.value)}
             aria-label={config.label}
           >
-            <option value="">{config.label}</option>
+            <option value="">{allLabel(config.label)}</option>
             {config.options?.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}

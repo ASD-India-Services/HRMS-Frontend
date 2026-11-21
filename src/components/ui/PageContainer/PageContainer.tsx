@@ -5,7 +5,7 @@
 import type { HTMLAttributes } from 'react';
 import { cx } from '../cx';
 
-const MAX_WIDTH = { lg: 'max-w-5xl', xl: 'max-w-7xl' } as const;
+const MAX_WIDTH = { lg: 'max-w-7xl', xl: 'max-w-7xl' } as const;
 
 export interface PageContainerProps extends HTMLAttributes<HTMLDivElement> {
   /** 'lg' for narrow forms, 'xl' (default) for lists and dashboards. */

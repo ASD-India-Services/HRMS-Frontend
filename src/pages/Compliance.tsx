@@ -15,21 +15,21 @@ const COMPLIANCE_CONFIGS = [
   {
     title: 'PF Configuration',
     description: 'Configure Provident Fund contribution rates, employer/employee split, and registration details.',
-    icon: <Iconify icon="payroll" width={32} className="text-primary-main" />,
+    icon: <Iconify icon="payroll" width={24} />,
     status: 'Not Configured',
     statusColor: 'text-warning-dark bg-warning-lighter',
   },
   {
     title: 'ESI Configuration',
     description: 'Configure Employee State Insurance contribution rates, wage ceiling, and branch details.',
-    icon: <Iconify icon="healthInsurance" width={32} className="text-success-main" />,
+    icon: <Iconify icon="healthInsurance" width={24} />,
     status: 'Not Configured',
     statusColor: 'text-warning-dark bg-warning-lighter',
   },
   {
     title: 'Professional Tax Slabs',
     description: 'Configure state-wise professional tax slab rates and deduction rules.',
-    icon: <Iconify icon="expenseTaxes" width={32} className="text-secondary-main" />,
+    icon: <Iconify icon="expenseTaxes" width={24} />,
     status: 'Not Configured',
     statusColor: 'text-warning-dark bg-warning-lighter',
   },
@@ -47,7 +47,9 @@ export default function Compliance() {
             className="p-6"
           >
             <div className="flex items-start justify-between">
-              {config.icon}
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary-main/10 text-primary-main">
+                {config.icon}
+              </span>
               <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${config.statusColor}`}>
                 {config.status}
               </span>

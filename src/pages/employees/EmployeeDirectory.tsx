@@ -124,6 +124,7 @@ export function EmployeeDirectory() {
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search by name, department, or designation..."
+            inputSize="small"
             className="pl-10 pr-4"
             aria-label="Search employees"
           />

@@ -75,6 +75,7 @@ export function InterviewSchedule() {
         <div className="flex items-center gap-2">
           <CreateButton permission="recruitment.create" label="Schedule Interview" onClick={() => setShowCreate(true)} />
           <Select
+            selectSize="small"
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
             aria-label="Filter by interview status"

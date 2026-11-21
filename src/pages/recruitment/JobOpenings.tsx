@@ -198,6 +198,7 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
           />
         </div>
         <Select
+          selectSize="small"
           value={status}
           onChange={(e) => { setStatus(e.target.value as JobOpeningStatus | ''); setPage(1); }}
           aria-label="Filter by status"

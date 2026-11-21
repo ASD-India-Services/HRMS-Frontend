@@ -14,6 +14,7 @@ import { Select } from '@/components/ui/Select';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card } from '@/components/ui/Card';
+import { StateView } from '@/components/ui/StateView';
 import { EmptyState } from '@/components/EmptyState';
 import { Iconify } from '@/components/Iconify';
 
@@ -121,6 +122,7 @@ export function PayslipViewer() {
         <div>
           <label htmlFor="month-select" className="block text-xs font-medium text-ink-secondary">Month</label>
           <Select
+            selectSize="small"
             id="month-select"
             value={month}
             onChange={(e) => { setMonth(Number(e.target.value)); setSelectedSlipId(null); }}
@@ -134,6 +136,7 @@ export function PayslipViewer() {
         <div>
           <label htmlFor="year-input" className="block text-xs font-medium text-ink-secondary">Year</label>
           <Input
+            inputSize="small"
             id="year-input"
             type="number"
             value={year}
@@ -149,7 +152,7 @@ export function PayslipViewer() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Slip List */}
         <div className="lg:col-span-1">
-          <h2 className="mb-3 text-sm font-semibold text-ink-primary">
+          <h2 className="mb-4 text-lg font-semibold text-ink-primary">
             Salary Slips — {MONTHS[month - 1]} {year}
           </h2>
 
@@ -400,9 +403,9 @@ export function PayslipViewer() {
               })()
             ) : null
           ) : (
-            <div className="flex h-64 items-center justify-center rounded-card bg-surface-neutral">
-              <p className="text-sm text-ink-secondary">Select a salary slip to view details</p>
-            </div>
+            <Card>
+              <StateView icon="payroll" title="Select a salary slip" description="Choose a salary slip to view its details." />
+            </Card>
           )}
         </div>
       </div>

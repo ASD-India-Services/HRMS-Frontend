@@ -63,7 +63,7 @@ export function EmployeeDashboard() {
       </div>
 
       {/* Top Row */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Attendance Widget */}
         <Can permissions={['attendance.view']}>
           <Card>
@@ -107,7 +107,7 @@ export function EmployeeDashboard() {
 
         {/* Leave Balances Widget */}
         <Can permissions={['leaves.view']}>
-          <Card className="lg:col-span-2">
+          <Card>
             <CardHeader
               title="My Leave Balances"
               action={

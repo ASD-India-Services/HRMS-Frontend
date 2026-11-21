@@ -333,6 +333,7 @@ export default function DocumentRequests() {
         <div className="flex flex-wrap items-center gap-2">
           {/* Status Filter */}
           <Select
+            selectSize="small"
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
           >
@@ -345,6 +346,7 @@ export default function DocumentRequests() {
 
           {/* Format Filter */}
           <Select
+            selectSize="small"
             value={selectedFormat}
             onChange={(e) => setSelectedFormat(e.target.value)}
           >

@@ -326,6 +326,7 @@ export function ApplicantPipeline({ jobOpeningId, onBack }: ApplicantPipelinePro
           </ButtonLink>
           <CreateButton permission="recruitment.create" label="Add Applicant" onClick={() => setShowCreate(true)} />
           <Select
+            selectSize="small"
             value={selectedJobOpening}
             onChange={(e) => setSelectedJobOpening(e.target.value)}
             aria-label="Filter by job opening"
