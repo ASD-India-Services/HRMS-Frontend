@@ -59,7 +59,6 @@ const SETTINGS_GROUPS: NavGroup[] = [
     icon: 'solar:users-group-rounded-linear',
     items: [
       { id: 'work-types', label: 'Work Type', path: '/settings/work-types' },
-      { id: 'leave-types', label: 'Leave Type', path: '/settings/leave-types' },
       { id: 'employee-types', label: 'Employee Type', path: '/settings/employee-types' },
     ],
   },

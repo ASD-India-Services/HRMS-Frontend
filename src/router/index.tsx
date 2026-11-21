@@ -936,8 +936,6 @@ export const router = createBrowserRouter([
           // ─── Employee Settings ─────────────────────────────────────
           { path: 'work-types', element: <WorkTypeTab /> },
           { path: 'work-type', element: <Navigate to="work-types" replace /> },
-          { path: 'leave-types', element: <LeaveTypeTab /> },
-          { path: 'leave-type', element: <Navigate to="leave-types" replace /> },
           { path: 'employee-types', element: <EmployeeTypeTab /> },
           { path: 'employee-type', element: <Navigate to="employee-types" replace /> },
           { path: 'rotating-work-types', element: <Navigate to="work-types" replace /> },
@@ -956,6 +954,8 @@ export const router = createBrowserRouter([
           { path: 'grace-time', element: <GraceTimeTab /> },
 
           // ─── Leave Settings ────────────────────────────────────────
+          { path: 'leave-types', element: <LeaveTypeTab /> },
+          { path: 'leave-type', element: <Navigate to="leave-types" replace /> },
           { path: 'restrict-past-leave', element: <RestrictPastLeaveTab /> },
           { path: 'compensatory-leave', element: <CompensatoryLeaveSettingsTab /> },
           { path: 'compensatory-leave-settings', element: <Navigate to="compensatory-leave" replace /> },

@@ -10,6 +10,7 @@ export interface LeaveTypeItem {
   is_paid: boolean;
   requires_approval: boolean;
   is_encashable: boolean;
+  is_active?: boolean;
   max_encashable_days?: number | string;
   max_days_per_year?: number | string;
   max_carry_forward_days?: number | string;
@@ -56,7 +57,7 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
     setLoading(true);
     setErrorMsg(null);
     try {
-      const res = await api.get('/api/v1/leaves/types/');
+      const res = await api.get('/api/v1/leaves/types/?include_inactive=true');
       const data = res.data;
       const list = Array.isArray(data) ? data : data.results || [];
       setLeaveTypes(list);
@@ -148,6 +149,25 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
         err.response?.data?.message ||
         'Error saving leave type. Please check the values and try again.';
       setErrorMsg(detail);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleReactivate = async (item: LeaveTypeItem) => {
+    setSaving(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    try {
+      await api.patch(`/api/v1/leaves/types/${item.id}/`, { is_active: true });
+      setSuccessMsg(`Leave type "${item.name}" reactivated successfully.`);
+      await queryClient.invalidateQueries({ queryKey: ['leave-types'] });
+      await queryClient.invalidateQueries({ queryKey: ['leave-policies'] });
+      if (onLeaveTypesChanged) onLeaveTypesChanged();
+      await fetchTypes();
+    } catch (err: any) {
+      console.error('Failed to reactivate leave type', err);
+      setErrorMsg(err.response?.data?.detail || 'Failed to reactivate leave type.');
     } finally {
       setSaving(false);
     }
@@ -389,6 +409,9 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
                   <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Approval
                   </th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Status
+                  </th>
                   <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider text-right">
                     Actions
                   </th>
@@ -397,13 +420,13 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
               <tbody className="divide-y divide-gray-100 text-sm">
                 {loading ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                       Loading leave types...
                     </td>
                   </tr>
                 ) : leaveTypes.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-10 text-center">
+                    <td colSpan={6} className="px-4 py-10 text-center">
                       <div className="flex flex-col items-center justify-center text-gray-400">
                         <svg className="w-10 h-10 mb-2 stroke-current" fill="none" viewBox="0 0 24 24">
                           <path
@@ -462,26 +485,51 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
                           <span className="text-gray-400">Auto</span>
                         )}
                       </td>
+                      <td className="px-4 py-3 text-xs">
+                        {item.is_active === false ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-700">
+                            Inactive
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700">
+                            Active
+                          </span>
+                        )}
+                      </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-1">
-                          {canEdit && (
-                            <button
-                              type="button"
-                              onClick={() => handleStartEdit(item)}
-                              className="px-2 py-1 text-xs font-medium rounded text-blue-700 hover:bg-blue-50 transition-colors"
-                            >
-                              Edit
-                            </button>
-                          )}
-                          {canDelete && (
-                            <button
-                              type="button"
-                              disabled={deletingId === item.id}
-                              onClick={() => handleDelete(item)}
-                              className="px-2 py-1 text-xs font-medium rounded text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
-                            >
-                              {deletingId === item.id ? 'Deleting...' : 'Delete'}
-                            </button>
+                          {item.is_active === false ? (
+                            canEdit && (
+                              <button
+                                type="button"
+                                onClick={() => handleReactivate(item)}
+                                className="px-2 py-1 text-xs font-semibold rounded bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+                              >
+                                Reactivate
+                              </button>
+                            )
+                          ) : (
+                            <>
+                              {canEdit && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleStartEdit(item)}
+                                  className="px-2 py-1 text-xs font-medium rounded text-blue-700 hover:bg-blue-50 transition-colors"
+                                >
+                                  Edit
+                                </button>
+                              )}
+                              {canDelete && (
+                                <button
+                                  type="button"
+                                  disabled={deletingId === item.id}
+                                  onClick={() => handleDelete(item)}
+                                  className="px-2 py-1 text-xs font-medium rounded text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
+                                >
+                                  {deletingId === item.id ? 'Deleting...' : 'Delete'}
+                                </button>
+                              )}
+                            </>
                           )}
                         </div>
                       </td>
