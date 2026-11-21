@@ -7,6 +7,8 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const ENDPOINT = '/api/v1/holidays/holiday-lists/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -78,11 +80,8 @@ export default function Holidays() {
 
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-ink-primary">Holiday Lists</h1><p className="mt-1 text-sm text-ink-secondary">Manage holiday lists for your organization and locations</p></div>
-        <CreateButton permission="holidays.create" label="Create Holiday List" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Holiday Lists" subtitle="Manage holiday lists for your organization and locations" actions={<CreateButton permission="holidays.create" label="Create Holiday List" onClick={() => setShowCreate(true)} />} />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
@@ -124,6 +123,6 @@ export default function Holidays() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

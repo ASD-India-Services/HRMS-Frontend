@@ -12,6 +12,8 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const desigCrud = createCrudHooks<Record<string, unknown>>({
   queryKey: 'designations',
@@ -76,14 +78,8 @@ export default function Designations() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Designations</h1>
-          <p className="mt-1 text-sm text-ink-secondary">Manage job designations and titles</p>
-        </div>
-        <CreateButton permission="designations.create" label="Add Designation" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Designations" subtitle="Manage job designations and titles" actions={<CreateButton permission="designations.create" label="Add Designation" onClick={() => setShowCreate(true)} />} />
 
       <FilterBar
         filters={designationCrudConfig.filters}
@@ -128,6 +124,6 @@ export default function Designations() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

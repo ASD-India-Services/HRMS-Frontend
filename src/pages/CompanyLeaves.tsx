@@ -11,9 +11,13 @@ import {
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Iconify } from '@/components/Iconify';
+import { StateView } from '@/components/ui/StateView';
 
 const WEEK_OPTIONS = [
   { value: 'all', label: 'All' },
@@ -244,19 +248,13 @@ export default function CompanyLeaves() {
   const hasActiveFilters = Boolean(appliedWeek || appliedWeekDay);
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Top Header & Action Controls (Matching Screenshot 2) */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
-        <h1 className="text-2xl font-bold text-ink-primary tracking-tight">Company Leaves</h1>
-
-        <div className="flex items-center gap-2.5 self-end sm:self-auto">
+    <PageContainer>
+      <PageHeader title="Company Leaves" actions={
+        <>
+<div className="flex items-center gap-2.5 self-end sm:self-auto">
           {/* Search Input with Q icon */}
           <div className="relative">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none text-ink-disabled">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </span>
+            <Iconify icon="search" width={16} className="pointer-events-none absolute left-2.5 top-2.5 text-ink-disabled" />
             <Input
               type="text"
               value={searchTerm}
@@ -268,38 +266,25 @@ export default function CompanyLeaves() {
 
           {/* Filter Popover Button */}
           <div className="relative" ref={filterRef}>
-            <button
-              type="button"
+            <Button
+              variant="outlined"
+              color="inherit"
+              size="small"
+              startIcon={<Iconify icon="filter" />}
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xs border transition-colors ${
-                hasActiveFilters || isFilterOpen
-                  ? 'border-grey-400 bg-surface-neutral text-ink-primary'
-                  : 'border-divider bg-surface-neutral/70 hover:bg-surface-neutral text-ink-primary'
-              }`}
             >
-              <svg className="w-3.5 h-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-              </svg>
-              <span>Filter</span>
+              Filter
               {hasActiveFilters && (
-                <span className="w-1.5 h-1.5 rounded-full bg-primary-main" />
+                <span className="h-1.5 w-1.5 rounded-full bg-primary-main" />
               )}
-            </button>
+            </Button>
 
             {/* Filter Dropdown / Card (Matching Screenshot 3) */}
             {isFilterOpen && (
               <div className="absolute right-0 top-full mt-2 w-80 bg-surface-paper border border-divider rounded-sm shadow-xl p-5 z-40 animate-in fade-in zoom-in-95 duration-100">
                 <div className="flex items-center justify-between border-b border-divider pb-2 mb-4">
                   <h3 className="text-sm font-bold text-ink-primary">Company Leave</h3>
-                  <button
-                    type="button"
-                    onClick={() => setIsFilterOpen(false)}
-                    className="text-ink-disabled hover:text-ink-secondary"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
-                    </svg>
-                  </button>
+                  <IconButton icon="chevron-up" size="small" onClick={() => setIsFilterOpen(false)} aria-label="Close filters" />
                 </div>
 
                 <div className="space-y-4">
@@ -346,13 +331,9 @@ export default function CompanyLeaves() {
                       Filter
                     </Button>
                     {hasActiveFilters && (
-                      <button
-                        type="button"
-                        onClick={handleResetFilter}
-                        className="w-full py-1.5 text-xs text-ink-secondary hover:text-ink-primary underline text-center"
-                      >
+                      <Button variant="text" color="inherit" size="small" onClick={handleResetFilter} className="w-full">
                         Reset Filter
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -368,7 +349,8 @@ export default function CompanyLeaves() {
             <span>+ Create</span>
           </Button>
         </div>
-      </div>
+        </>
+      } />
 
       {/* Main Table (Matching Screenshot 2) */}
       <div className="bg-surface-paper border border-grey-300/90 rounded-xs shadow-2xs overflow-hidden">
@@ -405,11 +387,12 @@ export default function CompanyLeaves() {
                 </tr>
               ) : records.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="py-12 text-center">
-                    <p className="text-sm font-medium text-ink-secondary">No company leaves configured yet.</p>
-                    <p className="text-xs text-ink-disabled mt-1">
-                      Click "+ Create" to configure recurring leaves like All Sundays or Second/Fourth Saturdays.
-                    </p>
+                  <td colSpan={3}>
+                    <StateView
+                      icon="leaves"
+                      title="No company leaves configured yet."
+                      description={'Click "Create" to configure recurring leaves like All Sundays or Second/Fourth Saturdays.'}
+                    />
                   </td>
                 </tr>
               ) : (
@@ -424,38 +407,10 @@ export default function CompanyLeaves() {
                     <td className="py-2 px-4 text-center border-l border-divider">
                       <div className="inline-flex items-center justify-center gap-4">
                         {/* Edit Icon (Pencil in Square) */}
-                        <button
-                          type="button"
-                          onClick={() => handleOpenEdit(item)}
-                          title="Edit"
-                          className="text-ink-disabled hover:text-ink-primary p-1 rounded-xs transition-colors cursor-pointer"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={1.75}
-                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            />
-                          </svg>
-                        </button>
+                        <IconButton icon="pencil" size="small" onClick={() => handleOpenEdit(item)} aria-label="Edit" />
 
                         {/* Delete Icon (Red Trash) */}
-                        <button
-                          type="button"
-                          onClick={() => setDeletingLeave(item)}
-                          title="Delete"
-                          className="text-error-main hover:text-error-dark p-1 rounded-xs transition-colors cursor-pointer"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={1.75}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                        </button>
+                        <IconButton icon="trash" size="small" color="error" onClick={() => setDeletingLeave(item)} aria-label="Delete" />
                       </div>
                     </td>
                   </tr>
@@ -477,28 +432,8 @@ export default function CompanyLeaves() {
             </span>
             <span>of {totalPages}</span>
             <div className="flex items-center gap-1 ml-2">
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
-                className="p-1 rounded-xs border border-divider hover:bg-surface-neutral disabled:opacity-30 disabled:cursor-not-allowed"
-                title="Previous Page"
-              >
-                <svg className="w-3.5 h-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page >= totalPages}
-                className="p-1 rounded-xs border border-divider hover:bg-surface-neutral disabled:opacity-30 disabled:cursor-not-allowed"
-                title="Next Page"
-              >
-                <svg className="w-3.5 h-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+              <IconButton icon="arrow-left" size="small" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1} aria-label="Previous Page" />
+              <IconButton icon="arrow-right" size="small" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page >= totalPages} aria-label="Next Page" />
             </div>
           </div>
         </div>
@@ -513,13 +448,7 @@ export default function CompanyLeaves() {
               <h2 id="CompanyLeaves-modal-title-1" className="text-lg font-bold text-ink-primary tracking-tight">
                 {editingLeave ? 'Edit Company Leave' : 'Create Company Leave'}
               </h2>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="text-ink-disabled hover:text-ink-primary text-lg leading-none"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setIsModalOpen(false)} aria-label="Close" />
             </div>
 
             {/* Inner Bordered Card (Matching Screenshot 1) */}
@@ -616,7 +545,7 @@ export default function CompanyLeaves() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }
 

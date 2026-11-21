@@ -14,10 +14,16 @@ import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { StateView } from '@/components/ui/StateView';
+import { StatCard } from '@/components/ui/StatCard';
 
 interface EmployeeOption {
   id: string;
@@ -268,7 +274,7 @@ export default function DocumentRequests() {
   }, [requestsData]);
 
   return (
-    <div className="space-y-6">
+    <PageContainer>
       {/* Toast Notification */}
       {notification && (
         <div
@@ -280,103 +286,38 @@ export default function DocumentRequests() {
         >
           <div className="flex items-center gap-2">
             {notification.type === 'success' ? (
-              <svg className="h-5 w-5 text-success-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
+              <Iconify icon="check" width={20} className="text-success-main" />
             ) : (
-              <svg className="h-5 w-5 text-error-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <Iconify icon="close" width={20} className="text-error-main" />
             )}
             <span>{notification.message}</span>
           </div>
-          <button onClick={() => setNotification(null)} className="text-ink-disabled hover:text-ink-secondary">
-            &times;
-          </button>
+          <IconButton icon="close" size="small" onClick={() => setNotification(null)} aria-label="Close" />
         </div>
       )}
 
-      {/* Header and Action */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-ink-primary">Document Requests</h2>
-          <p className="mt-0.5 text-xs text-ink-secondary">
-            Employees can request verified certificates, proof of employment, and service letters.
-          </p>
-        </div>
-
-        {canCreate && (
-          <Button
-            type="button"
-            onClick={handleOpenRequestModal}
-          >
-            <span className="text-base font-bold leading-none">+</span>
-            <span>Create</span>
-          </Button>
-        )}
-      </div>
-
+      <PageHeader
+        title="Document Requests"
+        subtitle="Employees can request verified certificates, proof of employment, and service letters."
+        actions={
+          canCreate && (
+            <Button startIcon={<Iconify icon="plus" />} onClick={handleOpenRequestModal}>
+              Create
+            </Button>
+          )
+        }
+      />
       {/* KPI Metric Summary Cards */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-        {/* Total */}
-        <div className="rounded-xl border border-divider bg-surface-paper p-4 shadow-xs">
-          <div className="flex items-center justify-between text-xs text-ink-secondary">
-            <span>Total Requests</span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-lighter text-primary-main">
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </span>
-          </div>
-          <p className="mt-2 text-2xl font-bold text-ink-primary">{summary?.total ?? 0}</p>
-        </div>
-
-        {/* Pending Review */}
-        <div className="rounded-xl border border-warning-light bg-warning-lighter/40 p-4 shadow-xs">
-          <div className="flex items-center justify-between text-xs text-warning-dark font-medium">
-            <span>Pending Review</span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-warning-lighter text-warning-dark">
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </span>
-          </div>
-          <p className="mt-2 text-2xl font-bold text-warning-darker">{summary?.pending ?? 0}</p>
-        </div>
-
-        {/* Approved & Issued */}
-        <div className="rounded-xl border border-success-light bg-success-lighter/40 p-4 shadow-xs">
-          <div className="flex items-center justify-between text-xs text-success-dark font-medium">
-            <span>Approved & Issued</span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-success-lighter text-success-dark">
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </span>
-          </div>
-          <p className="mt-2 text-2xl font-bold text-success-darker">{summary?.approved ?? 0}</p>
-        </div>
-
-        {/* Rejected */}
-        <div className="rounded-xl border border-error-light bg-error-lighter/40 p-4 shadow-xs">
-          <div className="flex items-center justify-between text-xs text-error-dark font-medium">
-            <span>Rejected</span>
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-error-lighter text-error-dark">
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </span>
-          </div>
-          <p className="mt-2 text-2xl font-bold text-error-darker">{summary?.rejected ?? 0}</p>
-        </div>
+      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <StatCard title="Total Requests" value={summary?.total ?? 0} icon="leavePolicies" />
+        <StatCard title="Pending Review" value={summary?.pending ?? 0} icon="attendance" />
+        <StatCard title="Approved & Issued" value={summary?.approved ?? 0} icon="approvers" />
+        <StatCard title="Rejected" value={summary?.rejected ?? 0} icon="leaveBlock" />
       </div>
-
       {/* Filter and Search Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-divider bg-surface-paper p-3 shadow-xs">
+      <Card className="flex flex-wrap items-center justify-between gap-3 p-3">
         <div className="flex flex-1 min-w-[240px] items-center gap-2 rounded-lg border border-divider bg-surface-neutral/80 px-3 py-1.5 focus-within:border-primary-main focus-within:bg-surface-paper focus-within:ring-1 focus-within:ring-primary-main">
-          <svg className="h-4 w-4 text-ink-disabled" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <Iconify icon="search" width={16} className="text-ink-disabled" />
           <input
             type="text"
             placeholder="Search employee, title, format, description..."
@@ -385,9 +326,7 @@ export default function DocumentRequests() {
             className="w-full bg-transparent text-xs text-ink-primary placeholder-ink-disabled focus:outline-none"
           />
           {search && (
-            <button onClick={() => setSearch('')} className="text-ink-disabled hover:text-ink-secondary">
-              &times;
-            </button>
+            <IconButton icon="close" size="small" onClick={() => setSearch('')} aria-label="Close" />
           )}
         </div>
 
@@ -418,7 +357,7 @@ export default function DocumentRequests() {
             <option value="XLSX">XLSX</option>
           </Select>
         </div>
-      </div>
+      </Card>
 
       {/* Loading & Error States */}
       {isLoading && (
@@ -436,31 +375,27 @@ export default function DocumentRequests() {
 
       {/* Empty State */}
       {!isLoading && filteredRequests.length === 0 && (
-        <div className="rounded-2xl border-2 border-dashed border-divider bg-surface-paper py-16 text-center shadow-xs">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-lighter text-primary-main">
-            <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-          </div>
-          <h3 className="mt-3 text-sm font-bold text-ink-primary">No document requests found</h3>
-          <p className="mt-1 text-xs text-ink-secondary max-w-sm mx-auto">
-            {search || selectedStatus || selectedFormat
-              ? 'Try clearing the search or filters to see more results.'
-              : 'Click "+ Create" to request documents or certificates from employees.'}
-          </p>
-          <Button size="small"
-            type="button"
-            onClick={handleOpenRequestModal}
-            className="mt-4"
-          >
-            + Create Document Request
-          </Button>
-        </div>
+        <Card>
+          <StateView
+            icon="leavePolicies"
+            title="No document requests found"
+            description={
+              search || selectedStatus || selectedFormat
+                ? 'Try clearing the search or filters to see more results.'
+                : 'Click "Create" to request documents or certificates from employees.'
+            }
+            action={
+              <Button size="small" startIcon={<Iconify icon="plus" />} onClick={handleOpenRequestModal}>
+                Create Document Request
+              </Button>
+            }
+          />
+        </Card>
       )}
 
       {/* Table of Requests */}
       {!isLoading && filteredRequests.length > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-divider bg-surface-paper shadow-xs">
+        <Card className="overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-ink-secondary">
               <thead className="border-b border-divider bg-surface-neutral/75 text-[11px] font-semibold text-ink-secondary uppercase tracking-wider">
@@ -538,9 +473,7 @@ export default function DocumentRequests() {
                     <td className="px-4 py-3.5 whitespace-nowrap">
                       {req.status === 'approved' && (
                         <span className="inline-flex items-center gap-1 rounded-full bg-success-lighter px-2.5 py-0.5 text-[11px] font-semibold text-success-dark border border-success-light">
-                          <svg className="h-3 w-3 text-success-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
+                          <Iconify icon="check" width={12} className="text-success-main" />
                           Approved
                         </span>
                       )}
@@ -581,17 +514,17 @@ export default function DocumentRequests() {
                       {/* Issued Document */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
                         {req.issued_document ? (
-                          <a
+                          <ButtonLink
+                            size="small"
+                            variant="soft"
+                            color="success"
                             href={req.issued_document}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 rounded-lg border border-success-light bg-success-lighter px-2.5 py-1 text-xs font-semibold text-success-dark hover:bg-success-lighter transition shadow-2xs"
+                            startIcon={<Iconify icon="download" />}
                           >
-                            <svg className="h-3.5 w-3.5 text-success-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                            <span>Download</span>
-                          </a>
+                            Download
+                          </ButtonLink>
                         ) : req.status === 'approved' ? (
                           <span className="text-[11px] text-ink-disabled">Approved (No file)</span>
                         ) : (
@@ -604,67 +537,30 @@ export default function DocumentRequests() {
                         <div className="flex items-center justify-end gap-1.5">
                           {/* Approve Action */}
                           {req.status === 'pending' && canApprove && (
-                            <Button variant="outlined" color="inherit"
-                              type="button"
-                              onClick={() => {
+                            <Button variant="soft" color="success" size="small" startIcon={<Iconify icon="check" />} onClick={() => {
                                 setApproveError(null);
                                 setApproveFile(null);
                                 setApproveNotes('');
                                 setApprovingRequest(req);
-                              }}
-                              title="Approve & issue document"
-                            >
-                              <svg className="h-3.5 w-3.5 text-success-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                              <span>Approve</span>
-                            </Button>
+                              }} title="Approve & issue document">Approve</Button>
                           )}
 
                           {/* Reject Action */}
                           {req.status === 'pending' && canReject && (
-                            <Button variant="outlined" color="inherit"
-                              type="button"
-                              onClick={() => {
+                            <Button variant="soft" color="error" size="small" startIcon={<Iconify icon="close" />} onClick={() => {
                                 setRejectError(null);
                                 setRejectReason('');
                                 setRejectNotes('');
                                 setRejectingRequest(req);
-                              }}
-                              title="Reject request"
-                            >
-                              <svg className="h-3.5 w-3.5 text-error-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                              <span>Reject</span>
-                            </Button>
+                              }} title="Reject request">Reject</Button>
                           )}
 
                           {/* Details */}
-                          <button
-                            type="button"
-                            onClick={() => setViewingRequest(req)}
-                            className="rounded-lg p-1 text-ink-disabled hover:bg-surface-neutral hover:text-ink-secondary transition"
-                            title="View details"
-                          >
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                          </button>
+                          <IconButton icon="eye" size="small" onClick={() => setViewingRequest(req)} aria-label="View details" />
 
                           {/* Delete (if pending) */}
                           {req.status === 'pending' && canDelete && (
-                            <button
-                              type="button"
-                              onClick={() => setDeleteTargetId(req.id)}
-                              className="rounded-lg p-1 text-ink-disabled hover:bg-error-lighter hover:text-error-main transition"
-                              title="Cancel / Delete request"
-                            >
-                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                            </button>
+                            <IconButton icon="trash" size="small" color="error" onClick={() => setDeleteTargetId(req.id)} aria-label="Cancel / Delete request" />
                           )}
                         </div>
                       </td>
@@ -673,7 +569,7 @@ export default function DocumentRequests() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* ─── MODAL 1: Document Request (DigiHRMS Form Format) ───────────────── */}
@@ -683,14 +579,7 @@ export default function DocumentRequests() {
             {/* Header */}
             <div className="flex items-center justify-between pb-4">
               <h3 id="DocumentRequests-modal-title-1" className="text-xl font-normal text-ink-primary">Document Request</h3>
-              <button
-                type="button"
-                onClick={() => setShowRequestModal(false)}
-                className="text-ink-disabled hover:text-ink-secondary transition p-1 text-lg leading-none"
-                aria-label="Close"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setShowRequestModal(false)} aria-label="Close" />
             </div>
 
             {requestError && (
@@ -741,9 +630,7 @@ export default function DocumentRequests() {
                       )}
                     </div>
                     <div className="flex items-center gap-1 text-ink-disabled">
-                      <svg className="h-4 w-4 text-ink-disabled" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.7 9.24a.75.75 0 011.1 1.02L10 16.148l2.7-2.888a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.05-1.04z" clipRule="evenodd" />
-                      </svg>
+                      <Iconify icon="chevron-up" width={16} className="text-ink-disabled" />
                     </div>
                   </div>
 
@@ -807,14 +694,10 @@ export default function DocumentRequests() {
 
                 {/* Filter Link below employee */}
                 <div className="flex justify-end mt-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setShowEmployeeFilter(!showEmployeeFilter)}
-                    className="inline-flex items-center gap-1.5 text-xs text-primary-main hover:text-primary-dark font-medium transition-colors"
-                  >
+                  <Button variant="text" size="small" onClick={() => setShowEmployeeFilter(!showEmployeeFilter)}>
                     <span className="h-2 w-2 rounded-full bg-primary-main inline-block" />
                     <span>Filter</span>
-                  </button>
+                  </Button>
                 </div>
 
                 {/* Filter Expand Panel */}
@@ -823,24 +706,16 @@ export default function DocumentRequests() {
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-ink-primary">Filter Employees</span>
                       <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => {
+                        <Button variant="text" onClick={() => {
                             const allIds = filteredEmployeesForSelection.map((e) => e.id);
                             setSelectedEmployees(allIds);
-                          }}
-                          className="text-[11px] text-primary-main hover:underline font-semibold"
-                        >
+                          }}>
                           Select All ({filteredEmployeesForSelection.length})
-                        </button>
+                        </Button>
                         <span className="text-grey-300">|</span>
-                        <button
-                          type="button"
-                          onClick={() => setSelectedEmployees([])}
-                          className="text-[11px] text-ink-secondary hover:underline"
-                        >
+                        <Button variant="text" color="inherit" onClick={() => setSelectedEmployees([])}>
                           Clear Selection
-                        </button>
+                        </Button>
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -936,9 +811,7 @@ export default function DocumentRequests() {
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-start gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-success-lighter text-success-main flex-shrink-0">
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <Iconify icon="approvers" width={24} />
               </span>
               <div>
                 <h3 id="DocumentRequests-modal-title-2" className="text-base font-bold text-ink-primary">Approve & Issue Document</h3>
@@ -999,14 +872,9 @@ export default function DocumentRequests() {
               >
                 Cancel
               </Button>
-              <button
-                type="button"
-                onClick={handleConfirmApprove}
-                disabled={approveMutation.isPending}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-success-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-success-dark disabled:opacity-50"
-              >
+              <Button color="success" size="small" onClick={handleConfirmApprove} disabled={approveMutation.isPending}>
                 {approveMutation.isPending ? 'Fulfilling...' : 'Confirm & Approve'}
-              </button>
+              </Button>
             </div>
           </div>
         </Modal>
@@ -1018,9 +886,7 @@ export default function DocumentRequests() {
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-start gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-error-lighter text-error-main flex-shrink-0">
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <Iconify icon="close" width={24} />
               </span>
               <div>
                 <h3 id="DocumentRequests-modal-title-3" className="text-base font-bold text-ink-primary">Reject Document Request</h3>
@@ -1070,14 +936,9 @@ export default function DocumentRequests() {
               >
                 Cancel
               </Button>
-              <button
-                type="button"
-                onClick={handleConfirmReject}
-                disabled={rejectMutation.isPending}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-error-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-error-dark disabled:opacity-50"
-              >
+              <Button color="error" size="small" onClick={handleConfirmReject} disabled={rejectMutation.isPending}>
                 {rejectMutation.isPending ? 'Rejecting...' : 'Confirm Rejection'}
-              </button>
+              </Button>
             </div>
           </div>
         </Modal>
@@ -1089,9 +950,7 @@ export default function DocumentRequests() {
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center justify-between border-b border-divider pb-3">
               <h3 id="DocumentRequests-modal-title-4" className="text-base font-bold text-ink-primary">Document Request Details</h3>
-              <button onClick={() => setViewingRequest(null)} className="rounded-lg p-1 text-ink-disabled hover:text-ink-secondary">
-                &times;
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setViewingRequest(null)} aria-label="Close" />
             </div>
 
             <div className="mt-4 space-y-3 text-xs text-ink-primary">
@@ -1143,22 +1002,20 @@ export default function DocumentRequests() {
               {viewingRequest.issued_document && (
                 <div className="rounded-xl border border-success-light bg-success-lighter p-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <svg className="h-5 w-5 text-success-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+                    <Iconify icon="leavePolicies" width={20} className="text-success-main" />
                     <div>
                       <p className="font-semibold text-success-darker">Official Document Attached</p>
                       <p className="text-[10px] text-success-dark">Issued by {viewingRequest.reviewed_by_name || 'HR'}</p>
                     </div>
                   </div>
-                  <a
+                  <ButtonLink
+                    size="small"
                     href={viewingRequest.issued_document}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-lg bg-primary-main px-3 py-1.5 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-primary-dark"
                   >
                     Download File
-                  </a>
+                  </ButtonLink>
                 </div>
               )}
             </div>
@@ -1190,18 +1047,13 @@ export default function DocumentRequests() {
               >
                 Cancel
               </Button>
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                disabled={deleteMutation.isPending}
-                className="rounded-xl bg-error-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-error-dark disabled:opacity-50"
-              >
+              <Button color="error" size="small" onClick={handleConfirmDelete} disabled={deleteMutation.isPending}>
                 {deleteMutation.isPending ? 'Deleting...' : 'Confirm Delete'}
-              </button>
+              </Button>
             </div>
           </div>
         </Modal>
       )}
-    </div>
+    </PageContainer>
   );
 }

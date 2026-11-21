@@ -15,10 +15,15 @@ import {
 } from '@/hooks/useMeetings';
 import type { Meeting } from '@/hooks/useMeetings';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { StateView } from '@/components/ui/StateView';
 
 interface EmployeeOption {
   id: string;
@@ -128,14 +133,7 @@ function SelectTagInput({
               key={id}
               className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded border border-divider bg-surface-paper text-xs text-ink-primary shadow-2xs shrink-0 select-none"
             >
-              <button
-                type="button"
-                onClick={(e) => handleRemove(id, e)}
-                className="text-ink-disabled hover:text-ink-primary font-bold text-xs leading-none cursor-pointer"
-                title="Remove"
-              >
-                ×
-              </button>
+              <IconButton icon="close" size="small" onClick={(e) => handleRemove(id, e)} aria-label="Remove" />
               <span>{text}</span>
             </span>
           );
@@ -455,15 +453,11 @@ export default function Meetings() {
   }, [employeeOptions, deptFilterId]);
 
   return (
-    <div className="p-6 bg-surface-neutral min-h-screen">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary tracking-tight">Meetings</h1>
-        </div>
-
-        {/* Right Top Actions */}
-        <div className="flex items-center gap-3">
+    <PageContainer>
+      <PageHeader
+        title="Meetings"
+        actions={
+        <>
           {/* Search Box */}
           <div className="relative">
             <Input
@@ -473,19 +467,7 @@ export default function Meetings() {
               placeholder="Search meetings..."
               className="w-48 sm:w-56 pl-8 pr-3"
             />
-            <svg
-              className="w-4 h-4 text-ink-disabled absolute left-2.5 top-2.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+            <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
           </div>
 
           {/* Status Filter */}
@@ -503,17 +485,18 @@ export default function Meetings() {
           {/* Blue + Create Button matching requirement & permissions */}
           {canCreate && (
             <Button size="small"
-              type="button"
+              startIcon={<Iconify icon="plus" />}
               onClick={handleOpenCreate}
             >
-              <span>+ Create</span>
+              Create
             </Button>
           )}
-        </div>
-      </div>
+        </>
+        }
+      />
 
       {/* Main Content Area */}
-      <div className="bg-surface-paper border border-divider rounded-lg shadow-xs overflow-hidden">
+      <Card className="overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-24 text-ink-secondary">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-main mb-3" />
@@ -521,22 +504,7 @@ export default function Meetings() {
           </div>
         ) : meetings.length === 0 ? (
           /* Empty State matching Screenshot 1 */
-          <div className="py-28 flex flex-col items-center justify-center text-center">
-            {/* Magnifying Glass Icon matching Screenshot 1 */}
-            <div className="mb-4">
-              <svg
-                className="w-16 h-16 text-ink-disabled stroke-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="11" cy="11" r="7" strokeWidth="2.2" />
-                <path d="M16.5 16.5L21 21" strokeWidth="2.2" strokeLinecap="round" />
-              </svg>
-            </div>
-            <h3 className="text-base font-bold text-ink-primary mb-1">No Records found.</h3>
-            <p className="text-xs text-ink-secondary">There is no meetings has been created.</p>
-          </div>
+          <StateView icon="search" title="No Records found." description="There is no meetings has been created." />
         ) : (
           /* Meetings Table */
           <div className="overflow-x-auto">
@@ -587,7 +555,7 @@ export default function Meetings() {
                                 key={mgr.id}
                                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-surface-neutral text-ink-primary font-medium border border-divider"
                               >
-                                👤 {mgr.full_name}
+                                <Iconify icon="user" width={12} /> {mgr.full_name}
                               </span>
                             ))
                           ) : (
@@ -623,7 +591,7 @@ export default function Meetings() {
                       <td className="py-3 px-3 text-ink-primary">
                         {m.question_template_name ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary-lighter text-secondary-dark border border-secondary-light text-[11px] font-medium">
-                            📝 {m.question_template_name}
+                            <Iconify icon="policies" width={12} /> {m.question_template_name}
                           </span>
                         ) : (
                           <span className="text-ink-disabled text-[11px]">None</span>
@@ -649,79 +617,34 @@ export default function Meetings() {
 
                       {/* Actions */}
                       <td className="py-3 px-3 text-center">
-                        <div className="inline-flex items-center border border-divider rounded divide-x divide-divider bg-surface-paper shadow-2xs">
+                        <div className="inline-flex items-center gap-1">
                           {/* View details */}
-                          <button
-                            type="button"
-                            onClick={() => setSelectedMeeting(m)}
-                            className="p-1.5 text-ink-secondary hover:text-primary-main hover:bg-primary-lighter transition-colors cursor-pointer"
-                            title="View Meeting Details"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                          </button>
+                          <IconButton icon="eye" size="small" onClick={() => setSelectedMeeting(m)} aria-label="View Meeting Details" />
 
                           {/* Edit button */}
                           {canEdit && (
-                            <button
-                              type="button"
+                            <IconButton
+                              icon="pencil"
+                              size="small"
                               onClick={() => handleOpenEdit(m)}
                               disabled={isCompleted || isCancelled}
-                              className={`p-1.5 transition-colors ${
-                                isCompleted || isCancelled
-                                  ? 'text-grey-300 cursor-not-allowed'
-                                  : 'text-ink-secondary hover:text-primary-main hover:bg-primary-lighter cursor-pointer'
-                              }`}
-                              title={isCompleted || isCancelled ? 'Completed or cancelled meeting cannot be edited' : 'Edit Meeting'}
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                            </button>
+                              aria-label={isCompleted || isCancelled ? 'Completed or cancelled meeting cannot be edited' : 'Edit Meeting'}
+                            />
                           )}
 
                           {/* Complete button */}
                           {canEdit && isScheduled && (
-                            <button
-                              type="button"
-                              onClick={() => handleCompleteMeeting(m.id)}
-                              className="p-1.5 text-ink-secondary hover:text-success-main hover:bg-success-lighter transition-colors cursor-pointer"
-                              title="Mark Completed"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                            </button>
+                            <IconButton icon="check" size="small" color="success" onClick={() => handleCompleteMeeting(m.id)} aria-label="Mark Completed" />
                           )}
 
                           {/* Cancel button */}
                           {canEdit && isScheduled && (
-                            <button
-                              type="button"
-                              onClick={() => handleCancelMeeting(m.id)}
-                              className="p-1.5 text-ink-secondary hover:text-warning-main hover:bg-warning-lighter transition-colors cursor-pointer"
-                              title="Cancel Meeting"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                              </svg>
-                            </button>
+                            <IconButton icon="leaveBlock" size="small" color="warning" onClick={() => handleCancelMeeting(m.id)} aria-label="Cancel Meeting" />
                           )}
 
                           {/* Delete button */}
                           {canDelete && (
-                            <button
-                              type="button"
-                              onClick={() => handleDelete(m.id)}
-                              className="p-1.5 text-ink-secondary hover:text-error-main hover:bg-error-lighter transition-colors cursor-pointer"
-                              title="Delete Meeting"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                            </button>
+                            <IconButton icon="trash" size="small" color="error" onClick={() => handleDelete(m.id)} aria-label="Delete Meeting" />
                           )}
                         </div>
                       </td>
@@ -732,7 +655,7 @@ export default function Meetings() {
             </table>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Create / Edit Modal Matching Screenshot 2 */}
       {isModalOpen && (
@@ -741,13 +664,7 @@ export default function Meetings() {
             {/* Modal Header matching Screenshot 2: Meetings title with X */}
             <div className="flex items-center justify-between p-5 border-b border-divider shrink-0">
               <h2 id="Meetings-modal-title-1" className="text-lg font-bold text-ink-primary">Meetings</h2>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="text-ink-disabled hover:text-ink-secondary text-lg font-bold p-1 cursor-pointer"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setIsModalOpen(false)} aria-label="Close" />
             </div>
 
             {/* Modal Form matching Screenshot 2 */}
@@ -797,14 +714,10 @@ export default function Meetings() {
                 options={filteredEmployeeOptions}
                 placeholder=""
                 footerRight={
-                  <button
-                    type="button"
-                    onClick={() => setIsDeptFilterOpen(!isDeptFilterOpen)}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-error-main hover:text-error-dark transition-colors cursor-pointer"
-                  >
+                  <Button variant="text" color="error" size="small" onClick={() => setIsDeptFilterOpen(!isDeptFilterOpen)}>
                     <span className="text-sm leading-none font-bold">⊝</span>
                     <span>Filter</span>
-                  </button>
+                  </Button>
                 }
               />
 
@@ -814,26 +727,18 @@ export default function Meetings() {
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-warning-darker text-[11px]">Filter Employees by Department:</span>
                     <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => {
+                      <Button variant="text" onClick={() => {
                           const ids = filteredEmployeesByDept.map((e: any) => e.id);
                           setSelectedEmployees(Array.from(new Set([...selectedEmployees, ...ids])));
-                        }}
-                        className="text-[11px] font-bold text-primary-main hover:text-primary-dark cursor-pointer"
-                      >
+                        }}>
                         Select All in Dept
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
+                      </Button>
+                      <Button variant="text" color="inherit" size="small" startIcon={<Iconify icon="close" />} onClick={() => {
                           setDeptFilterId('');
                           setIsDeptFilterOpen(false);
-                        }}
-                        className="text-[11px] text-ink-secondary hover:text-ink-primary cursor-pointer"
-                      >
-                        ✕ Close
-                      </button>
+                        }}>
+                        Close
+                      </Button>
                     </div>
                   </div>
                   <Select
@@ -912,13 +817,8 @@ export default function Meetings() {
                     />
                   </div>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => setDescription(' ')}
-                    className="text-[11px] text-ink-disabled hover:text-ink-secondary underline cursor-pointer"
-                  >
-                    + Add notes (optional)
-                  </button>
+                  <Button variant="text" color="inherit" startIcon={<Iconify icon="plus" />} onClick={() => setDescription(' ')}>Add notes (optional)
+                  </Button>
                 )}
               </div>
 
@@ -942,13 +842,7 @@ export default function Meetings() {
           <div className="min-h-0 flex-1 overflow-y-auto">
             <div className="p-4 border-b border-divider flex items-center justify-between">
               <h3 id="Meetings-modal-title-2" className="text-sm font-bold text-ink-primary">Meeting Details</h3>
-              <button
-                type="button"
-                onClick={() => setSelectedMeeting(null)}
-                className="text-ink-disabled hover:text-ink-secondary text-sm font-bold cursor-pointer"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setSelectedMeeting(null)} aria-label="Close" />
             </div>
 
             <div className="p-5 space-y-4 text-xs">
@@ -980,8 +874,8 @@ export default function Meetings() {
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedMeeting.managers_details?.map((m) => (
-                    <span key={m.id} className="bg-surface-neutral text-ink-primary px-2 py-0.5 rounded text-xs font-medium">
-                      👤 {m.full_name}
+                    <span key={m.id} className="inline-flex items-center gap-1 bg-surface-neutral text-ink-primary px-2 py-0.5 rounded text-xs font-medium">
+                      <Iconify icon="user" width={12} /> {m.full_name}
                     </span>
                   ))}
                 </div>
@@ -1020,7 +914,7 @@ export default function Meetings() {
                   <span className="font-bold text-ink-primary block text-[11px] uppercase tracking-wider mb-0.5">
                     Question Template
                   </span>
-                  <span className="text-secondary-dark font-medium">📝 {selectedMeeting.question_template_name}</span>
+                  <span className="inline-flex items-center gap-1 text-secondary-dark font-medium"><Iconify icon="policies" width={14} /> {selectedMeeting.question_template_name}</span>
                 </div>
               )}
 
@@ -1071,7 +965,7 @@ export default function Meetings() {
         variant="destructive"
         isLoading={cancelMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }
 

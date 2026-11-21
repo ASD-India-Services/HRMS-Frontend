@@ -5,6 +5,10 @@ import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 const ENDPOINT = '/api/v1/hr-settings/';
 
@@ -211,14 +215,11 @@ export default function HRSettings() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">HR Settings</h1>
-        <p className="mt-1 text-sm text-ink-secondary">Configure global HR system settings</p>
-      </div>
+    <PageContainer>
+      <PageHeader title="HR Settings" subtitle="Configure global HR system settings" />
 
       {/* General HR Settings */}
-      <div className="rounded-lg border border-divider bg-surface-paper p-6">
+      <Card className="p-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div>
             <label htmlFor="company_name" className="mb-1 block text-sm font-medium text-ink-primary">Company Name</label>
@@ -241,18 +242,14 @@ export default function HRSettings() {
                   href="/careers/embed"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-medium text-primary-main hover:text-primary-dark"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-primary-main hover:text-primary-dark"
                   title="Open live preview in new tab"
                 >
-                  Preview ↗
+                  Preview <Iconify icon="external" width={14} />
                 </a>
-                <button
-                  type="button"
-                  onClick={handleCopyEmbed}
-                  className="inline-flex items-center gap-1 rounded bg-primary-lighter px-2 py-0.5 text-xs font-semibold text-primary-dark hover:bg-primary-lighter transition-colors"
-                >
-                  {copiedEmbed ? '✓ Copied!' : 'Copy Code'}
-                </button>
+                <Button variant="soft" size="small" startIcon={<Iconify icon={copiedEmbed ? 'check' : 'copy'} />} onClick={handleCopyEmbed}>
+                  {copiedEmbed ? 'Copied!' : 'Copy Code'}
+                </Button>
               </div>
             </div>
             <div className="relative">
@@ -332,10 +329,10 @@ export default function HRSettings() {
           </Button>
           {saved && <span className="text-sm text-success-main">Settings saved successfully.</span>}
         </div>
-      </div>
+      </Card>
 
       {/* Email Configuration */}
-      <div className="mt-8 rounded-lg border border-divider bg-surface-paper p-6">
+      <Card className="mt-8 p-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-ink-primary">Email Configuration (SMTP)</h2>
@@ -350,7 +347,7 @@ export default function HRSettings() {
                   : 'bg-warning-lighter text-warning-dark'
                 }`}
             >
-              {emailConfig.is_verified ? '✓ Verified' : 'Not Verified'}
+              {emailConfig.is_verified ? (<><Iconify icon="check" width={14} className="mr-1" />Verified</>) : 'Not Verified'}
             </span>
           )}
         </div>
@@ -520,7 +517,7 @@ export default function HRSettings() {
             Last tested: {new Date(emailConfig.last_tested_at).toLocaleString()}
           </p>
         )}
-      </div>
+      </Card>
 
       {/* Test Email Modal */}
       {showTestModal && (
@@ -576,6 +573,6 @@ export default function HRSettings() {
           </div>
         </Modal>
       )}
-    </div>
+    </PageContainer>
   );
 }

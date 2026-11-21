@@ -12,6 +12,10 @@ import type { FieldConfig } from '@/components/CrudModal';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Tabs } from '@/components/ui/Tabs';
+import { Iconify } from '@/components/Iconify';
 
 const ENDPOINT = '/api/v1/attendance/requests/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -144,28 +148,14 @@ export default function AttendanceRequests() {
             {isPending && (
               <>
                 {canApproveThis && (
-                  <button
-                    type="button"
-                    onClick={() => setApproveId(row.id as string)}
-                    className="inline-flex items-center gap-1 rounded-md bg-success-lighter px-2 py-1 text-xs font-medium text-success-dark ring-1 ring-inset ring-success-main/20 hover:bg-success-lighter transition-colors"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
+                  <Button size="small" variant="soft" color="success" startIcon={<Iconify icon="check" width={16} />} onClick={() => setApproveId(row.id as string)}>
                     Approve
-                  </button>
+                  </Button>
                 )}
                 {canRejectThis && (
-                  <button
-                    type="button"
-                    onClick={() => setRejectId(row.id as string)}
-                    className="inline-flex items-center gap-1 rounded-md bg-error-lighter px-2 py-1 text-xs font-medium text-error-dark ring-1 ring-inset ring-error-main/20 hover:bg-error-lighter transition-colors"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                  <Button size="small" variant="soft" color="error" startIcon={<Iconify icon="close" width={16} />} onClick={() => setRejectId(row.id as string)}>
                     Reject
-                  </button>
+                  </Button>
                 )}
               </>
             )}
@@ -200,46 +190,19 @@ export default function AttendanceRequests() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Attendance Requests</h1>
-          <p className="mt-1 text-sm text-ink-secondary">Manage attendance correction requests</p>
-        </div>
-        <CreateButton permission="attendance_requests.create" label="Create Request" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Attendance Requests" subtitle="Manage attendance correction requests" actions={<CreateButton permission="attendance_requests.create" label="Create Request" onClick={() => setShowCreate(true)} />} />
 
       {isApproverOrAdmin && (
-        <div className="mb-4 border-b border-divider" role="tablist">
-          <nav className="-mb-px flex gap-4">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={viewTab === 'mine'}
-              onClick={() => { setViewTab('mine'); setPage(1); }}
-              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-                viewTab === 'mine'
-                  ? 'border-primary-main text-primary-main font-semibold'
-                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
-              }`}
-            >
-              My Requests
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={viewTab === 'approvals'}
-              onClick={() => { setViewTab('approvals'); setPage(1); }}
-              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-                viewTab === 'approvals'
-                  ? 'border-primary-main text-primary-main font-semibold'
-                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
-              }`}
-            >
-              Team Approvals
-            </button>
-          </nav>
-        </div>
+        <Tabs
+          aria-label="Request views"
+          items={[
+            { value: 'mine', label: 'My Requests' },
+            { value: 'approvals', label: 'Team Approvals' },
+          ]}
+          value={viewTab}
+          onChange={(v) => { setViewTab(v); setPage(1); }}
+        />
       )}
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
@@ -313,13 +276,7 @@ export default function AttendanceRequests() {
               rows={3}
             />
             <div className="mt-4 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => { setRejectId(null); setRejectReason(''); }}
-                className="rounded-md px-3 py-2 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
-              >
-                Cancel
-              </button>
+              <Button variant="text" color="inherit" onClick={() => { setRejectId(null); setRejectReason(''); }}>Cancel</Button>
               <Button color="error"
                 type="button"
                 onClick={handleReject}
@@ -331,6 +288,6 @@ export default function AttendanceRequests() {
           </div>
         </Modal>
       )}
-    </div>
+    </PageContainer>
   );
 }

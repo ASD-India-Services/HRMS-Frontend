@@ -7,6 +7,10 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Button } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
 
 const ENDPOINT = '/api/v1/employee-transfers/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -75,17 +79,13 @@ export default function Transfers() {
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
           {row.status === 'pending' && (
-            <button
-              onClick={() => handleApproveRow(row.id as string)}
-              disabled={approvingId === row.id}
-              className="inline-flex items-center rounded bg-success-main px-2 py-1 text-xs font-medium text-primary-contrast hover:bg-success-dark disabled:opacity-50"
-            >
+            <Button color="success" size="small" onClick={() => handleApproveRow(row.id as string)} disabled={approvingId === row.id}>
               {approvingId === row.id ? '...' : 'Approve'}
-            </button>
+            </Button>
           )}
           {row.status === 'completed' && (
-            <span className="inline-flex items-center rounded bg-success-lighter px-2 py-1 text-xs font-medium text-success-dark">
-              ✓ Done
+            <span className="inline-flex items-center gap-1 rounded bg-success-lighter px-2 py-1 text-xs font-medium text-success-dark">
+              <Iconify icon="check" width={14} /> Done
             </span>
           )}
           <EditButton permission="transfers.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
@@ -115,11 +115,8 @@ export default function Transfers() {
 
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-ink-primary">Employee Transfers</h1><p className="mt-1 text-sm text-ink-secondary">Manage employee department and location transfers</p></div>
-        <CreateButton permission="transfers.create" label="Create Transfer" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Employee Transfers" subtitle="Manage employee department and location transfers" actions={<CreateButton permission="transfers.create" label="Create Transfer" onClick={() => setShowCreate(true)} />} />
       {processMessage && (
         <div className="mb-4 rounded-md bg-primary-lighter p-3 text-sm text-primary-dark">
           {processMessage}
@@ -166,6 +163,6 @@ export default function Transfers() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

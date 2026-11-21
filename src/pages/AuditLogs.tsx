@@ -11,6 +11,9 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { DataTable, Pagination, FilterBar, useFilterSync } from '@/components/DataTable';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import api from '@/lib/api';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
 
 interface AuditLogEntry {
   id: string;
@@ -132,15 +135,10 @@ export default function AuditLogs() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">Audit Logs</h1>
-        <p className="mt-1 text-sm text-ink-secondary">
-          Track all changes and actions performed across the HRMS platform
-        </p>
-      </div>
+    <PageContainer>
+      <PageHeader title="Audit Logs" subtitle="Track all changes and actions performed across the HRMS platform" />
 
-      <div className="rounded-lg border border-divider bg-surface-paper">
+      <Card>
         <div className="border-b border-divider p-4">
           <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
         </div>
@@ -209,7 +207,7 @@ export default function AuditLogs() {
             onPageSizeChange={setPageSize}
           />
         )}
-      </div>
-    </div>
+      </Card>
+    </PageContainer>
   );
 }

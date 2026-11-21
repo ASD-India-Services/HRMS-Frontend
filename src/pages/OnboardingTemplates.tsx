@@ -16,6 +16,9 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Tabs } from '@/components/ui/Tabs';
 
 // ─── Templates CRUD ──────────────────────────────────────────────────────────
 
@@ -98,41 +101,23 @@ export default function OnboardingTemplates() {
   const [activeTab, setActiveTab] = useState<Tab>('templates');
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">Onboarding Management</h1>
-        <p className="mt-1 text-sm text-ink-secondary">Create templates and assign onboarding tasks to employees</p>
-      </div>
+    <PageContainer>
+      <PageHeader title="Onboarding Management" subtitle="Create templates and assign onboarding tasks to employees" />
 
       {/* Tabs */}
-      <div className="mb-6 border-b border-divider">
-        <nav className="flex gap-0">
-          <button
-            onClick={() => setActiveTab('templates')}
-            className={`border-b-2 px-4 py-2 text-sm font-medium ${
-              activeTab === 'templates'
-                ? 'border-primary-main text-primary-dark'
-                : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
-            }`}
-          >
-            Templates
-          </button>
-          <button
-            onClick={() => setActiveTab('tasks')}
-            className={`border-b-2 px-4 py-2 text-sm font-medium ${
-              activeTab === 'tasks'
-                ? 'border-primary-main text-primary-dark'
-                : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
-            }`}
-          >
-            Tasks
-          </button>
-        </nav>
-      </div>
+      <Tabs
+        aria-label="Onboarding tabs"
+        items={[
+          { value: 'templates', label: 'Templates' },
+          { value: 'tasks', label: 'Tasks' },
+        ]}
+        value={activeTab}
+        onChange={setActiveTab}
+      />
 
       {activeTab === 'templates' && <TemplatesTab />}
       {activeTab === 'tasks' && <TasksTab />}
-    </div>
+    </PageContainer>
   );
 }
 

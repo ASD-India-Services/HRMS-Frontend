@@ -8,6 +8,9 @@ import { useLocation } from 'react-router-dom';
 import { JobOpenings } from './recruitment/JobOpenings';
 import { ApplicantPipeline } from './recruitment/ApplicantPipeline';
 import { InterviewSchedule } from './recruitment/InterviewSchedule';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Tabs } from '@/components/ui/Tabs';
 
 type Tab = 'openings' | 'pipeline' | 'interviews';
 
@@ -45,34 +48,16 @@ export default function Recruitment() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">Recruitment</h1>
-        <p className="mt-1 text-sm text-ink-secondary">
-          Manage job openings, applicants, and the hiring pipeline.
-        </p>
-      </div>
+    <PageContainer>
+      <PageHeader title="Recruitment" subtitle="Manage job openings, applicants, and the hiring pipeline." />
 
       {/* Tab Navigation */}
-      <div className="mb-6 border-b border-divider">
-        <nav className="-mb-px flex gap-6" aria-label="Recruitment tabs">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`whitespace-nowrap border-b-2 pb-3 text-sm font-medium transition-colors ${
-                activeTab === tab.key
-                  ? 'border-primary-main text-primary-main'
-                  : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
-              }`}
-              aria-current={activeTab === tab.key ? 'page' : undefined}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-      </div>
+      <Tabs
+        aria-label="Recruitment tabs"
+        items={TABS.map((tab) => ({ value: tab.key, label: tab.label }))}
+        value={activeTab}
+        onChange={setActiveTab}
+      />
 
       {/* Tab Content */}
       {activeTab === 'openings' && (
@@ -89,6 +74,6 @@ export default function Recruitment() {
       {activeTab === 'interviews' && (
         <InterviewSchedule />
       )}
-    </div>
+    </PageContainer>
   );
 }

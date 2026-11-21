@@ -14,6 +14,10 @@ import api from '@/lib/api';
 import type { EmployeeDetail, EmployeeProfileUpdate } from '@/types/employee';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 function useCurrentEmployee() {
   return useQuery({
@@ -74,16 +78,11 @@ export default function Profile() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-ink-primary">My Profile</h1>
-        <p className="mt-1 text-sm text-ink-secondary">
-          View and manage your personal information.
-        </p>
-      </div>
+    <PageContainer maxWidth="lg">
+      <PageHeader title="My Profile" subtitle="View and manage your personal information." />
 
       {/* Profile Header with Avatar */}
-      <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+      <Card className="p-6">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
           {/* Avatar */}
           <div className="relative group">
@@ -102,10 +101,7 @@ export default function Profile() {
             )}
             {/* Upload overlay hint */}
             <div className="absolute inset-0 flex items-center justify-center rounded-full bg-grey-900/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-              <svg className="h-6 w-6 text-primary-contrast" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z" />
-              </svg>
+              <Iconify icon="upload" width={24} className="text-primary-contrast" />
             </div>
           </div>
 
@@ -133,10 +129,10 @@ export default function Profile() {
             )}
           </div>
         </div>
-      </section>
+      </Card>
 
       {/* Account Details */}
-      <section className="mt-6 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+      <Card className="mt-6 p-6">
         <h2 className="mb-4 text-lg font-semibold text-ink-primary">Account Details</h2>
         <dl className="space-y-3">
           <InfoRow label="Full Name" value={name ?? '--'} />
@@ -151,7 +147,7 @@ export default function Profile() {
             </>
           )}
         </dl>
-      </section>
+      </Card>
 
       {/* Employee Profile Section */}
       {isLoading && (
@@ -164,7 +160,7 @@ export default function Profile() {
       {employee && !isEditing && (
         <>
           {/* Personal Details (read-only) */}
-          <section className="mt-6 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+          <Card className="mt-6 p-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-ink-primary">Contact Information</h2>
               {isAdmin && (
@@ -189,10 +185,10 @@ export default function Profile() {
                 Contact information is read-only. Please contact HR for changes.
               </p>
             )}
-          </section>
+          </Card>
 
           {/* Emergency Contact (editable by employee) */}
-          <section className="mt-6 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+          <Card className="mt-6 p-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-ink-primary">Emergency Contact</h2>
               {!isEditing && (
@@ -208,10 +204,10 @@ export default function Profile() {
               <InfoRow label="Phone" value={employee.emergency_contact_phone} />
               <InfoRow label="Relation" value={employee.emergency_contact_relation} capitalize />
             </dl>
-          </section>
+          </Card>
 
           {/* Reporting Hierarchy */}
-          <section className="mt-6 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+          <Card className="mt-6 p-6">
             <h2 className="mb-4 text-lg font-semibold text-ink-primary">Reporting Hierarchy</h2>
             {employee.reporting_manager ? (
               <div className="flex items-center gap-3">
@@ -229,7 +225,7 @@ export default function Profile() {
             ) : (
               <p className="text-sm text-ink-secondary">No reporting manager assigned.</p>
             )}
-          </section>
+          </Card>
         </>
       )}
 
@@ -238,7 +234,7 @@ export default function Profile() {
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           {/* Contact Info — only shown for admins */}
           {isAdmin && (
-            <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+            <Card className="p-6">
               <h2 className="mb-4 text-lg font-semibold text-ink-primary">Edit Contact Information</h2>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <FormField
@@ -280,11 +276,11 @@ export default function Profile() {
                   onChange={(v) => handleChange('pincode', v)}
                 />
               </div>
-            </section>
+            </Card>
           )}
 
           {/* Emergency Contact — editable by everyone */}
-          <section className="rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+          <Card className="p-6">
             <h2 className="mb-4 text-lg font-semibold text-ink-primary">Emergency Contact</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField
@@ -304,7 +300,7 @@ export default function Profile() {
                 onChange={(v) => handleChange('emergency_contact_relation', v)}
               />
             </div>
-          </section>
+          </Card>
 
           {/* Actions */}
           <div className="flex items-center gap-3">
@@ -334,13 +330,13 @@ export default function Profile() {
 
       {/* Fallback when no employee record is linked */}
       {!isLoading && !employee && (
-        <div className="mt-6 rounded-xl border border-divider bg-surface-paper p-6 shadow-sm">
+        <Card className="mt-6 p-6">
           <p className="text-sm text-ink-secondary">
             Your employee profile is not linked yet. Contact your HR administrator.
           </p>
-        </div>
+        </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

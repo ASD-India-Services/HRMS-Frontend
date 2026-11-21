@@ -11,8 +11,12 @@ import api from '@/lib/api';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { Button } from '@/components/ui/Button';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { Iconify } from '@/components/Iconify';
+import { Card } from '@/components/ui/Card';
 
 const POLICY_ENDPOINT = '/api/v1/leaves/lop-policy/';
 const RATES_ENDPOINT = '/api/v1/leaves/lop-rates/';
@@ -227,23 +231,21 @@ export default function LossOfPay() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
+      <PageContainer maxWidth="lg">
         <div className="animate-pulse space-y-4">
           <div className="h-8 w-48 rounded bg-grey-200" />
           <div className="h-64 rounded bg-surface-neutral" />
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">Loss of Pay</h1>
-        <p className="mt-1 text-sm text-ink-secondary">
-          Configure LOP policy and set different deduction rates for specific employees, departments, or grades.
-        </p>
-      </div>
+    <PageContainer maxWidth="lg">
+      <PageHeader
+        title="Loss of Pay"
+        subtitle="Configure LOP policy and set different deduction rates for specific employees, departments, or grades."
+      />
 
       {error && (
         <div className="mb-4 rounded-md border border-error-light bg-error-lighter p-3 text-sm text-error-dark">{error}</div>
@@ -253,7 +255,8 @@ export default function LossOfPay() {
       )}
 
       {/* ─── Single Card with all settings ───────────────────── */}
-      <form onSubmit={handleSavePolicy} className="rounded-lg border border-divider bg-surface-paper p-6 shadow-sm">
+      <Card>
+      <form onSubmit={handleSavePolicy} className="p-6">
         <div className="mb-6">
           <label className="flex items-center gap-3">
             <input
@@ -315,10 +318,7 @@ export default function LossOfPay() {
                 <p className="text-xs text-ink-secondary">Most specific wins: Employee &gt; Grade &gt; Department &gt; All Employees.</p>
               </div>
               {canCreate && (
-                <Button size="small" type="button" onClick={() => setShowRateForm(true)}>
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                  </svg>
+                <Button size="small" startIcon={<Iconify icon="plus" />} onClick={() => setShowRateForm(true)}>
                   Add Rate
                 </Button>
               )}
@@ -398,10 +398,9 @@ export default function LossOfPay() {
                         <td className="px-4 py-2 text-sm text-ink-secondary">{rate.max_days_per_year ?? 'Unlimited'}</td>
                         <td className="px-4 py-2">
                           {canDelete ? (
-                            <button type="button" onClick={() => setDeleteRateId(rate.id)}
-                              className="rounded px-2 py-0.5 text-xs font-medium text-error-main hover:bg-error-lighter border border-error-light">
+                            <Button variant="soft" color="error" size="small" onClick={() => setDeleteRateId(rate.id)}>
                               Remove
-                            </button>
+                            </Button>
                           ) : (
                             <span className="text-xs text-ink-disabled">—</span>
                           )}
@@ -428,6 +427,7 @@ export default function LossOfPay() {
           </div>
         )}
       </form>
+      </Card>
 
       {/* Delete Rate Confirmation */}
       <ConfirmDialog
@@ -439,6 +439,6 @@ export default function LossOfPay() {
         confirmLabel="Remove"
         variant="destructive"
       />
-    </div>
+    </PageContainer>
   );
 }

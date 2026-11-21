@@ -15,6 +15,13 @@ import { useEmployees } from '@/hooks/useEmployees';
 import { useCompanyLeaves, type CompanyLeave } from '@/hooks/useCompanyLeaves';
 import type { HourAccount, HourAccountFilterParams } from '@/types/hourAccount';
 import { Select } from '@/components/ui/Select';
+import { Button, IconButton } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { StateView } from '@/components/ui/StateView';
+import { Card } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
 
 const MONTH_NAMES = [
   'January',
@@ -1114,101 +1121,58 @@ export default function HourAccountPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface-paper p-6">
+    <PageContainer>
       {/* ─── Top Bar ───────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-divider">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-bold text-ink-primary">Hour Account</h1>
-
+      <PageHeader
+        title="Hour Account"
+        actions={
+        <>
           {/* Monthly / Weekly View Mode Switcher */}
-          <div className="inline-flex items-center rounded-lg border border-divider bg-surface-neutral p-0.5 shadow-2xs">
-            <button
-              type="button"
+          <div className="inline-flex items-center gap-1 rounded-lg bg-surface-neutral p-0.5">
+            <Button
+              size="small"
+              variant={viewMode === 'monthly' ? 'contained' : 'text'}
+              color={viewMode === 'monthly' ? 'primary' : 'inherit'}
               onClick={() => setViewMode('monthly')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-                viewMode === 'monthly'
-                  ? 'bg-primary-main text-primary-contrast shadow-xs'
-                  : 'text-ink-secondary hover:text-ink-primary hover:bg-grey-200/60'
-              }`}
             >
               Monthly
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              size="small"
+              variant={viewMode === 'weekly' ? 'contained' : 'text'}
+              color={viewMode === 'weekly' ? 'primary' : 'inherit'}
               onClick={() => setViewMode('weekly')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-                viewMode === 'weekly'
-                  ? 'bg-primary-main text-primary-contrast shadow-xs'
-                  : 'text-ink-secondary hover:text-ink-primary hover:bg-grey-200/60'
-              }`}
             >
               Weekly
-            </button>
+            </Button>
           </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
           {/* Search Box */}
           <div className="relative">
-            <input
+            <Input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search"
-              className="w-48 sm:w-64 pl-8 pr-3 py-1.5 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main focus:border-primary-main"
+              className="w-48 sm:w-64 pl-8 pr-3"
             />
-            <svg
-              className="w-4 h-4 text-ink-disabled absolute left-2.5 top-2.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+            <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
           </div>
 
           {/* Filter Button */}
           <div className="relative" ref={filterBtnRef}>
-            <button
-              type="button"
-              onClick={() => {
+            <Button variant="outlined" color="inherit" size="small" startIcon={<Iconify icon="filter" />} onClick={() => {
                 setShowFilterPopover(!showFilterPopover);
                 setShowGroupByPopover(false);
                 setShowActionsMenu(false);
-              }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-ink-primary bg-surface-paper border border-divider rounded-md hover:bg-surface-neutral shadow-2xs transition-colors"
-            >
-              <svg className="w-4 h-4 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-              </svg>
-              <span>Filter{activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}</span>
-            </button>
+              }}><span>Filter{activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}</span>
+            </Button>
 
             {/* Filter Popover */}
             {showFilterPopover && (
               <div className="absolute right-0 mt-2 w-80 sm:w-[480px] max-h-[85vh] overflow-y-auto bg-surface-paper border border-divider rounded-lg shadow-2xl z-50 p-4 divide-y divide-divider">
                 {/* Accordion: Work Info */}
                 <div className="pb-3 mb-1">
-                  <button
-                    type="button"
-                    onClick={() => setFilterWorkInfoOpen(!filterWorkInfoOpen)}
-                    className="w-full flex items-center justify-between text-sm font-semibold text-ink-primary"
-                  >
-                    <span>Work Info</span>
-                    <svg
-                      className={`w-4 h-4 text-ink-secondary transition-transform ${filterWorkInfoOpen ? 'rotate-180' : ''}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
+                  <Button variant="text" color="inherit" onClick={() => setFilterWorkInfoOpen(!filterWorkInfoOpen)} className="w-full !justify-between" endIcon={<Iconify icon="chevron-down" className={`transition-transform ${filterWorkInfoOpen ? 'rotate-180' : ''}`} />}>Work Info</Button>
 
                   {filterWorkInfoOpen && (
                     <div className="grid grid-cols-2 gap-3 mt-3">
@@ -1348,21 +1312,7 @@ export default function HourAccountPage() {
 
                 {/* Accordion: Attendance */}
                 <div className="py-3">
-                  <button
-                    type="button"
-                    onClick={() => setFilterAttendanceOpen(!filterAttendanceOpen)}
-                    className="w-full flex items-center justify-between text-sm font-semibold text-ink-primary"
-                  >
-                    <span>Attendance</span>
-                    <svg
-                      className={`w-4 h-4 text-ink-secondary transition-transform ${filterAttendanceOpen ? 'rotate-180' : ''}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
+                  <Button variant="text" color="inherit" onClick={() => setFilterAttendanceOpen(!filterAttendanceOpen)} className="w-full !justify-between" endIcon={<Iconify icon="chevron-down" className={`transition-transform ${filterAttendanceOpen ? 'rotate-180' : ''}`} />}>Attendance</Button>
 
                   {filterAttendanceOpen && (
                     <div className="grid grid-cols-2 gap-3 mt-3">
@@ -1461,21 +1411,7 @@ export default function HourAccountPage() {
 
                 {/* Accordion: Advanced */}
                 <div className="py-3">
-                  <button
-                    type="button"
-                    onClick={() => setFilterAdvancedOpen(!filterAdvancedOpen)}
-                    className="w-full flex items-center justify-between text-sm font-semibold text-ink-primary"
-                  >
-                    <span>Advanced</span>
-                    <svg
-                      className={`w-4 h-4 text-ink-secondary transition-transform ${filterAdvancedOpen ? 'rotate-180' : ''}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
+                  <Button variant="text" color="inherit" onClick={() => setFilterAdvancedOpen(!filterAdvancedOpen)} className="w-full !justify-between" endIcon={<Iconify icon="chevron-down" className={`transition-transform ${filterAdvancedOpen ? 'rotate-180' : ''}`} />}>Advanced</Button>
 
                   {filterAdvancedOpen && (
                     <div className="grid grid-cols-2 gap-3 mt-3">
@@ -1647,13 +1583,9 @@ export default function HourAccountPage() {
 
                 {/* Blue Filter Button */}
                 <div className="pt-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowFilterPopover(false)}
-                    className="w-full py-2 bg-primary-main hover:bg-primary-dark text-primary-contrast font-semibold text-sm rounded-md transition-colors shadow-sm"
-                  >
+                  <Button onClick={() => setShowFilterPopover(false)} className="w-full">
                     Filter
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -1661,20 +1593,19 @@ export default function HourAccountPage() {
 
           {/* Group By Button */}
           <div className="relative" ref={groupByBtnRef}>
-            <button
-              type="button"
+            <Button
+              variant="outlined"
+              color="inherit"
+              size="small"
+              startIcon={<Iconify icon="list-bulleted" />}
               onClick={() => {
                 setShowGroupByPopover(!showGroupByPopover);
                 setShowFilterPopover(false);
                 setShowActionsMenu(false);
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-ink-primary bg-surface-paper border border-divider rounded-md hover:bg-surface-neutral shadow-2xs transition-colors"
             >
-              <svg className="w-4 h-4 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-              <span>Group By</span>
-            </button>
+              Group By
+            </Button>
 
             {/* Group By Popover */}
             {showGroupByPopover && (
@@ -1700,42 +1631,32 @@ export default function HourAccountPage() {
 
           {/* Actions Dropdown Button */}
           <div className="relative" ref={actionsBtnRef}>
-            <button
-              type="button"
+            <Button
+              variant="outlined"
+              color="inherit"
+              size="small"
+              endIcon={<Iconify icon="chevron-down" />}
               onClick={() => {
                 setShowActionsMenu(!showActionsMenu);
                 setShowFilterPopover(false);
                 setShowGroupByPopover(false);
               }}
-              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-ink-primary bg-surface-paper border border-divider rounded-md hover:bg-surface-neutral shadow-2xs transition-colors"
             >
-              <span>Actions</span>
-              <svg className="w-3.5 h-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
+              Actions
+            </Button>
 
             {showActionsMenu && (
               <div className="absolute right-0 mt-2 w-36 bg-surface-paper border border-divider rounded-md shadow-lg z-50 py-1">
-                <button
-                  type="button"
-                  onClick={handleExportCSV}
-                  className="w-full text-left px-4 py-2 text-sm text-ink-primary hover:bg-surface-neutral flex items-center gap-2"
-                >
+                <Button variant="text" color="inherit" onClick={handleExportCSV} className="w-full">
                   Export
-                </button>
+                </Button>
                 {canDelete && (
-                  <button
-                    type="button"
-                    onClick={() => {
+                  <Button variant="soft" color="error" onClick={() => {
                       setShowActionsMenu(false);
                       handleConfirmBulkDelete();
-                    }}
-                    disabled={selectedIds.size === 0}
-                    className="w-full text-left px-4 py-2 text-sm text-error-main hover:bg-error-lighter disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
+                    }} disabled={selectedIds.size === 0} className="w-full">
                     Delete
-                  </button>
+                  </Button>
                 )}
               </div>
             )}
@@ -1743,52 +1664,33 @@ export default function HourAccountPage() {
 
           {/* + Create Button (Blue) */}
           {canCreate && (
-            <button
-              type="button"
-              onClick={handleOpenCreate}
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold text-primary-contrast bg-primary-main hover:bg-primary-dark rounded-md shadow-sm transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              <span>Create</span>
-            </button>
+            <Button size="small" startIcon={<Iconify icon="plus" />} onClick={handleOpenCreate}><span>Create</span>
+            </Button>
           )}
-        </div>
-      </div>
+        </>
+        }
+      />
 
       {/* ─── Selection Buttons & Active Filters Bar ────────────────────────────── */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 py-3 border-b border-divider">
         {/* Left: Selection Action Buttons */}
         <div className="flex flex-wrap items-center gap-2">
           {/* Select All Records Button (White) */}
-          <button
-            type="button"
-            onClick={handleSelectAllRecords}
-            className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral transition-colors shadow-2xs"
-          >
+          <Button variant="outlined" color="inherit" size="small" onClick={handleSelectAllRecords}>
             Select All Records
-          </button>
+          </Button>
 
           {selectedIds.size > 0 && (
             <>
               {/* Unselect All Records Button (White) */}
-              <button
-                type="button"
-                onClick={() => setSelectedIds(new Set())}
-                className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral transition-colors shadow-2xs"
-              >
+              <Button variant="outlined" color="inherit" size="small" onClick={() => setSelectedIds(new Set())}>
                 Unselect All Records
-              </button>
+              </Button>
 
               {/* Export Records Button (White) */}
-              <button
-                type="button"
-                onClick={handleExportCSV}
-                className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-divider bg-surface-paper text-ink-primary hover:bg-surface-neutral transition-colors shadow-2xs"
-              >
+              <Button variant="outlined" color="inherit" size="small" onClick={handleExportCSV}>
                 Export Records
-              </button>
+              </Button>
 
               {/* N - Selected Badge (Blue / White) */}
               <span className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-primary-light text-primary-dark bg-primary-lighter">
@@ -1807,338 +1709,182 @@ export default function HourAccountPage() {
           {groupByField && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Field : {GROUP_BY_OPTIONS.find((o) => o.value === groupByField)?.label || groupByField}
-              <button
-                type="button"
-                onClick={() => setGroupByField('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setGroupByField('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {selectedYear && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Year : {selectedYear}
-              <button
-                type="button"
-                onClick={() => setSelectedYear('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setSelectedYear('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterMonth && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Month : {filterMonth}
-              <button
-                type="button"
-                onClick={() => setFilterMonth('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterMonth('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterEmployee && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Employee : {employeesList.find((e) => e.id === filterEmployee)?.first_name || filterEmployee}
-              <button
-                type="button"
-                onClick={() => setFilterEmployee('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterEmployee('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterCompany && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Company : {filterCompany}
-              <button
-                type="button"
-                onClick={() => setFilterCompany('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterCompany('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterDepartment && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Dept : {filterDepartment}
-              <button
-                type="button"
-                onClick={() => setFilterDepartment('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterDepartment('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterJobPosition && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Job : {filterJobPosition}
-              <button
-                type="button"
-                onClick={() => setFilterJobPosition('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterJobPosition('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterShift && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Shift : {filterShift}
-              <button
-                type="button"
-                onClick={() => setFilterShift('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterShift('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterWorkType && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Work Type : {filterWorkType}
-              <button
-                type="button"
-                onClick={() => setFilterWorkType('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterWorkType('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterReportingManager && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Manager : {filterReportingManager}
-              <button
-                type="button"
-                onClick={() => setFilterReportingManager('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterReportingManager('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterWorkLocation && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Location : {filterWorkLocation}
-              <button
-                type="button"
-                onClick={() => setFilterWorkLocation('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterWorkLocation('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterAttendanceDate && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Date : {filterAttendanceDate}
-              <button
-                type="button"
-                onClick={() => setFilterAttendanceDate('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterAttendanceDate('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterBatch && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Batch : {filterBatch}
-              <button
-                type="button"
-                onClick={() => setFilterBatch('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterBatch('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterInTime && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               In : {filterInTime}
-              <button
-                type="button"
-                onClick={() => setFilterInTime('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterInTime('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterOutTime && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Out : {filterOutTime}
-              <button
-                type="button"
-                onClick={() => setFilterOutTime('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterOutTime('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterValidated && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Validated : {filterValidated === 'true' ? 'Yes' : 'No'}
-              <button
-                type="button"
-                onClick={() => setFilterValidated('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterValidated('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterOtApproved && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               OT Approved : {filterOtApproved === 'true' ? 'Yes' : 'No'}
-              <button
-                type="button"
-                onClick={() => setFilterOtApproved('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterOtApproved('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterMinHour && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Min Hour : {filterMinHour}
-              <button
-                type="button"
-                onClick={() => setFilterMinHour('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterMinHour('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterAttendanceFrom && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               From : {filterAttendanceFrom}
-              <button
-                type="button"
-                onClick={() => setFilterAttendanceFrom('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterAttendanceFrom('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterAttendanceTill && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Till : {filterAttendanceTill}
-              <button
-                type="button"
-                onClick={() => setFilterAttendanceTill('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterAttendanceTill('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterAtWorkGte && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               At Work &gt;= {filterAtWorkGte}
-              <button
-                type="button"
-                onClick={() => setFilterAtWorkGte('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterAtWorkGte('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterAtWorkLte && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               At Work &lt;= {filterAtWorkLte}
-              <button
-                type="button"
-                onClick={() => setFilterAtWorkLte('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterAtWorkLte('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterPendingGte && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Pending &gt;= {filterPendingGte}
-              <button
-                type="button"
-                onClick={() => setFilterPendingGte('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterPendingGte('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterPendingLte && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Pending &lt;= {filterPendingLte}
-              <button
-                type="button"
-                onClick={() => setFilterPendingLte('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterPendingLte('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterOtGte && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               OT &gt;= {filterOtGte}
-              <button
-                type="button"
-                onClick={() => setFilterOtGte('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterOtGte('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterOtLte && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               OT &lt;= {filterOtLte}
-              <button
-                type="button"
-                onClick={() => setFilterOtLte('')}
-                className="w-4 h-4 rounded-full bg-surface-neutral text-ink-secondary hover:bg-grey-200 hover:text-ink-primary flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterOtLte('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
@@ -2173,14 +1919,7 @@ export default function HourAccountPage() {
             filterPendingLte ||
             filterOtGte ||
             filterOtLte) && (
-            <button
-              type="button"
-              onClick={handleClearAllFilters}
-              className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-surface-paper border border-divider text-ink-secondary hover:text-ink-primary hover:bg-surface-neutral text-xs font-bold transition-colors shadow-2xs"
-              title="Clear all filters"
-            >
-              ✕
-            </button>
+            <IconButton icon="close" size="small" onClick={handleClearAllFilters} aria-label="Clear all filters" className="w-6" />
           )}
         </div>
       </div>
@@ -2188,32 +1927,25 @@ export default function HourAccountPage() {
       {/* ─── Accordion Groups & Tables ─────────────────────────────────────────── */}
       {isLoading ? (
         <div className="py-16 text-center text-ink-secondary">
-          <svg className="animate-spin h-8 w-8 text-primary-main mx-auto mb-2" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-          </svg>
+          <div className="mx-auto mb-2 h-8 w-8 animate-spin rounded-full border-b-2 border-primary-main" />
           Loading Hour Accounts...
         </div>
       ) : filteredHourAccounts.length === 0 ? (
-        <div className="py-16 text-center text-ink-secondary border border-divider rounded-lg p-6 space-y-3">
-          <p className="text-sm font-medium text-ink-secondary">
-            No hour account records found.
-          </p>
-          {canCreate && (
-            <button
-              type="button"
-              onClick={handleOpenCreate}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-primary-contrast bg-primary-main hover:bg-primary-dark rounded-md shadow-sm transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              <span>Create Hour Account</span>
-            </button>
-          )}
-        </div>
+        <Card>
+          <StateView
+            icon="inbox"
+            title="No hour account records found."
+            action={
+              canCreate && (
+                <Button startIcon={<Iconify icon="plus" />} onClick={handleOpenCreate}>
+                  Create Hour Account
+                </Button>
+              )
+            }
+          />
+        </Card>
       ) : viewMode === 'weekly' ? (
-        <div className="border border-divider rounded-lg overflow-hidden divide-y divide-divider">
+        <Card className="overflow-hidden divide-y divide-divider">
           {Object.entries(weeklyMonthsData).map(([monthName, monthData]) => {
             const isMonthExpanded = !!expandedGroups[monthName];
             const monthItems = monthData.items;
@@ -2221,11 +1953,7 @@ export default function HourAccountPage() {
             return (
               <div key={monthName} className="bg-surface-paper">
                 {/* Accordion Month Header (shows months below, matching monthly view style) */}
-                <button
-                  type="button"
-                  onClick={() => toggleGroup(monthName)}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 bg-surface-paper hover:bg-surface-neutral/80 transition-colors text-left font-medium text-ink-primary border-l-4 border-transparent hover:border-primary-main"
-                >
+                <Button variant="outlined" onClick={() => toggleGroup(monthName)} className="w-full">
                   <span className="text-ink-secondary text-lg font-mono leading-none">
                     {isMonthExpanded ? '—' : '+'}
                   </span>
@@ -2233,7 +1961,7 @@ export default function HourAccountPage() {
                     {monthItems.length}
                   </span>
                   <span className="text-sm font-semibold text-ink-primary">{monthName}</span>
-                </button>
+                </Button>
 
                 {/* Weeks under this Month */}
                 {isMonthExpanded && (
@@ -2252,11 +1980,7 @@ export default function HourAccountPage() {
                         return (
                           <div key={weekKey} className="bg-surface-paper">
                             {/* Accordion Week Header */}
-                            <button
-                              type="button"
-                              onClick={() => toggleWeek(weekKey)}
-                              className="w-full flex items-center gap-3 px-4 py-3 bg-surface-paper hover:bg-surface-neutral transition-colors text-left font-medium text-ink-primary border-l-4 border-transparent hover:border-primary-main"
-                            >
+                            <Button variant="outlined" onClick={() => toggleWeek(weekKey)} className="w-full">
                               <span className="text-ink-disabled text-base font-mono leading-none">
                                 {isWeekExpanded ? '—' : '+'}
                               </span>
@@ -2269,7 +1993,7 @@ export default function HourAccountPage() {
                                   {weekData.definition.dateRange}
                                 </span>
                               </div>
-                            </button>
+                            </Button>
 
                             {/* Expanded Week Table */}
                             {isWeekExpanded && (
@@ -2353,28 +2077,10 @@ export default function HourAccountPage() {
                                           <td className="px-4 py-3 text-right">
                                             <div className="inline-flex items-center gap-1.5">
                                               {canEdit && (
-                                                <button
-                                                  type="button"
-                                                  onClick={() => handleOpenEdit(row)}
-                                                  className="p-1.5 text-ink-secondary hover:text-primary-main border border-divider rounded hover:bg-surface-neutral transition-colors"
-                                                  title="Edit"
-                                                >
-                                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                                  </svg>
-                                                </button>
+                                                <IconButton icon="pencil" size="small" onClick={() => handleOpenEdit(row)} aria-label="Edit" />
                                               )}
                                               {canDelete && (
-                                                <button
-                                                  type="button"
-                                                  onClick={() => handleConfirmSingleDelete(row)}
-                                                  className="p-1.5 text-error-main hover:text-error-dark border border-divider rounded hover:bg-error-lighter transition-colors"
-                                                  title="Delete"
-                                                >
-                                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                  </svg>
-                                                </button>
+                                                <IconButton icon="trash" size="small" color="error" onClick={() => handleConfirmSingleDelete(row)} aria-label="Delete" />
                                               )}
                                             </div>
                                           </td>
@@ -2394,9 +2100,9 @@ export default function HourAccountPage() {
               </div>
             );
           })}
-        </div>
+        </Card>
       ) : (
-        <div className="border border-divider rounded-lg overflow-hidden divide-y divide-divider">
+        <Card className="overflow-hidden divide-y divide-divider">
           {Object.entries(groupedData).map(([groupKey, items]) => {
             const isExpanded = !!expandedGroups[groupKey];
             const groupAllSelected = items.length > 0 && items.every((item) => selectedIds.has(item.id));
@@ -2404,11 +2110,7 @@ export default function HourAccountPage() {
             return (
               <div key={groupKey} className="bg-surface-paper">
                 {/* Accordion Group Header */}
-                <button
-                  type="button"
-                  onClick={() => toggleGroup(groupKey)}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 bg-surface-paper hover:bg-surface-neutral/80 transition-colors text-left font-medium text-ink-primary border-l-4 border-transparent hover:border-primary-main"
-                >
+                <Button variant="outlined" onClick={() => toggleGroup(groupKey)} className="w-full">
                   <span className="text-ink-secondary text-lg font-mono leading-none">
                     {isExpanded ? '—' : '+'}
                   </span>
@@ -2416,7 +2118,7 @@ export default function HourAccountPage() {
                     {items.length}
                   </span>
                   <span className="text-sm font-semibold text-ink-primary">{groupKey}</span>
-                </button>
+                </Button>
 
                 {/* Expanded Table */}
                 {isExpanded && (
@@ -2505,28 +2207,10 @@ export default function HourAccountPage() {
                                 <td className="px-4 py-3 text-right">
                                   <div className="inline-flex items-center gap-1.5">
                                     {canEdit && (
-                                      <button
-                                        type="button"
-                                        onClick={() => handleOpenEdit(row)}
-                                        className="p-1.5 text-ink-secondary hover:text-primary-main border border-divider rounded hover:bg-surface-neutral transition-colors"
-                                        title="Edit"
-                                      >
-                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                        </svg>
-                                      </button>
+                                      <IconButton icon="pencil" size="small" onClick={() => handleOpenEdit(row)} aria-label="Edit" />
                                     )}
                                     {canDelete && (
-                                      <button
-                                        type="button"
-                                        onClick={() => handleConfirmSingleDelete(row)}
-                                        className="p-1.5 text-error-main hover:text-error-dark border border-divider rounded hover:bg-error-lighter transition-colors"
-                                        title="Delete"
-                                      >
-                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                      </button>
+                                      <IconButton icon="trash" size="small" color="error" onClick={() => handleConfirmSingleDelete(row)} aria-label="Delete" />
                                     )}
                                   </div>
                                 </td>
@@ -2541,7 +2225,7 @@ export default function HourAccountPage() {
               </div>
             );
           })}
-        </div>
+        </Card>
       )}
 
       {/* ─── Create / Edit Modal ───────────────────────────────────────────────── */}
@@ -2553,13 +2237,7 @@ export default function HourAccountPage() {
               <h3 className="text-lg font-semibold text-ink-primary">
                 {editingItem ? 'Edit Hour Account' : 'Create Hour Account'}
               </h3>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="text-ink-disabled hover:text-ink-secondary text-lg font-bold"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setModalOpen(false)} aria-label="Close" />
             </div>
 
             {/* Modal Form */}
@@ -2667,20 +2345,12 @@ export default function HourAccountPage() {
 
               {/* Modal Footer with Blue Save Button */}
               <div className="flex items-center justify-end gap-3 px-6 py-3.5 bg-surface-neutral border-t border-divider">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-ink-primary bg-surface-paper border border-divider rounded-md hover:bg-surface-neutral transition-colors"
-                >
+                <Button variant="outlined" color="inherit" onClick={() => setModalOpen(false)}>
                   Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={createMutation.isPending || updateMutation.isPending}
-                  className="px-5 py-2 text-sm font-semibold text-primary-contrast bg-primary-main hover:bg-primary-dark rounded-md shadow-sm transition-colors disabled:opacity-50"
-                >
+                </Button>
+                <Button disabled={createMutation.isPending || updateMutation.isPending} type="submit">
                   {createMutation.isPending || updateMutation.isPending ? 'Saving...' : 'Save'}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -2698,26 +2368,17 @@ export default function HourAccountPage() {
                 : `Are you sure you want to delete the hour account for "${itemToDelete?.employee_name}" (${itemToDelete?.month} ${itemToDelete?.year})?`}
             </p>
             <div className="flex items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setDeleteConfirmOpen(false)}
-                className="px-4 py-1.5 text-sm font-medium text-ink-primary bg-surface-paper border border-divider rounded-md hover:bg-surface-neutral"
-              >
+              <Button variant="outlined" color="inherit" size="small" onClick={() => setDeleteConfirmOpen(false)}>
                 Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleExecuteDelete}
-                disabled={deleteMutation.isPending || bulkDeleteMutation.isPending}
-                className="px-4 py-1.5 text-sm font-semibold text-primary-contrast bg-error-main hover:bg-error-dark rounded-md shadow-sm disabled:opacity-50"
-              >
+              </Button>
+              <Button color="error" size="small" onClick={handleExecuteDelete} disabled={deleteMutation.isPending || bulkDeleteMutation.isPending}>
                 {deleteMutation.isPending || bulkDeleteMutation.isPending ? 'Deleting...' : 'Delete'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

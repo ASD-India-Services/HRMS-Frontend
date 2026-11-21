@@ -15,6 +15,8 @@ import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
 import { BRANCHES } from '@/lib/endpoints';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const crud = createCrudHooks<Record<string, unknown>>({
   queryKey: 'branches',
@@ -39,7 +41,7 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     key: 'is_head_office',
     header: 'Head Office',
     sortable: true,
-    render: (value: unknown) => (value ? '⭐ Yes' : 'No'),
+    render: (value: unknown) => (value ? 'Yes' : 'No'),
   },
   {
     key: 'is_active',
@@ -148,16 +150,8 @@ export default function Branches() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Branches</h1>
-          <p className="mt-1 text-sm text-ink-secondary">
-            Manage office branches and locations across the organization
-          </p>
-        </div>
-        <CreateButton permission="branches.create" label="Add Branch" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Branches" subtitle="Manage office branches and locations across the organization" actions={<CreateButton permission="branches.create" label="Add Branch" onClick={() => setShowCreate(true)} />} />
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
@@ -206,6 +200,6 @@ export default function Branches() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

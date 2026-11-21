@@ -12,10 +12,14 @@ import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import { formatCurrency } from '@/utils/formatters';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Iconify } from '@/components/Iconify';
+import { Card } from '@/components/ui/Card';
 
 const RULES_ENDPOINT = '/api/v1/gratuity/rules/';
 const rulesCrud = createCrudHooks<Record<string, unknown>>({
@@ -129,10 +133,8 @@ function RuleFormModal({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-medium text-ink-primary">Slabs (Service Year Tiers)</h4>
-              <button type="button" onClick={addSlab} className="inline-flex items-center gap-1 rounded-md bg-primary-lighter px-2.5 py-1.5 text-xs font-medium text-primary-dark hover:bg-primary-lighter">
-                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                Add Slab
-              </button>
+              <Button variant="soft" size="small" startIcon={<Iconify icon="plus" />} onClick={addSlab}>Add Slab
+              </Button>
             </div>
             <p className="text-xs text-ink-disabled">Define multipliers for different service year ranges. Set "To Years" to 0 for unlimited (no upper cap).</p>
 
@@ -154,27 +156,21 @@ function RuleFormModal({
                   <label className="block text-xs text-ink-secondary mb-0.5">Multiplier</label>
                   <Input type="number" step="0.0001" min="0" value={slab.multiplier} onChange={e => updateSlab(idx, 'multiplier', e.target.value)} placeholder="e.g., 0.5769"/>
                 </div>
-                <button type="button" onClick={() => removeSlab(idx)} className="mt-4 rounded p-1 text-error-main hover:bg-error-lighter" aria-label="Remove slab">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                </button>
+                <IconButton icon="trash" size="small" color="error" onClick={() => removeSlab(idx)} aria-label="Remove slab" className="mt-4" />
               </div>
             ))}
 
             {/* Quick preset for India */}
             {form.slabs.length === 0 && form.region === 'india' && (
-              <button
-                type="button"
-                onClick={() => setForm(p => ({ ...p, slabs: [{ from_years: 0, to_years: 5, multiplier: 0 }, { from_years: 5, to_years: 0, multiplier: 0.5769 }] }))}
-                className="text-xs text-primary-main hover:text-primary-dark underline"
-              >
+              <Button variant="text" size="small" onClick={() => setForm(p => ({ ...p, slabs: [{ from_years: 0, to_years: 5, multiplier: 0 }, { from_years: 5, to_years: 0, multiplier: 0.5769 }] }))}>
                 Use India standard preset (0-5 yrs: not eligible, 5+ yrs: 15/26 days per year)
-              </button>
+              </Button>
             )}
           </div>
 
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <button type="button" onClick={onClose} className="rounded-md border border-divider px-4 py-2 text-sm font-medium text-ink-primary hover:bg-surface-neutral">Cancel</button>
+            <Button variant="outlined" color="inherit" onClick={onClose}>Cancel</Button>
             <Button type="submit" disabled={isLoading || !form.name.trim()}>
               {isLoading ? 'Saving...' : 'Save'}
             </Button>
@@ -302,14 +298,11 @@ export default function Gratuity() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">Gratuity</h1>
-        <p className="mt-1 text-sm text-ink-secondary">Configure gratuity rules and calculate end-of-service benefits</p>
-      </div>
+    <PageContainer>
+      <PageHeader title="Gratuity" subtitle="Configure gratuity rules and calculate end-of-service benefits" />
 
       {/* Calculator */}
-      <div className="mb-8 rounded-lg border border-divider bg-surface-paper p-6">
+      <Card className="mb-8 p-6">
         <h2 className="mb-2 text-lg font-semibold text-ink-primary">Calculate Gratuity</h2>
         <p className="mb-4 text-sm text-ink-secondary">Select an employee and rule to calculate their gratuity.</p>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -356,17 +349,17 @@ export default function Gratuity() {
             </div>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Rules Table */}
-      <div className="rounded-lg border border-divider bg-surface-paper p-6">
+      <Card className="p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-ink-primary">Gratuity Rules</h2>
           <CreateButton permission="gratuity.create" label="Create Rule" onClick={() => setShowCreate(true)} />
         </div>
         <DataTable queryResult={rulesQuery} columns={columnsWithActions} />
         {rulesQuery.data && rulesQuery.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={rulesQuery.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
-      </div>
+      </Card>
 
       {/* Create Modal */}
       <RuleFormModal isOpen={showCreate} onClose={() => setShowCreate(false)} title="Create Gratuity Rule" initialValues={emptyForm} onSubmit={handleCreate} isLoading={createMutation.isPending} />
@@ -376,6 +369,6 @@ export default function Gratuity() {
 
       {/* Delete */}
       <ConfirmDialog isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={() => { deleteMutation.mutate(deleteId!, { onSuccess: () => setDeleteId(null) }); }} title="Delete Gratuity Rule" message="Are you sure? This will delete the rule and all its slabs." confirmLabel="Delete" variant="destructive" isLoading={deleteMutation.isPending} />
-    </div>
+    </PageContainer>
   );
 }

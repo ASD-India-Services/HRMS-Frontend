@@ -16,9 +16,11 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const ENDPOINT = '/api/v1/shifts/schedules/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -294,14 +296,8 @@ export default function ShiftSchedules() {
   const modalTitle = editRecord ? 'Edit Shift Schedule' : 'Create Shift Schedule';
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Shift Schedules</h1>
-          <p className="mt-1 text-sm text-ink-secondary">Manage recurring shift schedules</p>
-        </div>
-        <CreateButton permission="shift_schedules.create" label="Create Schedule" onClick={openCreate} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Shift Schedules" subtitle="Manage recurring shift schedules" actions={<CreateButton permission="shift_schedules.create" label="Create Schedule" onClick={openCreate} />} />
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
@@ -324,15 +320,10 @@ export default function ShiftSchedules() {
           <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             <div className="mb-4 flex items-center justify-between">
               <h2 id="ShiftSchedules-modal-title-1" className="text-lg font-semibold text-ink-primary">{modalTitle}</h2>
-              <button
-                onClick={() => {
+              <IconButton icon="close" size="small" onClick={() => {
                   setShowCreate(false);
                   setEditRecord(null);
-                }}
-                className="text-ink-disabled hover:text-ink-secondary"
-              >
-                ✕
-              </button>
+                }} aria-label="Close" />
             </div>
 
             {formError && (
@@ -479,17 +470,15 @@ export default function ShiftSchedules() {
                 </label>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {DAY_LABELS.map((label, idx) => (
-                    <button
+                    <Button
                       key={idx}
-                      type="button"
+                      size="small"
+                      variant={formData.repeat_on.includes(idx) ? 'soft' : 'outlined'}
+                      color={formData.repeat_on.includes(idx) ? 'primary' : 'inherit'}
                       onClick={() => toggleDay(idx)}
-                      className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${formData.repeat_on.includes(idx)
-                          ? 'border-primary-main bg-primary-lighter text-primary-dark'
-                          : 'border-divider bg-surface-paper text-ink-secondary hover:bg-surface-neutral'
-                        }`}
                     >
                       {label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -497,15 +486,12 @@ export default function ShiftSchedules() {
 
             {/* Actions */}
             <div className="mt-6 flex justify-end gap-3">
-              <button
-                className="rounded border border-divider px-4 py-2 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
-                onClick={() => {
+              <Button variant="outlined" color="inherit" onClick={() => {
                   setShowCreate(false);
                   setEditRecord(null);
-                }}
-              >
+                }}>
                 Cancel
-              </button>
+              </Button>
               <Button type="button"
                 disabled={submitting}
                 onClick={handleSubmit}
@@ -534,6 +520,6 @@ export default function ShiftSchedules() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

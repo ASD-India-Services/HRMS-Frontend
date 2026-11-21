@@ -12,8 +12,13 @@ import type { CompanyPolicy } from '@/types/policies';
 import { RichTextEditor } from '@/components/RichTextEditor';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Card } from '@/components/ui/Card';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { StateView } from '@/components/ui/StateView';
+import { Iconify } from '@/components/Iconify';
 
 export default function Policies() {
   const { showToast } = useToast();
@@ -219,19 +224,18 @@ export default function Policies() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header and Search */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-1.5 text-xs text-ink-secondary mb-1">
+    <PageContainer>
+      <PageHeader
+        title="Policies"
+        breadcrumb={
+          <span className="inline-flex items-center gap-1.5">
             <span>More</span>
-            <span>&gt;</span>
+            <Iconify icon="chevron-right" width={14} />
             <span className="text-ink-primary font-medium">Policies</span>
-          </div>
-          <h1 className="text-2xl font-bold text-ink-primary">Policies</h1>
-        </div>
-
-        <div className="flex items-center gap-3">
+          </span>
+        }
+        actions={
+        <>
           {/* Search Bar */}
           <div className="relative">
             <Input
@@ -242,27 +246,19 @@ export default function Policies() {
               className="w-48 sm:w-64"
             />
             {searchTerm && (
-              <button
-                onClick={() => setSearchTerm('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-disabled hover:text-ink-secondary text-sm"
-              >
-                &times;
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setSearchTerm('')} aria-label="Clear search" className="absolute right-1 top-1/2 -translate-y-1/2" />
             )}
           </div>
 
           {/* Create Button */}
           {canCreate && (
-            <Button
-              type="button"
-              onClick={handleOpenCreateModal}
-            >
-              <span className="text-base font-bold leading-none">+</span>
-              <span>Create</span>
+            <Button startIcon={<Iconify icon="plus" />} onClick={handleOpenCreateModal}>
+              Create
             </Button>
           )}
-        </div>
-      </div>
+        </>
+        }
+      />
 
       {/* Loading & Error States */}
       {isLoading && (
@@ -280,28 +276,24 @@ export default function Policies() {
 
       {/* Empty State */}
       {!isLoading && !isError && policies.length === 0 && (
-        <div className="rounded-2xl border-2 border-dashed border-divider bg-surface-paper py-16 text-center shadow-xs">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-lighter text-primary-main">
-            <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-            </svg>
-          </div>
-          <h3 className="mt-3 text-sm font-bold text-ink-primary">No Policies Found</h3>
-          <p className="mt-1 text-xs text-ink-secondary max-w-sm mx-auto">
-            {searchTerm
-              ? 'No policies match your search term. Try a different query.'
-              : 'Add organizational policies, guidelines, and manuals for company staff to reference.'}
-          </p>
-          {canCreate && (
-            <Button size="small"
-              type="button"
-              onClick={handleOpenCreateModal}
-              className="mt-4"
-            >
-              + Create Policy
-            </Button>
-          )}
-        </div>
+        <Card>
+          <StateView
+            icon="policies"
+            title="No Policies Found"
+            description={
+              searchTerm
+                ? 'No policies match your search term. Try a different query.'
+                : 'Add organizational policies, guidelines, and manuals for company staff to reference.'
+            }
+            action={
+              canCreate && (
+                <Button size="small" startIcon={<Iconify icon="plus" />} onClick={handleOpenCreateModal}>
+                  Create Policy
+                </Button>
+              )
+            }
+          />
+        </Card>
       )}
 
       {/* Cards Grid */}
@@ -310,9 +302,9 @@ export default function Policies() {
           {policies.map((policy) => {
             if (!policy) return null;
             return (
-              <div
+              <Card
                 key={policy.id || policy.title}
-                className="rounded-lg border border-divider bg-surface-paper p-5 shadow-xs hover:shadow-md transition flex flex-col justify-between"
+                className="p-5 hover:shadow-md transition flex flex-col justify-between"
               >
                 <div>
                   {/* Card Top: Indicator + Title + Edit/Delete Icons */}
@@ -326,31 +318,13 @@ export default function Policies() {
 
                     <div className="flex items-center gap-1.5 flex-shrink-0">
                       {canEdit && (
-                        <button
-                          type="button"
-                          onClick={(e) => handleOpenEditModal(policy, e)}
-                          className="p-1 text-ink-disabled hover:text-primary-main transition"
-                          title="Edit Policy"
-                        >
-                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                        </button>
+                        <IconButton icon="pencil" size="small" onClick={(e) => handleOpenEditModal(policy, e)} aria-label="Edit Policy" />
                       )}
                       {canDelete && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
+                        <IconButton icon="trash" size="small" color="error" onClick={(e) => {
                             e.stopPropagation();
                             setDeletingPolicy(policy);
-                          }}
-                          className="p-1 text-ink-disabled hover:text-error-main transition"
-                          title="Delete Policy"
-                        >
-                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
+                          }} aria-label="Delete Policy" />
                       )}
                     </div>
                   </div>
@@ -372,7 +346,7 @@ export default function Policies() {
                     View policy
                   </Button>
                 </div>
-              </div>
+              </Card>
             );
           })}
         </div>
@@ -387,13 +361,7 @@ export default function Policies() {
               <h3 id="Policies-modal-title-1" className="text-xl font-normal text-ink-primary">
                 {editingPolicy ? 'Edit Policy' : 'Policy'}
               </h3>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="text-ink-disabled hover:text-ink-secondary text-lg leading-none p-1"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setIsModalOpen(false)} aria-label="Close" />
             </div>
 
             {formError && (
@@ -459,17 +427,10 @@ export default function Policies() {
                         key={comp}
                         className="inline-flex items-center gap-1.5 rounded bg-surface-neutral px-2.5 py-1 text-ink-primary font-medium border border-divider shadow-2xs"
                       >
-                        <button
-                          type="button"
-                          onClick={(e) => {
+                        <IconButton icon="close" size="small" onClick={(e) => {
                             e.stopPropagation();
                             handleRemoveCompany(comp);
-                          }}
-                          className="text-ink-disabled hover:text-ink-primary text-xs font-bold leading-none"
-                          title={`Remove ${comp}`}
-                        >
-                          ✕
-                        </button>
+                          }} aria-label={`Remove ${comp}`} />
                         <span>{comp}</span>
                       </span>
                     ))}
@@ -492,9 +453,7 @@ export default function Policies() {
                     />
 
                     <div className="ml-auto flex items-center pr-1 text-ink-disabled">
-                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
+                      <Iconify icon="chevron-down" width={14} />
                     </div>
                   </div>
 
@@ -512,21 +471,17 @@ export default function Policies() {
                         .map((comp) => {
                           const isSelected = selectedCompanies.includes(comp);
                           return (
-                            <button
+                            <Button
                               key={comp}
-                              type="button"
+                              variant={isSelected ? 'soft' : 'text'}
+                              color={isSelected ? 'primary' : 'inherit'}
+                              size="small"
+                              className="w-full !justify-between !rounded-none"
+                              endIcon={isSelected ? <Iconify icon="check" /> : undefined}
                               onClick={() => handleToggleCompany(comp)}
-                              className={`w-full px-3 py-2 text-left flex items-center justify-between transition ${
-                                isSelected
-                                  ? 'bg-primary-lighter text-primary-dark font-medium'
-                                  : 'text-ink-primary hover:bg-surface-neutral'
-                              }`}
                             >
-                              <span>{comp}</span>
-                              {isSelected && (
-                                <span className="text-primary-main font-bold">✓</span>
-                              )}
-                            </button>
+                              {comp}
+                            </Button>
                           );
                         })}
 
@@ -534,14 +489,10 @@ export default function Policies() {
                         !availableCompanies.some(
                           (c) => c.toLowerCase() === companySearch.trim().toLowerCase()
                         ) && (
-                          <button
-                            type="button"
-                            onClick={handleAddCustomCompany}
-                            className="w-full border-t border-divider px-3 py-2 text-left text-primary-main hover:bg-primary-lighter font-medium flex items-center gap-1.5"
-                          >
+                          <Button variant="soft" onClick={handleAddCustomCompany} className="w-full">
                             <span>+</span>
                             <span>Add "{companySearch.trim()}"</span>
-                          </button>
+                          </Button>
                         )}
                     </div>
                   )}
@@ -607,13 +558,7 @@ export default function Policies() {
                   )}
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={() => setViewingPolicy(null)}
-                className="text-ink-disabled hover:text-ink-secondary text-xl leading-none p-1"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setViewingPolicy(null)} aria-label="Close" />
             </div>
 
             {/* Body */}
@@ -626,19 +571,17 @@ export default function Policies() {
             {viewingPolicy.attachment && (
               <div className="mt-5 rounded-lg border border-primary-light bg-primary-lighter/50 p-3.5 flex items-center justify-between">
                 <div className="flex items-center gap-2.5 text-xs text-primary-darker font-medium">
-                  <svg className="h-5 w-5 text-primary-main" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                  </svg>
+                  <Iconify icon="download" width={20} className="text-primary-main" />
                   <span>Official Policy Document Attached</span>
                 </div>
-                <a
+                <ButtonLink
+                  size="small"
                   href={viewingPolicy.attachment}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-md bg-primary-main px-3.5 py-1.5 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-primary-dark transition"
                 >
                   Download File
-                </a>
+                </ButtonLink>
               </div>
             )}
 
@@ -670,19 +613,14 @@ export default function Policies() {
               >
                 Cancel
               </Button>
-              <button
-                type="button"
-                onClick={handleDeleteConfirm}
-                disabled={deleteMutation.isPending}
-                className="rounded bg-error-main px-4 py-2 text-xs font-semibold text-primary-contrast shadow-xs hover:bg-error-dark disabled:opacity-50"
-              >
+              <Button color="error" size="small" onClick={handleDeleteConfirm} disabled={deleteMutation.isPending}>
                 {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
-              </button>
+              </Button>
             </div>
           </div>
         </Modal>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

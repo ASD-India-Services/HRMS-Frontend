@@ -7,6 +7,8 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const ENDPOINT = '/api/v1/appraisals/kras/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -71,11 +73,8 @@ export default function KRAs() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-ink-primary">KRAs</h1><p className="mt-1 text-sm text-ink-secondary">Manage Key Result Areas</p></div>
-        <CreateButton permission="kras.create" label="Create KRA" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="KRAs" subtitle="Manage Key Result Areas" actions={<CreateButton permission="kras.create" label="Create KRA" onClick={() => setShowCreate(true)} />} />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columns} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
@@ -93,6 +92,6 @@ export default function KRAs() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

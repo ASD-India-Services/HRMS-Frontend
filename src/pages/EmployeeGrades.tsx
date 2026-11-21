@@ -14,6 +14,8 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 interface EmployeeGrade {
   id: string;
@@ -121,14 +123,8 @@ export default function EmployeeGrades() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Employee Grades</h1>
-          <p className="mt-1 text-sm text-ink-secondary">Manage employee grade classifications</p>
-        </div>
-        <CreateButton permission="employee_grades.create" label="Create Grade" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Employee Grades" subtitle="Manage employee grade classifications" actions={<CreateButton permission="employee_grades.create" label="Create Grade" onClick={() => setShowCreate(true)} />} />
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
@@ -140,6 +136,6 @@ export default function EmployeeGrades() {
       <CrudModal isOpen={showCreate} onClose={() => setShowCreate(false)} title="Create Employee Grade" fields={createFields} onSubmit={handleCreate} isLoading={createMutation.isPending} initialValues={{ is_active: true }} />
       <CrudModal isOpen={!!editRecord} onClose={() => setEditRecord(null)} title="Edit Employee Grade" fields={createFields} onSubmit={handleEdit} isLoading={editLoading} initialValues={editRecord ?? {}} />
       <ConfirmDialog isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={() => { deleteMutation.mutate(deleteId!, { onSuccess: () => setDeleteId(null) }); }} title="Delete Employee Grade" message="Are you sure? This action cannot be undone." confirmLabel="Delete" variant="destructive" isLoading={deleteMutation.isPending} />
-    </div>
+    </PageContainer>
   );
 }

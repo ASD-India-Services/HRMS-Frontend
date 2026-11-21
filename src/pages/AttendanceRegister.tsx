@@ -11,6 +11,9 @@ import { useMemo, useState } from 'react';
 import { createCrudHooks } from '@/hooks/useCrud';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { StatCard } from '@/components/ui/StatCard';
 
 const ENDPOINT = '/api/v1/attendance/register/';
 
@@ -122,34 +125,16 @@ export default function AttendanceRegister() {
   const onLeaveCount = results?.filter((r) => r.status === 'on_leave').length ?? 0;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink-primary">Attendance Register</h1>
-        <p className="mt-1 text-sm text-ink-secondary">
-          Daily attendance record for all employees. Employees without check-in are shown as absent.
-        </p>
-      </div>
+    <PageContainer>
+      <PageHeader title="Attendance Register" subtitle="Daily attendance record for all employees. Employees without check-in are shown as absent." />
 
       {/* Summary Cards */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-lg border border-divider bg-surface-paper p-3 shadow-sm">
-          <p className="text-xs font-medium text-ink-secondary">Total</p>
-          <p className="mt-1 text-xl font-bold text-ink-primary">{totalEmployees}</p>
-        </div>
-        <div className="rounded-lg border border-success-light bg-success-lighter p-3 shadow-sm">
-          <p className="text-xs font-medium text-success-main">Present</p>
-          <p className="mt-1 text-xl font-bold text-success-dark">{presentCount}</p>
-        </div>
-        <div className="rounded-lg border border-error-light bg-error-lighter p-3 shadow-sm">
-          <p className="text-xs font-medium text-error-main">Absent</p>
-          <p className="mt-1 text-xl font-bold text-error-dark">{absentCount}</p>
-        </div>
-        <div className="rounded-lg border border-warning-light bg-warning-lighter p-3 shadow-sm">
-          <p className="text-xs font-medium text-warning-main">Half Day / Leave</p>
-          <p className="mt-1 text-xl font-bold text-warning-dark">{halfDayCount + onLeaveCount}</p>
-        </div>
+      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <StatCard title="Total" value={totalEmployees} icon="employees" />
+        <StatCard title="Present" value={presentCount} icon="attendance" />
+        <StatCard title="Absent" value={absentCount} icon="leaveBlock" />
+        <StatCard title="Half Day / Leave" value={halfDayCount + onLeaveCount} icon="leaves" />
       </div>
-
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columns} />
       {queryResult.data && queryResult.data.count > 0 && (
@@ -161,6 +146,6 @@ export default function AttendanceRegister() {
           onPageSizeChange={setPageSize}
         />
       )}
-    </div>
+    </PageContainer>
   );
 }

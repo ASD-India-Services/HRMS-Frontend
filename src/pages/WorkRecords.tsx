@@ -9,10 +9,15 @@ import type {
   EmployeeWorkRecord,
   WorkRecordsFilterParams,
 } from '@/hooks/useWorkRecords';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { useToast } from '@/components/ui/Toast';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { StateView } from '@/components/ui/StateView';
 
 const MONTH_NAMES = [
   'January',
@@ -384,14 +389,11 @@ export default function WorkRecords() {
   } | null>(null);
 
   return (
-    <div className="p-6 bg-surface-neutral min-h-screen">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary tracking-tight">Work Records</h1>
-        </div>
-
-        <div className="flex items-center gap-6">
+    <PageContainer>
+      <PageHeader
+        title="Work Records"
+        actions={
+        <>
           <div className="text-sm font-semibold text-ink-primary">
             Date: <span className="font-bold text-ink-primary">{formattedToday}</span>
           </div>
@@ -401,13 +403,11 @@ export default function WorkRecords() {
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-error-main">Month</span>
               <Button variant="outlined" color="inherit"
-                type="button"
+                endIcon={<Iconify icon="leaves" />}
                 onClick={() => setIsMonthPickerOpen(!isMonthPickerOpen)}
               >
-                <span>
-                  {monthName}, {selectedYear}
-                </span>
-                <span className="text-ink-secondary">📅</span>
+                {monthName}, {selectedYear}
+                
               </Button>
             </div>
 
@@ -419,21 +419,9 @@ export default function WorkRecords() {
                     Select Month & Year
                   </span>
                   <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedYear((y) => y - 1)}
-                      className="p-1 rounded hover:bg-surface-neutral text-ink-secondary font-bold"
-                    >
-                      ‹
-                    </button>
+                    <IconButton icon="arrow-left" size="small" onClick={() => setSelectedYear((y) => y - 1)} aria-label="Previous year" />
                     <span className="text-sm font-bold text-ink-primary px-1">{selectedYear}</span>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedYear((y) => y + 1)}
-                      className="p-1 rounded hover:bg-surface-neutral text-ink-secondary font-bold"
-                    >
-                      ›
-                    </button>
+                    <IconButton icon="arrow-right" size="small" onClick={() => setSelectedYear((y) => y + 1)} aria-label="Next year" />
                   </div>
                 </div>
 
@@ -442,96 +430,59 @@ export default function WorkRecords() {
                     const mNum = idx + 1;
                     const isSelected = selectedMonth === mNum;
                     return (
-                      <button
+                      <Button
                         key={m}
-                        type="button"
+                        size="small"
+                        variant={isSelected ? 'contained' : 'text'}
+                        color={isSelected ? 'primary' : 'inherit'}
                         onClick={() => {
                           setSelectedMonth(mNum);
                           setPage(1);
                           setIsMonthPickerOpen(false);
                         }}
-                        className={`text-xs font-medium py-1.5 px-2 rounded-md transition-colors ${
-                          isSelected
-                            ? 'bg-primary-main text-primary-contrast font-bold'
-                            : 'hover:bg-primary-lighter text-ink-primary'
-                        }`}
                       >
                         {m.slice(0, 3)}
-                      </button>
+                      </Button>
                     );
                   })}
                 </div>
               </div>
             )}
           </div>
-        </div>
-      </div>
+        </>
+        }
+      />
 
       {/* Action Toolbar & Legend Bar */}
-      <div className="bg-surface-paper rounded-t-lg border border-b-0 border-divider p-3.5 flex flex-wrap items-center justify-between gap-4">
+      <Card className="border-b-0 p-3.5 flex flex-wrap items-center justify-between gap-4">
         {/* Left Actions: Export & Filter buttons in BLUE */}
         <div className="flex items-center gap-2.5 relative" ref={filterRef}>
           {/* Blue Export Button */}
           <Button
-            type="button"
+            startIcon={<Iconify icon="download" />}
             onClick={handleExportCSV}
             disabled={!canExport}
             title={!canExport ? 'Export permission required' : 'Export Work Records to CSV'}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-              />
-            </svg>
-            <span>Export</span>
+            Export
           </Button>
 
           {/* Filter Button */}
-          <button
-            type="button"
+          <Button
+            variant={activeFilterCount > 0 ? 'soft' : 'outlined'}
+            color={activeFilterCount > 0 ? 'primary' : 'inherit'}
+            startIcon={<Iconify icon="filter" />}
             onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className={`inline-flex items-center gap-2 px-3.5 py-2 border rounded-md text-sm font-medium shadow-sm transition-colors ${
-              activeFilterCount > 0
-                ? 'border-primary-main bg-primary-lighter text-primary-dark font-semibold'
-                : 'border-divider bg-surface-neutral hover:bg-surface-neutral text-ink-primary'
-            }`}
           >
-            <svg className="w-4 h-4 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-              />
-            </svg>
-            <span>Filter {activeFilterCount > 0 && `(${activeFilterCount})`}</span>
-          </button>
+            Filter {activeFilterCount > 0 && `(${activeFilterCount})`}
+          </Button>
 
           {/* Filter Popover matching Screenshots 2, 3, 4 */}
           {isFilterOpen && (
             <div className="absolute top-12 left-0 w-[420px] max-w-[95vw] max-h-[85vh] overflow-y-auto bg-surface-paper border border-divider rounded-lg shadow-2xl p-5 z-50 animate-in fade-in zoom-in-95 duration-100">
               {/* Accordion 1: Employee */}
               <div className="border-b border-divider pb-3 mb-3">
-                <button
-                  type="button"
-                  onClick={() => setFilterEmployeeOpen(!filterEmployeeOpen)}
-                  className="w-full flex items-center justify-between text-sm font-bold text-ink-primary py-1"
-                >
-                  <span>Employee</span>
-                  <svg
-                    className={`w-4 h-4 text-ink-secondary transition-transform ${
-                      filterEmployeeOpen ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+                <Button variant="text" color="inherit" onClick={() => setFilterEmployeeOpen(!filterEmployeeOpen)} className="w-full !justify-between" endIcon={<Iconify icon="chevron-down" className={`transition-transform ${filterEmployeeOpen ? 'rotate-180' : ''}`} />}>Employee</Button>
 
                 {filterEmployeeOpen && (
                   <div className="grid grid-cols-2 gap-3 mt-3">
@@ -603,23 +554,7 @@ export default function WorkRecords() {
 
               {/* Accordion 2: Work Info */}
               <div className="border-b border-divider pb-3 mb-3">
-                <button
-                  type="button"
-                  onClick={() => setFilterWorkInfoOpen(!filterWorkInfoOpen)}
-                  className="w-full flex items-center justify-between text-sm font-bold text-ink-primary py-1"
-                >
-                  <span>Work Info</span>
-                  <svg
-                    className={`w-4 h-4 text-ink-secondary transition-transform ${
-                      filterWorkInfoOpen ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+                <Button variant="text" color="inherit" onClick={() => setFilterWorkInfoOpen(!filterWorkInfoOpen)} className="w-full !justify-between" endIcon={<Iconify icon="chevron-down" className={`transition-transform ${filterWorkInfoOpen ? 'rotate-180' : ''}`} />}>Work Info</Button>
 
                 {filterWorkInfoOpen && (
                   <div className="grid grid-cols-2 gap-3 mt-3">
@@ -737,23 +672,7 @@ export default function WorkRecords() {
 
               {/* Accordion 3: Advanced */}
               <div className="pb-4 mb-3">
-                <button
-                  type="button"
-                  onClick={() => setFilterAdvancedOpen(!filterAdvancedOpen)}
-                  className="w-full flex items-center justify-between text-sm font-bold text-ink-primary py-1"
-                >
-                  <span>Advanced</span>
-                  <svg
-                    className={`w-4 h-4 text-ink-secondary transition-transform ${
-                      filterAdvancedOpen ? 'rotate-180' : ''
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+                <Button variant="text" color="inherit" onClick={() => setFilterAdvancedOpen(!filterAdvancedOpen)} className="w-full !justify-between" endIcon={<Iconify icon="chevron-down" className={`transition-transform ${filterAdvancedOpen ? 'rotate-180' : ''}`} />}>Advanced</Button>
 
                 {filterAdvancedOpen && (
                   <div className="grid grid-cols-2 gap-3 mt-3">
@@ -847,13 +766,9 @@ export default function WorkRecords() {
                 >
                   Filter
                 </Button>
-                <button
-                  type="button"
-                  onClick={handleResetFilters}
-                  className="bg-surface-neutral hover:bg-grey-200 text-ink-primary text-sm font-medium py-2 px-3 rounded transition-colors"
-                >
+                <Button variant="text" color="inherit" onClick={handleResetFilters}>
                   Reset
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -882,10 +797,10 @@ export default function WorkRecords() {
             <span>Absent</span>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Monthly Attendance Matrix Grid Table */}
-      <div className="bg-surface-paper border border-divider rounded-b-lg shadow-sm overflow-hidden">
+      <Card className="overflow-hidden">
         <div className="overflow-x-auto relative min-h-[400px]">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-24 text-ink-secondary">
@@ -903,12 +818,7 @@ export default function WorkRecords() {
               </Button>
             </div>
           ) : !data?.results || data.results.length === 0 ? (
-            <div className="py-20 text-center text-ink-secondary">
-              <p className="text-base font-semibold text-ink-primary">No work records found</p>
-              <p className="text-xs text-ink-secondary mt-1">
-                No active employee attendance records found for {monthName} {selectedYear}.
-              </p>
-            </div>
+            <StateView icon="inbox" title="No work records found" description={`No active employee attendance records found for ${monthName} ${selectedYear}.`} />
           ) : (
             <table className="w-full border-collapse text-left text-xs">
               <thead>
@@ -1157,7 +1067,7 @@ export default function WorkRecords() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </Card>
+    </PageContainer>
   );
 }

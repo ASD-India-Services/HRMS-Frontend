@@ -8,10 +8,12 @@ import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const ENDPOINT = '/api/v1/leaves/adjustments/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -182,7 +184,7 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
       <div className="p-6 min-h-0 flex-1 overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h2 id="LeaveAdjustments-modal-title-1" className="text-lg font-semibold">Create Leave Adjustment</h2>
-          <button onClick={onClose} className="text-ink-disabled hover:text-ink-secondary text-xl">&times;</button>
+          <IconButton icon="close" size="small" onClick={onClose} aria-label="Close" />
         </div>
 
         {error && (
@@ -289,7 +291,7 @@ function CreateAdjustmentModal({ isOpen, onClose, onSuccess }: { isOpen: boolean
         </div>
 
         <div className="mt-5 flex justify-end gap-2">
-          <button className="px-4 py-2 text-sm rounded border border-divider hover:bg-surface-neutral" onClick={onClose}>Cancel</button>
+          <Button variant="outlined" color="inherit" onClick={onClose}>Cancel</Button>
           <Button type="button"
             disabled={submitting || !selectedEmployee || !selectedLeaveType || !days || !reason.trim()}
             onClick={handleSubmit}
@@ -339,11 +341,8 @@ export default function LeaveAdjustments() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-ink-primary">Leave Adjustments</h1><p className="mt-1 text-sm text-ink-secondary">Manual leave balance adjustments</p></div>
-        <CreateButton permission="leave_adjustments.create" label="Create Adjustment" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Leave Adjustments" subtitle="Manual leave balance adjustments" actions={<CreateButton permission="leave_adjustments.create" label="Create Adjustment" onClick={() => setShowCreate(true)} />} />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
@@ -383,6 +382,6 @@ export default function LeaveAdjustments() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

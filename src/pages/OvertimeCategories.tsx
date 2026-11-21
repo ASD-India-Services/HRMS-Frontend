@@ -7,6 +7,8 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const ENDPOINT = '/api/v1/overtime-categories/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -53,17 +55,14 @@ export default function OvertimeCategories() {
   const handleEdit = async (data: Record<string, unknown>) => { if (!editRecord) return; setEditLoading(true); try { await api.patch(`${ENDPOINT}${editRecord.id}/`, data); setEditRecord(null); queryResult.refetch(); } finally { setEditLoading(false); } };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-ink-primary">Overtime Categories</h1><p className="mt-1 text-sm text-ink-secondary">Manage overtime categories used by overtime types</p></div>
-        <CreateButton permission="overtime_categories.create" label="Create Category" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Overtime Categories" subtitle="Manage overtime categories used by overtime types" actions={<CreateButton permission="overtime_categories.create" label="Create Category" onClick={() => setShowCreate(true)} />} />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
       <CrudModal isOpen={showCreate} onClose={() => setShowCreate(false)} title="Create Overtime Category" fields={createFields} onSubmit={handleCreate} isLoading={createMutation.isPending} />
       <CrudModal isOpen={!!editRecord} onClose={() => setEditRecord(null)} title="Edit Overtime Category" fields={createFields} initialValues={editRecord ?? undefined} onSubmit={handleEdit} isLoading={editLoading} />
       <ConfirmDialog isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={() => { if (deleteId) deleteMutation.mutate(deleteId, { onSuccess: () => setDeleteId(null) }); }} title="Delete Overtime Category" message="Delete this overtime category?" confirmLabel="Delete" variant="destructive" isLoading={deleteMutation.isPending} />
-    </div>
+    </PageContainer>
   );
 }

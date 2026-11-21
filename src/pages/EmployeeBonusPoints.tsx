@@ -12,9 +12,14 @@ import {
   type EmployeeBonusPoint,
 } from '@/hooks/useEmployeeBonusPoints';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { StateView } from '@/components/ui/StateView';
+import { Iconify } from '@/components/Iconify';
 
 type GroupByOption =
   | 'Select'
@@ -270,21 +275,13 @@ export default function EmployeeBonusPoints() {
   const activeGroupsCount = groupByField === 'Select' ? 0 : 1;
 
   return (
-    <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-4">
-      {/* ── Top Bar matching Screenshot 1 & 3 ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <h1 className="text-xl sm:text-2xl font-bold text-ink-primary tracking-tight">
-          Employee Bonus Point
-        </h1>
-
-        <div className="flex items-center gap-2 self-end sm:self-auto">
+    <PageContainer>
+      <PageHeader title="Employee Bonus Point" actions={
+        <>
+<div className="flex items-center gap-2 self-end sm:self-auto">
           {/* Search Input matching Screenshot 1 */}
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-ink-disabled">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
+            <Iconify icon="search" width={16} className="pointer-events-none absolute left-2.5 top-2.5 text-ink-disabled" />
             <Input
               type="text"
               placeholder="Search"
@@ -297,13 +294,10 @@ export default function EmployeeBonusPoints() {
           {/* Group By(1) Popover Trigger Button */}
           <div className="relative" ref={groupByRef}>
             <Button variant="outlined" color="inherit" size="small"
-              type="button"
+              startIcon={<Iconify icon="chart" />}
               onClick={() => setIsGroupByOpen((prev) => !prev)}
             >
-              <svg className="w-3.5 h-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              <span>Group By({activeGroupsCount})</span>
+              Group By({activeGroupsCount})
             </Button>
 
             {/* Popover matching Screenshot 3 */}
@@ -335,58 +329,43 @@ export default function EmployeeBonusPoints() {
           {/* + Create Button (Blue) */}
           {canCreate && (
             <Button size="small"
-              type="button"
+              startIcon={<Iconify icon="plus" />}
               onClick={handleOpenCreate}
             >
-              <span>+ Create</span>
+              Create
             </Button>
           )}
         </div>
-      </div>
+        </>
+      } />
 
       {/* ── Active Filter Bar ── */}
       {groupByField !== 'Select' && (
         <div className="flex items-center justify-end gap-2 pt-1 pb-1">
           {/* White Filters: Badge */}
-          <span className="bg-surface-paper border border-divider text-ink-primary text-[11px] font-bold px-3 py-1 rounded-full shadow-2xs">
+          <span className="rounded-full bg-surface-neutral px-3 py-1 text-[11px] font-bold text-ink-primary">
             Filters:
           </span>
 
-          {/* Active Field Chip with ⓧ */}
-          <div className="bg-surface-paper border border-divider text-ink-primary text-xs px-2.5 py-0.5 rounded-full flex items-center gap-1.5 shadow-2xs">
-            <span className="text-ink-primary font-normal">Field : {groupByField}</span>
-            <button
-              type="button"
-              onClick={() => setGroupByField('Select')}
-              className="text-ink-disabled hover:text-ink-secondary font-bold text-xs ml-0.5 transition-colors cursor-pointer"
-              title="Remove filter"
-            >
-              ⓧ
-            </button>
-          </div>
+          {/* Active Field Chip */}
+          <span className="inline-flex items-center gap-1 rounded-full bg-surface-neutral py-0.5 pl-3 pr-1 text-xs text-ink-primary">
+            Field : {groupByField}
+            <IconButton icon="close" size="small" onClick={() => setGroupByField('Select')} aria-label="Remove filter" />
+          </span>
 
           {/* Save Button (White) */}
           <Button variant="outlined" color="inherit" size="small"
-            type="button"
+            startIcon={<Iconify icon="download" />}
             onClick={() => {
               setSavedNotification('View preferences saved.');
               setTimeout(() => setSavedNotification(''), 3000);
             }}
           >
-            <svg className="w-3.5 h-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-            </svg>
-            <span>Save</span>
+            Save
           </Button>
 
-          {/* Clear Button (White ✕) */}
-          <Button variant="outlined" color="inherit" size="small"
-            type="button"
-            onClick={() => setGroupByField('Select')}
-            title="Clear filters"
-          >
-            ✕
-          </Button>
+          {/* Clear Button */}
+          <IconButton icon="close" size="small" onClick={() => setGroupByField('Select')} aria-label="Clear filters" />
         </div>
       )}
 
@@ -398,46 +377,33 @@ export default function EmployeeBonusPoints() {
 
       {/* ── Main Content Area: Empty State or Grouped / Flat View ── */}
       {isLoading ? (
-        <div className="bg-surface-paper border border-divider rounded-sm p-16 text-center shadow-xs">
+        <Card className="p-16 text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-main mb-2"></div>
           <p className="text-xs text-ink-secondary">Loading employee bonus points...</p>
-        </div>
+        </Card>
       ) : filteredBonusPoints.length === 0 ? (
         /* Empty State exactly matching Screenshot 1 */
-        <div className="bg-surface-paper border border-divider rounded-sm py-28 px-4 flex flex-col items-center justify-center text-center shadow-xs">
-          <svg
-            className="w-16 h-16 text-ink-disabled stroke-1 mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <circle cx="11" cy="11" r="7" strokeWidth="1.5" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M21 21l-5-5" />
-          </svg>
-
-          <h2 className="text-xl font-bold text-ink-primary mb-1 tracking-tight">
-            No Records found
-          </h2>
-          <p className="text-xs text-ink-secondary font-normal">
-            No records found.
-          </p>
-
-          {canCreate && (
-            <Button type="button" size="small"
-              onClick={handleOpenCreate}
-              className="mt-4"
-            >
-              + Award First Bonus Point
-            </Button>
-          )}
-        </div>
+        <Card>
+          <StateView
+            icon="search"
+            title="No Records found"
+            description="No records found."
+            action={
+              canCreate && (
+                <Button size="small" startIcon={<Iconify icon="plus" />} onClick={handleOpenCreate}>
+                  Award First Bonus Point
+                </Button>
+              )
+            }
+          />
+        </Card>
       ) : groupByField !== 'Select' && groupedData ? (
         /* Grouped View */
         <div className="space-y-4">
           {groupedData.map((group) => (
-            <div
+            <Card
               key={group.groupKey}
-              className="bg-surface-paper border border-divider rounded-sm shadow-xs overflow-hidden"
+              className="overflow-hidden"
             >
               {/* Group Header */}
               <div className="px-4 py-3 bg-surface-neutral/75 border-b border-divider flex flex-wrap items-center justify-between gap-2">
@@ -453,7 +419,7 @@ export default function EmployeeBonusPoints() {
 
                 <div className="flex items-center gap-2">
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-warning-lighter text-warning-dark border border-warning-light">
-                    ⭐ Total: {group.totalPoints} pts
+                    <Iconify icon="bonusPoints" width={14} /> Total: {group.totalPoints} pts
                   </span>
                 </div>
               </div>
@@ -502,28 +468,10 @@ export default function EmployeeBonusPoints() {
                           <td className="py-2.5 px-4 text-right whitespace-nowrap">
                             <div className="flex items-center justify-end gap-1.5">
                               {canEdit && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleOpenEdit(item)}
-                                  className="p-1 text-primary-main hover:text-primary-dark hover:bg-primary-lighter rounded transition-colors"
-                                  title="Edit Bonus Point"
-                                >
-                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                  </svg>
-                                </button>
+                                <IconButton icon="pencil" size="small" onClick={() => handleOpenEdit(item)} aria-label="Edit Bonus Point" />
                               )}
                               {canDelete && (
-                                <button
-                                  type="button"
-                                  onClick={() => setDeleteConfirmId(item.id)}
-                                  className="p-1 text-error-main hover:text-error-dark hover:bg-error-lighter rounded transition-colors"
-                                  title="Delete Bonus Point"
-                                >
-                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                  </svg>
-                                </button>
+                                <IconButton icon="trash" size="small" color="error" onClick={() => setDeleteConfirmId(item.id)} aria-label="Delete Bonus Point" />
                               )}
                             </div>
                           </td>
@@ -533,12 +481,12 @@ export default function EmployeeBonusPoints() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       ) : (
         /* Flat List View (when Group By is Select) */
-        <div className="bg-surface-paper border border-divider rounded-sm shadow-xs overflow-hidden">
+        <Card className="overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead className="bg-surface-neutral border-b border-divider text-ink-secondary uppercase text-[10px] font-semibold tracking-wider">
@@ -585,28 +533,10 @@ export default function EmployeeBonusPoints() {
                       <td className="py-2.5 px-4 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
                           {canEdit && (
-                            <button
-                              type="button"
-                              onClick={() => handleOpenEdit(item)}
-                              className="p-1 text-primary-main hover:text-primary-dark hover:bg-primary-lighter rounded transition-colors"
-                              title="Edit"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                              </svg>
-                            </button>
+                            <IconButton icon="pencil" size="small" onClick={() => handleOpenEdit(item)} aria-label="Edit" />
                           )}
                           {canDelete && (
-                            <button
-                              type="button"
-                              onClick={() => setDeleteConfirmId(item.id)}
-                              className="p-1 text-error-main hover:text-error-dark hover:bg-error-lighter rounded transition-colors"
-                              title="Delete"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                            </button>
+                            <IconButton icon="trash" size="small" color="error" onClick={() => setDeleteConfirmId(item.id)} aria-label="Delete" />
                           )}
                         </div>
                       </td>
@@ -616,7 +546,7 @@ export default function EmployeeBonusPoints() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* ── Create / Edit Modal matching Screenshot 2 ── */}
@@ -631,16 +561,10 @@ export default function EmployeeBonusPoints() {
               <h3 id="EmployeeBonusPoints-modal-title-1" className="text-base font-bold text-ink-primary tracking-tight">
                 {editingRecord ? 'Edit Employee Bonus Point' : 'Create Employee Bonus Point'}
               </h3>
-              <button
-                type="button"
-                onClick={() => {
+              <IconButton icon="close" size="small" onClick={() => {
                   setIsModalOpen(false);
                   resetForm();
-                }}
-                className="text-ink-disabled hover:text-ink-secondary text-lg font-semibold leading-none cursor-pointer"
-              >
-                ✕
-              </button>
+                }} aria-label="Close" />
             </div>
 
             {/* Modal Form */}
@@ -727,7 +651,7 @@ export default function EmployeeBonusPoints() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }
 

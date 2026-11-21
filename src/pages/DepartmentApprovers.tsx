@@ -14,6 +14,8 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 interface DepartmentApprover {
   id: string;
@@ -134,14 +136,8 @@ export default function DepartmentApprovers() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Department Approvers</h1>
-          <p className="mt-1 text-sm text-ink-secondary">Configure approval workflows per department</p>
-        </div>
-        <CreateButton permission="department_approvers.create" label="Create Approver" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Department Approvers" subtitle="Configure approval workflows per department" actions={<CreateButton permission="department_approvers.create" label="Create Approver" onClick={() => setShowCreate(true)} />} />
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
@@ -153,6 +149,6 @@ export default function DepartmentApprovers() {
       <CrudModal isOpen={showCreate} onClose={() => setShowCreate(false)} title="Create Department Approver" fields={createFields} onSubmit={handleCreate} isLoading={createMutation.isPending} initialValues={{ is_active: true }} />
       <CrudModal isOpen={!!editRecord} onClose={() => setEditRecord(null)} title="Edit Department Approver" fields={createFields} onSubmit={handleEdit} isLoading={editLoading} initialValues={editRecord ?? {}} />
       <ConfirmDialog isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={() => { deleteMutation.mutate(deleteId!, { onSuccess: () => setDeleteId(null) }); }} title="Delete Approver" message="Are you sure? This action cannot be undone." confirmLabel="Delete" variant="destructive" isLoading={deleteMutation.isPending} />
-    </div>
+    </PageContainer>
   );
 }

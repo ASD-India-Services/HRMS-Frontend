@@ -9,6 +9,9 @@ import { ShiftSchedule } from './shifts/ShiftSchedule';
 import { ShiftRoster } from './shifts/ShiftRoster';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Tabs } from '@/components/ui/Tabs';
 
 type Tab = 'schedule' | 'roster';
 
@@ -41,49 +44,21 @@ export default function Shifts() {
           ? 'schedule'
           : 'roster';
 
-  const linkClasses = (isActive: boolean) =>
-    `inline-flex items-center border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-      isActive
-        ? 'border-primary-main text-primary-dark'
-        : 'border-transparent text-ink-secondary hover:border-divider hover:text-ink-primary'
-    }`;
+  const tabItems: { value: Tab; label: string }[] = [
+    ...(canViewOwn ? [{ value: 'schedule' as const, label: 'My Schedule' }] : []),
+    ...(canViewTeam ? [{ value: 'roster' as const, label: 'Team Roster' }] : []),
+  ];
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-ink-primary">Shift Management</h1>
-      <p className="mt-1 text-sm text-ink-secondary">
-        View shift schedules, assignments, and roster planning.
-      </p>
+    <PageContainer>
+      <PageHeader title="Shift Management" subtitle="View shift schedules, assignments, and roster planning." />
 
-      <div className="mt-4">
-        <nav className="border-b border-divider" aria-label="Shift navigation">
-          <div className="flex gap-0">
-            {canViewOwn && (
-              <button
-                type="button"
-                onClick={() => setActiveTab('schedule')}
-                className={linkClasses(effectiveTab === 'schedule')}
-              >
-                My Schedule
-              </button>
-            )}
-            {canViewTeam && (
-              <button
-                type="button"
-                onClick={() => setActiveTab('roster')}
-                className={linkClasses(effectiveTab === 'roster')}
-              >
-                Team Roster
-              </button>
-            )}
-          </div>
-        </nav>
-      </div>
+      <Tabs items={tabItems} value={effectiveTab} onChange={setActiveTab} aria-label="Shift navigation" />
 
-      <div className="mt-6">
+      <div>
         {effectiveTab === 'schedule' && canViewOwn && <ShiftSchedule />}
         {effectiveTab === 'roster' && canViewTeam && <ShiftRoster />}
       </div>
-    </div>
+    </PageContainer>
   );
 }

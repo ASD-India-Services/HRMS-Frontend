@@ -18,10 +18,16 @@ import {
 import type { CompensatoryLeaveRequest } from '@/hooks/useCompensatoryLeave';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Tabs } from '@/components/ui/Tabs';
+import { StateView } from '@/components/ui/StateView';
 
 export default function CompensatoryLeave() {
   const { showToast } = useToast();
@@ -304,38 +310,18 @@ export default function CompensatoryLeave() {
   // If user clicked comments on a request, show the Comments view matching user screenshot
   if (commentsViewReq) {
     return (
-      <div className="p-8 bg-surface-paper min-h-screen">
-        {/* Top Header matching user screenshot: > Comments */}
-        <div className="flex items-center justify-between pb-4 mb-4">
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setCommentsViewReq(null);
-                setNewCommentText('');
-              }}
-              className="flex items-center gap-2 text-2xl font-bold text-ink-primary hover:text-primary-main transition-colors cursor-pointer"
-            >
-              <span className="text-ink-secondary font-bold">&gt;</span>
-              <span>Comments</span>
-            </button>
-            <span className="text-xs text-ink-secondary font-medium">
-              — {commentsViewReq.employee_name} ({commentsViewReq.formatted_work_date})
-            </span>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => {
+      <PageContainer>
+        <PageHeader
+          title="Comments"
+          subtitle={`${commentsViewReq.employee_name} (${commentsViewReq.formatted_work_date})`}
+          actions={
+            <Button variant="soft" size="small" startIcon={<Iconify icon="arrow-left" />} onClick={() => {
               setCommentsViewReq(null);
               setNewCommentText('');
-            }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary-main hover:text-primary-dark bg-primary-lighter hover:bg-primary-lighter rounded-md transition-colors cursor-pointer"
-          >
-            ← Back to Requests
-          </button>
-        </div>
-
+            }}>Back to Requests
+            </Button>
+          }
+        />
         {/* Input box matching screenshot: "Comment here" with full width border */}
         <form onSubmit={handlePostComment} className="mb-4">
           <div className="relative">
@@ -361,39 +347,11 @@ export default function CompensatoryLeave() {
 
         {/* Body: Empty State or Comments List */}
         {commentsList.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="text-base font-medium text-ink-primary mb-8">
-              There are no comments to show.
-            </p>
-
-            {/* Illustration matching screenshot: speech bubble with user avatar & pencil */}
-            <div className="w-28 h-28 flex items-center justify-center">
-              <svg
-                className="w-24 h-24 text-ink-primary"
-                viewBox="0 0 64 64"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.4}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                {/* Speech bubble outline */}
-                <path d="M12 20C12 15.58 15.58 12 20 12H44C48.42 12 52 15.58 52 20V38C52 42.42 48.42 46 44 46H20L12 53V20Z" />
-                {/* User avatar head and shoulders inside bubble */}
-                <circle cx="21" cy="22" r="3.5" />
-                <path d="M15 31C15 28 17.5 26.5 21 26.5C24.5 26.5 27 28 27 31" />
-                {/* Text lines */}
-                <path d="M31 23H41" />
-                <path d="M31 29H41" />
-                {/* Pencil angled across */}
-                <path d="M48 18L32 38L27 41L30 36L46 16L48 18Z" strokeWidth={2.4} fill="white" />
-              </svg>
-            </div>
-          </div>
+          <StateView icon="feedback" title="There are no comments to show." />
         ) : (
           <div className="space-y-4 max-w-3xl">
             {commentsList.map((c) => (
-              <div key={c.id} className="p-4 bg-surface-paper border border-divider rounded-md shadow-2xs">
+              <Card key={c.id} className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <div className="w-7 h-7 rounded-full bg-primary-lighter text-primary-dark flex items-center justify-center text-xs font-bold">
@@ -404,42 +362,27 @@ export default function CompensatoryLeave() {
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] text-ink-disabled">{c.created_at_display}</span>
                     {(isApproverOrAdmin || (currentEmployee && c.author === currentEmployee.id)) && (
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteComment(c.id)}
-                        className="text-ink-disabled hover:text-error-main transition-colors p-1"
-                        title="Delete comment"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
+                      <IconButton icon="trash" size="small" color="error" onClick={() => handleDeleteComment(c.id)} aria-label="Delete comment" />
                     )}
                   </div>
                 </div>
                 <p className="text-xs text-ink-primary pl-9 whitespace-pre-wrap">{c.comment}</p>
-              </div>
+              </Card>
             ))}
           </div>
         )}
-      </div>
+      </PageContainer>
     );
   }
 
   const requests = data?.results || [];
 
   return (
-    <div className="p-6 bg-surface-neutral min-h-screen">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary tracking-tight">
-            Compensatory Leave Requests
-          </h1>
-        </div>
-
-        {/* Right Top Actions: Search, Filter, Blue + Create */}
-        <div className="flex items-center gap-3">
+    <PageContainer>
+      <PageHeader
+        title="Compensatory Leave Requests"
+        actions={
+        <>
           {/* Search Input */}
           <div className="relative">
             <Input
@@ -452,42 +395,20 @@ export default function CompensatoryLeave() {
               placeholder="Search"
               className="w-48 sm:w-56 pl-8 pr-3"
             />
-            <svg
-              className="w-4 h-4 text-ink-disabled absolute left-2.5 top-2.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+            <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
           </div>
 
           {/* Filter Button */}
           <div className="relative">
-            <button
-              type="button"
+            <Button
+              variant={statusFilter ? 'soft' : 'outlined'}
+              color={statusFilter ? 'primary' : 'inherit'}
+              size="small"
+              startIcon={<Iconify icon="filter" />}
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className={`inline-flex items-center gap-1.5 px-3.5 py-2 border rounded-md text-xs font-semibold shadow-sm transition-colors ${
-                statusFilter
-                  ? 'border-primary-main bg-primary-lighter text-primary-dark'
-                  : 'border-divider bg-surface-paper hover:bg-surface-neutral text-ink-primary'
-              }`}
             >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                />
-              </svg>
-              <span>Filter {statusFilter && `(${statusFilter})`}</span>
-            </button>
+              Filter {statusFilter && `(${statusFilter})`}
+            </Button>
 
             {isFilterOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-surface-paper border border-divider rounded-md shadow-xl p-3 z-30">
@@ -496,22 +417,20 @@ export default function CompensatoryLeave() {
                 </p>
                 <div className="space-y-1">
                   {['', 'approved', 'requested', 'rejected'].map((s) => (
-                    <button
+                    <Button
                       key={s}
-                      type="button"
+                      size="small"
+                      variant={statusFilter === s ? 'contained' : 'text'}
+                      color={statusFilter === s ? 'primary' : 'inherit'}
+                      className="w-full !justify-start"
                       onClick={() => {
                         setStatusFilter(s);
                         setIsFilterOpen(false);
                         setPage(1);
                       }}
-                      className={`w-full text-left text-xs px-2 py-1.5 rounded transition-colors ${
-                        statusFilter === s
-                          ? 'bg-primary-main text-primary-contrast font-bold'
-                          : 'hover:bg-surface-neutral text-ink-primary'
-                      }`}
                     >
                       {s === '' ? 'All Statuses' : s.charAt(0).toUpperCase() + s.slice(1)}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -537,8 +456,9 @@ export default function CompensatoryLeave() {
           >
             <span>+ Create</span>
           </Button>
-        </div>
-      </div>
+        </>
+        }
+      />
 
       {/* Status Indicators Legend matching Screenshots 1, 2, 4 */}
       <div className="flex justify-end items-center gap-4 py-2 text-xs font-medium text-ink-primary">
@@ -556,43 +476,20 @@ export default function CompensatoryLeave() {
         </div>
       </div>
 
-      {/* Tabs matching Screenshots */}
-      <div className="bg-surface-paper rounded-t-lg border border-b-0 border-divider flex items-center">
-        <button
-          type="button"
-          onClick={() => {
-            setActiveTab('my');
-            setPage(1);
-          }}
-          className={`py-3 px-6 text-sm font-semibold transition-colors border-b-2 ${
-            activeTab === 'my'
-              ? 'border-primary-main text-primary-main'
-              : 'border-transparent text-ink-secondary hover:text-ink-primary'
-          }`}
-        >
-          My Compensatory Leave Requests
-        </button>
-
-        {isApproverOrAdmin && (
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab('all');
-              setPage(1);
-            }}
-            className={`py-3 px-6 text-sm font-semibold transition-colors border-b-2 ${
-              activeTab === 'all'
-                ? 'border-primary-main text-primary-main'
-                : 'border-transparent text-ink-secondary hover:text-ink-primary'
-            }`}
-          >
-            Compensatory Leave Requests
-          </button>
-        )}
-      </div>
-
+      <Tabs
+        aria-label="Request views"
+        items={[
+          { value: 'my', label: 'My Compensatory Leave Requests' },
+          ...(isApproverOrAdmin ? [{ value: 'all' as const, label: 'Compensatory Leave Requests' }] : []),
+        ]}
+        value={activeTab}
+        onChange={(tab) => {
+          setActiveTab(tab);
+          setPage(1);
+        }}
+      />
       {/* Main Content: Table or Empty State */}
-      <div className="bg-surface-paper border border-divider rounded-b-lg shadow-sm overflow-hidden">
+      <Card className="overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-24 text-ink-secondary">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-main mb-3"></div>
@@ -600,23 +497,7 @@ export default function CompensatoryLeave() {
           </div>
         ) : requests.length === 0 ? (
           /* Empty State matching Screenshot 1 */
-          <div className="py-24 flex flex-col items-center justify-center text-center">
-            {/* 3 Checklist Icons illustration */}
-            <div className="flex flex-col items-center gap-1 text-ink-primary mb-4 opacity-80">
-              <div className="flex items-center gap-2 text-base font-bold">
-                <span>☑ 👤 ═</span>
-              </div>
-              <div className="flex items-center gap-2 text-base font-bold">
-                <span>☑ 👤 ═</span>
-              </div>
-              <div className="flex items-center gap-2 text-base font-bold">
-                <span>☑ 👤 ═</span>
-              </div>
-            </div>
-            <p className="text-sm font-medium text-ink-secondary">
-              You have No leave requests for this filter.
-            </p>
-          </div>
+          <StateView icon="inbox" title="You have No leave requests for this filter." />
         ) : (
           /* Table View matching Screenshots 2 & 4 */
           <div className="overflow-x-auto">
@@ -624,15 +505,15 @@ export default function CompensatoryLeave() {
               <thead>
                 <tr className="bg-surface-neutral/80 border-b border-divider text-ink-primary font-semibold">
                   <th className="py-3 px-4 min-w-[200px]">
-                    <span className="inline-flex items-center gap-1">⇅ Employee</span>
+                    <span className="inline-flex items-center gap-1">Employee</span>
                   </th>
                   <th className="py-3 px-3 min-w-[150px]">Leave Type</th>
                   <th className="py-3 px-3 min-w-[140px]">Attendance Dates</th>
                   <th className="py-3 px-3 min-w-[120px]">
-                    <span className="inline-flex items-center gap-1">⇅ Requested Days</span>
+                    <span className="inline-flex items-center gap-1">Requested Days</span>
                   </th>
                   <th className="py-3 px-3 min-w-[160px]">
-                    <span className="inline-flex items-center gap-1">⇅ Created By</span>
+                    <span className="inline-flex items-center gap-1">Created By</span>
                   </th>
                   <th className="py-3 px-3 min-w-[110px]">Status</th>
                   <th className="py-3 px-3 min-w-[180px]">Description</th>
@@ -662,8 +543,8 @@ export default function CompensatoryLeave() {
                           }`}
                         />
                         <div className="flex items-center gap-2.5 pl-1">
-                          <div className="w-7 h-7 rounded-full bg-grey-200 text-ink-secondary flex items-center justify-center text-xs font-bold shrink-0">
-                            👤
+                          <div className="w-7 h-7 rounded-full bg-grey-200 text-ink-secondary flex items-center justify-center shrink-0">
+                            <Iconify icon="user" width={16} />
                           </div>
                           <div className="flex flex-col">
                             <span className="font-semibold text-ink-primary">
@@ -720,27 +601,24 @@ export default function CompensatoryLeave() {
 
                       {/* Comment */}
                       <td className="py-3 px-3 text-center">
-                        <button
-                          type="button"
+                        <IconButton
+                          icon="feedback"
+                          size="small"
                           onClick={() => {
                             setCommentsViewReq(req);
                             setNewCommentText('');
                           }}
-                          className="p-1.5 rounded text-error-main hover:text-error-dark hover:bg-error-lighter transition-colors cursor-pointer"
-                          title="View / Add Comments"
-                        >
-                          <svg className="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
-                        </button>
+                          aria-label="View / Add Comments"
+                        />
                       </td>
 
                       {/* Actions: Edit & Delete */}
                       <td className="py-3 px-3 text-center">
-                        <div className="inline-flex items-center border border-divider rounded divide-x divide-divider bg-surface-paper shadow-2xs">
+                        <div className="inline-flex items-center gap-1">
                           {/* Edit Button */}
-                          <button
-                            type="button"
+                          <IconButton
+                            icon="pencil"
+                            size="small"
                             onClick={() => {
                               setEditReq(req);
                               setEditAttendance(req.work_date ? req.work_date.split('T')[0] : '');
@@ -749,34 +627,18 @@ export default function CompensatoryLeave() {
                               setIsEditOpen(true);
                             }}
                             disabled={req.status === 'approved'}
-                            className={`p-1.5 transition-colors ${
-                              req.status === 'approved'
-                                ? 'text-grey-300 cursor-not-allowed'
-                                : 'text-ink-secondary hover:text-primary-main hover:bg-primary-lighter cursor-pointer'
-                            }`}
-                            title={req.status === 'approved' ? 'Approved request cannot be edited' : 'Edit Request'}
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                          </button>
+                            aria-label={req.status === 'approved' ? 'Approved request cannot be edited' : 'Edit Request'}
+                          />
 
                           {/* Delete Button */}
-                          <button
-                            type="button"
+                          <IconButton
+                            icon="trash"
+                            size="small"
+                            color="error"
                             onClick={() => handleDelete(req.id)}
                             disabled={req.status === 'approved'}
-                            className={`p-1.5 transition-colors ${
-                              req.status === 'approved'
-                                ? 'text-grey-300 cursor-not-allowed'
-                                : 'text-ink-secondary hover:text-error-main hover:bg-error-lighter cursor-pointer'
-                            }`}
-                            title={req.status === 'approved' ? 'Approved request cannot be deleted' : 'Delete Request'}
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
+                            aria-label={req.status === 'approved' ? 'Approved request cannot be deleted' : 'Delete Request'}
+                          />
                         </div>
                       </td>
 
@@ -789,30 +651,16 @@ export default function CompensatoryLeave() {
                             req.employee_id !== currentEmployee.id)) ? (
                           <div className="inline-flex items-center gap-1">
                             {canApprove && (
-                              <button
-                                type="button"
-                                onClick={() => {
+                              <IconButton icon="check" size="small" color="success" onClick={() => {
                                   setCommentModalReq(req);
                                   setConfirmAction('approve');
-                                }}
-                                className="w-7 h-7 rounded bg-success-main hover:bg-success-main text-primary-contrast flex items-center justify-center font-bold text-xs shadow-xs transition-colors"
-                                title="Approve Request"
-                              >
-                                ✓
-                              </button>
+                                }} aria-label="Approve Request" />
                             )}
                             {canReject && (
-                              <Button color="error" size="small"
-                                type="button"
-                                onClick={() => {
+                              <IconButton icon="close" size="small" color="error" onClick={() => {
                                   setCommentModalReq(req);
                                   setConfirmAction('reject');
-                                }}
-                                className="w-7"
-                                title="Reject Request"
-                              >
-                                ✕
-                              </Button>
+                                }} aria-label="Reject Request" />
                             )}
                           </div>
                         ) : (
@@ -870,7 +718,7 @@ export default function CompensatoryLeave() {
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Create Compensatory Leave Request Modal matching Screenshot 3 */}
       {isCreateOpen && (
@@ -881,13 +729,7 @@ export default function CompensatoryLeave() {
               <h2 id="CompensatoryLeave-modal-title-1" className="text-lg font-bold text-ink-primary">
                 Create Compensatory Leave Request
               </h2>
-              <button
-                type="button"
-                onClick={() => setIsCreateOpen(false)}
-                className="text-ink-disabled hover:text-ink-secondary text-lg font-bold p-1"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setIsCreateOpen(false)} aria-label="Close" />
             </div>
 
             {/* Modal Form */}
@@ -1003,16 +845,10 @@ export default function CompensatoryLeave() {
               <h3 id="CompensatoryLeave-modal-title-2" className="text-sm font-bold text-ink-primary">
                 Edit Compensatory Leave Request
               </h3>
-              <button
-                type="button"
-                onClick={() => {
+              <IconButton icon="close" size="small" onClick={() => {
                   setIsEditOpen(false);
                   setEditReq(null);
-                }}
-                className="text-ink-disabled hover:text-ink-secondary text-sm font-bold cursor-pointer"
-              >
-                ✕
-              </button>
+                }} aria-label="Close" />
             </div>
 
             <form onSubmit={handleEditSubmit} className="p-5 space-y-4">
@@ -1089,16 +925,10 @@ export default function CompensatoryLeave() {
                   ? 'Reject Compensatory Leave'
                   : 'Compensatory Leave Details'}
               </h3>
-              <button
-                type="button"
-                onClick={() => {
+              <IconButton icon="close" size="small" onClick={() => {
                   setCommentModalReq(null);
                   setConfirmAction(null);
-                }}
-                className="text-ink-disabled hover:text-ink-secondary text-sm font-bold"
-              >
-                ✕
-              </button>
+                }} aria-label="Close" />
             </div>
 
             <div className="p-4 space-y-3 text-xs">
@@ -1155,6 +985,6 @@ export default function CompensatoryLeave() {
           </div>
         </Modal>
       )}
-    </div>
+    </PageContainer>
   );
 }

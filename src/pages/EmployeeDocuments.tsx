@@ -7,6 +7,8 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const ENDPOINT = '/api/v1/employee-documents/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -95,15 +97,12 @@ export default function EmployeeDocuments() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-bold text-ink-primary">Employee Documents</h2>
-          <p className="mt-0.5 text-xs text-ink-secondary">Track and manage employee-submitted credentials, IDs, and certificates</p>
-        </div>
-        <CreateButton permission="documents.create" label="Add Document" onClick={() => setShowCreate(true)} />
-      </div>
-
+    <PageContainer>
+      <PageHeader
+        title="Employee Documents"
+        subtitle="Track and manage employee-submitted credentials, IDs, and certificates"
+        actions={<CreateButton permission="documents.create" label="Add Document" onClick={() => setShowCreate(true)} />}
+      />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && (
@@ -147,6 +146,6 @@ export default function EmployeeDocuments() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

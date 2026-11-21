@@ -18,9 +18,12 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Iconify } from '@/components/Iconify';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -72,16 +75,8 @@ function ComponentRowEditor({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-medium text-ink-primary">{label}</h4>
-        <button
-          type="button"
-          onClick={addRow}
-          className="inline-flex items-center gap-1 rounded-md bg-primary-lighter px-2.5 py-1.5 text-xs font-medium text-primary-dark hover:bg-primary-lighter"
-        >
-          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Add {label.slice(0, -1)}
-        </button>
+        <Button variant="soft" size="small" startIcon={<Iconify icon="plus" />} onClick={addRow}>Add {label.slice(0, -1)}
+        </Button>
       </div>
 
       {rows.length === 0 && (
@@ -129,16 +124,7 @@ function ComponentRowEditor({
             />
           )}
 
-          <button
-            type="button"
-            onClick={() => removeRow(index)}
-            className="rounded p-1 text-error-main hover:bg-error-lighter"
-            aria-label="Remove row"
-          >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
+          <IconButton icon="trash" size="small" color="error" onClick={() => removeRow(index)} aria-label="Remove row" />
         </div>
       ))}
     </div>
@@ -235,13 +221,9 @@ function SalaryStructureFormModal({
 
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-md border border-divider px-4 py-2 text-sm font-medium text-ink-primary hover:bg-surface-neutral"
-            >
+            <Button variant="outlined" color="inherit" onClick={onClose}>
               Cancel
-            </button>
+            </Button>
             <Button
               type="submit"
               disabled={isLoading || !formData.name.trim()}
@@ -392,14 +374,8 @@ export default function SalaryStructures() {
   }, [editRecord]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Salary Structures</h1>
-          <p className="mt-1 text-sm text-ink-secondary">Manage salary structures with earnings and deductions</p>
-        </div>
-        <CreateButton permission="salary_structures.create" label="Create Structure" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Salary Structures" subtitle="Manage salary structures with earnings and deductions" actions={<CreateButton permission="salary_structures.create" label="Create Structure" onClick={() => setShowCreate(true)} />} />
 
       <FilterBar
         filters={salaryStructuresCrudConfig.filters}
@@ -449,6 +425,6 @@ export default function SalaryStructures() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

@@ -9,9 +9,12 @@ import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
 import { Modal } from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Iconify } from '@/components/Iconify';
 
 const ENDPOINT = '/api/v1/leaves/policies/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -89,12 +92,9 @@ export default function LeavePolicies() {
       sortable: false,
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
-          <button
-            className="inline-flex items-center rounded px-2 py-1 text-xs font-medium text-primary-dark bg-primary-lighter hover:bg-primary-lighter"
-            onClick={() => openAllocations(row)}
-          >
+          <Button variant="soft" size="small" onClick={() => openAllocations(row)}>
             Allocations
-          </button>
+          </Button>
           <EditButton permission="leave_policies.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
           <DeleteButton permission="leave_policies.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
         </div>
@@ -154,13 +154,10 @@ export default function LeavePolicies() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Leave Policies</h1>
-          <p className="mt-1 text-sm text-ink-secondary">Manage leave allocation policy templates</p>
-        </div>
-        <div className="flex items-center gap-3">
+    <PageContainer>
+      <PageHeader title="Leave Policies" subtitle="Manage leave allocation policy templates" actions={
+        <>
+<div className="flex items-center gap-3">
           <ActionButton
             permission="leave_types.create"
             variant="secondary"
@@ -170,7 +167,8 @@ export default function LeavePolicies() {
           />
           <CreateButton permission="leave_policies.create" label="Create Policy" onClick={() => setShowCreate(true)} />
         </div>
-      </div>
+        </>
+      } />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
@@ -261,30 +259,18 @@ export default function LeavePolicies() {
                       />
                     );
                   })()}
-                  <button
-                    className="text-error-main hover:text-error-dark text-sm px-1"
-                    onClick={() => setAllocations(allocations.filter((_, i) => i !== idx))}
-                  >
-                    ✕
-                  </button>
+                  <IconButton icon="close" size="small" color="error" onClick={() => setAllocations(allocations.filter((_, i) => i !== idx))} aria-label="Remove leave type" />
                 </div>
               ))}
             </div>
 
-            <button
-              className="mt-3 text-sm text-primary-main hover:text-primary-dark"
-              onClick={() => setAllocations([...allocations, { leave_type: '', annual_allocation: '', max_carry_forward: '0' }])}
-            >
-              + Add Leave Type
-            </button>
+            <Button variant="text" startIcon={<Iconify icon="plus" />} onClick={() => setAllocations([...allocations, { leave_type: '', annual_allocation: '', max_carry_forward: '0' }])} className="mt-3">Add Leave Type
+            </Button>
 
             <div className="mt-5 flex justify-end gap-2">
-              <button
-                className="px-4 py-2 text-sm rounded border border-divider hover:bg-surface-neutral"
-                onClick={() => setShowAllocations(null)}
-              >
+              <Button variant="outlined" color="inherit" onClick={() => setShowAllocations(null)}>
                 Cancel
-              </button>
+              </Button>
               <Button type="button"
                 disabled={allocLoading}
                 onClick={handleSaveAllocations}
@@ -318,6 +304,6 @@ export default function LeavePolicies() {
         onClose={() => setShowLeaveTypesModal(false)}
         onLeaveTypesChanged={loadLeaveTypes}
       />
-    </div>
+    </PageContainer>
   );
 }

@@ -7,6 +7,9 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Button } from '@/components/ui/Button';
 
 const ENDPOINT = '/api/v1/payroll-corrections/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -91,13 +94,9 @@ export default function PayrollCorrections() {
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
           {row.status === 'submitted' && (
-            <button
-              type="button"
-              onClick={() => setApplyId(row.id as string)}
-              className="inline-flex items-center rounded-md bg-success-main px-2.5 py-1 text-xs font-medium text-primary-contrast hover:bg-success-dark"
-            >
+            <Button color="success" size="small" onClick={() => setApplyId(row.id as string)}>
               Apply
-            </button>
+            </Button>
           )}
           {row.status !== 'applied' && (
             <>
@@ -132,14 +131,8 @@ export default function PayrollCorrections() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-ink-primary">Payroll Corrections</h1>
-          <p className="mt-1 text-sm text-ink-secondary">Manage salary correction entries</p>
-        </div>
-        <CreateButton permission="payroll_corrections.create" label="Create Correction" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Payroll Corrections" subtitle="Manage salary correction entries" actions={<CreateButton permission="payroll_corrections.create" label="Create Correction" onClick={() => setShowCreate(true)} />} />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
@@ -193,6 +186,6 @@ export default function PayrollCorrections() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }
