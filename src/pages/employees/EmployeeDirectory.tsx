@@ -20,6 +20,8 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card } from '@/components/ui/Card';
 import { Iconify } from '@/components/Iconify';
+import { Can } from '@/components/Can';
+import { ImportFromCRMModal } from './components/ImportFromCRMModal';
 
 const PAGE_SIZE = 12;
 
@@ -43,6 +45,7 @@ export function EmployeeDirectory() {
     staleTime: 5 * 60 * 1000,
   });
   const departments = departmentsData ?? [];
+  const [importCrmOpen, setImportCrmOpen] = useState(false);
 
   // Debounce search input
   const debounceTimeout = useMemo(() => {
@@ -91,6 +94,11 @@ export function EmployeeDirectory() {
 
   return (
     <PageContainer>
+      <ImportFromCRMModal
+        open={importCrmOpen}
+        onClose={() => setImportCrmOpen(false)}
+        departments={departments}
+      />
       <PageHeader
         title="Employee Directory"
         subtitle="Browse and search employees across your organization"
@@ -105,6 +113,16 @@ export function EmployeeDirectory() {
               importPermission="employees.create"
               onImportSuccess={() => queryClient.invalidateQueries({ queryKey: ['employees'] })}
             />
+            <Can permissions={['employees.create']}>
+              <Button
+                variant="outlined"
+                color="inherit"
+                startIcon={<Iconify icon="user" width={18} />}
+                onClick={() => setImportCrmOpen(true)}
+              >
+                Import from CRM
+              </Button>
+            </Can>
             <CreateButton
               label="Add Employee"
               onClick={() => navigate('/employees/new')}
