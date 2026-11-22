@@ -54,6 +54,12 @@ type GroupedPermissions = Record<string, PermissionItem[]>;
 
 const EMPTY_OVERRIDES: string[] = [];
 
+/** Prefer the backend's own message (e.g. "This employee has no login account yet"). */
+function apiErrorMessage(err: unknown, fallback: string): string {
+  const data = (err as { response?: { data?: { error?: string; detail?: string } } })?.response?.data;
+  return data?.error || data?.detail || fallback;
+}
+
 export function UserPermissionsPanel({
   userId,
 }: UserPermissionsPanelProps) {
@@ -224,14 +230,14 @@ export function UserPermissionsPanel({
       {roleAssignMutation.isError && (
         <div className="mb-4 rounded-md bg-error-lighter p-3">
           <p className="text-sm text-error-dark">
-            Failed to update role. Please try again.
+            {apiErrorMessage(roleAssignMutation.error, 'Failed to update role. Please try again.')}
           </p>
         </div>
       )}
       {overridesMutation.isError && (
         <div className="mb-4 rounded-md bg-error-lighter p-3">
           <p className="text-sm text-error-dark">
-            Failed to save overrides. Please try again.
+            {apiErrorMessage(overridesMutation.error, 'Failed to save overrides. Please try again.')}
           </p>
         </div>
       )}

@@ -15,6 +15,7 @@
 
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { HomeLanding } from './HomeLanding';
 import { AppShell } from '@/components/Layout/AppShell';
 import { ProtectedRoute } from './ProtectedRoute';
 import { FeatureGatedRoute } from './FeatureGatedRoute';
@@ -358,7 +359,8 @@ export const router = createBrowserRouter([
       // ─── Dashboard ───────────────────────────────────────────────
       {
         path: 'dashboard',
-        element: permGated('dashboard.view', <Dashboard />),
+        // Users without dashboard.view land on their first allowed page instead of Access Denied
+        element: <OnboardingGuard><HomeLanding dashboard={<Dashboard />} /></OnboardingGuard>,
       },
 
       // ─── Profile ─────────────────────────────────────────────────
