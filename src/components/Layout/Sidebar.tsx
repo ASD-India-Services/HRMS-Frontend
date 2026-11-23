@@ -15,7 +15,7 @@
  * Requirements: 16.1, 16.2, 16.3, 16.4
  */
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { usePermissions, useUser } from '@platform/auth-sdk';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
@@ -64,8 +64,17 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
   const { hasPermission, roleName } = useHrmsPermissionsContext();
   const location = useLocation();
 
-  // org_admin sees everything; other roles are checked against their actual permissions
-  const effectiveHasPermission = roleName === 'org_admin'
+  // Admin roles bypass permission and feature checks (full access)
+  const normalizedRole = (roleName || role || '').toLowerCase().trim();
+  const isAdmin =
+    normalizedRole === 'org_admin' ||
+    normalizedRole === 'admin' ||
+    normalizedRole === 'administrator' ||
+    normalizedRole === 'org admin' ||
+    normalizedRole === 'superadmin';
+
+  // org_admin and other admin roles see everything; other roles are checked against their actual permissions
+  const effectiveHasPermission = isAdmin
     ? () => true
     : hasPermission;
 
@@ -175,7 +184,6 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
           <div className={isCollapsed ? 'space-y-1' : 'space-y-3'}>
             {visibleGroups.map((group, groupIdx) => {
               const groupExpanded = Boolean(expandedGroups[group.label]);
-              const _groupActive = isGroupActive(group);
 
               return (
                 <div key={group.label}>

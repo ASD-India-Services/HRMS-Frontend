@@ -16,9 +16,9 @@ export interface NavItem {
   /** Icon name registered in components/Iconify (rendered by NavIcon) */
   icon: string;
   /** Permission code required to see this item (e.g. "employees.view") */
-  requiredPermission: string;
+  requiredPermission?: string | null;
   /** Optional: show the item if the user has ANY one of these permissions. */
-  requiredAnyPermission?: string[];
+  requiredAnyPermission?: string[] | null;
   /** Feature flag key required to access this module (null = always visible) */
   featureFlag?: string | null;
 }
