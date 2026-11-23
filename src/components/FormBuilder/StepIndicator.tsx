@@ -36,10 +36,10 @@ export function StepIndicator({ steps, currentStep, completedSteps }: StepIndica
                 <div
                   className={`flex items-center justify-center w-8 h-8 rounded-full border-2 text-sm font-semibold transition-colors ${
                     isCompleted
-                      ? 'bg-green-600 border-green-600 text-white'
+                      ? 'bg-success-main border-success-main text-success-contrast'
                       : isCurrent
-                      ? 'bg-indigo-600 border-indigo-600 text-white'
-                      : 'bg-white border-gray-300 text-gray-500'
+                      ? 'bg-primary-main border-primary-main text-primary-contrast'
+                      : 'bg-surface-paper border-grey-500/30 text-ink-secondary'
                   }`}
                   aria-current={isCurrent ? 'step' : undefined}
                 >
@@ -64,10 +64,10 @@ export function StepIndicator({ steps, currentStep, completedSteps }: StepIndica
                 <span
                   className={`mt-2 text-xs font-medium text-center whitespace-nowrap ${
                     isCompleted
-                      ? 'text-green-600'
+                      ? 'text-success-dark'
                       : isCurrent
-                      ? 'text-indigo-600'
-                      : 'text-gray-500'
+                      ? 'text-primary-main'
+                      : 'text-ink-secondary'
                   }`}
                 >
                   {label}
@@ -79,10 +79,10 @@ export function StepIndicator({ steps, currentStep, completedSteps }: StepIndica
                 <div
                   className={`flex-1 h-0.5 mx-2 ${
                     completedSteps.includes(index)
-                      ? 'bg-green-600'
+                      ? 'bg-success-main'
                       : isCurrent
-                      ? 'bg-indigo-200'
-                      : 'bg-gray-200'
+                      ? 'bg-primary-main/20'
+                      : 'bg-surface-neutral'
                   }`}
                   aria-hidden="true"
                 />

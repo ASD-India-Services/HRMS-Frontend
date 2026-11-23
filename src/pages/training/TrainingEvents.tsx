@@ -27,6 +27,8 @@ import { Can } from '@/components/Can';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
 import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const createFields: FieldConfig[] = [
   { key: 'name', label: 'Event Name', type: 'text', required: true },
@@ -72,7 +74,7 @@ function useTrainingColumns(): ColumnDef<TrainingEvent>[] {
         header: 'Type',
         sortable: true,
         render: (value: unknown) => (
-          <span className="inline-flex items-center rounded-full bg-purple-50 px-2 py-0.5 text-xs font-medium capitalize text-purple-700">
+          <span className="inline-flex items-center rounded-full bg-secondary-lighter px-2 py-0.5 text-xs font-medium capitalize text-secondary-dark">
             {String(value || '—')}
           </span>
         ),
@@ -82,7 +84,7 @@ function useTrainingColumns(): ColumnDef<TrainingEvent>[] {
         header: 'Start Date',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm text-gray-700">{formatDate(value as string)}</span>
+          <span className="text-sm text-ink-primary">{formatDate(value as string)}</span>
         ),
       },
       { key: 'trainer', header: 'Trainer', sortable: true },
@@ -91,7 +93,7 @@ function useTrainingColumns(): ColumnDef<TrainingEvent>[] {
         header: 'Max Participants',
         sortable: true,
         render: (value: unknown) => (
-          <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-800">
+          <span className="inline-flex items-center rounded-full bg-surface-neutral px-2 py-0.5 text-xs font-semibold text-ink-primary">
             {String(value ?? '—')}
           </span>
         ),
@@ -158,20 +160,18 @@ function TrainingEventsContent({ onSelectEvent }: { onSelectEvent?: (id: string)
   const queryResult = trainingCrud.useList(apiParams);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Training Events</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Manage training events, track statuses, and control lifecycle.
-          </p>
-        </div>
-        <CreateButton
-          label="Create Training Event"
-          permission="training.create"
-          onClick={() => setShowCreate(true)}
-        />
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Training Events"
+        subtitle="Manage training events, track statuses, and control lifecycle."
+        actions={
+          <CreateButton
+              label="Create Training Event"
+              permission="training.create"
+              onClick={() => setShowCreate(true)}
+            />
+        }
+      />
 
       <FilterBar
         filters={filters}
@@ -204,6 +204,6 @@ function TrainingEventsContent({ onSelectEvent }: { onSelectEvent?: (id: string)
         onSubmit={(data) => createMutation.mutate(data)}
         isLoading={createMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

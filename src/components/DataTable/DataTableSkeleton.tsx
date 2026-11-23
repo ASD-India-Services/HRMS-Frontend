@@ -16,26 +16,26 @@ interface DataTableSkeletonProps {
 
 export function DataTableSkeleton({ columnCount, rowCount = 5 }: DataTableSkeletonProps) {
   return (
-    <div className="overflow-x-auto border border-gray-200 rounded-lg">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="overflow-x-auto border border-divider rounded-lg">
+      <table className="min-w-full divide-y divide-divider">
+        <thead className="bg-surface-neutral">
           <tr>
             {Array.from({ length: columnCount }).map((_, colIdx) => (
               <th
                 key={colIdx}
-                className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                className="px-4 py-3 text-left text-sm font-semibold text-ink-secondary"
               >
-                <div className="h-3 bg-gray-200 rounded animate-pulse w-20" />
+                <div className="h-3 bg-surface-neutral rounded animate-pulse w-20" />
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-surface-paper divide-y divide-divider">
           {Array.from({ length: rowCount }).map((_, rowIdx) => (
             <tr key={rowIdx}>
               {Array.from({ length: columnCount }).map((_, colIdx) => (
                 <td key={colIdx} className="px-4 py-3">
-                  <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
+                  <div className="h-4 bg-surface-neutral rounded animate-pulse w-3/4" />
                 </td>
               ))}
             </tr>

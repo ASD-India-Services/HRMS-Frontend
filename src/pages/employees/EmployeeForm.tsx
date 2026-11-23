@@ -18,6 +18,10 @@ import { FormBuilder } from '@/components/FormBuilder';
 import { createCrudHooks } from '@/hooks/useCrud';
 import { employeeCrudConfig } from '@/config/crud/employees';
 import type { Employee } from '@/types/employee';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 interface EmployeeFormProps {
   /** When provided, the form operates in edit mode fetching the employee record */
@@ -83,17 +87,17 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
   // Show loading state while fetching employee data in edit mode
   if (isEditMode && isLoadingEmployee) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
+      <PageContainer maxWidth="lg">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 rounded bg-gray-200" />
-          <div className="h-4 w-64 rounded bg-gray-200" />
+          <div className="h-8 w-48 rounded bg-grey-200" />
+          <div className="h-4 w-64 rounded bg-grey-200" />
           <div className="mt-6 space-y-3">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-10 rounded bg-gray-200" />
+              <div key={i} className="h-10 rounded bg-grey-200" />
             ))}
           </div>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -126,43 +130,29 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
     : undefined;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
+    <PageContainer maxWidth="lg">
       {/* Page header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
-          {isEditMode ? 'Edit Employee' : 'Add Employee'}
-        </h1>
-        <p className="mt-1 text-sm text-gray-600">
-          {isEditMode
+      <PageHeader
+        title={isEditMode ? 'Edit Employee' : 'Add Employee'}
+        subtitle={
+          isEditMode
             ? 'Update employee information across all sections.'
-            : 'Fill in the details below to add a new employee to the organization.'}
-        </p>
-      </div>
+            : 'Fill in the details below to add a new employee to the organization.'
+        }
+      />
 
       {/* Success toast */}
       {successMessage && (
-        <div className="mb-4 rounded-md bg-green-50 p-3" role="status">
+        <div className="mb-4 rounded-card bg-success-lighter p-3" role="status">
           <div className="flex items-center">
-            <svg
-              className="h-4 w-4 text-green-400"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <p className="ml-2 text-sm font-medium text-green-800">{successMessage}</p>
+            <Iconify icon="success" width={18} className="text-success-main" />
+            <p className="ml-2 text-sm font-medium text-success-dark">{successMessage}</p>
           </div>
         </div>
       )}
 
       {/* Form */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <Card className="p-6">
         <FormBuilder
           fields={employeeCrudConfig.formFields}
           steps={employeeCrudConfig.formSteps}
@@ -171,7 +161,7 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
           onCancel={handleCancel}
           isSubmitting={isSubmitting}
         />
-      </div>
-    </div>
+      </Card>
+    </PageContainer>
   );
 }

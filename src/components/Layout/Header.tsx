@@ -1,7 +1,7 @@
 /**
  * Header Component
  *
- * Top bar with notification bell, user profile dropdown, ProductSwitcher,
+ * Minimal-style sticky blurred top bar with notification bell, user profile dropdown, ProductSwitcher,
  * and mobile menu toggle.
  *
  * Requirements: 16.5
@@ -13,9 +13,19 @@ import { useAuth, useUser } from '@platform/auth-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { ProductSwitcher } from '@/components/ProductSwitcher';
 import { useNotifications } from '@/hooks/useNotifications';
-import { SettingsIcon } from '@/pages/settings/SettingsIcons';
+import { Iconify, type IconName } from '@/components/Iconify';
+import { Button, IconButton } from '@/components/ui/Button';
 import { TimeRunnerWidget } from './TimeRunnerWidget';
 import api from '@/lib/api';
+
+/** Registry icon per notification type. */
+const NOTIFICATION_ICONS: Record<string, IconName> = {
+  leave_approval: 'leaves',
+  expense_approval: 'expenses',
+  travel_approval: 'travel',
+  overtime_approval: 'overtime',
+  onboarding_task: 'training',
+};
 
 interface HeaderProps {
   onMenuToggle: () => void;
@@ -57,28 +67,24 @@ export function Header({ onMenuToggle }: HeaderProps) {
 
   const initials = name
     ? name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2)
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
     : '??';
 
   const pendingCount = notifications.length;
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full max-w-full min-w-0 items-center gap-4 border-b border-gray-200 bg-white px-4 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-header w-full max-w-full min-w-0 shrink-0 items-center gap-4 bg-surface-default/80 px-4 backdrop-blur-md sm:px-6 lg:px-10">
       {/* Mobile menu toggle */}
-      <button
-        type="button"
+      <IconButton
+        icon="menu"
         onClick={onMenuToggle}
-        className="md:hidden -ml-2 p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100"
+        className="-ml-2 md:hidden"
         aria-label="Toggle sidebar"
-      >
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-        </svg>
-      </button>
+      />
 
       {/* Spacer */}
       <div className="flex-1 min-w-0" />
@@ -90,67 +96,61 @@ export function Header({ onMenuToggle }: HeaderProps) {
 
         {/* Notification bell */}
         <div className="relative" ref={notificationRef}>
-          <button
-            type="button"
+          <IconButton
+            icon="bell"
             onClick={() => setIsNotificationsOpen((prev) => !prev)}
-            className="relative p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+            className="relative"
             aria-label="Notifications"
             aria-expanded={isNotificationsOpen}
             aria-haspopup="true"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
-            </svg>
             {pendingCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-error-main text-[10px] font-bold text-error-contrast">
                 {pendingCount > 9 ? '9+' : pendingCount}
               </span>
             )}
-          </button>
+          </IconButton>
 
           {/* Notification dropdown */}
           {isNotificationsOpen && (
             <div
-              className="absolute right-0 mt-2 w-80 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 z-50"
+              className="absolute right-0 mt-2 w-80 rounded-xl bg-surface-paper shadow-dropdown z-50"
               role="menu"
               aria-label="Notifications"
             >
-              <div className="px-4 py-3 border-b border-gray-100">
-                <p className="text-sm font-semibold text-gray-900">Pending Approvals</p>
+              <div className="px-4 py-3 border-b border-dashed border-divider">
+                <p className="text-sm font-semibold text-ink-primary">Pending Approvals</p>
               </div>
               <div className="max-h-80 overflow-y-auto">
                 {notificationsLoading && (
-                  <div className="px-4 py-6 text-center text-sm text-gray-500">Loading...</div>
+                  <div className="px-4 py-6 text-center text-sm text-ink-secondary">Loading...</div>
                 )}
                 {!notificationsLoading && notifications.length === 0 && (
-                  <div className="px-4 py-6 text-center text-sm text-gray-500">
+                  <div className="px-4 py-6 text-center text-sm text-ink-secondary">
                     No pending approvals
                   </div>
                 )}
                 {!notificationsLoading &&
                   notifications.map((item) => (
-                    <button
+                    <Button
                       key={item.id}
-                      type="button"
+                      variant="text"
+                      color="inherit"
                       onClick={() => {
                         setIsNotificationsOpen(false);
                         navigate(item.link);
                       }}
-                      className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors"
+                      className="!h-auto w-full !items-start !justify-start gap-3 !rounded-none px-4 py-3 text-left !font-normal"
                       role="menuitem"
                     >
-                      <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs">
-                        {item.type === 'leave_approval' && '🏖️'}
-                        {item.type === 'expense_approval' && '🧾'}
-                        {item.type === 'travel_approval' && '✈️'}
-                        {item.type === 'overtime_approval' && '⏱️'}
-                        {item.type === 'onboarding_task' && '🎓'}
+                      <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary-lighter text-primary-main">
+                        {NOTIFICATION_ICONS[item.type] && <Iconify icon={NOTIFICATION_ICONS[item.type]} width={16} />}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
-                        <p className="text-xs text-gray-500 truncate">{item.description}</p>
+                        <p className="text-sm font-medium text-ink-primary truncate">{item.title}</p>
+                        <p className="text-xs text-ink-secondary truncate">{item.description}</p>
                       </div>
-                    </button>
+                    </Button>
                   ))}
               </div>
             </div>
@@ -158,76 +158,69 @@ export function Header({ onMenuToggle }: HeaderProps) {
         </div>
 
         {/* Settings button */}
-        <button
-          type="button"
+        <IconButton
+          icon="settings"
           onClick={() => navigate('/settings/general-settings')}
-          className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
           title="Settings"
           aria-label="Settings"
-        >
-          <SettingsIcon className="w-5 h-5" />
-        </button>
+        />
 
         {/* Product Switcher */}
         <ProductSwitcher />
 
         {/* Profile dropdown */}
         <div className="relative" ref={profileRef}>
-          <button
-            type="button"
+          <Button
+            variant="text"
+            color="inherit"
             onClick={() => setIsProfileOpen((prev) => !prev)}
-            className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-gray-100 transition-colors"
+            className="!h-auto gap-2 !rounded-full !p-1.5 !font-normal"
             aria-label="User menu"
             aria-expanded={isProfileOpen}
             aria-haspopup="true"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700 text-sm font-semibold">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-lighter text-primary-darker text-sm font-semibold">
               {initials}
             </div>
             <div className="hidden sm:block text-left shrink-0">
-              <p className="text-sm font-medium text-gray-900 leading-tight whitespace-nowrap">{name ?? 'User'}</p>
-              <p className="text-xs text-gray-500 leading-tight capitalize whitespace-nowrap">{displayRole}</p>
+              <p className="text-sm font-medium text-ink-primary leading-tight whitespace-nowrap">{name ?? 'User'}</p>
+              <p className="text-xs text-ink-secondary leading-tight capitalize whitespace-nowrap">{displayRole}</p>
             </div>
-            <svg className="hidden sm:block w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>
-          </button>
+            <Iconify icon="chevron-down" width={16} className="hidden sm:block text-ink-disabled shrink-0" />
+          </Button>
 
           {/* Dropdown menu */}
           {isProfileOpen && (
             <div
-              className="absolute right-0 mt-2 w-56 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 py-1 z-50"
+              className="absolute right-0 mt-2 w-56 rounded-xl bg-surface-paper shadow-dropdown py-1 z-50"
               role="menu"
               aria-label="User menu"
             >
-              <div className="px-4 py-3 border-b border-gray-100">
-                <p className="text-sm font-medium text-gray-900">{name}</p>
-                <p className="text-xs text-gray-500 truncate">{email}</p>
+              <div className="px-4 py-3 border-b border-dashed border-divider">
+                <p className="text-sm font-medium text-ink-primary">{name}</p>
+                <p className="text-xs text-ink-secondary truncate">{email}</p>
               </div>
               <a
                 href="/profile"
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-ink-primary hover:bg-grey-500/10"
                 role="menuitem"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                </svg>
+                <Iconify icon="user" width={18} />
                 My Profile
               </a>
-              <button
-                type="button"
+              <Button
+                variant="text"
+                color="error"
+                startIcon={<Iconify icon="logout" width={18} />}
                 onClick={() => {
                   setIsProfileOpen(false);
                   void logout();
                 }}
-                className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                className="w-full !justify-start !rounded-none px-4 !font-normal"
                 role="menuitem"
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-                </svg>
                 Sign out
-              </button>
+              </Button>
             </div>
           )}
         </div>

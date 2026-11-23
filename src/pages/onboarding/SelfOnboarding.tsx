@@ -18,6 +18,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useOnboardingStatus } from '@/hooks/useOnboardingStatus';
 import { useAuth } from '@platform/auth-sdk';
 import api from '@/lib/api';
+import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
+import { Input } from '@/components/ui/Input';
+import { Card } from '@/components/ui/Card';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { Iconify } from '@/components/Iconify';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -251,7 +257,7 @@ export default function SelfOnboarding() {
   if (statusLoading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-main border-t-transparent" />
       </div>
     );
   }
@@ -259,24 +265,21 @@ export default function SelfOnboarding() {
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="px-4 py-8 sm:px-6 lg:px-10">
+    <PageContainer className="!max-w-2xl">
       {/* Logout button */}
       <div className="mb-4 flex justify-end">
-        <button
-          type="button"
+        <Button variant="outlined" color="inherit"
           onClick={() => void logout()}
-          className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 hover:text-red-600 transition-colors"
+          startIcon={<Iconify icon="logout" />}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-          </svg>
           Sign out
-        </button>
+        </Button>
       </div>
 
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Welcome! Complete Your Onboarding</h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-ink-primary">Welcome! Complete Your Onboarding</h1>
+        <p className="mt-2 text-sm text-ink-secondary">
           Please fill in your details to get started. You can save and continue later.
         </p>
       </div>
@@ -285,8 +288,8 @@ export default function SelfOnboarding() {
       <StepIndicator currentStep={currentStep} steps={STEPS} />
 
       {/* Step Content */}
-      <div className="mt-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-6 text-lg font-semibold text-gray-900">
+      <Card className="mt-8 p-6">
+        <h2 className="mb-6 text-lg font-semibold text-ink-primary">
           Step {currentStep}: {STEPS[currentStep - 1].name}
         </h2>
 
@@ -316,50 +319,46 @@ export default function SelfOnboarding() {
 
         {/* Global error message */}
         {errors.non_field_errors && (
-          <div className="mt-4 rounded-md bg-red-50 p-3">
-            <p className="text-sm text-red-800">{errors.non_field_errors.join(', ')}</p>
+          <div className="mt-4 rounded-card bg-error-lighter p-3">
+            <p className="text-sm text-error-dark">{errors.non_field_errors.join(', ')}</p>
           </div>
         )}
         {errors.detail && (
-          <div className="mt-4 rounded-md bg-red-50 p-3">
-            <p className="text-sm text-red-800">
+          <div className="mt-4 rounded-card bg-error-lighter p-3">
+            <p className="text-sm text-error-dark">
               {Array.isArray(errors.detail) ? errors.detail.join(', ') : String(errors.detail)}
             </p>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Navigation Buttons */}
       <div className="mt-6 flex items-center justify-between">
-        <button
-          type="button"
+        <Button variant="outlined" color="inherit"
           onClick={handleBack}
           disabled={currentStep === 1}
-          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
           Back
-        </button>
+        </Button>
 
         {currentStep < 5 ? (
-          <button
-            type="button"
+          <Button
             onClick={handleSaveAndContinue}
             disabled={saveStepMutation.isPending}
-            className="rounded-md bg-primary-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:opacity-50"
           >
             {saveStepMutation.isPending ? 'Saving...' : 'Next'}
-          </button>
+          </Button>
         ) : (
-          <button
-            type="button"
+          <Button
+            color="success"
             onClick={handleComplete}
             disabled={saveStepMutation.isPending || completeMutation.isPending}
-            className="rounded-md bg-green-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
           >
             {completeMutation.isPending ? 'Completing...' : 'Complete Onboarding'}
-          </button>
+          </Button>
         )}
       </div>
+    </PageContainer>
     </div>
   );
 }
@@ -386,18 +385,18 @@ function StepIndicator({
                 <div
                   className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition-colors ${
                     isCompleted
-                      ? 'bg-green-500 text-white'
+                      ? 'bg-success-main text-primary-contrast'
                       : isActive
-                        ? 'bg-primary-600 text-white'
-                        : 'bg-gray-200 text-gray-600'
+                        ? 'bg-primary-main text-primary-contrast'
+                        : 'bg-grey-200 text-ink-secondary'
                   }`}
                 >
-                  {isCompleted ? '✓' : step.number}
+                  {isCompleted ? <Iconify icon="check" width={18} /> : step.number}
                 </div>
               </div>
               <span
                 className={`mt-2 text-xs font-medium ${
-                  isActive ? 'text-primary-600' : 'text-gray-500'
+                  isActive ? 'text-primary-main' : 'text-ink-secondary'
                 }`}
               >
                 {step.name}
@@ -415,7 +414,7 @@ function StepIndicator({
 function FieldError({ errors, field }: { errors: ValidationErrors; field: string }) {
   if (!errors[field]) return null;
   return (
-    <p className="mt-1 text-xs text-red-600">
+    <p className="mt-1 text-xs text-error-main">
       {errors[field].join(', ')}
     </p>
   );
@@ -433,47 +432,47 @@ function PersonalDetailsForm({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div>
-        <label htmlFor="date_of_birth" className="block text-sm font-medium text-gray-700">
-          Date of Birth<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="date_of_birth" className="block text-sm font-medium text-ink-primary">
+          Date of Birth<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="date_of_birth"
           type="date"
           value={data.date_of_birth}
           onChange={(e) => onChange({ ...data, date_of_birth: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.date_of_birth ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
+          className="mt-1"
+          aria-invalid={errors.date_of_birth ? true : undefined}
         />
         <FieldError errors={errors} field="date_of_birth" />
       </div>
       <div>
-        <label htmlFor="gender" className="block text-sm font-medium text-gray-700">
-          Gender<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="gender" className="block text-sm font-medium text-ink-primary">
+          Gender<span className="text-error-main ml-0.5">*</span>
         </label>
-        <select
+        <Select
           id="gender"
           value={data.gender}
-          onChange={(e) => onChange({ ...data, gender: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.gender ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
-        >
+          onChange={(e) => onChange({ ...data, gender: e.target.value })} className="mt-1" aria-invalid={errors.gender ? true : undefined}>
           <option value="">Select Gender</option>
           <option value="male">Male</option>
           <option value="female">Female</option>
           <option value="other">Other</option>
           <option value="prefer_not_to_say">Prefer Not to Say</option>
-        </select>
+        </Select>
         <FieldError errors={errors} field="gender" />
       </div>
       <div className="sm:col-span-2">
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-          Phone Number<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="phone" className="block text-sm font-medium text-ink-primary">
+          Phone Number<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="phone"
           type="tel"
           value={data.phone}
           onChange={(e) => onChange({ ...data, phone: e.target.value })}
           placeholder="+91 98765 43210"
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
+          className="mt-1"
+          aria-invalid={errors.phone ? true : undefined}
         />
         <FieldError errors={errors} field="phone" />
       </div>
@@ -493,68 +492,73 @@ function AddressForm({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="sm:col-span-2">
-        <label htmlFor="address_line_1" className="block text-sm font-medium text-gray-700">
-          Address Line 1<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="address_line_1" className="block text-sm font-medium text-ink-primary">
+          Address Line 1<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="address_line_1"
           type="text"
           value={data.address_line_1}
           onChange={(e) => onChange({ ...data, address_line_1: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.address_line_1 ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
+          className="mt-1"
+          aria-invalid={errors.address_line_1 ? true : undefined}
         />
         <FieldError errors={errors} field="address_line_1" />
       </div>
       <div>
-        <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-          City<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="city" className="block text-sm font-medium text-ink-primary">
+          City<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="city"
           type="text"
           value={data.city}
           onChange={(e) => onChange({ ...data, city: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.city ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
+          className="mt-1"
+          aria-invalid={errors.city ? true : undefined}
         />
         <FieldError errors={errors} field="city" />
       </div>
       <div>
-        <label htmlFor="state" className="block text-sm font-medium text-gray-700">
-          State<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="state" className="block text-sm font-medium text-ink-primary">
+          State<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="state"
           type="text"
           value={data.state}
           onChange={(e) => onChange({ ...data, state: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.state ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
+          className="mt-1"
+          aria-invalid={errors.state ? true : undefined}
         />
         <FieldError errors={errors} field="state" />
       </div>
       <div>
-        <label htmlFor="postal_code" className="block text-sm font-medium text-gray-700">
-          Postal Code<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="postal_code" className="block text-sm font-medium text-ink-primary">
+          Postal Code<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="postal_code"
           type="text"
           value={data.postal_code}
           onChange={(e) => onChange({ ...data, postal_code: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.postal_code ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
+          className="mt-1"
+          aria-invalid={errors.postal_code ? true : undefined}
         />
         <FieldError errors={errors} field="postal_code" />
       </div>
       <div>
-        <label htmlFor="country" className="block text-sm font-medium text-gray-700">
-          Country<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="country" className="block text-sm font-medium text-ink-primary">
+          Country<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="country"
           type="text"
           value={data.country}
           onChange={(e) => onChange({ ...data, country: e.target.value })}
           placeholder="India"
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.country ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
+          className="mt-1"
+          aria-invalid={errors.country ? true : undefined}
         />
         <FieldError errors={errors} field="country" />
       </div>
@@ -574,48 +578,48 @@ function EmergencyContactForm({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div>
-        <label htmlFor="emergency_contact_name" className="block text-sm font-medium text-gray-700">
-          Contact Name<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="emergency_contact_name" className="block text-sm font-medium text-ink-primary">
+          Contact Name<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="emergency_contact_name"
           type="text"
           value={data.emergency_contact_name}
           onChange={(e) => onChange({ ...data, emergency_contact_name: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.emergency_contact_name ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
+          className="mt-1"
+          aria-invalid={errors.emergency_contact_name ? true : undefined}
         />
         <FieldError errors={errors} field="emergency_contact_name" />
       </div>
       <div>
-        <label htmlFor="emergency_contact_phone" className="block text-sm font-medium text-gray-700">
-          Contact Phone<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="emergency_contact_phone" className="block text-sm font-medium text-ink-primary">
+          Contact Phone<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="emergency_contact_phone"
           type="tel"
           value={data.emergency_contact_phone}
           onChange={(e) => onChange({ ...data, emergency_contact_phone: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.emergency_contact_phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
+          className="mt-1"
+          aria-invalid={errors.emergency_contact_phone ? true : undefined}
         />
         <FieldError errors={errors} field="emergency_contact_phone" />
       </div>
       <div className="sm:col-span-2">
-        <label htmlFor="emergency_contact_relationship" className="block text-sm font-medium text-gray-700">
-          Relationship<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="emergency_contact_relationship" className="block text-sm font-medium text-ink-primary">
+          Relationship<span className="text-error-main ml-0.5">*</span>
         </label>
-        <select
+        <Select
           id="emergency_contact_relationship"
           value={data.emergency_contact_relationship}
-          onChange={(e) => onChange({ ...data, emergency_contact_relationship: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.emergency_contact_relationship ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
-        >
+          onChange={(e) => onChange({ ...data, emergency_contact_relationship: e.target.value })} className="mt-1" aria-invalid={errors.emergency_contact_relationship ? true : undefined}>
           <option value="">Select Relationship</option>
           <option value="spouse">Spouse</option>
           <option value="parent">Parent</option>
           <option value="sibling">Sibling</option>
           <option value="friend">Friend</option>
           <option value="other">Other</option>
-        </select>
+        </Select>
         <FieldError errors={errors} field="emergency_contact_relationship" />
       </div>
     </div>
@@ -634,42 +638,45 @@ function BankDetailsForm({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="sm:col-span-2">
-        <label htmlFor="bank_name" className="block text-sm font-medium text-gray-700">
-          Bank Name<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="bank_name" className="block text-sm font-medium text-ink-primary">
+          Bank Name<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="bank_name"
           type="text"
           value={data.bank_name}
           onChange={(e) => onChange({ ...data, bank_name: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.bank_name ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
+          className="mt-1"
+          aria-invalid={errors.bank_name ? true : undefined}
         />
         <FieldError errors={errors} field="bank_name" />
       </div>
       <div>
-        <label htmlFor="account_number" className="block text-sm font-medium text-gray-700">
-          Account Number<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="account_number" className="block text-sm font-medium text-ink-primary">
+          Account Number<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="account_number"
           type="text"
           value={data.account_number}
           onChange={(e) => onChange({ ...data, account_number: e.target.value })}
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.account_number ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
+          className="mt-1"
+          aria-invalid={errors.account_number ? true : undefined}
         />
         <FieldError errors={errors} field="account_number" />
       </div>
       <div>
-        <label htmlFor="ifsc_code" className="block text-sm font-medium text-gray-700">
-          IFSC Code<span className="text-red-500 ml-0.5">*</span>
+        <label htmlFor="ifsc_code" className="block text-sm font-medium text-ink-primary">
+          IFSC Code<span className="text-error-main ml-0.5">*</span>
         </label>
-        <input
+        <Input
           id="ifsc_code"
           type="text"
           value={data.ifsc_code}
           onChange={(e) => onChange({ ...data, ifsc_code: e.target.value.toUpperCase() })}
           placeholder="e.g. SBIN0001234"
-          className={`mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.ifsc_code ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-primary-500'}`}
+          className="mt-1"
+          aria-invalid={errors.ifsc_code ? true : undefined}
         />
         <FieldError errors={errors} field="ifsc_code" />
       </div>
@@ -688,8 +695,8 @@ function DocumentUploadForm({
 }) {
   return (
     <div>
-      <label htmlFor="id_proof" className="block text-sm font-medium text-gray-700">
-        ID Proof (Aadhaar, PAN, Passport, etc.)<span className="text-red-500 ml-0.5">*</span>
+      <label htmlFor="id_proof" className="block text-sm font-medium text-ink-primary">
+        ID Proof (Aadhaar, PAN, Passport, etc.)<span className="text-error-main ml-0.5">*</span>
       </label>
       <div className="mt-2">
         <input
@@ -697,15 +704,15 @@ function DocumentUploadForm({
           type="file"
           accept=".pdf,.jpg,.jpeg,.png"
           onChange={(e) => onChange(e.target.files?.[0] ?? null)}
-          className="block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-700 hover:file:bg-primary-100"
+          className="block w-full text-sm text-ink-secondary file:mr-4 file:rounded-md file:border-0 file:bg-primary-lighter file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-dark hover:file:bg-primary-lighter"
         />
       </div>
       {file && (
-        <p className="mt-2 text-xs text-gray-500">
+        <p className="mt-2 text-xs text-ink-secondary">
           Selected: {file.name} ({(file.size / 1024).toFixed(1)} KB)
         </p>
       )}
-      <p className="mt-1 text-xs text-gray-400">
+      <p className="mt-1 text-xs text-ink-disabled">
         Accepted formats: PDF, JPG, PNG. Max size: 5 MB.
       </p>
       <FieldError errors={errors} field="id_proof" />

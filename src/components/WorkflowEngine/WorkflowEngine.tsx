@@ -176,10 +176,10 @@ export function WorkflowEngine<T>({
 
       {/* Terminal state info message */}
       {config.terminalMessage && config.terminalMessage[record.status] && (
-        <div className="rounded-md bg-blue-50 border border-blue-200 p-2.5" role="note">
+        <div className="rounded-md bg-primary-lighter border border-primary-light p-2.5" role="note">
           <div className="flex items-start gap-2">
             <svg
-              className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-500"
+              className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary-main"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
@@ -191,7 +191,7 @@ export function WorkflowEngine<T>({
                 clipRule="evenodd"
               />
             </svg>
-            <p className="text-xs text-blue-700">
+            <p className="text-xs text-primary-dark">
               {config.terminalMessage[record.status]}
             </p>
           </div>
@@ -200,10 +200,10 @@ export function WorkflowEngine<T>({
 
       {/* Success feedback */}
       {successMessage && (
-        <div className="rounded-md bg-green-50 p-3" role="status">
+        <div className="rounded-md bg-success-lighter p-3" role="status">
           <div className="flex items-center">
             <svg
-              className="h-4 w-4 text-green-400"
+              className="h-4 w-4 text-success-light"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
@@ -215,7 +215,7 @@ export function WorkflowEngine<T>({
                 clipRule="evenodd"
               />
             </svg>
-            <p className="ml-2 text-sm font-medium text-green-800">
+            <p className="ml-2 text-sm font-medium text-success-dark">
               {successMessage}
             </p>
           </div>
@@ -224,10 +224,10 @@ export function WorkflowEngine<T>({
 
       {/* Error feedback */}
       {errorMessage && (
-        <div className="rounded-md bg-red-50 p-3" role="alert">
+        <div className="rounded-md bg-error-lighter p-3" role="alert">
           <div className="flex items-center">
             <svg
-              className="h-4 w-4 text-red-400"
+              className="h-4 w-4 text-error-light"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
@@ -239,7 +239,7 @@ export function WorkflowEngine<T>({
                 clipRule="evenodd"
               />
             </svg>
-            <p className="ml-2 text-sm font-medium text-red-800">
+            <p className="ml-2 text-sm font-medium text-error-dark">
               {errorMessage}
             </p>
           </div>

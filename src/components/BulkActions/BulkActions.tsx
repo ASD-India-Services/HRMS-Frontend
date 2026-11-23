@@ -8,6 +8,8 @@ import { useState, useCallback, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
+import { Button } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
 
 interface ImportResult {
   created: number;
@@ -129,107 +131,72 @@ export function BulkActions({
       <div className="flex flex-wrap items-center gap-2">
         {/* Export Button */}
         {canExport && (
-          <button
-            type="button"
+          <Button
+            variant="outlined"
+            color="inherit"
+            startIcon={<Iconify icon="download" />}
             onClick={handleExport}
             disabled={exporting}
-            className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50"
             aria-label="Export CSV"
           >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
-              />
-            </svg>
             {exporting ? 'Exporting...' : 'Export CSV'}
-          </button>
+          </Button>
         )}
 
         {/* Import Button */}
         {showImport && (
-          <button
-            type="button"
+          <Button
+            variant={showImportPanel ? 'soft' : 'outlined'}
+            color={showImportPanel ? 'primary' : 'inherit'}
+            startIcon={<Iconify icon="upload" />}
             onClick={() => {
               setShowImportPanel((v) => !v);
               setImportResult(null);
             }}
-            className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium shadow-sm ${
-              showImportPanel
-                ? 'border-primary-300 bg-primary-50 text-primary-700'
-                : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-            }`}
             aria-expanded={showImportPanel}
             aria-label="Import CSV"
           >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"
-              />
-            </svg>
             Import CSV
-          </button>
+          </Button>
         )}
 
         {/* Template Link */}
         {showImport && (
-          <button
-            type="button"
-            onClick={handleDownloadTemplate}
-            className="text-sm font-medium text-primary-600 hover:text-primary-500 underline"
-          >
+          <Button variant="outlined" color="inherit" startIcon={<Iconify icon="download" />} onClick={handleDownloadTemplate}>
             Download Template
-          </button>
+          </Button>
         )}
 
         {/* Export Error */}
         {exportError && (
-          <span className="text-sm text-red-600">{exportError}</span>
+          <span className="text-sm text-error-main">{exportError}</span>
         )}
       </div>
 
       {/* Import Panel (collapsible) */}
       {showImportPanel && showImport && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div className="rounded-lg border border-divider bg-surface-neutral p-4">
           <div className="flex flex-wrap items-center gap-3">
             <input
               ref={fileInputRef}
               type="file"
               accept=".csv"
               onChange={handleFileChange}
-              className="block text-sm text-gray-500 file:mr-3 file:rounded file:border-0 file:bg-primary-50 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100"
+              className="block text-sm text-ink-secondary file:mr-3 file:rounded file:border-0 file:bg-primary-lighter file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-primary-dark hover:file:bg-primary-lighter"
               aria-label="Select CSV file to import"
             />
-            <button
+            <Button
               type="button"
               onClick={handleUpload}
               disabled={!file || importMutation.isPending}
-              className="rounded-md bg-primary-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 disabled:opacity-50"
             >
               {importMutation.isPending ? 'Uploading...' : 'Upload'}
-            </button>
+            </Button>
           </div>
 
           {/* Import Error */}
           {importMutation.isError && (
-            <p className="mt-2 text-sm text-red-600">
+            <p className="mt-2 text-sm text-error-main">
               Upload failed. Please check your file format and try again.
             </p>
           )}
@@ -238,33 +205,33 @@ export function BulkActions({
           {importResult && (
             <div className="mt-3">
               <div className="flex flex-wrap gap-3">
-                <span className="inline-flex items-center rounded-md bg-green-50 px-2.5 py-1 text-xs font-medium text-green-800">
+                <span className="inline-flex items-center rounded-md bg-success-lighter px-2.5 py-1 text-xs font-medium text-success-dark">
                   Created: {importResult.created}
                 </span>
-                <span className="inline-flex items-center rounded-md bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-800">
+                <span className="inline-flex items-center rounded-md bg-primary-lighter px-2.5 py-1 text-xs font-medium text-primary-dark">
                   Updated: {importResult.updated}
                 </span>
                 {importResult.errors.length > 0 && (
-                  <span className="inline-flex items-center rounded-md bg-red-50 px-2.5 py-1 text-xs font-medium text-red-800">
+                  <span className="inline-flex items-center rounded-md bg-error-lighter px-2.5 py-1 text-xs font-medium text-error-dark">
                     Errors: {importResult.errors.length}
                   </span>
                 )}
               </div>
 
               {importResult.errors.length > 0 && (
-                <div className="mt-2 max-h-40 overflow-auto rounded-md border border-red-200">
-                  <table className="min-w-full divide-y divide-red-200 text-xs">
-                    <thead className="bg-red-50">
+                <div className="mt-2 max-h-40 overflow-auto rounded-md border border-error-light">
+                  <table className="min-w-full divide-y divide-error-light text-xs">
+                    <thead className="bg-error-lighter">
                       <tr>
-                        <th className="px-3 py-1.5 text-left font-medium text-red-800">Row</th>
-                        <th className="px-3 py-1.5 text-left font-medium text-red-800">Error</th>
+                        <th className="px-3 py-1.5 text-left font-medium text-error-dark">Row</th>
+                        <th className="px-3 py-1.5 text-left font-medium text-error-dark">Error</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-red-100">
+                    <tbody className="divide-y divide-error-lighter">
                       {importResult.errors.map((err, idx) => (
                         <tr key={idx}>
-                          <td className="px-3 py-1.5 text-red-700">{err.row}</td>
-                          <td className="px-3 py-1.5 text-red-700">{err.message}</td>
+                          <td className="px-3 py-1.5 text-error-dark">{err.row}</td>
+                          <td className="px-3 py-1.5 text-error-dark">{err.message}</td>
                         </tr>
                       ))}
                     </tbody>

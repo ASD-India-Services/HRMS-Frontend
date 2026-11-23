@@ -9,6 +9,12 @@ import { formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Button } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
+import { Card } from '@/components/ui/Card';
+import { StateView } from '@/components/ui/StateView';
 
 const ENDPOINT = '/api/v1/holidays/holiday-lists/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -57,7 +63,7 @@ export default function HolidayLists() {
     ...columns,
     { key: 'id', header: 'Actions', sortable: false, render: (_v: unknown, row: Record<string, unknown>) => (
       <div className="flex items-center gap-1">
-        <button onClick={() => setSelectedList(row)} className="rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100">Entries</button>
+        <Button variant="soft" size="small" onClick={() => setSelectedList(row)}>Entries</Button>
         <EditButton permission="holidays.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
         <DeleteButton permission="holidays.delete" label="Delete" size="sm" onClick={() => setDeleteId(row.id as string)} />
       </div>
@@ -76,18 +82,15 @@ export default function HolidayLists() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Holiday Lists</h1><p className="mt-1 text-sm text-gray-600">Manage holiday calendars for the organization</p></div>
-        <CreateButton permission="holidays.create" label="Create Holiday List" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Holiday Lists" subtitle="Manage holiday calendars for the organization" actions={<CreateButton permission="holidays.create" label="Create Holiday List" onClick={() => setShowCreate(true)} />} />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
       <CrudModal isOpen={showCreate} onClose={() => setShowCreate(false)} title="Create Holiday List" fields={createFields} onSubmit={handleCreate} isLoading={createMutation.isPending} />
       <CrudModal isOpen={!!editRecord} onClose={() => setEditRecord(null)} title="Edit Holiday List" fields={createFields} initialValues={editRecord ?? undefined} onSubmit={handleEdit} isLoading={editLoading} />
       <ConfirmDialog isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={() => { if (deleteId) deleteMutation.mutate(deleteId, { onSuccess: () => setDeleteId(null) }); }} title="Delete Holiday List" message="Delete this holiday list and all its entries?" confirmLabel="Delete" variant="destructive" isLoading={deleteMutation.isPending} />
-    </div>
+    </PageContainer>
   );
 }
 
@@ -129,43 +132,38 @@ function HolidayEntries({ list, onBack }: { list: Record<string, unknown>; onBac
   const entries = Array.isArray(data) ? data : data?.results || [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <button onClick={onBack} className="mb-3 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700">
-          ← Back to Holiday Lists
-        </button>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">{list.name as string}</h1>
-            <p className="mt-1 text-sm text-gray-600">
-              {formatDate(list.from_date as string)} to {formatDate(list.to_date as string)} · {entries.length} holidays
-            </p>
-          </div>
-          <CreateButton permission="holidays.create" label="Add Holiday" onClick={() => setShowCreate(true)} />
-        </div>
-      </div>
-
+    <PageContainer>
+      <PageHeader
+        title={list.name as string}
+        subtitle={`${formatDate(list.from_date as string)} to ${formatDate(list.to_date as string)} · ${entries.length} holidays`}
+        breadcrumb={
+          <Button variant="text" color="inherit" size="small" startIcon={<Iconify icon="arrow-left" />} onClick={onBack}>
+            Back to Holiday Lists
+          </Button>
+        }
+        actions={<CreateButton permission="holidays.create" label="Add Holiday" onClick={() => setShowCreate(true)} />}
+      />
       {isLoading ? (
-        <div className="flex justify-center py-8"><div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-500 border-t-transparent" /></div>
+        <div className="flex justify-center py-8"><div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-main border-t-transparent" /></div>
       ) : entries.length === 0 ? (
-        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center text-gray-500">No holidays added yet. Click "Add Holiday" to add entries.</div>
+        <Card><StateView icon="holidayLists" title="No holidays added yet" description={'Click "Add Holiday" to add entries.'} /></Card>
       ) : (
-        <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <Card className="overflow-hidden">
+          <table className="min-w-full divide-y divide-divider">
+            <thead className="bg-surface-neutral">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Date</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Holiday</th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Date</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Holiday</th>
+                <th className="px-4 py-3 text-right text-xs font-medium uppercase text-ink-secondary">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-divider">
               {entries.map((entry: Record<string, unknown>) => (
                 <tr key={entry.id as string}>
-                  <td className="px-4 py-3 text-sm text-gray-900">
+                  <td className="px-4 py-3 text-sm text-ink-primary">
                     {formatDate(entry.holiday_date as string)}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-700">{entry.description as string}</td>
+                  <td className="px-4 py-3 text-sm text-ink-primary">{entry.description as string}</td>
                   <td className="px-4 py-3 text-right">
                     <DeleteButton permission="holidays.delete" label="Delete" size="sm" onClick={() => setDeleteId(entry.id as string)} />
                   </td>
@@ -173,7 +171,7 @@ function HolidayEntries({ list, onBack }: { list: Record<string, unknown>; onBac
               ))}
             </tbody>
           </table>
-        </div>
+        </Card>
       )}
 
       <CrudModal
@@ -195,6 +193,6 @@ function HolidayEntries({ list, onBack }: { list: Record<string, unknown>; onBac
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

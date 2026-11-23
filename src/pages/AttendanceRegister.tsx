@@ -11,6 +11,9 @@ import { useMemo, useState } from 'react';
 import { createCrudHooks } from '@/hooks/useCrud';
 import { DataTable, FilterBar, Pagination, useFilterSync } from '@/components/DataTable';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { StatCard } from '@/components/ui/StatCard';
 
 const ENDPOINT = '/api/v1/attendance/register/';
 
@@ -27,11 +30,11 @@ const crud = createCrudHooks<Record<string, unknown>>({
 
 const statusBadge = (status: string) => {
   const styles: Record<string, string> = {
-    present: 'bg-green-100 text-green-800',
-    absent: 'bg-red-100 text-red-800',
-    half_day: 'bg-yellow-100 text-yellow-800',
-    on_leave: 'bg-blue-100 text-blue-800',
-    holiday: 'bg-purple-100 text-purple-800',
+    present: 'bg-success-lighter text-success-dark',
+    absent: 'bg-error-lighter text-error-dark',
+    half_day: 'bg-warning-lighter text-warning-dark',
+    on_leave: 'bg-primary-lighter text-primary-dark',
+    holiday: 'bg-secondary-lighter text-secondary-dark',
   };
   const labels: Record<string, string> = {
     present: 'Present',
@@ -41,7 +44,7 @@ const statusBadge = (status: string) => {
     holiday: 'Holiday',
   };
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${styles[status] || 'bg-gray-100 text-gray-800'}`}>
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${styles[status] || 'bg-surface-neutral text-ink-primary'}`}>
       {labels[status] || status}
     </span>
   );
@@ -73,7 +76,7 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     key: 'is_late',
     header: 'Late',
     sortable: true,
-    render: (v: unknown) => (v ? <span className="text-red-600 font-medium text-xs">Late</span> : ''),
+    render: (v: unknown) => (v ? <span className="text-error-main font-medium text-xs">Late</span> : ''),
   },
 ];
 
@@ -122,34 +125,16 @@ export default function AttendanceRegister() {
   const onLeaveCount = results?.filter((r) => r.status === 'on_leave').length ?? 0;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Attendance Register</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Daily attendance record for all employees. Employees without check-in are shown as absent.
-        </p>
-      </div>
+    <PageContainer>
+      <PageHeader title="Attendance Register" subtitle="Daily attendance record for all employees. Employees without check-in are shown as absent." />
 
       {/* Summary Cards */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
-          <p className="text-xs font-medium text-gray-500">Total</p>
-          <p className="mt-1 text-xl font-bold text-gray-900">{totalEmployees}</p>
-        </div>
-        <div className="rounded-lg border border-green-200 bg-green-50 p-3 shadow-sm">
-          <p className="text-xs font-medium text-green-600">Present</p>
-          <p className="mt-1 text-xl font-bold text-green-700">{presentCount}</p>
-        </div>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-3 shadow-sm">
-          <p className="text-xs font-medium text-red-600">Absent</p>
-          <p className="mt-1 text-xl font-bold text-red-700">{absentCount}</p>
-        </div>
-        <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 shadow-sm">
-          <p className="text-xs font-medium text-yellow-600">Half Day / Leave</p>
-          <p className="mt-1 text-xl font-bold text-yellow-700">{halfDayCount + onLeaveCount}</p>
-        </div>
+      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <StatCard title="Total" value={totalEmployees} icon="employees" />
+        <StatCard title="Present" value={presentCount} icon="attendance" />
+        <StatCard title="Absent" value={absentCount} icon="leaveBlock" />
+        <StatCard title="Half Day / Leave" value={halfDayCount + onLeaveCount} icon="leaves" />
       </div>
-
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columns} />
       {queryResult.data && queryResult.data.count > 0 && (
@@ -161,6 +146,6 @@ export default function AttendanceRegister() {
           onPageSizeChange={setPageSize}
         />
       )}
-    </div>
+    </PageContainer>
   );
 }

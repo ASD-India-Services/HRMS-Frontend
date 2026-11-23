@@ -16,6 +16,8 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const ENDPOINT = '/api/v1/shifts/types/';
 
@@ -207,16 +209,8 @@ export default function ShiftTypes() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Shift Types</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Define shift templates with timing and grace periods
-          </p>
-        </div>
-        <CreateButton permission="shift_types.create" label="Create Shift Type" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Shift Types" subtitle="Define shift templates with timing and grace periods" actions={<CreateButton permission="shift_types.create" label="Create Shift Type" onClick={() => setShowCreate(true)} />} />
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
@@ -265,6 +259,6 @@ export default function ShiftTypes() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

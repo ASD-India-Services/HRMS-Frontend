@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
+import { Iconify } from '@/components/Iconify';
+import { Button, IconButton } from '@/components/ui/Button';
 
 export interface RichTextEditorProps {
   value: string;
@@ -701,7 +703,7 @@ export function RichTextEditor({
     const targetAttr = linkOpenInNewWindow
       ? ' target="_blank" rel="noopener noreferrer"'
       : '';
-    const anchorHtml = `<a href="${url}"${targetAttr} class="text-blue-600 underline hover:text-blue-800">${text}</a>`;
+    const anchorHtml = `<a href="${url}"${targetAttr} class="text-primary-main underline hover:text-primary-dark">${text}</a>`;
 
     insertHtmlAtSelection(anchorHtml);
     setShowLinkModal(false);
@@ -826,8 +828,8 @@ export function RichTextEditor({
       ref={containerRef}
       className={`transition-all ${
         isFullscreen
-          ? 'fixed inset-0 z-[9999] flex flex-col bg-white h-screen w-screen overflow-hidden'
-          : `relative rounded-md border border-gray-300 bg-white shadow-2xs ${className}`
+          ? 'fixed inset-0 z-[9999] flex flex-col bg-surface-paper h-screen w-screen overflow-hidden'
+          : `relative rounded-md border border-divider bg-surface-paper shadow-2xs ${className}`
       }`}
     >
       <style>{`
@@ -835,22 +837,22 @@ export function RichTextEditor({
           width: 100%;
           border-collapse: collapse;
           margin: 12px 0;
-          border: 1px solid #d1d5db;
+          border: 1px solid rgb(var(--grey-300));
         }
         .rich-editor-content th,
         .rich-editor-content td {
-          border: 1px solid #d1d5db;
+          border: 1px solid rgb(var(--grey-300));
           padding: 8px 12px;
           min-width: 48px;
           vertical-align: top;
         }
         .rich-editor-content th {
-          background-color: #f9fafb;
+          background-color: rgb(var(--grey-100));
           font-weight: 600;
         }
         .rich-editor-content td:focus,
         .rich-editor-content th:focus {
-          outline: 2px solid #2563eb;
+          outline: 2px solid rgb(var(--primary-main));
           outline-offset: -2px;
         }
         .rich-editor-content img {
@@ -863,54 +865,35 @@ export function RichTextEditor({
 
       {/* ─── Fullscreen Banner ───────────────────────────────────────────── */}
       {isFullscreen && (
-        <div className="flex items-center justify-between border-b border-blue-200 bg-blue-50 px-4 py-2 text-xs text-blue-900 select-none">
+        <div className="flex items-center justify-between border-b border-primary-light bg-primary-lighter px-4 py-2 text-xs text-primary-darker select-none">
           <div className="flex items-center gap-2 font-medium">
-            <span className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+            <span className="h-2 w-2 rounded-full bg-primary-main animate-pulse" />
             <span>Full Screen Policy Editor</span>
-            <span className="text-gray-500 font-normal hidden sm:inline">(Press Esc or click the fullscreen icon to exit)</span>
+            <span className="text-ink-secondary font-normal hidden sm:inline">(Press Esc or click the fullscreen icon to exit)</span>
           </div>
-          <button
-            type="button"
-            onClick={() => setIsFullscreen(false)}
-            className="rounded bg-blue-600 px-3 py-1 font-semibold text-white hover:bg-blue-700 transition"
-          >
-            Exit Fullscreen (Esc)
-          </button>
+          <Button size="small"
+            onClick={() => setIsFullscreen(false)}>Exit Fullscreen (Esc)</Button>
         </div>
       )}
 
       {/* ─── Toolbar Container ────────────────────────────────────────────── */}
-      <div className="border-b border-gray-300 bg-[#f8f9fa] p-2 select-none rich-editor-dropdown-container">
+      <div className="border-b border-divider bg-surface-neutral p-2 select-none rich-editor-dropdown-container">
         {/* ROW 1 */}
         <div className="flex flex-wrap items-center gap-1.5 pb-1.5">
           {/* Group 1: Magic Wand Dropdown */}
           <div className="relative inline-block">
-            <div className="inline-flex items-center rounded border border-gray-300 bg-white shadow-2xs hover:bg-gray-50">
-              <button
-                type="button"
+            <div className="inline-flex items-center rounded border border-divider bg-surface-paper shadow-2xs hover:bg-surface-neutral">
+              <Button variant="text" color="inherit" size="small" startIcon={<Iconify icon="magic-wand" />} endIcon={<Iconify icon="chevron-down" />} className="!rounded-none"
                 onClick={() => setShowWandMenu((prev) => !prev)}
-                className="flex items-center gap-1 px-2.5 py-1.5 text-gray-700 hover:text-blue-600 transition"
-                title="AI & Templates"
-              >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.8}
-                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h.01M12 2h.01M16 4h.01M5 8h.01M19 8h.01M12 11l-8 8"
-                  />
-                </svg>
-                <span className="text-[10px] text-gray-500">▼</span>
-              </button>
+                title="AI & Templates" />
             </div>
 
             {showWandMenu && (
-              <div className="absolute left-0 top-full z-30 mt-1 w-64 rounded-md border border-gray-200 bg-white py-1 shadow-lg text-xs">
-                <div className="px-3 py-1 font-bold text-gray-400 uppercase tracking-wider text-[10px]">
+              <div className="absolute left-0 top-full z-30 mt-1 w-64 rounded-md border border-divider bg-surface-paper py-1 shadow-lg text-xs">
+                <div className="px-3 py-1 font-bold text-ink-disabled uppercase tracking-wider text-[10px]">
                   Insert Policy Template
                 </div>
-                <button
-                  type="button"
+                <Button variant="text" color="inherit" size="small" startIcon={<Iconify icon="policies" />} className="w-full !h-auto !justify-start !rounded-none !px-3 py-1.5 text-left !font-normal"
                   onClick={() =>
                     handleInsertTemplate(`
 <h3>1.0 TABLE OF CONTENTS</h3>
@@ -922,13 +905,8 @@ export function RichTextEditor({
 <hr/>
 <p>This policy outlines official operational rules, standards, and employee guidelines.</p>
 `)
-                  }
-                  className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex items-center gap-2"
-                >
-                  <span>📋</span> Standard Policy Format
-                </button>
-                <button
-                  type="button"
+                  }>Standard Policy Format</Button>
+                <Button variant="text" color="inherit" size="small" startIcon={<Iconify icon="table" />} className="w-full !h-auto !justify-start !rounded-none !px-3 py-1.5 text-left !font-normal"
                   onClick={() =>
                     handleInsertTemplate(`
 <h3>2.0 ABBREVIATIONS</h3>
@@ -964,13 +942,8 @@ export function RichTextEditor({
 </table>
 <p><br></p>
 `)
-                  }
-                  className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex items-center gap-2"
-                >
-                  <span>📊</span> Abbreviations Table
-                </button>
-                <button
-                  type="button"
+                  }>Abbreviations Table</Button>
+                <Button variant="text" color="inherit" size="small" startIcon={<Iconify icon="overtime" />} className="w-full !h-auto !justify-start !rounded-none !px-3 py-1.5 text-left !font-normal"
                   onClick={() =>
                     handleInsertTemplate(`
 <h3>3.0 WORKING HOURS & ATTENDANCE</h3>
@@ -980,13 +953,8 @@ export function RichTextEditor({
 <p>3.1.3 Core business hours are strictly maintained between 11:00 AM and 5:00 PM.</p>
 <p>3.1.4 Minimum required work duration is 8.5 working hours per day.</p>
 `)
-                  }
-                  className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex items-center gap-2"
-                >
-                  <span>⏰</span> Working Hours Template
-                </button>
-                <button
-                  type="button"
+                  }>Working Hours Template</Button>
+                <Button variant="text" color="inherit" size="small" startIcon={<Iconify icon="compliance" />} className="w-full !h-auto !justify-start !rounded-none !px-3 py-1.5 text-left !font-normal"
                   onClick={() =>
                     handleInsertTemplate(`
 <h3>4.0 CODE OF PROFESSIONAL CONDUCT</h3>
@@ -994,85 +962,44 @@ export function RichTextEditor({
 <p>4.2 Company assets, confidentiality, and proprietary information must be protected.</p>
 <p>4.3 Zero-tolerance policy toward harassment, discrimination, or conflict of interest.</p>
 `)
-                  }
-                  className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex items-center gap-2"
-                >
-                  <span>🛡️</span> Code of Conduct Template
-                </button>
+                  }>Code of Conduct Template</Button>
               </div>
             )}
           </div>
 
           {/* Group 2: B | I | U | Eraser */}
-          <div className="inline-flex items-center rounded border border-gray-300 bg-white shadow-2xs divide-x divide-gray-200">
-            <button
-              type="button"
+          <div className="inline-flex items-center rounded border border-divider bg-surface-paper shadow-2xs divide-x divide-divider">
+            <Button variant="text" color="inherit" size="small" className="!rounded-none font-serif !font-black"
               onClick={() => execute('bold')}
-              className="px-2.5 py-1.5 text-gray-800 hover:bg-gray-100 font-serif font-black text-sm transition"
-              title="Bold (Ctrl+B)"
-            >
-              B
-            </button>
-            <button
-              type="button"
+              title="Bold (Ctrl+B)">B</Button>
+            <Button variant="text" color="inherit" size="small" className="!rounded-none font-serif italic"
               onClick={() => execute('italic')}
-              className="px-2.5 py-1.5 text-gray-800 hover:bg-gray-100 font-serif italic font-bold text-sm transition"
-              title="Italic (Ctrl+I)"
-            >
-              I
-            </button>
-            <button
-              type="button"
+              title="Italic (Ctrl+I)">I</Button>
+            <Button variant="text" color="inherit" size="small" className="!rounded-none font-serif underline underline-offset-2"
               onClick={() => execute('underline')}
-              className="px-2.5 py-1.5 text-gray-800 hover:bg-gray-100 font-serif font-bold text-sm underline underline-offset-2 transition"
-              title="Underline (Ctrl+U)"
-            >
-              U
-            </button>
-            <button
-              type="button"
+              title="Underline (Ctrl+U)">U</Button>
+            <IconButton icon="clear-format" size="small" className="!rounded-none"
               onClick={() => execute('removeFormat')}
-              className="px-2.5 py-1.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition"
               title="Remove Formatting (Ctrl+\)"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.8}
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
-            </button>
+             aria-label="Remove Formatting (Ctrl+\)" />
           </div>
 
           {/* Group 3: Font Family Dropdown */}
           <div className="relative inline-block">
-            <div className="inline-flex items-center rounded border border-gray-300 bg-white shadow-2xs">
-              <button
-                type="button"
+            <div className="inline-flex items-center rounded border border-divider bg-surface-paper shadow-2xs">
+              <Button variant="text" color="inherit" size="small" endIcon={<Iconify icon="chevron-down" />} className="min-w-[95px] !justify-between"
                 onClick={() => setShowFontMenu((prev) => !prev)}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 transition min-w-[95px] justify-between"
-                title="Font Family"
-              >
-                <span className="truncate">{currentFont}</span>
-                <span className="text-[10px] text-gray-500">▼</span>
-              </button>
+                title="Font Family"><span className="truncate">{currentFont}</span></Button>
             </div>
 
             {showFontMenu && (
-              <div className="absolute left-0 top-full z-30 mt-1 w-40 rounded-md border border-gray-200 bg-white py-1 shadow-lg text-xs">
+              <div className="absolute left-0 top-full z-30 mt-1 w-40 rounded-md border border-divider bg-surface-paper py-1 shadow-lg text-xs">
                 {['sans-serif', 'Poppins', 'Arial', 'Inter', 'Georgia', 'Times New Roman', 'Courier New'].map(
                   (font) => (
-                    <button
+                    <Button variant="text" color="inherit" size="small" className="w-full !h-auto !justify-start !rounded-none !px-3 py-1.5 text-left !font-normal"
                       key={font}
-                      type="button"
                       onClick={() => handleFontSelect(font)}
-                      className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition"
-                      style={{ fontFamily: font }}
-                    >
-                      {font}
-                    </button>
+                      style={{ fontFamily: font }}>{font}</Button>
                   )
                 )}
               </div>
@@ -1081,22 +1008,14 @@ export function RichTextEditor({
 
           {/* Group 4: Highlight Color Dropdown */}
           <div className="relative inline-block">
-            <div className="inline-flex items-center rounded border border-gray-300 bg-white shadow-2xs">
-              <button
-                type="button"
+            <div className="inline-flex items-center rounded border border-divider bg-surface-paper shadow-2xs">
+              <Button variant="text" color="inherit" size="small" endIcon={<Iconify icon="chevron-down" />}
                 onClick={() => setShowColorMenu((prev) => !prev)}
-                className="flex items-center gap-1 px-2.5 py-1 text-gray-700 hover:bg-gray-50 transition"
-                title="Highlight Color"
-              >
-                <span className="bg-yellow-300 text-black px-1 py-0.5 rounded-xs font-black text-xs leading-none">
-                  A
-                </span>
-                <span className="text-[10px] text-gray-500">▼</span>
-              </button>
+                title="Highlight Color"><span className="bg-warning-light text-ink-primary px-1 py-0.5 rounded-xs font-black text-xs leading-none">A</span></Button>
             </div>
 
             {showColorMenu && (
-              <div className="absolute left-0 top-full z-30 mt-1 w-32 rounded-md border border-gray-200 bg-white p-2 shadow-lg text-xs grid grid-cols-3 gap-1.5">
+              <div className="absolute left-0 top-full z-30 mt-1 w-32 rounded-md border border-divider bg-surface-paper p-2 shadow-lg text-xs grid grid-cols-3 gap-1.5">
                 {[
                   { name: 'Yellow', color: '#fef08a' },
                   { name: 'Green', color: '#bbf7d0' },
@@ -1105,118 +1024,60 @@ export function RichTextEditor({
                   { name: 'Orange', color: '#fed7aa' },
                   { name: 'Clear', color: 'transparent' },
                 ].map((item) => (
-                  <button
+                  <Button variant="text" color="inherit" size="small" aria-label={item.name} className="!h-6 w-full !rounded border border-divider hover:scale-110"
                     key={item.name}
-                    type="button"
                     onClick={() => handleHighlight(item.color)}
-                    className="h-6 w-full rounded border border-gray-300 transition hover:scale-110"
                     style={{ backgroundColor: item.color }}
-                    title={item.name}
-                  />
+                    title={item.name} />
                 ))}
               </div>
             )}
           </div>
 
           {/* Group 5: Bullet List | Numbered List | Alignment */}
-          <div className="inline-flex items-center rounded border border-gray-300 bg-white shadow-2xs divide-x divide-gray-200">
-            <button
-              type="button"
+          <div className="inline-flex items-center rounded border border-divider bg-surface-paper shadow-2xs divide-x divide-divider">
+            <IconButton icon="list-bulleted" size="small" className="!rounded-none"
               onClick={() => execute('insertUnorderedList')}
-              className="px-2.5 py-1.5 text-gray-700 hover:bg-gray-100 transition"
               title="Bulleted List (Ctrl+Shift+8)"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16M2 6h.01M2 12h.01M2 18h.01"
-                />
-              </svg>
-            </button>
+             aria-label="Bulleted List (Ctrl+Shift+8)" />
 
-            <button
-              type="button"
+            <IconButton icon="list-numbered" size="small" className="!rounded-none"
               onClick={() => execute('insertOrderedList')}
-              className="px-2.5 py-1.5 text-gray-700 hover:bg-gray-100 transition"
               title="Numbered List (Ctrl+Shift+7)"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 6h14M7 12h14M7 18h14M3 5v3m0 0h2M3 11h2v3H3m0 3h2v3H3"
-                />
-              </svg>
-            </button>
+             aria-label="Numbered List (Ctrl+Shift+7)" />
 
             {/* Alignment dropdown */}
             <div className="relative inline-block">
-              <button
-                type="button"
+              <Button variant="text" color="inherit" size="small" startIcon={<Iconify icon="align-left" />} endIcon={<Iconify icon="chevron-down" />} className="!rounded-none"
                 onClick={() => setShowAlignMenu((prev) => !prev)}
-                className="flex items-center gap-0.5 px-2 py-1.5 text-gray-700 hover:bg-gray-100 transition"
-                title="Text Alignment"
-              >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h10M4 18h14"
-                  />
-                </svg>
-                <span className="text-[10px] text-gray-500">▼</span>
-              </button>
+                title="Text Alignment" />
 
               {showAlignMenu && (
-                <div className="absolute left-0 top-full z-30 mt-1 w-44 rounded-md border border-gray-200 bg-white py-1 shadow-lg text-xs">
-                  <button
-                    type="button"
+                <div className="absolute left-0 top-full z-30 mt-1 w-44 rounded-md border border-divider bg-surface-paper py-1 shadow-lg text-xs">
+                  <Button variant="text" color="inherit" size="small" className="w-full !h-auto !justify-between !rounded-none !px-3 py-1.5 text-left !font-normal"
                     onClick={() => {
                       execute('justifyLeft');
                       setShowAlignMenu(false);
-                    }}
-                    className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex justify-between"
-                  >
-                    <span>Align Left</span>
-                    <span className="text-[10px] text-gray-400">Ctrl+Shift+L</span>
-                  </button>
-                  <button
-                    type="button"
+                    }}><span>Align Left</span>
+                    <span className="text-[10px] text-ink-disabled">Ctrl+Shift+L</span></Button>
+                  <Button variant="text" color="inherit" size="small" className="w-full !h-auto !justify-between !rounded-none !px-3 py-1.5 text-left !font-normal"
                     onClick={() => {
                       execute('justifyCenter');
                       setShowAlignMenu(false);
-                    }}
-                    className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex justify-between"
-                  >
-                    <span>Align Center</span>
-                    <span className="text-[10px] text-gray-400">Ctrl+Shift+E</span>
-                  </button>
-                  <button
-                    type="button"
+                    }}><span>Align Center</span>
+                    <span className="text-[10px] text-ink-disabled">Ctrl+Shift+E</span></Button>
+                  <Button variant="text" color="inherit" size="small" className="w-full !h-auto !justify-between !rounded-none !px-3 py-1.5 text-left !font-normal"
                     onClick={() => {
                       execute('justifyRight');
                       setShowAlignMenu(false);
-                    }}
-                    className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex justify-between"
-                  >
-                    <span>Align Right</span>
-                    <span className="text-[10px] text-gray-400">Ctrl+Shift+R</span>
-                  </button>
-                  <button
-                    type="button"
+                    }}><span>Align Right</span>
+                    <span className="text-[10px] text-ink-disabled">Ctrl+Shift+R</span></Button>
+                  <Button variant="text" color="inherit" size="small" className="w-full !h-auto !justify-between !rounded-none !px-3 py-1.5 text-left !font-normal"
                     onClick={() => {
                       execute('justifyFull');
                       setShowAlignMenu(false);
-                    }}
-                    className="w-full px-3 py-1.5 text-left text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex justify-between"
-                  >
-                    <span>Justify</span>
-                    <span className="text-[10px] text-gray-400">Ctrl+Shift+J</span>
-                  </button>
+                    }}><span>Justify</span>
+                    <span className="text-[10px] text-ink-disabled">Ctrl+Shift+J</span></Button>
                 </div>
               )}
             </div>
@@ -1224,32 +1085,19 @@ export function RichTextEditor({
 
           {/* Group 6: 10x10 Table Grid Picker Dropdown */}
           <div className="relative inline-block">
-            <div className="inline-flex items-center rounded border border-gray-300 bg-white shadow-2xs">
-              <button
-                type="button"
+            <div className="inline-flex items-center rounded border border-divider bg-surface-paper shadow-2xs">
+              <Button variant="text" color="inherit" size="small" startIcon={<Iconify icon="table" />} endIcon={<Iconify icon="chevron-down" />} className="!rounded-none"
                 onClick={() => {
                   setShowTableMenu((prev) => !prev);
                   setHoverGrid({ cols: 1, rows: 1 });
                 }}
-                className="flex items-center gap-1 px-2.5 py-1.5 text-gray-700 hover:bg-gray-50 transition"
-                title="Insert Table"
-              >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.8}
-                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6h18M3 14h18M10 3v18M16 3v18"
-                  />
-                </svg>
-                <span className="text-[10px] text-gray-500">▼</span>
-              </button>
+                title="Insert Table" />
             </div>
 
             {/* Interactive 10x10 Grid Table Selector */}
             {showTableMenu && (
               <div
-                className="absolute left-0 top-full z-30 mt-1 rounded-md border border-gray-200 bg-white p-2.5 shadow-lg select-none"
+                className="absolute left-0 top-full z-30 mt-1 rounded-md border border-divider bg-surface-paper p-2.5 shadow-lg select-none"
                 onMouseLeave={() => setHoverGrid({ cols: 0, rows: 0 })}
               >
                 <div className="grid grid-cols-10 gap-1" style={{ width: '190px' }}>
@@ -1264,15 +1112,15 @@ export function RichTextEditor({
                           onClick={() => handleInsertTable(row, col)}
                           className={`h-3.5 w-3.5 cursor-pointer rounded-xs border transition-colors ${
                             isHighlighted
-                              ? 'border-blue-400 bg-blue-100'
-                              : 'border-gray-200 bg-gray-50/50 hover:border-gray-300'
+                              ? 'border-primary-main bg-primary-lighter'
+                              : 'border-divider bg-surface-neutral/50 hover:border-divider'
                           }`}
                         />
                       );
                     })
                   )}
                 </div>
-                <div className="mt-2 text-left text-xs font-normal text-gray-800">
+                <div className="mt-2 text-left text-xs font-normal text-ink-primary">
                   {hoverGrid.cols > 0 && hoverGrid.rows > 0
                     ? `${hoverGrid.cols} x ${hoverGrid.rows}`
                     : '1 x 1'}
@@ -1285,111 +1133,45 @@ export function RichTextEditor({
         {/* ROW 2: Link | Image | Video | Fullscreen | Code View | Help */}
         <div className="flex flex-wrap items-center gap-1.5">
           {/* Group 1: Link | Image | Video */}
-          <div className="inline-flex items-center rounded border border-gray-300 bg-white shadow-2xs divide-x divide-gray-200">
+          <div className="inline-flex items-center rounded border border-divider bg-surface-paper shadow-2xs divide-x divide-divider">
             {/* Link */}
-            <button
-              type="button"
+            <IconButton icon="link" size="small" className="!rounded-none"
               onClick={handleOpenLinkModal}
-              className="px-2.5 py-1.5 text-gray-700 hover:bg-gray-100 transition"
               title="Insert Link (Ctrl+K)"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.8}
-                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                />
-              </svg>
-            </button>
+             aria-label="Insert Link (Ctrl+K)" />
 
             {/* Image */}
-            <button
-              type="button"
+            <IconButton icon="image" size="small" className="!rounded-none"
               onClick={handleOpenImageModal}
-              className="px-2.5 py-1.5 text-gray-700 hover:bg-gray-100 transition"
               title="Insert Image (Ctrl+Alt+I)"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.8}
-                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-            </button>
+             aria-label="Insert Image (Ctrl+Alt+I)" />
 
             {/* Video */}
-            <button
-              type="button"
+            <IconButton icon="video" size="small" className="!rounded-none"
               onClick={handleOpenVideoModal}
-              className="px-2.5 py-1.5 text-gray-700 hover:bg-gray-100 transition"
               title="Insert Video (Ctrl+Alt+V)"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.8}
-                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
-            </button>
+             aria-label="Insert Video (Ctrl+Alt+V)" />
           </div>
 
           {/* Group 2: Fullscreen | Code View </> | Help ? */}
-          <div className="inline-flex items-center rounded border border-gray-300 bg-white shadow-2xs divide-x divide-gray-200">
+          <div className="inline-flex items-center rounded border border-divider bg-surface-paper shadow-2xs divide-x divide-divider">
             {/* Fullscreen */}
-            <button
-              type="button"
+            <IconButton icon={isFullscreen ? 'fullscreen-exit' : 'fullscreen'} size="small" variant={isFullscreen ? 'soft' : 'text'} color={isFullscreen ? 'primary' : 'inherit'} className="!rounded-none"
               onClick={() => setIsFullscreen((prev) => !prev)}
-              className={`px-2.5 py-1.5 transition ${
-                isFullscreen
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
               title={isFullscreen ? 'Exit Fullscreen (Esc)' : 'Full Screen (Ctrl+Shift+F / F11)'}
-            >
-              <svg
-                className="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="6" y1="6" x2="18" y2="18" />
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <polyline points="6 9 6 6 9 6" />
-                <polyline points="15 6 18 6 18 9" />
-                <polyline points="18 15 18 18 15 18" />
-                <polyline points="9 18 6 18 6 15" />
-              </svg>
-            </button>
+             aria-label={isFullscreen ? 'Exit Fullscreen (Esc)' : 'Full Screen (Ctrl+Shift+F / F11)'} />
 
             {/* Code View </> */}
-            <button
-              type="button"
+            <IconButton icon="code" size="small" variant={isCodeView ? 'soft' : 'text'} color={isCodeView ? 'primary' : 'inherit'} className="!rounded-none"
               onClick={() => setIsCodeView((prev) => !prev)}
-              className={`px-2.5 py-1.5 font-mono text-xs font-bold transition ${
-                isCodeView ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-gray-100'
-              }`}
               title="Toggle HTML Code View (Ctrl+/)"
-            >
-              &lt;/&gt;
-            </button>
+             aria-label="Toggle HTML Code View (Ctrl+/)" />
 
             {/* Help ? */}
-            <button
-              type="button"
+            <IconButton icon="help" size="small" className="!rounded-none"
               onClick={() => setShowHelpModal(true)}
-              className="px-2.5 py-1.5 font-bold text-xs text-gray-700 hover:bg-gray-100 transition"
               title="Help & Shortcuts"
-            >
-              ?
-            </button>
+             aria-label="Help & Shortcuts" />
           </div>
         </div>
       </div>
@@ -1400,7 +1182,7 @@ export function RichTextEditor({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Enter raw HTML content here..."
-          className="w-full flex-1 p-4 font-mono text-xs text-gray-800 focus:outline-none bg-gray-50/50 leading-relaxed rounded-b-md resize-y"
+          className="w-full flex-1 p-4 font-mono text-xs text-ink-primary focus:outline-none bg-surface-neutral/50 leading-relaxed rounded-b-md resize-y"
           style={{ minHeight: isFullscreen ? 'calc(100vh - 120px)' : minHeight }}
         />
       ) : (
@@ -1414,7 +1196,7 @@ export function RichTextEditor({
           onScroll={updateEditorContext}
           onKeyDown={handleEditorKeyDown}
           data-placeholder={placeholder}
-          className={`rich-editor-content prose prose-sm max-w-none w-full flex-1 p-4 text-sm text-gray-800 focus:outline-none leading-relaxed overflow-y-auto ${
+          className={`rich-editor-content prose prose-sm max-w-none w-full flex-1 p-4 text-sm text-ink-primary focus:outline-none leading-relaxed overflow-y-auto ${
             isFullscreen ? 'max-w-5xl mx-auto py-6' : 'rounded-b-md'
           }`}
           style={{ minHeight: isFullscreen ? 'calc(100vh - 120px)' : minHeight }}
@@ -1424,7 +1206,7 @@ export function RichTextEditor({
       {/* ─── Floating Contextual Table Toolbar (Image 2) ────────────────── */}
       {activeTableContext && (
         <div
-          className="table-floating-toolbar absolute z-40 bg-white border border-gray-300 rounded-md shadow-lg flex items-center p-1 gap-0.5 select-none animate-in fade-in zoom-in-95 duration-100"
+          className="table-floating-toolbar absolute z-40 bg-surface-paper border border-divider rounded-md shadow-lg flex items-center p-1 gap-0.5 select-none animate-in fade-in zoom-in-95 duration-100"
           style={{
             top: `${activeTableContext.top}px`,
             left: `${activeTableContext.left}px`,
@@ -1435,178 +1217,59 @@ export function RichTextEditor({
           }}
         >
           {/* Caret pointing up */}
-          <div className="absolute -top-1.5 left-5 w-3 h-3 bg-white border-t border-l border-gray-300 rotate-45 transform pointer-events-none" />
+          <div className="absolute -top-1.5 left-5 w-3 h-3 bg-surface-paper border-t border-l border-divider rotate-45 transform pointer-events-none" />
 
           {/* GROUP 1: Rows */}
-          <button
-            type="button"
+          <IconButton icon="row-below" size="small" className="relative z-10"
             onClick={handleInsertRowBelow}
             title="Insert row below"
-            className="relative z-10 p-1.5 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded transition cursor-pointer"
-          >
-            <svg
-              className="w-4 h-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="3" y="6" width="18" height="6" rx="1" />
-              <line x1="9" y1="6" x2="9" y2="12" />
-              <line x1="15" y1="6" x2="15" y2="12" />
-              <path d="M12 15v5m0 0l-2.5-2.5M12 20l2.5-2.5" />
-            </svg>
-          </button>
+           aria-label="Insert row below" />
 
-          <button
-            type="button"
+          <IconButton icon="row-above" size="small" className="relative z-10"
             onClick={handleInsertRowAbove}
             title="Insert row above"
-            className="relative z-10 p-1.5 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded transition cursor-pointer"
-          >
-            <svg
-              className="w-4 h-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 9V4m0 0l-2.5 2.5M12 4l2.5 2.5" />
-              <rect x="3" y="12" width="18" height="6" rx="1" />
-              <line x1="9" y1="12" x2="9" y2="18" />
-              <line x1="15" y1="12" x2="15" y2="18" />
-            </svg>
-          </button>
+           aria-label="Insert row above" />
 
-          <div className="relative z-10 w-px h-5 bg-gray-200 mx-0.5" />
+          <div className="relative z-10 w-px h-5 bg-grey-200 mx-0.5" />
 
           {/* GROUP 2: Columns */}
-          <button
-            type="button"
+          <IconButton icon="arrow-left" size="small" className="relative z-10"
             onClick={handleInsertColLeft}
             title="Insert column left"
-            className="relative z-10 p-1.5 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded transition cursor-pointer"
-          >
-            <svg
-              className="w-4 h-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M9 12H4m0 0l2.5-2.5M4 12l2.5 2.5" />
-              <rect x="12" y="3" width="7" height="18" rx="1" />
-              <line x1="12" y1="9" x2="19" y2="9" />
-              <line x1="12" y1="15" x2="19" y2="15" />
-            </svg>
-          </button>
+           aria-label="Insert column left" />
 
-          <button
-            type="button"
+          <IconButton icon="arrow-right" size="small" className="relative z-10"
             onClick={handleInsertColRight}
             title="Insert column right"
-            className="relative z-10 p-1.5 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded transition cursor-pointer"
-          >
-            <svg
-              className="w-4 h-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="5" y="3" width="7" height="18" rx="1" />
-              <line x1="5" y1="9" x2="12" y2="9" />
-              <line x1="5" y1="15" x2="12" y2="15" />
-              <path d="M15 12h5m0 0l-2.5-2.5M20 12l2.5 2.5" />
-            </svg>
-          </button>
+           aria-label="Insert column right" />
 
-          <div className="relative z-10 w-px h-5 bg-gray-200 mx-0.5" />
+          <div className="relative z-10 w-px h-5 bg-grey-200 mx-0.5" />
 
           {/* GROUP 3: Delete Row / Delete Column */}
-          <button
-            type="button"
+          <IconButton icon="close" size="small" color="error" className="relative z-10"
             onClick={handleDeleteRow}
             title="Delete row"
-            className="relative z-10 p-1.5 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded transition cursor-pointer"
-          >
-            <svg
-              className="w-4 h-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="3" y="11" width="18" height="7" rx="1" />
-              <line x1="9" y1="11" x2="9" y2="18" />
-              <line x1="15" y1="11" x2="15" y2="18" />
-              <path d="M10 4l4 4m0-4l-4 4" strokeWidth="2" />
-            </svg>
-          </button>
+           aria-label="Delete row" />
 
-          <button
-            type="button"
+          <IconButton icon="close" size="small" color="error" className="relative z-10"
             onClick={handleDeleteCol}
             title="Delete column"
-            className="relative z-10 p-1.5 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded transition cursor-pointer"
-          >
-            <svg
-              className="w-4 h-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="5" y="3" width="7" height="18" rx="1" />
-              <line x1="5" y1="9" x2="12" y2="9" />
-              <line x1="5" y1="15" x2="12" y2="15" />
-              <path d="M15 10l4 4m0-4l-4 4" strokeWidth="2" />
-            </svg>
-          </button>
+           aria-label="Delete column" />
 
-          <div className="relative z-10 w-px h-5 bg-gray-200 mx-0.5" />
+          <div className="relative z-10 w-px h-5 bg-grey-200 mx-0.5" />
 
           {/* GROUP 4: Delete Table */}
-          <button
-            type="button"
+          <IconButton icon="trash" size="small" color="error" className="relative z-10"
             onClick={handleDeleteTable}
             title="Delete table"
-            className="relative z-10 p-1.5 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded transition cursor-pointer"
-          >
-            <svg
-              className="w-4 h-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-              <line x1="10" y1="11" x2="10" y2="17" />
-              <line x1="14" y1="11" x2="14" y2="17" />
-            </svg>
-          </button>
+           aria-label="Delete table" />
         </div>
       )}
 
       {/* ─── Floating Link Popover ────────────────────────────────────────── */}
       {activeLinkContext && (
         <div
-          className="link-floating-toolbar absolute z-40 bg-white border border-gray-300 rounded shadow-md flex items-center p-1 gap-1 select-none animate-in fade-in duration-100"
+          className="link-floating-toolbar absolute z-40 bg-surface-paper border border-divider rounded shadow-md flex items-center p-1 gap-1 select-none animate-in fade-in duration-100"
           style={{
             top: `${activeLinkContext.top}px`,
             left: `${activeLinkContext.left}px`,
@@ -1616,31 +1279,25 @@ export function RichTextEditor({
             e.stopPropagation();
           }}
         >
-          <div className="absolute -top-1.5 left-4 w-2.5 h-2.5 bg-white border-t border-l border-gray-300 rotate-45 transform" />
+          <div className="absolute -top-1.5 left-4 w-2.5 h-2.5 bg-surface-paper border-t border-l border-divider rotate-45 transform" />
           <a
             href={activeLinkContext.url}
             target="_blank"
             rel="noopener noreferrer"
             title="Open link in new window"
-            className="p-1 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded transition"
+            className="p-1 text-ink-primary hover:text-primary-main hover:bg-surface-neutral rounded transition"
           >
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
           </a>
-          <button
-            type="button"
+          <IconButton icon="unlink" size="small" color="error"
             onClick={() => {
               execute('unlink');
               setActiveLinkContext(null);
             }}
             title="Unlink"
-            className="p-1 text-gray-700 hover:text-red-600 hover:bg-red-50 rounded transition"
-          >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1M3 3l18 18" />
-            </svg>
-          </button>
+           aria-label="Unlink" />
         </div>
       )}
 
@@ -1648,22 +1305,17 @@ export function RichTextEditor({
       {showLinkModal &&
         typeof document !== 'undefined' &&
         createPortal(
-          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-md rounded-lg bg-white p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-                <h3 className="text-base font-normal text-gray-800">Insert Link</h3>
-                <button
-                  type="button"
-                  onClick={() => setShowLinkModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-lg leading-none"
-                >
-                  ✕
-                </button>
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-grey-900/40 p-4">
+            <div className="w-full max-w-md rounded-lg bg-surface-paper p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center justify-between pb-3 border-b border-divider">
+                <h3 className="text-base font-normal text-ink-primary">Insert Link</h3>
+                <IconButton icon="close" size="small" aria-label="Close"
+                  onClick={() => setShowLinkModal(false)} />
               </div>
 
               <div className="mt-4 space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  <label className="block text-xs font-semibold text-ink-primary mb-1">
                     Text to display
                   </label>
                   <input
@@ -1674,12 +1326,12 @@ export function RichTextEditor({
                       if (e.key === 'Enter') handleInsertLinkSubmit(e);
                     }}
                     placeholder="Text"
-                    className="w-full rounded border border-gray-300 px-3 py-1.5 text-xs text-gray-800 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded border border-divider px-3 py-1.5 text-xs text-ink-primary focus:border-primary-main focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  <label className="block text-xs font-semibold text-ink-primary mb-1">
                     To what URL should this link go?
                   </label>
                   <input
@@ -1690,40 +1342,35 @@ export function RichTextEditor({
                       if (e.key === 'Enter') handleInsertLinkSubmit(e);
                     }}
                     placeholder="https://example.com"
-                    className="w-full rounded border border-gray-300 px-3 py-1.5 text-xs text-gray-800 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded border border-divider px-3 py-1.5 text-xs text-ink-primary focus:border-primary-main focus:outline-none"
                   />
                 </div>
 
                 <div className="space-y-1.5 pt-1">
-                  <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-ink-primary cursor-pointer">
                     <input
                       type="checkbox"
                       checked={linkOpenInNewWindow}
                       onChange={(e) => setLinkOpenInNewWindow(e.target.checked)}
-                      className="h-3.5 w-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="h-3.5 w-3.5 rounded border-divider text-primary-main focus:ring-primary-main"
                     />
                     <span>Open in new window</span>
                   </label>
-                  <label className="flex items-center gap-2 text-xs text-gray-700 cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-ink-primary cursor-pointer">
                     <input
                       type="checkbox"
                       checked={linkUseDefaultProtocol}
                       onChange={(e) => setLinkUseDefaultProtocol(e.target.checked)}
-                      className="h-3.5 w-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="h-3.5 w-3.5 rounded border-divider text-primary-main focus:ring-primary-main"
                     />
                     <span>Use default protocol</span>
                   </label>
                 </div>
 
                 <div className="flex justify-end pt-3">
-                  <button
-                    type="button"
+                  <Button size="small"
                     onClick={(e) => handleInsertLinkSubmit(e)}
-                    disabled={!linkUrl.trim()}
-                    className="rounded bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 disabled:opacity-50 transition cursor-pointer"
-                  >
-                    Insert Link
-                  </button>
+                    disabled={!linkUrl.trim()}>Insert Link</Button>
                 </div>
               </div>
             </div>
@@ -1735,39 +1382,34 @@ export function RichTextEditor({
       {showImageModal &&
         typeof document !== 'undefined' &&
         createPortal(
-          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-md rounded-lg bg-white p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-                <h3 className="text-base font-normal text-gray-800">Insert Image</h3>
-                <button
-                  type="button"
-                  onClick={() => setShowImageModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-lg leading-none"
-                >
-                  ✕
-                </button>
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-grey-900/40 p-4">
+            <div className="w-full max-w-md rounded-lg bg-surface-paper p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center justify-between pb-3 border-b border-divider">
+                <h3 className="text-base font-normal text-ink-primary">Insert Image</h3>
+                <IconButton icon="close" size="small" aria-label="Close"
+                  onClick={() => setShowImageModal(false)} />
               </div>
 
               <div className="mt-4 space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  <label className="block text-xs font-semibold text-ink-primary mb-1">
                     Select from files
                   </label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => handleImageFileChange(e.target.files?.[0] || null)}
-                    className="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border file:border-gray-300 file:bg-gray-50 file:text-xs file:font-medium file:text-gray-700 hover:file:bg-gray-100 cursor-pointer"
+                    className="w-full text-xs text-ink-secondary file:mr-3 file:py-1.5 file:px-3 file:rounded file:border file:border-divider file:bg-surface-neutral file:text-xs file:font-medium file:text-ink-primary hover:file:bg-surface-neutral cursor-pointer"
                   />
                   {imagePreview && (
-                    <div className="mt-2 p-1.5 border border-gray-200 rounded bg-gray-50 max-h-32 overflow-hidden flex items-center justify-center">
+                    <div className="mt-2 p-1.5 border border-divider rounded bg-surface-neutral max-h-32 overflow-hidden flex items-center justify-center">
                       <img src={imagePreview} alt="Preview" className="max-h-28 object-contain rounded" />
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  <label className="block text-xs font-semibold text-ink-primary mb-1">
                     Image URL
                   </label>
                   <input
@@ -1778,19 +1420,14 @@ export function RichTextEditor({
                       if (e.key === 'Enter') handleInsertImageSubmit(e);
                     }}
                     placeholder="https://example.com/image.png"
-                    className="w-full rounded border border-gray-300 px-3 py-1.5 text-xs text-gray-800 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded border border-divider px-3 py-1.5 text-xs text-ink-primary focus:border-primary-main focus:outline-none"
                   />
                 </div>
 
                 <div className="flex justify-end pt-3">
-                  <button
-                    type="button"
+                  <Button size="small"
                     onClick={(e) => handleInsertImageSubmit(e)}
-                    disabled={!imageFile && !imagePreview && !imageUrl.trim()}
-                    className="rounded bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 disabled:opacity-50 transition cursor-pointer"
-                  >
-                    Insert Image
-                  </button>
+                    disabled={!imageFile && !imagePreview && !imageUrl.trim()}>Insert Image</Button>
                 </div>
               </div>
             </div>
@@ -1802,22 +1439,17 @@ export function RichTextEditor({
       {showVideoModal &&
         typeof document !== 'undefined' &&
         createPortal(
-          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-md rounded-lg bg-white p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-                <h3 className="text-base font-normal text-gray-800">Insert Video</h3>
-                <button
-                  type="button"
-                  onClick={() => setShowVideoModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-lg leading-none"
-                >
-                  ✕
-                </button>
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-grey-900/40 p-4">
+            <div className="w-full max-w-md rounded-lg bg-surface-paper p-5 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center justify-between pb-3 border-b border-divider">
+                <h3 className="text-base font-normal text-ink-primary">Insert Video</h3>
+                <IconButton icon="close" size="small" aria-label="Close"
+                  onClick={() => setShowVideoModal(false)} />
               </div>
 
               <div className="mt-4 space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  <label className="block text-xs font-semibold text-ink-primary mb-1">
                     Video URL (YouTube, Vimeo, Vine, Instagram, DailyMotion or Youku)
                   </label>
                   <input
@@ -1828,19 +1460,14 @@ export function RichTextEditor({
                       if (e.key === 'Enter') handleInsertVideoSubmit(e);
                     }}
                     placeholder="https://www.youtube.com/watch?v=..."
-                    className="w-full rounded border border-gray-300 px-3 py-1.5 text-xs text-gray-800 focus:border-blue-500 focus:outline-none"
+                    className="w-full rounded border border-divider px-3 py-1.5 text-xs text-ink-primary focus:border-primary-main focus:outline-none"
                   />
                 </div>
 
                 <div className="flex justify-end pt-3">
-                  <button
-                    type="button"
+                  <Button size="small"
                     onClick={(e) => handleInsertVideoSubmit(e)}
-                    disabled={!videoUrl.trim()}
-                    className="rounded bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 disabled:opacity-50 transition cursor-pointer"
-                  >
-                    Insert Video
-                  </button>
+                    disabled={!videoUrl.trim()}>Insert Video</Button>
                 </div>
               </div>
             </div>
@@ -1852,41 +1479,27 @@ export function RichTextEditor({
       {showHelpModal &&
         typeof document !== 'undefined' &&
         createPortal(
-          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150 flex flex-col max-h-[85vh]">
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-grey-900/40 p-4">
+            <div className="w-full max-w-2xl rounded-lg bg-surface-paper p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150 flex flex-col max-h-[85vh]">
               {/* Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div className="flex items-center justify-between pb-3 border-b border-divider">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-normal text-gray-800">Editor Help &amp; Keyboard Shortcuts</h3>
-                  <span className="text-xs bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">
+                  <h3 className="text-lg font-normal text-ink-primary">Editor Help &amp; Keyboard Shortcuts</h3>
+                  <span className="text-xs bg-primary-lighter text-primary-dark font-semibold px-2 py-0.5 rounded-full">
                     {filteredShortcuts.length} Shortcuts
                   </span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowHelpModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-lg leading-none p-1"
-                >
-                  ✕
-                </button>
+                <IconButton icon="close" size="small" aria-label="Close"
+                  onClick={() => setShowHelpModal(false)} />
               </div>
 
               {/* Filter & Category Pills */}
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-gray-100">
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-divider">
                 <div className="flex flex-wrap items-center gap-1 text-xs">
                   {(['All', 'Formatting', 'Navigation', 'Alignment', 'Structure', 'Media'] as const).map((cat) => (
-                    <button
+                    <Button size="small" variant={helpCategory === cat ? 'contained' : 'soft'} color={helpCategory === cat ? 'primary' : 'inherit'}
                       key={cat}
-                      type="button"
-                      onClick={() => setHelpCategory(cat)}
-                      className={`px-2.5 py-1 rounded transition text-xs font-medium cursor-pointer ${
-                        helpCategory === cat
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                    >
-                      {cat}
-                    </button>
+                      onClick={() => setHelpCategory(cat)}>{cat}</Button>
                   ))}
                 </div>
 
@@ -1896,58 +1509,48 @@ export function RichTextEditor({
                     value={helpSearch}
                     onChange={(e) => setHelpSearch(e.target.value)}
                     placeholder="Search shortcuts..."
-                    className="w-44 rounded border border-gray-200 px-2.5 py-1 text-xs text-gray-700 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                    className="w-44 rounded border border-divider px-2.5 py-1 text-xs text-ink-primary placeholder-ink-disabled focus:outline-none focus:border-primary-main"
                   />
                   {helpSearch && (
-                    <button
-                      type="button"
-                      onClick={() => setHelpSearch('')}
-                      className="absolute right-2 top-1 text-xs text-gray-400 hover:text-gray-600"
-                    >
-                      ✕
-                    </button>
+                    <IconButton icon="close" size="small" aria-label="Clear search" className="absolute right-0.5 top-1/2 -translate-y-1/2"
+                      onClick={() => setHelpSearch('')} />
                   )}
                 </div>
               </div>
 
               {/* Shortcuts Table */}
-              <div className="mt-3 flex-1 overflow-y-auto pr-1 space-y-1 text-xs divide-y divide-gray-50">
+              <div className="mt-3 flex-1 overflow-y-auto pr-1 space-y-1 text-xs divide-y divide-divider">
                 {filteredShortcuts.length > 0 ? (
                   filteredShortcuts.map((item) => (
                     <div
                       key={item.key + item.label}
-                      className="flex items-center justify-between py-1.5 px-1 hover:bg-gray-50 rounded"
+                      className="flex items-center justify-between py-1.5 px-1 hover:bg-surface-neutral rounded"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="inline-block bg-black text-white text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-xs tracking-wider shadow-2xs min-w-[70px] text-center">
+                        <span className="inline-block bg-grey-900 text-primary-contrast text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-xs tracking-wider shadow-2xs min-w-[70px] text-center">
                           {item.key}
                         </span>
-                        <span className="text-gray-800 font-normal">{item.label}</span>
+                        <span className="text-ink-primary font-normal">{item.label}</span>
                       </div>
-                      <span className="text-[10px] uppercase font-semibold tracking-wider text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] uppercase font-semibold tracking-wider text-ink-disabled bg-surface-neutral px-1.5 py-0.5 rounded">
                         {item.category}
                       </span>
                     </div>
                   ))
                 ) : (
-                  <div className="py-8 text-center text-xs text-gray-400">
+                  <div className="py-8 text-center text-xs text-ink-disabled">
                     No shortcuts found matching &quot;{helpSearch}&quot;
                   </div>
                 )}
               </div>
 
               {/* Footer */}
-              <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
-                <span className="text-blue-600 text-[11px] font-medium">
+              <div className="mt-4 pt-3 border-t border-divider flex items-center justify-between text-xs text-ink-secondary">
+                <span className="text-primary-main text-[11px] font-medium">
                   Summernote 0.8.18 · All Shortcuts Active in Editor
                 </span>
-                <button
-                  type="button"
-                  onClick={() => setShowHelpModal(false)}
-                  className="rounded bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 transition cursor-pointer"
-                >
-                  Close
-                </button>
+                <Button size="small"
+                  onClick={() => setShowHelpModal(false)}>Close</Button>
               </div>
             </div>
           </div>,

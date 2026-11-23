@@ -15,6 +15,8 @@ import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
 import type { AxiosError } from 'axios';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const assignmentCrud = createCrudHooks<Record<string, unknown>>({
   queryKey: 'salary-structure-assignments',
@@ -135,14 +137,8 @@ export default function SalaryStructureAssignments() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Salary Structure Assignments</h1>
-          <p className="mt-1 text-sm text-gray-600">Manage employee salary structure assignments</p>
-        </div>
-        <CreateButton permission="salary_structure_assignments.create" label="Create Assignment" onClick={() => { setShowCreate(true); setCreateErrors({}); }} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Salary Structure Assignments" subtitle="Manage employee salary structure assignments" actions={<CreateButton permission="salary_structure_assignments.create" label="Create Assignment" onClick={() => { setShowCreate(true); setCreateErrors({}); }} />} />
 
       <FilterBar
         filters={salaryStructureAssignmentCrudConfig.filters}
@@ -178,6 +174,6 @@ export default function SalaryStructureAssignments() {
         apiErrors={editErrors}
       />
       <ConfirmDialog isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={() => { deleteMutation.mutate(deleteId!, { onSuccess: () => setDeleteId(null) }); }} title="Delete Assignment" message="Are you sure? This action cannot be undone." confirmLabel="Delete" variant="destructive" isLoading={deleteMutation.isPending} />
-    </div>
+    </PageContainer>
   );
 }

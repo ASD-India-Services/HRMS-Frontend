@@ -11,6 +11,8 @@ import { CreateButton } from '@/components/ActionButton';
 import { CrudModal } from '@/components/CrudModal';
 import type { FieldConfig } from '@/components/CrudModal';
 import api from '@/lib/api';
+import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
 import { formatDate, formatTime } from '@/utils/formatters';
 
 const INTERVIEW_FIELDS: FieldConfig[] = [
@@ -33,9 +35,9 @@ const INTERVIEW_FIELDS: FieldConfig[] = [
 ];
 
 const STATUS_STYLES: Record<string, { label: string; className: string }> = {
-  scheduled: { label: 'Scheduled', className: 'bg-blue-100 text-blue-800' },
-  completed: { label: 'Completed', className: 'bg-green-100 text-green-800' },
-  cancelled: { label: 'Cancelled', className: 'bg-gray-100 text-gray-800' },
+  scheduled: { label: 'Scheduled', className: 'bg-primary-lighter text-primary-dark' },
+  completed: { label: 'Completed', className: 'bg-success-lighter text-success-dark' },
+  cancelled: { label: 'Cancelled', className: 'bg-surface-neutral text-ink-primary' },
 };
 
 export function InterviewSchedule() {
@@ -66,39 +68,39 @@ export function InterviewSchedule() {
       {/* Header */}
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Interview Schedule</h2>
-          <p className="mt-0.5 text-sm text-gray-500">
+          <h2 className="text-lg font-semibold text-ink-primary">Interview Schedule</h2>
+          <p className="mt-0.5 text-sm text-ink-secondary">
             {data ? `${data.count} interview${data.count !== 1 ? 's' : ''}` : 'Loading...'}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <CreateButton permission="recruitment.create" label="Schedule Interview" onClick={() => setShowCreate(true)} />
-          <select
+          <Select
+            selectSize="small"
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             aria-label="Filter by interview status"
           >
             <option value="">All Statuses</option>
             <option value="scheduled">Scheduled</option>
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
-          </select>
+          </Select>
         </div>
       </div>
 
       {/* Loading */}
       {isLoading && (
         <div className="flex items-center justify-center py-12">
-          <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-500 border-t-transparent" />
-          <span className="ml-3 text-sm text-gray-600">Loading interviews...</span>
+          <div className="h-6 w-6 animate-spin rounded-full border-3 border-primary-main border-t-transparent" />
+          <span className="ml-3 text-sm text-ink-secondary">Loading interviews...</span>
         </div>
       )}
 
       {/* Error */}
       {isError && (
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">
+        <div className="rounded-md bg-error-lighter p-4">
+          <p className="text-sm text-error-dark">
             Failed to load interviews. {error instanceof Error ? error.message : 'Please try again.'}
           </p>
         </div>
@@ -107,10 +109,10 @@ export function InterviewSchedule() {
       {/* Empty */}
       {data && data.results.length === 0 && (
         <div className="py-12 text-center">
-          <svg className="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <svg className="mx-auto h-12 w-12 text-grey-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          <p className="mt-4 text-gray-600">No interviews scheduled.</p>
+          <p className="mt-4 text-ink-secondary">No interviews scheduled.</p>
         </div>
       )}
 
@@ -122,55 +124,55 @@ export function InterviewSchedule() {
             return (
               <div
                 key={interview.id}
-                className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                className="rounded-lg border border-divider bg-surface-paper p-4 shadow-sm transition-shadow hover:shadow-md"
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   {/* Left: Applicant & Job info */}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="truncate text-sm font-medium text-gray-900">
+                      <p className="truncate text-sm font-medium text-ink-primary">
                         {interview.applicant_name || 'Unknown Applicant'}
                       </p>
                       <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusStyle.className}`}>
                         {statusStyle.label}
                       </span>
                     </div>
-                    <p className="mt-0.5 truncate text-xs text-gray-500">
+                    <p className="mt-0.5 truncate text-xs text-ink-secondary">
                       {interview.job_opening_title || '—'}
                     </p>
                   </div>
 
                   {/* Right: Schedule info */}
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-4 text-sm text-ink-secondary">
                     <div className="flex items-center gap-1.5">
-                      <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="h-4 w-4 text-ink-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       <span>{interview.scheduled_at ? formatDate(interview.scheduled_at) : '—'}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="h-4 w-4 text-ink-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span>{interview.scheduled_at ? formatTime(interview.scheduled_at) : '—'}</span>
-                      <span className="text-xs text-gray-400">({interview.duration_minutes} min)</span>
+                      <span className="text-xs text-ink-disabled">({interview.duration_minutes} min)</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Interviewer & Feedback */}
-                <div className="mt-3 flex flex-col gap-2 border-t border-gray-100 pt-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-xs text-gray-500">
-                    <span className="font-medium text-gray-700">Interviewer:</span>{' '}
+                <div className="mt-3 flex flex-col gap-2 border-t border-divider pt-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-xs text-ink-secondary">
+                    <span className="font-medium text-ink-primary">Interviewer:</span>{' '}
                     {interview.interviewer_name || '—'}
                   </p>
                   {interview.rating !== undefined && interview.rating !== null && (
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-500">Rating:</span>
+                      <span className="text-xs text-ink-secondary">Rating:</span>
                       {[1, 2, 3, 4, 5].map((star) => (
                         <svg
                           key={star}
-                          className={`h-3.5 w-3.5 ${star <= (interview.rating ?? 0) ? 'text-yellow-400' : 'text-gray-200'}`}
+                          className={`h-3.5 w-3.5 ${star <= (interview.rating ?? 0) ? 'text-warning-light' : 'text-grey-200'}`}
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -183,7 +185,7 @@ export function InterviewSchedule() {
 
                 {/* Feedback */}
                 {interview.feedback && (
-                  <p className="mt-2 text-xs text-gray-500 italic">
+                  <p className="mt-2 text-xs text-ink-secondary italic">
                     &ldquo;{interview.feedback}&rdquo;
                   </p>
                 )}
@@ -193,7 +195,7 @@ export function InterviewSchedule() {
 
           {/* Fetching indicator */}
           {isFetching && !isLoading && (
-            <p className="text-center text-xs text-primary-600">Updating...</p>
+            <p className="text-center text-xs text-primary-main">Updating...</p>
           )}
         </div>
       )}
@@ -201,24 +203,22 @@ export function InterviewSchedule() {
       {/* Pagination */}
       {totalPages > 1 && (
         <nav className="mt-4 flex items-center justify-between" aria-label="Interviews pagination">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-ink-secondary">
             Page {page} of {totalPages}
           </p>
           <div className="flex gap-2">
-            <button
+            <Button type="button" variant="outlined" color="inherit"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Previous
-            </button>
-            <button
+            </Button>
+            <Button type="button" variant="outlined" color="inherit"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
-            </button>
+            </Button>
           </div>
         </nav>
       )}

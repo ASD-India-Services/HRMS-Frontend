@@ -11,6 +11,14 @@ import { useHRSettings } from '@/hooks/useHRSettings';
 import { LeaveBalanceCard } from './components/LeaveBalanceCard';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 interface LopPolicy {
   is_active: boolean;
@@ -122,21 +130,16 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
   }
 
   return (
-    <div className={hideHeader ? 'w-full' : 'mx-auto max-w-4xl px-4 py-8'}>
-      {!hideHeader && (
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Apply for Leave</h1>
-          <p className="mt-1 text-sm text-gray-600">Submit a new leave application</p>
-        </div>
-      )}
+    <PageContainer maxWidth="lg" className={hideHeader ? '!max-w-none' : undefined}>
+      {!hideHeader && <PageHeader title="Apply for Leave" subtitle="Submit a new leave application" />}
 
       {/* Leave Balances */}
       <section className="mb-6" aria-label="Leave balances">
-        <h2 className="mb-3 text-sm font-medium text-gray-700">Your Leave Balances</h2>
+        <h2 className="mb-4 text-lg font-semibold text-ink-primary">Your Leave Balances</h2>
         {balancesLoading ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 animate-pulse rounded-lg bg-gray-100" />
+              <div key={i} className="h-24 animate-pulse rounded-card bg-surface-neutral" />
             ))}
           </div>
         ) : balances && balances.length > 0 ? (
@@ -145,45 +148,46 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
               <LeaveBalanceCard key={balance.leave_type_id ?? balance.id} balance={balance} />
             ))}
             {lopPolicy && (
-              <div className="rounded-lg border border-orange-200 bg-orange-50 p-4 shadow-sm">
-                <h4 className="text-sm font-semibold text-orange-900">Loss of Pay</h4>
+              <div className="rounded-card bg-warning-lighter p-4">
+                <h4 className="text-sm font-semibold text-warning-darker">Loss of Pay</h4>
                 <div className="mt-3 flex items-end justify-between">
                   <div>
-                    <p className="text-2xl font-bold text-orange-600">
+                    <p className="text-2xl font-bold text-warning-main">
                       {lopPolicy.remaining_days !== null ? lopPolicy.remaining_days : '∞'}
                     </p>
-                    <p className="text-xs text-gray-500">remaining</p>
+                    <p className="text-xs text-ink-secondary">remaining</p>
                   </div>
-                  <div className="text-right text-xs text-gray-500">
+                  <div className="text-right text-xs text-ink-secondary">
                     <p>{lopPolicy.used_days} used</p>
                     <p>{lopPolicy.max_days_per_year ?? '∞'} max/year</p>
                   </div>
                 </div>
-                <p className="mt-2 text-xs text-orange-700">
+                <p className="mt-2 text-xs text-warning-dark">
                   {formatCurrency(lopPolicy.deduction_per_day)} deducted per day
                 </p>
               </div>
             )}
           </div>
         ) : (
-          <p className="text-sm text-gray-500">No leave balances found.</p>
+          <p className="text-sm text-ink-secondary">No leave balances found.</p>
         )}
       </section>
 
       {/* Application Form */}
-      <form onSubmit={handleSubmit} className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <Card className="p-6">
+      <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {/* Leave Type */}
           <div className="sm:col-span-2">
-            <label htmlFor="leave-type" className="block text-sm font-medium text-gray-700">
-              Leave Type <span className="text-red-500">*</span>
+            <label htmlFor="leave-type" className="block text-sm font-medium text-ink-primary">
+              Leave Type <span className="text-error-main">*</span>
             </label>
-            <select
+            <Select
               id="leave-type"
               value={leaveType}
               onChange={(e) => setLeaveType(e.target.value)}
               disabled={typesLoading}
-              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:bg-gray-50"
+              className="mt-1"
               required
             >
               <option value="">Select leave type</option>
@@ -202,14 +206,14 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
               {lopPolicy && (
                 <option value="__lop__">Loss of Pay</option>
               )}
-            </select>
+            </Select>
             {isOthers && (
-              <input
+              <Input
                 type="text"
                 value={customLeaveType}
                 onChange={(e) => setCustomLeaveType(e.target.value)}
                 placeholder="Please specify the leave type"
-                className="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="mt-2"
                 required
               />
             )}
@@ -217,8 +221,8 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
 
           {/* Restrict Past Leave policy indicator & error */}
           {isPastLeaveRestricted && (
-            <div className="sm:col-span-2 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50/70 p-3 text-xs text-blue-900 shadow-2xs">
-              <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+            <div className="sm:col-span-2 flex items-center gap-2 rounded-lg bg-primary-lighter/70 p-3 text-xs text-primary-darker">
+              <span className="flex h-2 w-2 rounded-full bg-primary-main animate-pulse" />
               <span>
                 <strong>HR Policy Active:</strong> Restrict Past Leave is ON. Backdated leave applications are not permitted.
               </span>
@@ -226,17 +230,17 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
           )}
 
           {policyError && (
-            <div className="sm:col-span-2 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700 shadow-2xs">
+            <div className="sm:col-span-2 rounded-lg bg-error-lighter p-3 text-xs text-error-dark">
               {policyError}
             </div>
           )}
 
           {/* From Date */}
           <div>
-            <label htmlFor="from-date" className="block text-sm font-medium text-gray-700">
-              From Date <span className="text-red-500">*</span>
+            <label htmlFor="from-date" className="block text-sm font-medium text-ink-primary">
+              From Date <span className="text-error-main">*</span>
             </label>
-            <input
+            <Input
               type="date"
               id="from-date"
               value={fromDate}
@@ -246,17 +250,17 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
               }}
               min={isPastLeaveRestricted ? todayStr : undefined}
               max={toDate || undefined}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="mt-1"
               required
             />
           </div>
 
           {/* To Date */}
           <div>
-            <label htmlFor="to-date" className="block text-sm font-medium text-gray-700">
-              To Date <span className="text-red-500">*</span>
+            <label htmlFor="to-date" className="block text-sm font-medium text-ink-primary">
+              To Date <span className="text-error-main">*</span>
             </label>
-            <input
+            <Input
               type="date"
               id="to-date"
               value={toDate}
@@ -265,33 +269,33 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
                 setToDate(e.target.value);
               }}
               min={fromDate || (isPastLeaveRestricted ? todayStr : undefined)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="mt-1"
               required
             />
           </div>
 
           {/* Real-time Leave Calculation Breakdown */}
           {fromDate && toDate && fromDate <= toDate && (
-            <div className="sm:col-span-2 rounded-xl border border-blue-200 bg-blue-50/70 p-4 shadow-2xs">
+            <div className="sm:col-span-2 rounded-card bg-primary-lighter/70 p-4">
               {calcLoading ? (
-                <div className="flex items-center gap-2 text-xs text-blue-700">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                <div className="flex items-center gap-2 text-xs text-primary-dark">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-main border-t-transparent" />
                   <span>Calculating working days and company week-offs...</span>
                 </div>
               ) : calcResult ? (
                 <div className="space-y-3">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-blue-200/80 pb-2.5">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-primary-light/80 pb-2.5">
                     <div>
-                      <span className="text-xs font-semibold text-blue-900">Leave Duration Summary</span>
-                      <p className="text-xs text-blue-700 mt-0.5">
+                      <span className="text-xs font-semibold text-primary-darker">Leave Duration Summary</span>
+                      <p className="text-xs text-primary-dark mt-0.5">
                         {calcResult.calendar_days} calendar {calcResult.calendar_days === 1 ? 'day' : 'days'} selected
                         {calcResult.company_leave_days > 0 && ` • ${calcResult.company_leave_days} company week-off${calcResult.company_leave_days === 1 ? '' : 's'} excluded`}
                         {calcResult.holiday_days > 0 && ` • ${calcResult.holiday_days} public holiday${calcResult.holiday_days === 1 ? '' : 's'} excluded`}
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-xs text-slate-500">Total Leave to Deduct:</span>
-                      <div className="text-xl font-extrabold text-blue-700">
+                      <span className="text-xs text-ink-secondary">Total Leave to Deduct:</span>
+                      <div className="text-xl font-extrabold text-primary-dark">
                         {calcResult.total_days} {calcResult.total_days === 1 ? 'Day' : 'Days'}
                       </div>
                     </div>
@@ -300,15 +304,15 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
                   {/* Day-by-Day Breakdown Pills */}
                   {calcResult.breakdown && calcResult.breakdown.length > 0 && (
                     <div className="space-y-1.5">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-blue-900">Date Breakdown</span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-primary-darker">Date Breakdown</span>
                       <div className="flex flex-wrap gap-1.5">
                         {calcResult.breakdown.map((item) => (
                           <div
                             key={item.date}
-                            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium border ${
+                            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium ${
                               item.is_working_day
-                                ? 'bg-white border-blue-300 text-blue-900 shadow-2xs'
-                                : 'bg-amber-100/90 border-amber-300 text-amber-900'
+                                ? 'bg-surface-paper text-primary-darker shadow-z1'
+                                : 'bg-warning-lighter/90 text-warning-darker'
                             }`}
                             title={item.reason || 'Working day'}
                           >
@@ -321,8 +325,8 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
                   )}
 
                   {calcResult.total_days === 0 && (
-                    <div className="rounded-lg bg-amber-50 border border-amber-300 p-2.5 text-xs text-amber-800">
-                      ⚠️ The selected dates consist entirely of non-working days or company week-offs. No leave days will be deducted.
+                    <div className="rounded-lg bg-warning-lighter p-2.5 text-xs text-warning-dark">
+                      <Iconify icon="warning" width={14} className="mr-1 inline align-text-bottom" />The selected dates consist entirely of non-working days or company week-offs. No leave days will be deducted.
                     </div>
                   )}
                 </div>
@@ -332,16 +336,16 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
 
           {/* Reason */}
           <div className="sm:col-span-2">
-            <label htmlFor="reason" className="block text-sm font-medium text-gray-700">
-              Reason <span className="text-red-500">*</span>
+            <label htmlFor="reason" className="block text-sm font-medium text-ink-primary">
+              Reason <span className="text-error-main">*</span>
             </label>
-            <textarea
+            <Textarea
               id="reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={4}
               placeholder="Provide a reason for your leave application..."
-              className="mt-1 block w-full resize-y rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+              className="mt-1 resize-y"
               required
             />
           </div>
@@ -349,7 +353,7 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
 
         {/* Error message */}
         {applyLeave.isError && (
-          <div className="mt-4 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700" role="alert">
+          <div className="mt-4 rounded-card bg-error-lighter p-3 text-sm text-error-dark" role="alert">
             {(() => {
               const err = applyLeave.error as { response?: { data?: Record<string, unknown> } } | null;
               const data = err?.response?.data;
@@ -366,22 +370,20 @@ export function LeaveApply({ onSuccess, onCancel, hideHeader = false }: LeaveApp
 
         {/* Actions */}
         <div className="mt-6 flex items-center justify-end gap-3">
-          <button
-            type="button"
+          <Button variant="outlined" color="inherit"
             onClick={handleCancel}
-            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             disabled={!isFormValid || applyLeave.isPending}
-            className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {applyLeave.isPending ? 'Submitting...' : 'Submit Application'}
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+      </Card>
+    </PageContainer>
   );
 }

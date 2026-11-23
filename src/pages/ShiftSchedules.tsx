@@ -15,6 +15,12 @@ import { CreateButton, EditButton, DeleteButton } from '@/components/ActionButto
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
+import { Modal } from '@/components/ui/Modal';
+import { Button, IconButton } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const ENDPOINT = '/api/v1/shifts/schedules/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -38,7 +44,7 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     header: 'Employee',
     sortable: false,
     render: (v: unknown) => {
-      if (!v) return <span className="text-gray-400">—</span>;
+      if (!v) return <span className="text-ink-disabled">—</span>;
       return <span>{v as string}</span>;
     },
   },
@@ -47,7 +53,7 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     header: 'Department',
     sortable: false,
     render: (v: unknown) => {
-      if (!v) return <span className="text-gray-400">—</span>;
+      if (!v) return <span className="text-ink-disabled">—</span>;
       return <span>{v as string}</span>;
     },
   },
@@ -58,15 +64,15 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     render: (v: unknown, row: Record<string, unknown>) => {
       // Location was assigned but has since been deleted → flag it.
       if (!v && row.geofence_required) {
-        return <span className="text-red-600">Location deleted</span>;
+        return <span className="text-error-main">Location deleted</span>;
       }
-      if (!v) return <span className="text-gray-400">—</span>;
+      if (!v) return <span className="text-ink-disabled">—</span>;
       const mode = row.geofence_location_mode as string | undefined;
       return (
         <span>
           {v as string}
           {mode && (
-            <span className="ml-1 text-xs text-gray-400">({mode})</span>
+            <span className="ml-1 text-xs text-ink-disabled">({mode})</span>
           )}
         </span>
       );
@@ -80,7 +86,7 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     sortable: false,
     render: (v: unknown) => {
       const arr = v as number[] | null;
-      if (!arr || arr.length === 0) return <span className="text-gray-400">—</span>;
+      if (!arr || arr.length === 0) return <span className="text-ink-disabled">—</span>;
       return <span className="text-xs">{arr.map((d) => DAY_LABELS[d]).join(', ')}</span>;
     },
   },
@@ -290,14 +296,8 @@ export default function ShiftSchedules() {
   const modalTitle = editRecord ? 'Edit Shift Schedule' : 'Create Shift Schedule';
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Shift Schedules</h1>
-          <p className="mt-1 text-sm text-gray-600">Manage recurring shift schedules</p>
-        </div>
-        <CreateButton permission="shift_schedules.create" label="Create Schedule" onClick={openCreate} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Shift Schedules" subtitle="Manage recurring shift schedules" actions={<CreateButton permission="shift_schedules.create" label="Create Schedule" onClick={openCreate} />} />
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
@@ -313,23 +313,21 @@ export default function ShiftSchedules() {
 
       {/* Create/Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">{modalTitle}</h2>
-              <button
-                onClick={() => {
+        <Modal open onClose={() => {
                   setShowCreate(false);
                   setEditRecord(null);
-                }}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                ✕
-              </button>
+                }} labelledBy="ShiftSchedules-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 id="ShiftSchedules-modal-title-1" className="text-lg font-semibold text-ink-primary">{modalTitle}</h2>
+              <IconButton icon="close" size="small" onClick={() => {
+                  setShowCreate(false);
+                  setEditRecord(null);
+                }} aria-label="Close" />
             </div>
 
             {formError && (
-              <div className="mb-4 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              <div className="mb-4 rounded border border-error-light bg-error-lighter px-3 py-2 text-sm text-error-dark">
                 {formError}
               </div>
             )}
@@ -337,12 +335,12 @@ export default function ShiftSchedules() {
             <div className="space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Name <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-ink-primary">
+                  Name <span className="text-error-main">*</span>
                 </label>
-                <input
+                <Input
                   type="text"
-                  className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                  className="mt-1"
                   value={formData.name}
                   onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
                   placeholder="e.g. August 2026 General"
@@ -351,11 +349,11 @@ export default function ShiftSchedules() {
 
               {/* Shift Type */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Shift Type <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-ink-primary">
+                  Shift Type <span className="text-error-main">*</span>
                 </label>
-                <select
-                  className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                <Select
+                  className="mt-1"
                   value={formData.shift_type}
                   onChange={(e) => setFormData((p) => ({ ...p, shift_type: e.target.value }))}
                 >
@@ -365,16 +363,16 @@ export default function ShiftSchedules() {
                       {st.name}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               {/* Employee */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Employee <span className="text-xs text-gray-400">(or pick a department below)</span>
+                <label className="block text-sm font-medium text-ink-primary">
+                  Employee <span className="text-xs text-ink-disabled">(or pick a department below)</span>
                 </label>
-                <select
-                  className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                <Select
+                  className="mt-1"
                   value={formData.employee}
                   onChange={(e) =>
                     setFormData((p) => ({ ...p, employee: e.target.value, department: '' }))
@@ -386,16 +384,16 @@ export default function ShiftSchedules() {
                       {emp.first_name} {emp.last_name}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               {/* Department */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Department <span className="text-xs text-gray-400">(or pick an employee above)</span>
+                <label className="block text-sm font-medium text-ink-primary">
+                  Department <span className="text-xs text-ink-disabled">(or pick an employee above)</span>
                 </label>
-                <select
-                  className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                <Select
+                  className="mt-1"
                   value={formData.department}
                   onChange={(e) =>
                     setFormData((p) => ({ ...p, department: e.target.value, employee: '' }))
@@ -407,19 +405,19 @@ export default function ShiftSchedules() {
                       {dept.name}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               {/* Work Location (Geo-fence) */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-ink-primary">
                   Work Location{' '}
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-ink-disabled">
                     (optional — restricts attendance to this geo-fence)
                   </span>
                 </label>
-                <select
-                  className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                <Select
+                  className="mt-1"
                   value={formData.geofence_location}
                   onChange={(e) =>
                     setFormData((p) => ({ ...p, geofence_location: e.target.value }))
@@ -432,8 +430,8 @@ export default function ShiftSchedules() {
                       {loc.geofence_mode ? ` (${loc.geofence_mode})` : ''}
                     </option>
                   ))}
-                </select>
-                <p className="mt-1 text-xs text-gray-400">
+                </Select>
+                <p className="mt-1 text-xs text-ink-disabled">
                   The location&apos;s strict/warn mode is set in Geo Locations and
                   applies automatically. Editing that location updates this instantly.
                 </p>
@@ -442,23 +440,23 @@ export default function ShiftSchedules() {
               {/* Date Range */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Start Date <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-ink-primary">
+                    Start Date <span className="text-error-main">*</span>
                   </label>
-                  <input
+                  <Input
                     type="date"
-                    className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                    className="mt-1"
                     value={formData.start_date}
                     onChange={(e) => setFormData((p) => ({ ...p, start_date: e.target.value }))}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    End Date <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-ink-primary">
+                    End Date <span className="text-error-main">*</span>
                   </label>
-                  <input
+                  <Input
                     type="date"
-                    className="mt-1 w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                    className="mt-1"
                     value={formData.end_date}
                     onChange={(e) => setFormData((p) => ({ ...p, end_date: e.target.value }))}
                   />
@@ -467,22 +465,20 @@ export default function ShiftSchedules() {
 
               {/* Repeat On (day checkboxes) */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Repeat On <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-ink-primary">
+                  Repeat On <span className="text-error-main">*</span>
                 </label>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {DAY_LABELS.map((label, idx) => (
-                    <button
+                    <Button
                       key={idx}
-                      type="button"
+                      size="small"
+                      variant={formData.repeat_on.includes(idx) ? 'soft' : 'outlined'}
+                      color={formData.repeat_on.includes(idx) ? 'primary' : 'inherit'}
                       onClick={() => toggleDay(idx)}
-                      className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${formData.repeat_on.includes(idx)
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
-                          : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50'
-                        }`}
                     >
                       {label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -490,25 +486,21 @@ export default function ShiftSchedules() {
 
             {/* Actions */}
             <div className="mt-6 flex justify-end gap-3">
-              <button
-                className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                onClick={() => {
+              <Button variant="outlined" color="inherit" onClick={() => {
                   setShowCreate(false);
                   setEditRecord(null);
-                }}
-              >
+                }}>
                 Cancel
-              </button>
-              <button
-                className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              </Button>
+              <Button type="button"
                 disabled={submitting}
                 onClick={handleSubmit}
               >
                 {submitting ? 'Saving...' : 'Save'}
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Delete Confirmation */}
@@ -528,6 +520,6 @@ export default function ShiftSchedules() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

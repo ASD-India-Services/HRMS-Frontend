@@ -3,16 +3,22 @@
  * Requirements: 20.2, 20.3
  */
 
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAppraisalDetail } from '@/hooks/useAppraisals';
 import type { AppraisalStatus } from '@/types/appraisal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { ButtonLink } from '@/components/ui/Button';
+import { Card, CardHeader } from '@/components/ui/Card';
+import { EmptyState } from '@/components/EmptyState';
+import { Iconify } from '@/components/Iconify';
 import { formatDate } from '@/utils/formatters';
 
 const statusStyles: Record<AppraisalStatus, string> = {
-  draft: 'bg-gray-100 text-gray-800',
-  self_review: 'bg-yellow-100 text-yellow-800',
-  manager_review: 'bg-orange-100 text-orange-800',
-  completed: 'bg-green-100 text-green-800',
+  draft: 'bg-surface-neutral text-ink-primary',
+  self_review: 'bg-warning-lighter text-warning-dark',
+  manager_review: 'bg-warning-lighter text-warning-dark',
+  completed: 'bg-success-lighter text-success-dark',
 };
 
 const statusLabels: Record<AppraisalStatus, string> = {
@@ -29,29 +35,26 @@ export function AppraisalDetail() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
+      <PageContainer maxWidth="lg">
         <div className="space-y-4">
-          <div className="h-8 w-48 animate-pulse rounded bg-gray-100" />
-          <div className="h-32 animate-pulse rounded-lg bg-gray-100" />
-          <div className="h-64 animate-pulse rounded-lg bg-gray-100" />
+          <div className="h-8 w-48 animate-pulse rounded bg-surface-neutral" />
+          <div className="h-32 animate-pulse rounded-card bg-surface-neutral" />
+          <div className="h-64 animate-pulse rounded-card bg-surface-neutral" />
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
   if (isError || !appraisal) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-md bg-red-50 p-4 text-sm text-red-700" role="alert">
+      <PageContainer maxWidth="lg">
+        <div className="rounded-card bg-error-lighter p-4 text-sm text-error-dark" role="alert">
           Failed to load appraisal details. Please try again.
         </div>
-        <Link
-          to="/appraisals"
-          className="mt-4 inline-block text-sm font-medium text-primary-600 hover:text-primary-700"
-        >
-          ← Back to Appraisals
-        </Link>
-      </div>
+        <ButtonLink to="/appraisals" variant="text" size="small" className="mt-4 -ml-2.5" startIcon={<Iconify icon="arrow-left" />}>
+          Back to Appraisals
+        </ButtonLink>
+      </PageContainer>
     );
   }
 
@@ -62,52 +65,46 @@ export function AppraisalDetail() {
       : null;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
-      {/* Breadcrumb */}
-      <nav className="mb-4">
-        <Link
-          to="/appraisals"
-          className="text-sm font-medium text-primary-600 hover:text-primary-700"
-        >
-          ← Back to Appraisals
-        </Link>
-      </nav>
-
-      {/* Header */}
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {appraisal.employee.first_name} {appraisal.employee.last_name}
-          </h1>
-          <p className="mt-1 text-sm text-gray-600">
+    <PageContainer maxWidth="lg">
+      <PageHeader
+        breadcrumb={
+          <ButtonLink to="/appraisals" variant="text" size="small" className="-ml-2.5" startIcon={<Iconify icon="arrow-left" />}>
+            Back to Appraisals
+          </ButtonLink>
+        }
+        title={`${appraisal.employee.first_name} ${appraisal.employee.last_name}`}
+        subtitle={
+          <>
             {appraisal.employee.employee_id}
             {appraisal.employee.department && ` • ${appraisal.employee.department.name}`}
             {appraisal.employee.designation && ` • ${appraisal.employee.designation.name}`}
-          </p>
-        </div>
-        <span
-          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${statusStyles[appraisal.status]}`}
-        >
-          {statusLabels[appraisal.status]}
-        </span>
-      </div>
+          </>
+        }
+        actions={
+          <span
+            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${statusStyles[appraisal.status]}`}
+          >
+            {statusLabels[appraisal.status]}
+          </span>
+        }
+      />
 
       {/* Appraisal Info Card */}
-      <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <Card className="mb-6 p-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div>
-            <p className="text-xs font-medium uppercase text-gray-500">Cycle</p>
-            <p className="mt-1 text-sm text-gray-900">{appraisal.cycle.name}</p>
+            <p className="text-xs font-medium uppercase text-ink-secondary">Cycle</p>
+            <p className="mt-1 text-sm text-ink-primary">{appraisal.cycle.name}</p>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase text-gray-500">Appraiser</p>
-            <p className="mt-1 text-sm text-gray-900">
+            <p className="text-xs font-medium uppercase text-ink-secondary">Appraiser</p>
+            <p className="mt-1 text-sm text-ink-primary">
               {appraisal.appraiser.first_name} {appraisal.appraiser.last_name}
             </p>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase text-gray-500">Overall Score</p>
-            <p className="mt-1 text-sm font-semibold text-gray-900">
+            <p className="text-xs font-medium uppercase text-ink-secondary">Overall Score</p>
+            <p className="mt-1 text-sm font-semibold text-ink-primary">
               {appraisal.score != null
                 ? `${appraisal.score.toFixed(1)} / 5`
                 : weightedScore != null
@@ -117,63 +114,60 @@ export function AppraisalDetail() {
           </div>
         </div>
         {appraisal.remarks && (
-          <div className="mt-4 border-t border-gray-100 pt-4">
-            <p className="text-xs font-medium uppercase text-gray-500">Remarks</p>
-            <p className="mt-1 text-sm text-gray-700">{appraisal.remarks}</p>
+          <div className="mt-4 border-t border-divider pt-4">
+            <p className="text-xs font-medium uppercase text-ink-secondary">Remarks</p>
+            <p className="mt-1 text-sm text-ink-primary">{appraisal.remarks}</p>
           </div>
         )}
-      </div>
-
+      </Card>
       {/* Goals Table */}
-      <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-        <div className="border-b border-gray-200 px-6 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">Goals</h2>
-          <p className="mt-0.5 text-sm text-gray-500">
-            {appraisal.goals.length} goal{appraisal.goals.length !== 1 ? 's' : ''} defined for this appraisal
-          </p>
-        </div>
-
+      <Card>
+        <CardHeader
+          title="Goals"
+          subtitle={`${appraisal.goals.length} goal${appraisal.goals.length !== 1 ? 's' : ''} defined for this appraisal`}
+          className="pb-4"
+        />
         {appraisal.goals.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-divider">
+              <thead className="bg-surface-neutral">
                 <tr>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">
                     Goal
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">
                     Weight
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">
                     Self Score
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">
                     Manager Score
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">
                     Remarks
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-divider">
                 {appraisal.goals.map((goal) => (
-                  <tr key={goal.id} className="hover:bg-gray-50">
+                  <tr key={goal.id} className="hover:bg-surface-neutral">
                     <td className="px-4 py-3">
-                      <p className="text-sm font-medium text-gray-900">{goal.title}</p>
+                      <p className="text-sm font-medium text-ink-primary">{goal.title}</p>
                       {goal.description && (
-                        <p className="mt-0.5 text-xs text-gray-500">{goal.description}</p>
+                        <p className="mt-0.5 text-xs text-ink-secondary">{goal.description}</p>
                       )}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary">
                       {goal.weight}%
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary">
                       {goal.self_score != null ? `${goal.self_score} / 5` : '—'}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary">
                       {goal.score != null ? `${goal.score} / 5` : '—'}
                     </td>
-                    <td className="max-w-xs truncate px-4 py-3 text-sm text-gray-500" title={goal.remarks || ''}>
+                    <td className="max-w-xs truncate px-4 py-3 text-sm text-ink-secondary" title={goal.remarks || ''}>
                       {goal.remarks || '—'}
                     </td>
                   </tr>
@@ -182,16 +176,14 @@ export function AppraisalDetail() {
             </table>
           </div>
         ) : (
-          <div className="p-6 text-center text-sm text-gray-500">
-            No goals have been defined for this appraisal yet.
-          </div>
+          <EmptyState module="appraisals" title="No goals yet" description="No goals have been defined for this appraisal yet." />
         )}
-      </div>
+      </Card>
 
       {/* Metadata */}
-      <div className="mt-4 text-xs text-gray-400">
+      <div className="mt-4 text-xs text-ink-disabled">
         Created {formatDate(appraisal.created_at)} • Last updated {formatDate(appraisal.updated_at)}
       </div>
-    </div>
+    </PageContainer>
   );
 }

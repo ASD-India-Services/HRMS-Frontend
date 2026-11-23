@@ -7,8 +7,11 @@
  */
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { Button, ButtonLink } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
+import { AuthLayout } from './AuthLayout';
+import { Input } from '@/components/ui/Input';
 
 const IC_URL = import.meta.env.VITE_IDENTITY_CENTER_URL;
 
@@ -33,23 +36,22 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+    <AuthLayout>
         {!submitted ? (
           <>
             <div className="text-center">
-              <h1 className="text-2xl font-bold text-gray-900">Forgot Password</h1>
-              <p className="mt-2 text-sm text-gray-600">
+              <h1 className="text-2xl font-bold text-ink-primary">Forgot Password</h1>
+              <p className="mt-2 text-sm text-ink-secondary">
                 Enter your email address and we'll send you a link to reset your password.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="email" className="block text-sm font-medium text-ink-primary">
                   Email Address
                 </label>
-                <input
+                <Input
                   id="email"
                   type="email"
                   value={email}
@@ -57,47 +59,41 @@ export default function ForgotPassword() {
                   required
                   autoComplete="email"
                   placeholder="you@company.com"
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  className="mt-1"
                 />
               </div>
 
-              <button
+              <Button
                 type="submit"
                 disabled={submitting || !email.trim()}
-                className="w-full rounded-md bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full"
               >
                 {submitting ? 'Sending...' : 'Send Reset Link'}
-              </button>
+              </Button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-gray-500">
+            <p className="mt-6 text-center text-sm text-ink-secondary">
               Remember your password?{' '}
-              <Link to="/auth/callback" className="font-medium text-primary-600 hover:text-primary-500">
+              <ButtonLink to="/auth/callback" variant="text" size="small">
                 Sign in
-              </Link>
+              </ButtonLink>
             </p>
           </>
         ) : (
           <div className="text-center">
-            <svg className="mx-auto h-12 w-12 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-            </svg>
-            <h2 className="mt-4 text-lg font-semibold text-gray-900">Check Your Email</h2>
-            <p className="mt-2 text-sm text-gray-600">
+            <Iconify icon="success" width={48} className="mx-auto text-success-main" />
+            <h2 className="mt-4 text-lg font-semibold text-ink-primary">Check Your Email</h2>
+            <p className="mt-2 text-sm text-ink-secondary">
               If an account exists for <strong>{email}</strong>, you'll receive a password reset link shortly.
             </p>
-            <p className="mt-4 text-xs text-gray-400">
+            <p className="mt-4 text-xs text-ink-disabled">
               Didn't receive an email? Check your spam folder or try again.
             </p>
-            <button
-              onClick={() => setSubmitted(false)}
-              className="mt-6 text-sm font-medium text-primary-600 hover:text-primary-500"
-            >
+            <Button variant="text" className="mt-6" onClick={() => setSubmitted(false)}>
               Try a different email
-            </button>
+            </Button>
           </div>
         )}
-      </div>
-    </div>
+    </AuthLayout>
   );
 }

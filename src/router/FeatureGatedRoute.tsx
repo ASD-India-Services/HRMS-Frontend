@@ -1,4 +1,5 @@
-import { usePermissions } from '@platform/auth-sdk';
+import { usePermissions, useUser } from '@platform/auth-sdk';
+import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { UpgradePrompt } from '@/components/UpgradePrompt';
 
 interface FeatureGatedRouteProps {
@@ -16,6 +17,8 @@ interface FeatureGatedRouteProps {
  */
 export function FeatureGatedRoute({ featureFlag, moduleName, children }: FeatureGatedRouteProps) {
   const { hasFeature } = usePermissions();
+  const { role } = useUser();
+  const { roleName } = useHrmsPermissionsContext();
 
   if (featureFlag && !hasFeature(featureFlag)) {
     return <UpgradePrompt moduleName={moduleName} />;

@@ -1,7 +1,11 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { Button, ButtonLink } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
+import { Iconify } from '@/components/Iconify';
 
 interface JobDetails {
   id: string;
@@ -72,10 +76,10 @@ export default function PublicJobApplyPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-surface-neutral">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
-          <p className="text-sm text-gray-500">Loading job opening...</p>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-main border-t-transparent"></div>
+          <p className="text-sm text-ink-secondary">Loading job opening...</p>
         </div>
       </div>
     );
@@ -83,15 +87,15 @@ export default function PublicJobApplyPage() {
 
   if (isError || !job) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-lg">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600">
+      <div className="flex min-h-screen items-center justify-center bg-surface-neutral p-4">
+        <div className="w-full max-w-md rounded-2xl bg-surface-paper p-8 text-center shadow-lg">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-error-lighter text-error-main">
             <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
-          <h2 className="mt-4 text-xl font-bold text-gray-900">Job Opening Unavailable</h2>
-          <p className="mt-2 text-sm text-gray-500">
+          <h2 className="mt-4 text-xl font-bold text-ink-primary">Job Opening Unavailable</h2>
+          <p className="mt-2 text-sm text-ink-secondary">
             This job opening is either closed or no longer accepting public applications.
           </p>
         </div>
@@ -101,26 +105,26 @@ export default function PublicJobApplyPage() {
 
   if (submitted) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-        <div className="w-full max-w-lg rounded-2xl bg-white p-8 text-center shadow-xl">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+      <div className="flex min-h-screen items-center justify-center bg-surface-neutral p-4">
+        <div className="w-full max-w-lg rounded-2xl bg-surface-paper p-8 text-center shadow-xl">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success-lighter text-success-main">
             <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="mt-4 text-2xl font-bold text-gray-900">Application Submitted!</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Thank you, <span className="font-semibold text-gray-900">{form.name}</span>. Your application for{' '}
-            <span className="font-semibold text-primary-600">{job.title}</span> has been received and routed directly to our hiring team.
+          <h2 className="mt-4 text-2xl font-bold text-ink-primary">Application Submitted!</h2>
+          <p className="mt-2 text-sm text-ink-secondary">
+            Thank you, <span className="font-semibold text-ink-primary">{form.name}</span>. Your application for{' '}
+            <span className="font-semibold text-primary-main">{job.title}</span> has been received and routed directly to our hiring team.
           </p>
-          <div className="mt-6 border-t border-gray-100 pt-6">
+          <div className="mt-6 border-t border-divider pt-6">
             {job.company_website && (
-              <a
+              <ButtonLink
                 href={job.company_website.startsWith('http') ? job.company_website : `https://${job.company_website}`}
-                className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 transition-colors"
+                endIcon={<Iconify icon="arrow-right" />}
               >
-                Back to Company Website &rarr;
-              </a>
+                Back to Company Website
+              </ButtonLink>
             )}
           </div>
         </div>
@@ -129,12 +133,12 @@ export default function PublicJobApplyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50/40 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-grey-50 to-secondary-lighter/40 py-12 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-3xl">
         {/* Header Branding */}
         <div className="mb-6 flex items-center justify-between">
-          <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-700">
-            <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
+          <span className="inline-flex items-center gap-2 rounded-full bg-primary-lighter px-3 py-1 text-xs font-semibold text-primary-dark">
+            <span className="h-2 w-2 rounded-full bg-success-main"></span>
             Accepting Applications
           </span>
           {job.company_website && (
@@ -142,21 +146,21 @@ export default function PublicJobApplyPage() {
               href={job.company_website.startsWith('http') ? job.company_website : `https://${job.company_website}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-medium text-gray-500 hover:text-primary-600 transition-colors"
+              className="text-xs font-medium text-ink-secondary hover:text-primary-main transition-colors"
             >
-              Company Website &rarr;
+              Company Website
             </a>
           )}
         </div>
 
         {/* Job Overview Card */}
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
-          <div className="border-b border-gray-100 pb-6">
-            <h1 className="text-3xl font-extrabold text-gray-900">{job.title}</h1>
-            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-gray-500">
+        <div className="overflow-hidden rounded-2xl border border-divider bg-surface-paper p-6 shadow-sm sm:p-8">
+          <div className="border-b border-divider pb-6">
+            <h1 className="text-3xl font-extrabold text-ink-primary">{job.title}</h1>
+            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-ink-secondary">
               {job.department_name && (
                 <div className="flex items-center gap-1.5">
-                  <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4 text-ink-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                   <span>{job.department_name}</span>
@@ -164,21 +168,21 @@ export default function PublicJobApplyPage() {
               )}
               {job.designation_name && (
                 <div className="flex items-center gap-1.5">
-                  <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4 text-ink-disabled" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   <span>{job.designation_name}</span>
                 </div>
               )}
               {job.vacancies && (
-                <div className="flex items-center gap-1.5 text-emerald-600 font-medium">
+                <div className="flex items-center gap-1.5 text-success-main font-medium">
                   <span>{job.vacancies} open position{job.vacancies > 1 ? 's' : ''}</span>
                 </div>
               )}
             </div>
 
             {job.description && (
-              <div className="mt-5 text-sm leading-relaxed text-gray-700 whitespace-pre-line bg-gray-50/70 p-4 rounded-xl border border-gray-100">
+              <div className="mt-5 text-sm leading-relaxed text-ink-primary whitespace-pre-line bg-surface-neutral/70 p-4 rounded-xl border border-divider">
                 {job.description}
               </div>
             )}
@@ -186,93 +190,93 @@ export default function PublicJobApplyPage() {
 
           {/* Application Form */}
           <form onSubmit={handleSubmit} className="mt-6 space-y-5">
-            <h2 className="text-lg font-bold text-gray-900">Apply for this Role</h2>
+            <h2 className="text-lg font-bold text-ink-primary">Apply for this Role</h2>
 
             {errorMessage && (
-              <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700 border border-red-200">
+              <div className="rounded-lg bg-error-lighter p-4 text-sm text-error-dark border border-error-light">
                 {errorMessage}
               </div>
             )}
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  Full Name <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold text-ink-primary uppercase tracking-wider">
+                  Full Name <span className="text-error-main">*</span>
                 </label>
-                <input
+                <Input
                   type="text"
                   required
                   value={form.name}
                   onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                   placeholder="e.g. Rahul Sharma"
-                  className="mt-1.5 w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  className="mt-1.5"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  Email Address <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold text-ink-primary uppercase tracking-wider">
+                  Email Address <span className="text-error-main">*</span>
                 </label>
-                <input
+                <Input
                   type="email"
                   required
                   value={form.email}
                   onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
                   placeholder="e.g. rahul@example.com"
-                  className="mt-1.5 w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  className="mt-1.5"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                <label className="block text-xs font-semibold text-ink-primary uppercase tracking-wider">
                   Phone Number
                 </label>
-                <input
+                <Input
                   type="tel"
                   value={form.phone}
                   onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
                   placeholder="e.g. +91 98765 43210"
-                  className="mt-1.5 w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  className="mt-1.5"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                <label className="block text-xs font-semibold text-ink-primary uppercase tracking-wider">
                   Resume / Portfolio Link (URL)
                 </label>
-                <input
+                <Input
                   type="url"
                   value={form.resume_url}
                   onChange={(e) => setForm((p) => ({ ...p, resume_url: e.target.value }))}
                   placeholder="https://linkedin.com/in/... or Google Drive PDF link"
-                  className="mt-1.5 w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  className="mt-1.5"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <label className="block text-xs font-semibold text-ink-primary uppercase tracking-wider">
                 Notes / Cover Letter
               </label>
-              <textarea
+              <Textarea
                 rows={3}
                 value={form.notes}
                 onChange={(e) => setForm((p) => ({ ...p, notes: e.target.value }))}
                 placeholder="Briefly introduce yourself and your relevant experience..."
-                className="mt-1.5 w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                className="mt-1.5"
               />
             </div>
 
             <div className="pt-2">
-              <button
+              <Button
                 type="submit"
                 disabled={applyMutation.isPending}
-                className="w-full rounded-lg bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all disabled:opacity-50"
+                className="w-full"
               >
                 {applyMutation.isPending ? 'Submitting Application...' : 'Submit Application'}
-              </button>
+              </Button>
             </div>
           </form>
         </div>

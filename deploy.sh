@@ -1,87 +1,66 @@
 #!/bin/bash
-set -e
 
-# ---------------------------------------------------------------------------
-# HRMS Frontend deploy script (S3 + CloudFront)
-#
-# Usage:
-#   ./deploy.sh prod     # deploy to production (app.digihrms.com)
-#   ./deploy.sh dev      # deploy to the dev environment
-#
-# Builds the Vite app (dist/) and syncs it to the environment's S3 bucket,
-# then invalidates CloudFront.
-#
-# Prerequisites:
-#   - AWS CLI configured with the profile set below (or override AWS_PROFILE).
-#   - The sibling ../Auth-sdk package present (the app depends on it via file:).
-#   - Env files: .env.production for prod, .env.development for dev
-#     (Vite loads these automatically based on --mode).
-# ---------------------------------------------------------------------------
+# === CONFIG ===  (same approach as New_CRM/deploy-react.sh)
+S3_BUCKET="digihrmsfrontend"     # HRMS frontend bucket
+CLOUDFRONT_ID=""                 # set to the CloudFront distribution ID (leave empty to skip)
+AWS_PROFILE="default"            # change if using a different AWS profile
+REGION="us-east-1"               # bucket region
 
-ENVIRONMENT="${1:-prod}"
-AWS_PROFILE="${AWS_PROFILE:-vysor}"   # change to your AWS CLI profile name
 export AWS_PROFILE
 
-case "$ENVIRONMENT" in
-  prod|production)
-    BUCKET="digihrmsapp"
-    DISTRIBUTION_ID="${CLOUDFRONT_DISTRIBUTION_ID_PROD:-${CLOUDFRONT_DISTRIBUTION_ID}}"
-    VITE_MODE="production"
-    ;;
-  dev|development)
-    BUCKET="${DEV_BUCKET:-digihrmsapp-dev}"
-    DISTRIBUTION_ID="${CLOUDFRONT_DISTRIBUTION_ID_DEV:-${CLOUDFRONT_DISTRIBUTION_ID}}"
-    VITE_MODE="development"
-    ;;
-  *)
-    echo "Unknown environment: '$ENVIRONMENT'  (use 'prod' or 'dev')"
-    exit 1
-    ;;
-esac
+# === STEP 1: Build (Vite -> dist/) ===
+echo "🚧 Building (Vite production)..."
+# Use Vite directly to skip the blocking `tsc -b`; type errors don't fail the bundle.
+npx vite build --mode production || { echo "❌ Build failed"; exit 1; }
 
-# CloudFront is optional. If no distribution id is set, we build + sync to S3
-# and skip the invalidation (useful before the distribution is created).
-CLOUDFRONT_LABEL="$DISTRIBUTION_ID"
-[ -z "$CLOUDFRONT_LABEL" ] && CLOUDFRONT_LABEL="(not set — invalidation skipped)"
+# === STEP 2: Create S3 bucket if it doesn't exist ===
+echo "🪣 Checking S3 bucket: $S3_BUCKET..."
+if ! aws s3 ls "s3://$S3_BUCKET" --profile $AWS_PROFILE 2>/dev/null; then
+  echo "📦 Creating S3 bucket: $S3_BUCKET..."
+  aws s3 mb s3://$S3_BUCKET --region $REGION --profile $AWS_PROFILE || { echo "❌ Failed to create bucket"; exit 1; }
 
-echo "=============================================="
-echo " Deploying HRMS Frontend"
-echo "   environment : $ENVIRONMENT"
-echo "   bucket      : s3://$BUCKET"
-echo "   cloudfront  : $CLOUDFRONT_LABEL"
-echo "   aws profile : $AWS_PROFILE"
-echo "=============================================="
+  # Enable static website hosting (SPA: errors fall back to index.html)
+  aws s3 website s3://$S3_BUCKET --index-document index.html --error-document index.html --profile $AWS_PROFILE
 
-echo "Building ($VITE_MODE)..."
-# Use Vite directly (skip the blocking `tsc -b` from `npm run build`).
-# Type-checking is a separate concern; the bundle builds fine without it.
-npx vite build --mode "$VITE_MODE"
-
-echo "Syncing to S3..."
-# 1) Assets with long cache (JS/CSS/images use hashed filenames)
-aws s3 sync dist/ "s3://$BUCKET/" \
-  --delete \
-  --cache-control "public,max-age=31536000,immutable" \
-  --exclude "*.html"
-
-# 2) HTML with no cache (so SPA entry point always refreshes)
-aws s3 sync dist/ "s3://$BUCKET/" \
-  --cache-control "no-cache,no-store,must-revalidate" \
-  --include "*.html" \
-  --exclude "assets/*"
-
-if [ -n "$DISTRIBUTION_ID" ]; then
-  echo "Invalidating CloudFront..."
-  aws cloudfront create-invalidation \
-    --distribution-id "$DISTRIBUTION_ID" \
-    --paths "/*"
-
-  DOMAIN=$(aws cloudfront get-distribution --id "$DISTRIBUTION_ID" \
-    --query 'Distribution.DomainName' --output text)
-  echo "Done! Files uploaded and CloudFront invalidated — https://$DOMAIN"
-else
-  echo "Skipping CloudFront invalidation (no distribution id set)."
-  echo "Done! Files uploaded to s3://$BUCKET."
-  echo "After you create the CloudFront distribution, re-run with:"
-  echo "  CLOUDFRONT_DISTRIBUTION_ID_PROD=<id> ./deploy.sh $ENVIRONMENT"
+  # Set bucket policy for public read access
+  cat > bucket-policy.json << EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::$S3_BUCKET/*"
+    }
+  ]
+}
+EOF
+  aws s3api put-bucket-policy --bucket $S3_BUCKET --policy file://bucket-policy.json --profile $AWS_PROFILE
+  rm bucket-policy.json
 fi
+
+# === STEP 3: Upload to S3 ===
+echo "📤 Uploading to S3 bucket: $S3_BUCKET..."
+aws s3 sync dist/ s3://$S3_BUCKET --delete --profile $AWS_PROFILE || { echo "❌ S3 upload failed"; exit 1; }
+
+# === STEP 4: CloudFront SPA error pages (manual reminder) ===
+if [ -n "$CLOUDFRONT_ID" ]; then
+  echo "⚙️  CloudFront custom error pages for SPA routing (configure once in Console):"
+  echo "   1. CloudFront Console → Distribution $CLOUDFRONT_ID → Error Pages"
+  echo "   2. Add 404: Response Path=/index.html, Response Code=200"
+  echo "   3. Add 403: Response Path=/index.html, Response Code=200"
+fi
+
+# === STEP 5: Invalidate CloudFront cache ===
+if [ -n "$CLOUDFRONT_ID" ]; then
+  echo "🔄 Invalidating CloudFront cache..."
+  aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_ID --paths "/*" --region us-east-1 --profile $AWS_PROFILE > /dev/null 2>&1
+  echo "✅ Cache invalidation initiated"
+else
+  echo "⚠️  CloudFront ID not configured, skipping cache invalidation"
+fi
+
+echo "✅ Deployment complete!"
+echo "🌐 S3 Website URL: http://$S3_BUCKET.s3-website-$REGION.amazonaws.com"

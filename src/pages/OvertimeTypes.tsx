@@ -7,6 +7,10 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { IconButton } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
 
 const ENDPOINT = '/api/v1/overtime-types/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -57,11 +61,8 @@ export default function OvertimeTypes() {
   const handleEdit = async (data: Record<string, unknown>) => { if (!editRecord) return; setEditLoading(true); try { await api.patch(`${ENDPOINT}${editRecord.id}/`, data); setEditRecord(null); queryResult.refetch(); } finally { setEditLoading(false); } };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Overtime Types</h1><p className="mt-1 text-sm text-gray-600">Manage overtime rate configurations</p></div>
-        <CreateButton permission="overtime_types.create" label="Create Type" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Overtime Types" subtitle="Manage overtime rate configurations" actions={<CreateButton permission="overtime_types.create" label="Create Type" onClick={() => setShowCreate(true)} />} />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
@@ -93,20 +94,14 @@ export default function OvertimeTypes() {
       />
 
       {deleteError && (
-        <div className="fixed bottom-4 right-4 z-50 max-w-sm rounded-lg border border-red-200 bg-white px-4 py-3 shadow-lg">
+        <div className="fixed bottom-4 right-4 z-50 max-w-sm rounded-lg border border-error-light bg-surface-paper px-4 py-3 shadow-lg">
           <div className="flex items-start gap-3">
-            <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-            </svg>
-            <p className="text-sm text-gray-700">{deleteError}</p>
-            <button type="button" onClick={() => setDeleteError(null)} className="ml-2 text-gray-400 hover:text-gray-600" aria-label="Dismiss">
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            <Iconify icon="warning" width={20} className="mt-0.5 flex-shrink-0 text-error-main" />
+            <p className="text-sm text-ink-primary">{deleteError}</p>
+            <IconButton icon="close" size="small" onClick={() => setDeleteError(null)} aria-label="Dismiss" className="ml-2" />
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }

@@ -8,6 +8,7 @@
  */
 
 import { useCallback } from 'react';
+import { Input } from '@/components/ui/Input';
 
 export interface DateRange {
   from: string;
@@ -47,22 +48,20 @@ export function DateRangeFilter({ value, onChange }: DateRangeFilterProps) {
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <label className="flex items-center gap-2 text-sm text-gray-600">
+      <label className="flex items-center gap-2 text-sm text-ink-secondary">
         <span>From</span>
-        <input
+        <Input
           type="date"
           value={value.from}
           onChange={handleFromChange}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
         />
       </label>
-      <label className="flex items-center gap-2 text-sm text-gray-600">
+      <label className="flex items-center gap-2 text-sm text-ink-secondary">
         <span>To</span>
-        <input
+        <Input
           type="date"
           value={value.to}
           onChange={handleToChange}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
         />
       </label>
     </div>

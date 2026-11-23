@@ -10,6 +10,13 @@ import { useLeaveApplications, useApproveLeave, useRejectLeave } from '@/hooks/u
 import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
 import type { LeaveApplication } from '@/types/leave';
 import { formatDate } from '@/utils/formatters';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { EmptyState } from '@/components/EmptyState';
 
 interface ApprovalModalProps {
   application: LeaveApplication;
@@ -24,55 +31,48 @@ function ApprovalModal({ application, action, onClose, onConfirm, isPending }: A
   const employeeName = `${application.employee.first_name} ${application.employee.last_name}`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h3 id="modal-title" className="text-lg font-semibold text-gray-900 capitalize">
+    <Modal open onClose={onClose} labelledBy="modal-title" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+      <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+        <h3 id="modal-title" className="text-lg font-semibold text-ink-primary capitalize">
           {action} Leave Application
         </h3>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-ink-secondary">
           {action === 'approve' ? 'Approve' : 'Reject'} the leave request from{' '}
           <span className="font-medium">{employeeName}</span> for{' '}
           <span className="font-medium">{application.leave_type.name}</span> ({formatDate(application.from_date)} – {formatDate(application.to_date)}).
         </p>
 
         <div className="mt-4">
-          <label htmlFor="comments" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="comments" className="block text-sm font-medium text-ink-primary">
             Comments
           </label>
-          <textarea
+          <Textarea
             id="comments"
             value={comments}
             onChange={(e) => setComments(e.target.value)}
             rows={3}
             placeholder={`Add a comment for ${action === 'approve' ? 'approval' : 'rejection'}...`}
-            className="mt-1 block w-full resize-y rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="mt-1 resize-y"
           />
         </div>
 
         <div className="mt-5 flex justify-end gap-3">
-          <button
-            type="button"
+          <Button variant="outlined" color="inherit"
             onClick={onClose}
             disabled={isPending}
-            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50"
           >
             Cancel
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            color={action === 'approve' ? 'success' : 'error'}
             onClick={() => onConfirm(comments)}
             disabled={isPending}
-            className={`rounded-md px-4 py-2 text-sm font-medium text-white shadow-sm disabled:opacity-50 ${
-              action === 'approve'
-                ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500'
-                : 'bg-red-600 hover:bg-red-700 focus:ring-red-500'
-            } focus:outline-none focus:ring-2 focus:ring-offset-2`}
           >
             {isPending ? 'Processing...' : action === 'approve' ? 'Approve' : 'Reject'}
-          </button>
+          </Button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -114,21 +114,18 @@ export function LeaveApproval() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Leave Approvals</h1>
-        <p className="mt-1 text-sm text-gray-600">Review and approve pending leave applications from your team</p>
-      </div>
+    <PageContainer maxWidth="lg">
+      <PageHeader title="Leave Approvals" subtitle="Review and approve pending leave applications from your team" />
 
       {/* Content */}
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 animate-pulse rounded-lg bg-gray-100" />
+            <div key={i} className="h-24 animate-pulse rounded-card bg-surface-neutral" />
           ))}
         </div>
       ) : isError ? (
-        <div className="rounded-md bg-red-50 p-4 text-sm text-red-700" role="alert">
+        <div className="rounded-card bg-error-lighter p-4 text-sm text-error-dark" role="alert">
           Failed to load pending leave applications. Please try again.
         </div>
       ) : data && data.results.length > 0 ? (
@@ -143,22 +140,22 @@ export function LeaveApproval() {
               );
 
               return (
-                <div
+                <Card
                   key={application.id}
-                  className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+                  className="p-6"
                 >
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     {/* Employee & Leave Details */}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-semibold text-gray-900">{employeeName}</h3>
+                        <h3 className="text-sm font-semibold text-ink-primary">{employeeName}</h3>
                         {application.employee.department && (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-ink-secondary">
                             ({application.employee.department.name})
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 text-sm text-gray-600">
+                      <p className="mt-1 text-sm text-ink-secondary">
                         <span className="font-medium">{application.leave_type.name}</span>
                         {' · '}
                         {formatDate(application.from_date)} – {formatDate(application.to_date)}
@@ -166,7 +163,7 @@ export function LeaveApproval() {
                         <span className="font-medium">{application.total_days} day{application.total_days !== 1 ? 's' : ''}</span>
                       </p>
                       {application.reason && (
-                        <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+                        <p className="mt-1 text-sm text-ink-secondary line-clamp-2">
                           {application.reason}
                         </p>
                       )}
@@ -175,59 +172,51 @@ export function LeaveApproval() {
                     {/* Action Buttons */}
                     <div className="flex shrink-0 gap-2 items-center">
                       {isOwn ? (
-                        <span className="inline-flex items-center rounded-md bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 border border-amber-200">
+                        <span className="inline-flex items-center rounded bg-warning-lighter px-2.5 py-1 text-xs font-medium text-warning-dark">
                           Own Request (Cannot self-approve)
                         </span>
                       ) : (
                         <>
-                          <button
-                            onClick={() => openModal(application, 'approve')}
-                            className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                          >
+                          <Button color="success" onClick={() => openModal(application, 'approve')}>
                             Approve
-                          </button>
-                          <button
-                            onClick={() => openModal(application, 'reject')}
-                            className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                          >
+                          </Button>
+                          <Button variant="outlined" color="error" onClick={() => openModal(application, 'reject')}>
                             Reject
-                          </button>
+                          </Button>
                         </>
                       )}
                     </div>
                   </div>
-                </div>
+                </Card>
               );
             })}
           </div>
 
           {/* Pagination */}
           <div className="mt-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-ink-secondary">
               {data.count} pending application{data.count !== 1 ? 's' : ''}
             </p>
             <div className="flex gap-2">
-              <button
+              <Button variant="outlined" color="inherit"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!data.previous}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Previous
-              </button>
-              <button
+              </Button>
+              <Button variant="outlined" color="inherit"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data.next}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next
-              </button>
+              </Button>
             </div>
           </div>
         </>
       ) : (
-        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-          <p className="text-sm text-gray-500">No pending leave applications to review.</p>
-        </div>
+        <Card>
+          <EmptyState module="leaves" title="No pending applications" description="No pending leave applications to review." />
+        </Card>
       )}
 
       {/* Approval/Rejection Modal */}
@@ -240,6 +229,6 @@ export function LeaveApproval() {
           isPending={approveLeave.isPending || rejectLeave.isPending}
         />
       )}
-    </div>
+    </PageContainer>
   );
 }

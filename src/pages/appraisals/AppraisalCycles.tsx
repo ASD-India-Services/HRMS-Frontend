@@ -27,6 +27,8 @@ import { Can } from '@/components/Can';
 import { AccessDenied } from '@/components/AccessDenied/AccessDenied';
 import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const createFields: FieldConfig[] = [
   { key: 'name', label: 'Cycle Name', type: 'text', required: true, placeholder: 'e.g. Q3 2026 Review' },
@@ -54,7 +56,7 @@ function useAppraisalColumns(): ColumnDef<AppraisalCycle>[] {
         header: 'Start Date',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm text-gray-700">{formatDate(value as string)}</span>
+          <span className="text-sm text-ink-primary">{formatDate(value as string)}</span>
         ),
       },
       {
@@ -62,7 +64,7 @@ function useAppraisalColumns(): ColumnDef<AppraisalCycle>[] {
         header: 'End Date',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm text-gray-700">{formatDate(value as string)}</span>
+          <span className="text-sm text-ink-primary">{formatDate(value as string)}</span>
         ),
       },
       {
@@ -127,16 +129,12 @@ function AppraisalCyclesContent() {
   const queryResult = appraisalCrud.useList(apiParams);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Appraisal Cycles</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Manage performance appraisal cycles and their lifecycle.
-          </p>
-        </div>
-        <CreateButton permission="appraisals.create" label="Create Appraisal Cycle" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Appraisal Cycles"
+        subtitle="Manage performance appraisal cycles and their lifecycle."
+        actions={<CreateButton permission="appraisals.create" label="Create Appraisal Cycle" onClick={() => setShowCreate(true)} />}
+      />
 
       <FilterBar
         filters={filters}
@@ -168,6 +166,6 @@ function AppraisalCyclesContent() {
         onSubmit={(data) => createMutation.mutate(data)}
         isLoading={createMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

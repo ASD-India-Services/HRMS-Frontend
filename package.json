@@ -7,9 +7,12 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:e2e": "playwright test",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
+    "@fontsource-variable/public-sans": "^5.3.0",
     "@iconify/react": "^6.0.4",
     "@platform/auth-sdk": "file:../Auth-sdk",
     "@tanstack/react-query": "^5.101.2",
@@ -21,12 +24,14 @@
     "workbox-window": "^7.4.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.0",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
     "agentation": "^3.0.2",
     "autoprefixer": "^10.5.2",
+    "dotenv": "^18.0.7",
     "fast-check": "^4.9.0",
     "oxlint": "^1.71.0",
     "postcss": "^8.5.16",

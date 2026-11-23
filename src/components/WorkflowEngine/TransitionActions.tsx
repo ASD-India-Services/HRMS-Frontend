@@ -17,6 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import type { WorkflowConfig, WorkflowTransition } from '@/types/workflow';
+import { Button, type ButtonProps } from '@/components/ui/Button';
 
 interface TransitionActionsProps {
   /** The current record with id and status */
@@ -29,13 +30,10 @@ interface TransitionActionsProps {
   isLoading?: boolean;
 }
 
-const VARIANT_CLASSES: Record<string, string> = {
-  primary:
-    'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
-  destructive:
-    'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-  secondary:
-    'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-primary-500',
+const VARIANT_PROPS: Record<string, Pick<ButtonProps, 'variant' | 'color'>> = {
+  primary: { variant: 'contained', color: 'primary' },
+  destructive: { variant: 'contained', color: 'error' },
+  secondary: { variant: 'outlined', color: 'inherit' },
 };
 
 export function TransitionActions({
@@ -93,18 +91,18 @@ export function TransitionActions({
     <div className="flex flex-wrap items-center gap-2">
       {availableTransitions.map((transition) => {
         const variant = transition.variant ?? 'secondary';
-        const variantClass = VARIANT_CLASSES[variant] ?? VARIANT_CLASSES.secondary;
+        const variantProps = VARIANT_PROPS[variant] ?? VARIANT_PROPS.secondary;
 
         return (
-          <button
+          <Button
             key={`${transition.from}-${transition.to}-${transition.action}`}
-            type="button"
+            size="small"
+            {...variantProps}
             disabled={isLoading}
             onClick={() => onTransition(transition)}
-            className={`inline-flex items-center rounded-md px-3 py-1.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${variantClass}`}
           >
             {transition.action}
-          </button>
+          </Button>
         );
       })}
     </div>

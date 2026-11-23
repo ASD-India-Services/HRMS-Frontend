@@ -14,6 +14,14 @@ import {
 import { useEmployees } from '@/hooks/useEmployees';
 import { useCompanyLeaves, type CompanyLeave } from '@/hooks/useCompanyLeaves';
 import type { HourAccount, HourAccountFilterParams } from '@/types/hourAccount';
+import { Select } from '@/components/ui/Select';
+import { Button, IconButton } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { StateView } from '@/components/ui/StateView';
+import { Card } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
 
 const MONTH_NAMES = [
   'January',
@@ -1113,111 +1121,67 @@ export default function HourAccountPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white p-6">
+    <PageContainer>
       {/* ─── Top Bar ───────────────────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-gray-100">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-bold text-gray-900">Hour Account</h1>
-
+      <PageHeader
+        title="Hour Account"
+        actions={
+        <>
           {/* Monthly / Weekly View Mode Switcher */}
-          <div className="inline-flex items-center rounded-lg border border-gray-200 bg-gray-100 p-0.5 shadow-2xs">
-            <button
-              type="button"
+          <div className="inline-flex items-center gap-1 rounded-lg bg-surface-neutral p-0.5">
+            <Button
+              size="small"
+              variant={viewMode === 'monthly' ? 'contained' : 'text'}
+              color={viewMode === 'monthly' ? 'primary' : 'inherit'}
               onClick={() => setViewMode('monthly')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-                viewMode === 'monthly'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/60'
-              }`}
             >
               Monthly
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              size="small"
+              variant={viewMode === 'weekly' ? 'contained' : 'text'}
+              color={viewMode === 'weekly' ? 'primary' : 'inherit'}
               onClick={() => setViewMode('weekly')}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
-                viewMode === 'weekly'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/60'
-              }`}
             >
               Weekly
-            </button>
+            </Button>
           </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
           {/* Search Box */}
           <div className="relative">
-            <input
+            <Input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search"
-              className="w-48 sm:w-64 pl-8 pr-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="w-48 sm:w-64 pl-8 pr-3"
             />
-            <svg
-              className="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+            <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
           </div>
 
           {/* Filter Button */}
           <div className="relative" ref={filterBtnRef}>
-            <button
-              type="button"
-              onClick={() => {
+            <Button variant="outlined" color="inherit" size="small" startIcon={<Iconify icon="filter" />} onClick={() => {
                 setShowFilterPopover(!showFilterPopover);
                 setShowGroupByPopover(false);
                 setShowActionsMenu(false);
-              }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 shadow-2xs transition-colors"
-            >
-              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-              </svg>
-              <span>Filter{activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}</span>
-            </button>
+              }}><span>Filter{activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}</span>
+            </Button>
 
             {/* Filter Popover */}
             {showFilterPopover && (
-              <div className="absolute right-0 mt-2 w-80 sm:w-[480px] max-h-[85vh] overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-2xl z-50 p-4 divide-y divide-gray-100">
+              <div className="absolute right-0 mt-2 w-80 sm:w-[480px] max-h-[85vh] overflow-y-auto bg-surface-paper border border-divider rounded-lg shadow-2xl z-50 p-4 divide-y divide-divider">
                 {/* Accordion: Work Info */}
                 <div className="pb-3 mb-1">
-                  <button
-                    type="button"
-                    onClick={() => setFilterWorkInfoOpen(!filterWorkInfoOpen)}
-                    className="w-full flex items-center justify-between text-sm font-semibold text-gray-900"
-                  >
-                    <span>Work Info</span>
-                    <svg
-                      className={`w-4 h-4 text-gray-500 transition-transform ${filterWorkInfoOpen ? 'rotate-180' : ''}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
+                  <Button variant="text" color="inherit" onClick={() => setFilterWorkInfoOpen(!filterWorkInfoOpen)} className="w-full !justify-between" endIcon={<Iconify icon="chevron-down" className={`transition-transform ${filterWorkInfoOpen ? 'rotate-180' : ''}`} />}>Work Info</Button>
 
                   {filterWorkInfoOpen && (
                     <div className="grid grid-cols-2 gap-3 mt-3">
                       {/* Employee */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Employee</label>
-                        <select
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Employee</label>
+                        <Select selectSize="small"
                           value={filterEmployee}
                           onChange={(e) => setFilterEmployee(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                         >
                           <option value="">All Employees</option>
                           {employeesList.map((emp) => (
@@ -1225,16 +1189,15 @@ export default function HourAccountPage() {
                               {emp.first_name} {emp.last_name} {emp.employee_id ? `(${emp.employee_id})` : ''}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Company */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Company</label>
-                        <select
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Company</label>
+                        <Select selectSize="small"
                           value={filterCompany}
                           onChange={(e) => setFilterCompany(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                         >
                           <option value="">All Companies</option>
                           {companyOptions.map((comp) => (
@@ -1242,16 +1205,15 @@ export default function HourAccountPage() {
                               {comp}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Department */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Department</label>
-                        <select
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Department</label>
+                        <Select selectSize="small"
                           value={filterDepartment}
                           onChange={(e) => setFilterDepartment(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                         >
                           <option value="">All Departments</option>
                           {departmentsList.map((dept) => (
@@ -1259,16 +1221,15 @@ export default function HourAccountPage() {
                               {dept.name}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Job Position */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Job Position</label>
-                        <select
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Job Position</label>
+                        <Select selectSize="small"
                           value={filterJobPosition}
                           onChange={(e) => setFilterJobPosition(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                         >
                           <option value="">All Job Positions</option>
                           {designationsList.map((desig) => {
@@ -1279,16 +1240,15 @@ export default function HourAccountPage() {
                               </option>
                             );
                           })}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Shift */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Shift</label>
-                        <select
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Shift</label>
+                        <Select selectSize="small"
                           value={filterShift}
                           onChange={(e) => setFilterShift(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                         >
                           <option value="">All Shifts</option>
                           {shiftsList.map((shift) => (
@@ -1296,16 +1256,15 @@ export default function HourAccountPage() {
                               {shift.name}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Work Type */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Work Type</label>
-                        <select
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Work Type</label>
+                        <Select selectSize="small"
                           value={filterWorkType}
                           onChange={(e) => setFilterWorkType(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                         >
                           <option value="">All Work Types</option>
                           {WORK_TYPES.map((wt) => (
@@ -1313,16 +1272,15 @@ export default function HourAccountPage() {
                               {wt}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Reporting Manager */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Reporting Manager</label>
-                        <select
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Reporting Manager</label>
+                        <Select selectSize="small"
                           value={filterReportingManager}
                           onChange={(e) => setFilterReportingManager(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                         >
                           <option value="">All Reporting Managers</option>
                           {reportingManagersList.map((mgr) => (
@@ -1330,16 +1288,15 @@ export default function HourAccountPage() {
                               {mgr.name}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Work Location */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Work Location</label>
-                        <select
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Work Location</label>
+                        <Select selectSize="small"
                           value={filterWorkLocation}
                           onChange={(e) => setFilterWorkLocation(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                         >
                           <option value="">All Locations</option>
                           {branchesList.map((b) => (
@@ -1347,7 +1304,7 @@ export default function HourAccountPage() {
                               {b.name}
                             </option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
                     </div>
                   )}
@@ -1355,42 +1312,27 @@ export default function HourAccountPage() {
 
                 {/* Accordion: Attendance */}
                 <div className="py-3">
-                  <button
-                    type="button"
-                    onClick={() => setFilterAttendanceOpen(!filterAttendanceOpen)}
-                    className="w-full flex items-center justify-between text-sm font-semibold text-gray-900"
-                  >
-                    <span>Attendance</span>
-                    <svg
-                      className={`w-4 h-4 text-gray-500 transition-transform ${filterAttendanceOpen ? 'rotate-180' : ''}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
+                  <Button variant="text" color="inherit" onClick={() => setFilterAttendanceOpen(!filterAttendanceOpen)} className="w-full !justify-between" endIcon={<Iconify icon="chevron-down" className={`transition-transform ${filterAttendanceOpen ? 'rotate-180' : ''}`} />}>Attendance</Button>
 
                   {filterAttendanceOpen && (
                     <div className="grid grid-cols-2 gap-3 mt-3">
                       {/* Attendance Date */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Attendance Date</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Attendance Date</label>
                         <input
                           type="date"
                           value={filterAttendanceDate}
                           onChange={(e) => setFilterAttendanceDate(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* Batch */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Batch</label>
-                        <select
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Batch</label>
+                        <Select selectSize="small"
                           value={filterBatch}
                           onChange={(e) => setFilterBatch(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                         >
                           <option value="">Select</option>
                           <option value="Batch A">Batch A</option>
@@ -1398,68 +1340,66 @@ export default function HourAccountPage() {
                           <option value="Morning Batch">Morning Batch</option>
                           <option value="Evening Batch">Evening Batch</option>
                           <option value="General Batch">General Batch</option>
-                        </select>
+                        </Select>
                       </div>
 
                       {/* In Time */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">In Time</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">In Time</label>
                         <input
                           type="time"
                           value={filterInTime}
                           onChange={(e) => setFilterInTime(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* Out Time */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Out Time</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Out Time</label>
                         <input
                           type="time"
                           value={filterOutTime}
                           onChange={(e) => setFilterOutTime(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* Validated? */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Validated?</label>
-                        <select
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Validated?</label>
+                        <Select selectSize="small"
                           value={filterValidated}
                           onChange={(e) => setFilterValidated(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                         >
                           <option value="">Unknown</option>
                           <option value="true">Yes</option>
                           <option value="false">No</option>
-                        </select>
+                        </Select>
                       </div>
 
                       {/* OT Approved? */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">OT Approved?</label>
-                        <select
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">OT Approved?</label>
+                        <Select selectSize="small"
                           value={filterOtApproved}
                           onChange={(e) => setFilterOtApproved(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                         >
                           <option value="">Unknown</option>
                           <option value="true">Yes</option>
                           <option value="false">No</option>
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Min Hour */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Min Hour</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Min Hour</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterMinHour}
                           onChange={(e) => setFilterMinHour(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
@@ -1471,185 +1411,170 @@ export default function HourAccountPage() {
 
                 {/* Accordion: Advanced */}
                 <div className="py-3">
-                  <button
-                    type="button"
-                    onClick={() => setFilterAdvancedOpen(!filterAdvancedOpen)}
-                    className="w-full flex items-center justify-between text-sm font-semibold text-gray-900"
-                  >
-                    <span>Advanced</span>
-                    <svg
-                      className={`w-4 h-4 text-gray-500 transition-transform ${filterAdvancedOpen ? 'rotate-180' : ''}`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
+                  <Button variant="text" color="inherit" onClick={() => setFilterAdvancedOpen(!filterAdvancedOpen)} className="w-full !justify-between" endIcon={<Iconify icon="chevron-down" className={`transition-transform ${filterAdvancedOpen ? 'rotate-180' : ''}`} />}>Advanced</Button>
 
                   {filterAdvancedOpen && (
                     <div className="grid grid-cols-2 gap-3 mt-3">
                       {/* Attendance From */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Attendance From</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Attendance From</label>
                         <input
                           type="date"
                           value={filterAttendanceFrom}
                           onChange={(e) => setFilterAttendanceFrom(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* Attendance Till */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Attendance Till</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Attendance Till</label>
                         <input
                           type="date"
                           value={filterAttendanceTill}
                           onChange={(e) => setFilterAttendanceTill(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* In From */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">In From</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">In From</label>
                         <input
                           type="time"
                           value={filterInFrom}
                           onChange={(e) => setFilterInFrom(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* In Till */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">In Till</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">In Till</label>
                         <input
                           type="time"
                           value={filterInTill}
                           onChange={(e) => setFilterInTill(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* Out From */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Out From</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Out From</label>
                         <input
                           type="time"
                           value={filterOutFrom}
                           onChange={(e) => setFilterOutFrom(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* Out Till */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Out Till</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Out Till</label>
                         <input
                           type="time"
                           value={filterOutTill}
                           onChange={(e) => setFilterOutTill(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
 
                       {/* At Work Greater or Equal */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">At Work Greater or Equal</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">At Work Greater or Equal</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterAtWorkGte}
                           onChange={(e) => setFilterAtWorkGte(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
                       {/* At Work Less Than or Equal */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">At Work Less Than or Equal</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">At Work Less Than or Equal</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterAtWorkLte}
                           onChange={(e) => setFilterAtWorkLte(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
                       {/* Pending Hour Greater or Equal */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Pending Hour Greater or Equal</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Pending Hour Greater or Equal</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterPendingGte}
                           onChange={(e) => setFilterPendingGte(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
                       {/* Pending Hour Less Than or Equal */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Pending Hour Less Than or Equal</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Pending Hour Less Than or Equal</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterPendingLte}
                           onChange={(e) => setFilterPendingLte(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
                       {/* OT Greater or Equal */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">OT Greater or Equal</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">OT Greater or Equal</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterOtGte}
                           onChange={(e) => setFilterOtGte(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
                       {/* OT Less Than or Equal */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">OT Less Than or Equal</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">OT Less Than or Equal</label>
                         <input
                           type="text"
                           placeholder="HH:MM"
                           value={filterOtLte}
                           onChange={(e) => setFilterOtLte(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                         />
                       </div>
 
                       {/* Month */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Month</label>
-                        <select
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Month</label>
+                        <Select selectSize="small"
                           value={filterMonth}
                           onChange={(e) => setFilterMonth(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
                         >
                           <option value="">All</option>
                           {MONTH_NAMES.map((m) => (
                             <option key={m} value={m}>{m}</option>
                           ))}
-                        </select>
+                        </Select>
                       </div>
 
                       {/* Year */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-900 mb-1.5">Year</label>
+                        <label className="block text-xs font-semibold text-ink-primary mb-1.5">Year</label>
                         <input
                           type="number"
                           value={selectedYear}
                           onChange={(e) => setSelectedYear(e.target.value)}
-                          className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="w-full px-2.5 py-1.5 text-xs border border-divider rounded bg-surface-paper text-ink-primary focus:outline-none focus:ring-1 focus:ring-primary-main"
                         />
                       </div>
                     </div>
@@ -1658,13 +1583,9 @@ export default function HourAccountPage() {
 
                 {/* Blue Filter Button */}
                 <div className="pt-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowFilterPopover(false)}
-                    className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-md transition-colors shadow-sm"
-                  >
+                  <Button onClick={() => setShowFilterPopover(false)} className="w-full">
                     Filter
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -1672,82 +1593,70 @@ export default function HourAccountPage() {
 
           {/* Group By Button */}
           <div className="relative" ref={groupByBtnRef}>
-            <button
-              type="button"
+            <Button
+              variant="outlined"
+              color="inherit"
+              size="small"
+              startIcon={<Iconify icon="list-bulleted" />}
               onClick={() => {
                 setShowGroupByPopover(!showGroupByPopover);
                 setShowFilterPopover(false);
                 setShowActionsMenu(false);
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 shadow-2xs transition-colors"
             >
-              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-              </svg>
-              <span>Group By</span>
-            </button>
+              Group By
+            </Button>
 
             {/* Group By Popover */}
             {showGroupByPopover && (
-              <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-xl z-50 p-4">
-                <h4 className="text-sm font-semibold text-gray-900 mb-2">Group By</h4>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Field</label>
-                <select
+              <div className="absolute right-0 mt-2 w-64 bg-surface-paper border border-divider rounded-lg shadow-xl z-50 p-4">
+                <h4 className="text-sm font-semibold text-ink-primary mb-2">Group By</h4>
+                <label className="block text-xs font-medium text-ink-secondary mb-1">Field</label>
+                <Select selectSize="small"
                   value={groupByField}
                   onChange={(e) => {
                     setGroupByField(e.target.value);
                     setShowGroupByPopover(false);
                   }}
-                  className="w-full px-2.5 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   {GROUP_BY_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
             )}
           </div>
 
           {/* Actions Dropdown Button */}
           <div className="relative" ref={actionsBtnRef}>
-            <button
-              type="button"
+            <Button
+              variant="outlined"
+              color="inherit"
+              size="small"
+              endIcon={<Iconify icon="chevron-down" />}
               onClick={() => {
                 setShowActionsMenu(!showActionsMenu);
                 setShowFilterPopover(false);
                 setShowGroupByPopover(false);
               }}
-              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 shadow-2xs transition-colors"
             >
-              <span>Actions</span>
-              <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
+              Actions
+            </Button>
 
             {showActionsMenu && (
-              <div className="absolute right-0 mt-2 w-36 bg-white border border-gray-200 rounded-md shadow-lg z-50 py-1">
-                <button
-                  type="button"
-                  onClick={handleExportCSV}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2"
-                >
+              <div className="absolute right-0 mt-2 w-36 bg-surface-paper border border-divider rounded-md shadow-lg z-50 py-1">
+                <Button variant="text" color="inherit" onClick={handleExportCSV} className="w-full">
                   Export
-                </button>
+                </Button>
                 {canDelete && (
-                  <button
-                    type="button"
-                    onClick={() => {
+                  <Button variant="soft" color="error" onClick={() => {
                       setShowActionsMenu(false);
                       handleConfirmBulkDelete();
-                    }}
-                    disabled={selectedIds.size === 0}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
+                    }} disabled={selectedIds.size === 0} className="w-full">
                     Delete
-                  </button>
+                  </Button>
                 )}
               </div>
             )}
@@ -1755,55 +1664,36 @@ export default function HourAccountPage() {
 
           {/* + Create Button (Blue) */}
           {canCreate && (
-            <button
-              type="button"
-              onClick={handleOpenCreate}
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              <span>Create</span>
-            </button>
+            <Button size="small" startIcon={<Iconify icon="plus" />} onClick={handleOpenCreate}><span>Create</span>
+            </Button>
           )}
-        </div>
-      </div>
+        </>
+        }
+      />
 
       {/* ─── Selection Buttons & Active Filters Bar ────────────────────────────── */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 py-3 border-b border-gray-100">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 py-3 border-b border-divider">
         {/* Left: Selection Action Buttons */}
         <div className="flex flex-wrap items-center gap-2">
           {/* Select All Records Button (White) */}
-          <button
-            type="button"
-            onClick={handleSelectAllRecords}
-            className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs"
-          >
+          <Button variant="outlined" color="inherit" size="small" onClick={handleSelectAllRecords}>
             Select All Records
-          </button>
+          </Button>
 
           {selectedIds.size > 0 && (
             <>
               {/* Unselect All Records Button (White) */}
-              <button
-                type="button"
-                onClick={() => setSelectedIds(new Set())}
-                className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs"
-              >
+              <Button variant="outlined" color="inherit" size="small" onClick={() => setSelectedIds(new Set())}>
                 Unselect All Records
-              </button>
+              </Button>
 
               {/* Export Records Button (White) */}
-              <button
-                type="button"
-                onClick={handleExportCSV}
-                className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors shadow-2xs"
-              >
+              <Button variant="outlined" color="inherit" size="small" onClick={handleExportCSV}>
                 Export Records
-              </button>
+              </Button>
 
               {/* N - Selected Badge (Blue / White) */}
-              <span className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-blue-200 text-blue-700 bg-blue-50">
+              <span className="inline-flex items-center px-3 py-1 text-sm font-medium rounded border border-primary-light text-primary-dark bg-primary-lighter">
                 {selectedIds.size} - Selected
               </span>
             </>
@@ -1812,345 +1702,189 @@ export default function HourAccountPage() {
 
         {/* Right: Active Filter Tags */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-white border border-gray-300 text-gray-700 shadow-2xs">
+          <span className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-surface-paper border border-divider text-ink-primary shadow-2xs">
             Filters:
           </span>
 
           {groupByField && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Field : {GROUP_BY_OPTIONS.find((o) => o.value === groupByField)?.label || groupByField}
-              <button
-                type="button"
-                onClick={() => setGroupByField('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setGroupByField('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {selectedYear && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Year : {selectedYear}
-              <button
-                type="button"
-                onClick={() => setSelectedYear('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setSelectedYear('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterMonth && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Month : {filterMonth}
-              <button
-                type="button"
-                onClick={() => setFilterMonth('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterMonth('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterEmployee && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Employee : {employeesList.find((e) => e.id === filterEmployee)?.first_name || filterEmployee}
-              <button
-                type="button"
-                onClick={() => setFilterEmployee('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterEmployee('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterCompany && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Company : {filterCompany}
-              <button
-                type="button"
-                onClick={() => setFilterCompany('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterCompany('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterDepartment && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Dept : {filterDepartment}
-              <button
-                type="button"
-                onClick={() => setFilterDepartment('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterDepartment('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterJobPosition && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Job : {filterJobPosition}
-              <button
-                type="button"
-                onClick={() => setFilterJobPosition('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterJobPosition('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterShift && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Shift : {filterShift}
-              <button
-                type="button"
-                onClick={() => setFilterShift('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterShift('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterWorkType && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Work Type : {filterWorkType}
-              <button
-                type="button"
-                onClick={() => setFilterWorkType('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterWorkType('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterReportingManager && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Manager : {filterReportingManager}
-              <button
-                type="button"
-                onClick={() => setFilterReportingManager('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterReportingManager('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterWorkLocation && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Location : {filterWorkLocation}
-              <button
-                type="button"
-                onClick={() => setFilterWorkLocation('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterWorkLocation('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterAttendanceDate && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Date : {filterAttendanceDate}
-              <button
-                type="button"
-                onClick={() => setFilterAttendanceDate('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterAttendanceDate('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterBatch && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Batch : {filterBatch}
-              <button
-                type="button"
-                onClick={() => setFilterBatch('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterBatch('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterInTime && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               In : {filterInTime}
-              <button
-                type="button"
-                onClick={() => setFilterInTime('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterInTime('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterOutTime && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Out : {filterOutTime}
-              <button
-                type="button"
-                onClick={() => setFilterOutTime('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterOutTime('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterValidated && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Validated : {filterValidated === 'true' ? 'Yes' : 'No'}
-              <button
-                type="button"
-                onClick={() => setFilterValidated('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterValidated('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterOtApproved && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               OT Approved : {filterOtApproved === 'true' ? 'Yes' : 'No'}
-              <button
-                type="button"
-                onClick={() => setFilterOtApproved('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterOtApproved('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterMinHour && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Min Hour : {filterMinHour}
-              <button
-                type="button"
-                onClick={() => setFilterMinHour('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterMinHour('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterAttendanceFrom && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               From : {filterAttendanceFrom}
-              <button
-                type="button"
-                onClick={() => setFilterAttendanceFrom('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterAttendanceFrom('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterAttendanceTill && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Till : {filterAttendanceTill}
-              <button
-                type="button"
-                onClick={() => setFilterAttendanceTill('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterAttendanceTill('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterAtWorkGte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               At Work &gt;= {filterAtWorkGte}
-              <button
-                type="button"
-                onClick={() => setFilterAtWorkGte('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterAtWorkGte('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterAtWorkLte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               At Work &lt;= {filterAtWorkLte}
-              <button
-                type="button"
-                onClick={() => setFilterAtWorkLte('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterAtWorkLte('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterPendingGte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Pending &gt;= {filterPendingGte}
-              <button
-                type="button"
-                onClick={() => setFilterPendingGte('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterPendingGte('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterPendingLte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               Pending &lt;= {filterPendingLte}
-              <button
-                type="button"
-                onClick={() => setFilterPendingLte('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterPendingLte('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterOtGte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               OT &gt;= {filterOtGte}
-              <button
-                type="button"
-                onClick={() => setFilterOtGte('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterOtGte('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
           {filterOtLte && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-white text-gray-800 border border-gray-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-surface-paper text-ink-primary border border-divider shadow-2xs">
               OT &lt;= {filterOtLte}
-              <button
-                type="button"
-                onClick={() => setFilterOtLte('')}
-                className="w-4 h-4 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-800 flex items-center justify-center text-[10px] font-bold transition-colors"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setFilterOtLte('')} aria-label="Close" className="w-4" />
             </span>
           )}
 
@@ -2185,73 +1919,55 @@ export default function HourAccountPage() {
             filterPendingLte ||
             filterOtGte ||
             filterOtLte) && (
-            <button
-              type="button"
-              onClick={handleClearAllFilters}
-              className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white border border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-50 text-xs font-bold transition-colors shadow-2xs"
-              title="Clear all filters"
-            >
-              ✕
-            </button>
+            <IconButton icon="close" size="small" onClick={handleClearAllFilters} aria-label="Clear all filters" className="w-6" />
           )}
         </div>
       </div>
 
       {/* ─── Accordion Groups & Tables ─────────────────────────────────────────── */}
       {isLoading ? (
-        <div className="py-16 text-center text-gray-500">
-          <svg className="animate-spin h-8 w-8 text-blue-600 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-          </svg>
+        <div className="py-16 text-center text-ink-secondary">
+          <div className="mx-auto mb-2 h-8 w-8 animate-spin rounded-full border-b-2 border-primary-main" />
           Loading Hour Accounts...
         </div>
       ) : filteredHourAccounts.length === 0 ? (
-        <div className="py-16 text-center text-gray-500 border border-gray-200 rounded-lg p-6 space-y-3">
-          <p className="text-sm font-medium text-gray-600">
-            No hour account records found.
-          </p>
-          {canCreate && (
-            <button
-              type="button"
-              onClick={handleOpenCreate}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              <span>Create Hour Account</span>
-            </button>
-          )}
-        </div>
+        <Card>
+          <StateView
+            icon="inbox"
+            title="No hour account records found."
+            action={
+              canCreate && (
+                <Button startIcon={<Iconify icon="plus" />} onClick={handleOpenCreate}>
+                  Create Hour Account
+                </Button>
+              )
+            }
+          />
+        </Card>
       ) : viewMode === 'weekly' ? (
-        <div className="border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-200">
+        <Card className="overflow-hidden divide-y divide-divider">
           {Object.entries(weeklyMonthsData).map(([monthName, monthData]) => {
             const isMonthExpanded = !!expandedGroups[monthName];
             const monthItems = monthData.items;
 
             return (
-              <div key={monthName} className="bg-white">
+              <div key={monthName} className="bg-surface-paper">
                 {/* Accordion Month Header (shows months below, matching monthly view style) */}
-                <button
-                  type="button"
-                  onClick={() => toggleGroup(monthName)}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 bg-white hover:bg-gray-50/80 transition-colors text-left font-medium text-gray-800 border-l-4 border-transparent hover:border-blue-500"
-                >
-                  <span className="text-gray-500 text-lg font-mono leading-none">
+                <Button variant="outlined" onClick={() => toggleGroup(monthName)} className="w-full">
+                  <span className="text-ink-secondary text-lg font-mono leading-none">
                     {isMonthExpanded ? '—' : '+'}
                   </span>
-                  <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200 min-w-[20px]">
+                  <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-primary-lighter text-primary-dark border border-primary-light min-w-[20px]">
                     {monthItems.length}
                   </span>
-                  <span className="text-sm font-semibold text-gray-800">{monthName}</span>
-                </button>
+                  <span className="text-sm font-semibold text-ink-primary">{monthName}</span>
+                </Button>
 
                 {/* Weeks under this Month */}
                 {isMonthExpanded && (
-                  <div className="border-t border-gray-200 divide-y divide-gray-200 bg-gray-50/20 pl-2 sm:pl-4">
+                  <div className="border-t border-divider divide-y divide-divider bg-surface-neutral/20 pl-2 sm:pl-4">
                     {monthItems.length === 0 ? (
-                      <div className="py-8 text-center text-gray-400 text-sm">
+                      <div className="py-8 text-center text-ink-disabled text-sm">
                         No records for this group.
                       </div>
                     ) : (
@@ -2262,39 +1978,35 @@ export default function HourAccountPage() {
                         const weekAllSelected = items.length > 0 && items.every((item) => selectedIds.has(item.id));
 
                         return (
-                          <div key={weekKey} className="bg-white">
+                          <div key={weekKey} className="bg-surface-paper">
                             {/* Accordion Week Header */}
-                            <button
-                              type="button"
-                              onClick={() => toggleWeek(weekKey)}
-                              className="w-full flex items-center gap-3 px-4 py-3 bg-white hover:bg-gray-50 transition-colors text-left font-medium text-gray-800 border-l-4 border-transparent hover:border-blue-400"
-                            >
-                              <span className="text-gray-400 text-base font-mono leading-none">
+                            <Button variant="outlined" onClick={() => toggleWeek(weekKey)} className="w-full">
+                              <span className="text-ink-disabled text-base font-mono leading-none">
                                 {isWeekExpanded ? '—' : '+'}
                               </span>
-                              <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200 min-w-[20px]">
+                              <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-semibold rounded-full bg-primary-lighter text-primary-dark border border-primary-light min-w-[20px]">
                                 {items.length}
                               </span>
                               <div className="flex items-center gap-2">
-                                <span className="text-sm font-semibold text-gray-800">{monthName} — {weekLabel}</span>
-                                <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                                <span className="text-sm font-semibold text-ink-primary">{monthName} — {weekLabel}</span>
+                                <span className="text-xs font-medium text-primary-dark bg-primary-lighter px-2 py-0.5 rounded border border-primary-light">
                                   {weekData.definition.dateRange}
                                 </span>
                               </div>
-                            </button>
+                            </Button>
 
                             {/* Expanded Week Table */}
                             {isWeekExpanded && (
-                              <div className="border-t border-gray-100 overflow-x-auto">
+                              <div className="border-t border-divider overflow-x-auto">
                                 <table className="w-full text-left text-sm">
-                                  <thead className="bg-gray-50 text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                                  <thead className="bg-surface-neutral text-xs font-semibold text-ink-primary uppercase tracking-wider border-b border-divider">
                                     <tr>
                                       <th className="w-10 px-4 py-3">
                                         <input
                                           type="checkbox"
                                           checked={weekAllSelected}
                                           onChange={() => toggleSelectGroup(items)}
-                                          className="w-4 h-4 rounded border-gray-300 accent-blue-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                          className="w-4 h-4 rounded border-divider accent-primary-main text-primary-main focus:ring-primary-main cursor-pointer"
                                         />
                                       </th>
                                       <th className="px-4 py-3">Employee</th>
@@ -2306,14 +2018,14 @@ export default function HourAccountPage() {
                                       <th className="px-4 py-3 text-right">Actions</th>
                                     </tr>
                                   </thead>
-                                  <tbody className="divide-y divide-gray-100">
+                                  <tbody className="divide-y divide-divider">
                                     {items.map((row) => {
                                       const isSelected = selectedIds.has(row.id);
                                       return (
                                         <tr
                                           key={row.weekId}
                                           className={`transition-colors ${
-                                            isSelected ? 'bg-blue-50/50' : 'hover:bg-gray-50/60'
+                                            isSelected ? 'bg-primary-lighter/50' : 'hover:bg-surface-neutral/60'
                                           }`}
                                         >
                                           <td className="w-10 px-4 py-3">
@@ -2321,7 +2033,7 @@ export default function HourAccountPage() {
                                               type="checkbox"
                                               checked={isSelected}
                                               onChange={() => toggleSelectRecord(row.id)}
-                                              className="w-4 h-4 rounded border-gray-300 accent-blue-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                              className="w-4 h-4 rounded border-divider accent-primary-main text-primary-main focus:ring-primary-main cursor-pointer"
                                             />
                                           </td>
                                           <td className="px-4 py-3">
@@ -2333,60 +2045,42 @@ export default function HourAccountPage() {
                                                   className="w-8 h-8 rounded-full object-cover"
                                                 />
                                               ) : (
-                                                <div className="w-8 h-8 rounded-full bg-slate-700 text-white flex items-center justify-center text-xs font-semibold">
+                                                <div className="w-8 h-8 rounded-full bg-grey-700 text-primary-contrast flex items-center justify-center text-xs font-semibold">
                                                   {row.employee_name
                                                     ? row.employee_name.slice(0, 2).toUpperCase()
                                                     : 'EM'}
                                                 </div>
                                               )}
                                               <div>
-                                                <div className="font-medium text-gray-900">
+                                                <div className="font-medium text-ink-primary">
                                                   {row.employee_name || 'Unnamed Employee'}
                                                 </div>
                                                 {row.department_name && (
-                                                  <div className="text-xs text-gray-500">
+                                                  <div className="text-xs text-ink-secondary">
                                                     {row.department_name}
                                                   </div>
                                                 )}
                                               </div>
                                             </div>
                                           </td>
-                                          <td className="px-4 py-3 font-semibold text-gray-800">{weekLabel}</td>
-                                          <td className="px-4 py-3 text-gray-600 text-xs font-mono">{row.weekDateRange}</td>
-                                          <td className="px-4 py-3 font-mono font-medium text-gray-800">
+                                          <td className="px-4 py-3 font-semibold text-ink-primary">{weekLabel}</td>
+                                          <td className="px-4 py-3 text-ink-secondary text-xs font-mono">{row.weekDateRange}</td>
+                                          <td className="px-4 py-3 font-mono font-medium text-ink-primary">
                                             {row.weekWorked}
                                           </td>
-                                          <td className="px-4 py-3 font-mono text-gray-600">
+                                          <td className="px-4 py-3 font-mono text-ink-secondary">
                                             {row.weekPending}
                                           </td>
-                                          <td className="px-4 py-3 font-mono text-gray-600">
+                                          <td className="px-4 py-3 font-mono text-ink-secondary">
                                             {row.weekOvertime}
                                           </td>
                                           <td className="px-4 py-3 text-right">
                                             <div className="inline-flex items-center gap-1.5">
                                               {canEdit && (
-                                                <button
-                                                  type="button"
-                                                  onClick={() => handleOpenEdit(row)}
-                                                  className="p-1.5 text-gray-500 hover:text-blue-600 border border-gray-200 rounded hover:bg-gray-100 transition-colors"
-                                                  title="Edit"
-                                                >
-                                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                                  </svg>
-                                                </button>
+                                                <IconButton icon="pencil" size="small" onClick={() => handleOpenEdit(row)} aria-label="Edit" />
                                               )}
                                               {canDelete && (
-                                                <button
-                                                  type="button"
-                                                  onClick={() => handleConfirmSingleDelete(row)}
-                                                  className="p-1.5 text-rose-500 hover:text-rose-700 border border-gray-200 rounded hover:bg-rose-50 transition-colors"
-                                                  title="Delete"
-                                                >
-                                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                  </svg>
-                                                </button>
+                                                <IconButton icon="trash" size="small" color="error" onClick={() => handleConfirmSingleDelete(row)} aria-label="Delete" />
                                               )}
                                             </div>
                                           </td>
@@ -2406,47 +2100,43 @@ export default function HourAccountPage() {
               </div>
             );
           })}
-        </div>
+        </Card>
       ) : (
-        <div className="border border-gray-200 rounded-lg overflow-hidden divide-y divide-gray-200">
+        <Card className="overflow-hidden divide-y divide-divider">
           {Object.entries(groupedData).map(([groupKey, items]) => {
             const isExpanded = !!expandedGroups[groupKey];
             const groupAllSelected = items.length > 0 && items.every((item) => selectedIds.has(item.id));
 
             return (
-              <div key={groupKey} className="bg-white">
+              <div key={groupKey} className="bg-surface-paper">
                 {/* Accordion Group Header */}
-                <button
-                  type="button"
-                  onClick={() => toggleGroup(groupKey)}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 bg-white hover:bg-gray-50/80 transition-colors text-left font-medium text-gray-800 border-l-4 border-transparent hover:border-blue-500"
-                >
-                  <span className="text-gray-500 text-lg font-mono leading-none">
+                <Button variant="outlined" onClick={() => toggleGroup(groupKey)} className="w-full">
+                  <span className="text-ink-secondary text-lg font-mono leading-none">
                     {isExpanded ? '—' : '+'}
                   </span>
-                  <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200 min-w-[20px]">
+                  <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold rounded-full bg-primary-lighter text-primary-dark border border-primary-light min-w-[20px]">
                     {items.length}
                   </span>
-                  <span className="text-sm font-semibold text-gray-800">{groupKey}</span>
-                </button>
+                  <span className="text-sm font-semibold text-ink-primary">{groupKey}</span>
+                </Button>
 
                 {/* Expanded Table */}
                 {isExpanded && (
-                  <div className="border-t border-gray-100 overflow-x-auto">
+                  <div className="border-t border-divider overflow-x-auto">
                     {items.length === 0 ? (
-                      <div className="py-8 text-center text-gray-400 text-sm">
+                      <div className="py-8 text-center text-ink-disabled text-sm">
                         No records for this group.
                       </div>
                     ) : (
                       <table className="w-full text-left text-sm">
-                        <thead className="bg-gray-50 text-xs font-semibold text-gray-700 uppercase tracking-wider border-b border-gray-200">
+                        <thead className="bg-surface-neutral text-xs font-semibold text-ink-primary uppercase tracking-wider border-b border-divider">
                           <tr>
                             <th className="w-10 px-4 py-3">
                               <input
                                 type="checkbox"
                                 checked={groupAllSelected}
                                 onChange={() => toggleSelectGroup(items)}
-                                className="w-4 h-4 rounded border-gray-300 accent-blue-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                className="w-4 h-4 rounded border-divider accent-primary-main text-primary-main focus:ring-primary-main cursor-pointer"
                               />
                             </th>
                             <th className="px-4 py-3">Employee</th>
@@ -2458,14 +2148,14 @@ export default function HourAccountPage() {
                             <th className="px-4 py-3 text-right">Actions</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-divider">
                           {items.map((row) => {
                             const isSelected = selectedIds.has(row.id);
                             return (
                               <tr
                                 key={row.id}
                                 className={`transition-colors ${
-                                  isSelected ? 'bg-blue-50/50' : 'hover:bg-gray-50/60'
+                                  isSelected ? 'bg-primary-lighter/50' : 'hover:bg-surface-neutral/60'
                                 }`}
                               >
                                 <td className="w-10 px-4 py-3">
@@ -2473,7 +2163,7 @@ export default function HourAccountPage() {
                                     type="checkbox"
                                     checked={isSelected}
                                     onChange={() => toggleSelectRecord(row.id)}
-                                    className="w-4 h-4 rounded border-gray-300 accent-blue-600 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                    className="w-4 h-4 rounded border-divider accent-primary-main text-primary-main focus:ring-primary-main cursor-pointer"
                                   />
                                 </td>
                                 <td className="px-4 py-3">
@@ -2485,60 +2175,42 @@ export default function HourAccountPage() {
                                         className="w-8 h-8 rounded-full object-cover"
                                       />
                                     ) : (
-                                      <div className="w-8 h-8 rounded-full bg-slate-700 text-white flex items-center justify-center text-xs font-semibold">
+                                      <div className="w-8 h-8 rounded-full bg-grey-700 text-primary-contrast flex items-center justify-center text-xs font-semibold">
                                         {row.employee_name
                                           ? row.employee_name.slice(0, 2).toUpperCase()
                                           : 'EM'}
                                       </div>
                                     )}
                                     <div>
-                                      <div className="font-medium text-gray-900">
+                                      <div className="font-medium text-ink-primary">
                                         {row.employee_name || 'Unnamed Employee'}
                                       </div>
                                       {row.department_name && (
-                                        <div className="text-xs text-gray-500">
+                                        <div className="text-xs text-ink-secondary">
                                           {row.department_name}
                                         </div>
                                       )}
                                     </div>
                                   </div>
                                 </td>
-                                <td className="px-4 py-3 text-gray-600">{row.month}</td>
-                                <td className="px-4 py-3 text-gray-600">{row.year}</td>
-                                <td className="px-4 py-3 font-mono font-medium text-gray-800">
+                                <td className="px-4 py-3 text-ink-secondary">{row.month}</td>
+                                <td className="px-4 py-3 text-ink-secondary">{row.year}</td>
+                                <td className="px-4 py-3 font-mono font-medium text-ink-primary">
                                   {row.worked_hours}
                                 </td>
-                                <td className="px-4 py-3 font-mono text-gray-600">
+                                <td className="px-4 py-3 font-mono text-ink-secondary">
                                   {row.pending_hours}
                                 </td>
-                                <td className="px-4 py-3 font-mono text-gray-600">
+                                <td className="px-4 py-3 font-mono text-ink-secondary">
                                   {row.overtime}
                                 </td>
                                 <td className="px-4 py-3 text-right">
                                   <div className="inline-flex items-center gap-1.5">
                                     {canEdit && (
-                                      <button
-                                        type="button"
-                                        onClick={() => handleOpenEdit(row)}
-                                        className="p-1.5 text-gray-500 hover:text-blue-600 border border-gray-200 rounded hover:bg-gray-100 transition-colors"
-                                        title="Edit"
-                                      >
-                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                        </svg>
-                                      </button>
+                                      <IconButton icon="pencil" size="small" onClick={() => handleOpenEdit(row)} aria-label="Edit" />
                                     )}
                                     {canDelete && (
-                                      <button
-                                        type="button"
-                                        onClick={() => handleConfirmSingleDelete(row)}
-                                        className="p-1.5 text-rose-500 hover:text-rose-700 border border-gray-200 rounded hover:bg-rose-50 transition-colors"
-                                        title="Delete"
-                                      >
-                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                      </button>
+                                      <IconButton icon="trash" size="small" color="error" onClick={() => handleConfirmSingleDelete(row)} aria-label="Delete" />
                                     )}
                                   </div>
                                 </td>
@@ -2553,32 +2225,26 @@ export default function HourAccountPage() {
               </div>
             );
           })}
-        </div>
+        </Card>
       )}
 
       {/* ─── Create / Edit Modal ───────────────────────────────────────────────── */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-lg shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-grey-900/40 p-4">
+          <div className="bg-surface-paper rounded-lg shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-divider">
+              <h3 className="text-lg font-semibold text-ink-primary">
                 {editingItem ? 'Edit Hour Account' : 'Create Hour Account'}
               </h3>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 text-lg font-bold"
-              >
-                ✕
-              </button>
+              <IconButton icon="close" size="small" onClick={() => setModalOpen(false)} aria-label="Close" />
             </div>
 
             {/* Modal Form */}
             <form onSubmit={handleSaveModal}>
               <div className="px-6 py-4 space-y-4">
                 {formError && (
-                  <div className="p-3 text-xs bg-red-50 text-red-700 border border-red-200 rounded-md">
+                  <div className="p-3 text-xs bg-error-lighter text-error-dark border border-error-light rounded-md">
                     {formError}
                   </div>
                 )}
@@ -2586,14 +2252,13 @@ export default function HourAccountPage() {
                 <div className="grid grid-cols-2 gap-4">
                   {/* Employee */}
                   <div className="col-span-2">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">
                       Employee *
                     </label>
-                    <select
+                    <Select selectSize="small"
                       value={formData.employee}
                       onChange={(e) => setFormData({ ...formData, employee: e.target.value })}
                       required
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                     >
                       <option value="">Select an employee</option>
                       {employeesList.map((emp) => (
@@ -2601,29 +2266,28 @@ export default function HourAccountPage() {
                           {emp.first_name} {emp.last_name} ({emp.employee_id || 'No ID'})
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   {/* Month */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">
                       Month *
                     </label>
-                    <select
+                    <Select selectSize="small"
                       value={formData.month}
                       onChange={(e) => setFormData({ ...formData, month: e.target.value })}
                       required
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                     >
                       {MONTH_NAMES.map((m) => (
                         <option key={m} value={m}>{m}</option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   {/* Year */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">
                       Year *
                     </label>
                     <input
@@ -2631,13 +2295,13 @@ export default function HourAccountPage() {
                       value={formData.year}
                       onChange={(e) => setFormData({ ...formData, year: Number(e.target.value) })}
                       required
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="w-full px-3 py-2 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main"
                     />
                   </div>
 
                   {/* Worked Hours */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">
                       Worked Hours (HH:MM)
                     </label>
                     <input
@@ -2645,13 +2309,13 @@ export default function HourAccountPage() {
                       placeholder="167:10"
                       value={formData.worked_hours}
                       onChange={(e) => setFormData({ ...formData, worked_hours: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                      className="w-full px-3 py-2 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                     />
                   </div>
 
                   {/* Pending Hours */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">
                       Pending Hours (HH:MM)
                     </label>
                     <input
@@ -2659,13 +2323,13 @@ export default function HourAccountPage() {
                       placeholder="00:50"
                       value={formData.pending_hours}
                       onChange={(e) => setFormData({ ...formData, pending_hours: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                      className="w-full px-3 py-2 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                     />
                   </div>
 
                   {/* Overtime */}
                   <div className="col-span-2">
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-medium text-ink-primary mb-1">
                       Overtime (HH:MM)
                     </label>
                     <input
@@ -2673,28 +2337,20 @@ export default function HourAccountPage() {
                       placeholder="00:00"
                       value={formData.overtime}
                       onChange={(e) => setFormData({ ...formData, overtime: e.target.value })}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
+                      className="w-full px-3 py-2 text-sm border border-divider rounded-md focus:outline-none focus:ring-1 focus:ring-primary-main font-mono"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Modal Footer with Blue Save Button */}
-              <div className="flex items-center justify-end gap-3 px-6 py-3.5 bg-gray-50 border-t border-gray-100">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                >
+              <div className="flex items-center justify-end gap-3 px-6 py-3.5 bg-surface-neutral border-t border-divider">
+                <Button variant="outlined" color="inherit" onClick={() => setModalOpen(false)}>
                   Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={createMutation.isPending || updateMutation.isPending}
-                  className="px-5 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm transition-colors disabled:opacity-50"
-                >
+                </Button>
+                <Button disabled={createMutation.isPending || updateMutation.isPending} type="submit">
                   {createMutation.isPending || updateMutation.isPending ? 'Saving...' : 'Save'}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -2703,35 +2359,26 @@ export default function HourAccountPage() {
 
       {/* ─── Delete Confirmation Modal ─────────────────────────────────────────── */}
       {deleteConfirmOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-5">
-            <h4 className="text-base font-semibold text-gray-900 mb-2">Confirm Delete</h4>
-            <p className="text-sm text-gray-600 mb-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-grey-900/40 p-4">
+          <div className="bg-surface-paper rounded-lg shadow-xl max-w-sm w-full p-5">
+            <h4 className="text-base font-semibold text-ink-primary mb-2">Confirm Delete</h4>
+            <p className="text-sm text-ink-secondary mb-5">
               {isBulkDeleting
                 ? `Are you sure you want to delete ${selectedIds.size} selected hour account records? This action cannot be undone.`
                 : `Are you sure you want to delete the hour account for "${itemToDelete?.employee_name}" (${itemToDelete?.month} ${itemToDelete?.year})?`}
             </p>
             <div className="flex items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setDeleteConfirmOpen(false)}
-                className="px-4 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
-              >
+              <Button variant="outlined" color="inherit" size="small" onClick={() => setDeleteConfirmOpen(false)}>
                 Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleExecuteDelete}
-                disabled={deleteMutation.isPending || bulkDeleteMutation.isPending}
-                className="px-4 py-1.5 text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-md shadow-sm disabled:opacity-50"
-              >
+              </Button>
+              <Button color="error" size="small" onClick={handleExecuteDelete} disabled={deleteMutation.isPending || bulkDeleteMutation.isPending}>
                 {deleteMutation.isPending || bulkDeleteMutation.isPending ? 'Deleting...' : 'Delete'}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }
 

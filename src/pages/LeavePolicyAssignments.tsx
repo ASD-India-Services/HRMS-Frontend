@@ -7,6 +7,8 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { formatDate } from '@/utils/formatters';
 
 const ENDPOINT = '/api/v1/leaves/policy-assignments/';
@@ -89,11 +91,8 @@ export default function LeavePolicyAssignments() {
 
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Leave Policy Assignments</h1><p className="mt-1 text-sm text-gray-600">Manage policy assignments to employees, departments, and grades</p></div>
-        <CreateButton permission="leave_policy_assignments.create" label="Create Assignment" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Leave Policy Assignments" subtitle="Manage policy assignments to employees, departments, and grades" actions={<CreateButton permission="leave_policy_assignments.create" label="Create Assignment" onClick={() => setShowCreate(true)} />} />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
@@ -135,6 +134,6 @@ export default function LeavePolicyAssignments() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

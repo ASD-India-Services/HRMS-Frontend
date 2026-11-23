@@ -8,6 +8,8 @@ import { formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const ENDPOINT = '/api/v1/appointment-letters/templates/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -76,11 +78,8 @@ export default function AppointmentLetters() {
 
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Appointment Letters</h1><p className="mt-1 text-sm text-gray-600">Manage appointment letter templates</p></div>
-        <CreateButton permission="appointment_letters.create" label="Create Template" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Appointment Letters" subtitle="Manage appointment letter templates" actions={<CreateButton permission="appointment_letters.create" label="Create Template" onClick={() => setShowCreate(true)} />} />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
@@ -122,6 +121,6 @@ export default function AppointmentLetters() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

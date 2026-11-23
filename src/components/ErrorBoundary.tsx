@@ -1,4 +1,5 @@
 import { useRouteError, isRouteErrorResponse, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/Button';
 
 /**
  * Custom error boundary for React Router.
@@ -31,26 +32,20 @@ export function RouteErrorBoundary() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-surface-neutral px-4">
       <div className="w-full max-w-md text-center">
         {statusCode && (
-          <p className="text-6xl font-bold text-gray-300">{statusCode}</p>
+          <p className="text-6xl font-bold text-ink-disabled">{statusCode}</p>
         )}
-        <h1 className="mt-4 text-2xl font-semibold text-gray-900">{title}</h1>
-        <p className="mt-2 text-sm text-gray-600">{message}</p>
+        <h1 className="mt-4 text-2xl font-semibold text-ink-primary">{title}</h1>
+        <p className="mt-2 text-sm text-ink-secondary">{message}</p>
         <div className="mt-6 flex items-center justify-center gap-3">
-          <button
-            onClick={() => navigate(-1)}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
+          <Button variant="outlined" color="inherit" onClick={() => navigate(-1)}>
             Go back
-          </button>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
-          >
+          </Button>
+          <Button onClick={() => navigate('/dashboard')}>
             Dashboard
-          </button>
+          </Button>
         </div>
       </div>
     </div>

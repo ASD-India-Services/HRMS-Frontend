@@ -7,6 +7,8 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { formatDate } from '@/utils/formatters';
 
 const ENDPOINT = '/api/v1/leaves/block-lists/';
@@ -20,7 +22,7 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
   { key: 'applies_to_all', header: 'All Depts', sortable: true, render: (v: unknown) => (v ? 'Yes' : 'No') },
   { key: 'block_dates', header: 'Blocked Dates', sortable: false, render: (v: unknown) => {
     const dates = v as Array<{ date?: string; reason?: string }> | null;
-    if (!dates || dates.length === 0) return <span className="text-gray-500 text-xs">–</span>;
+    if (!dates || dates.length === 0) return <span className="text-ink-secondary text-xs">–</span>;
     return <span className="text-xs">{dates.map(d => formatDate(d.date)).join(', ')}</span>;
   }},
   { key: 'is_active', header: 'Active', sortable: true, render: (v: unknown) => (v ? 'Yes' : 'No') },
@@ -113,11 +115,8 @@ export default function LeaveBlockLists() {
 
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Leave Block Lists</h1><p className="mt-1 text-sm text-gray-600">Manage dates when leave cannot be taken</p></div>
-        <CreateButton permission="leave_block_lists.create" label="Create Block List" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Leave Block Lists" subtitle="Manage dates when leave cannot be taken" actions={<CreateButton permission="leave_block_lists.create" label="Create Block List" onClick={() => setShowCreate(true)} />} />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
@@ -159,6 +158,6 @@ export default function LeaveBlockLists() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

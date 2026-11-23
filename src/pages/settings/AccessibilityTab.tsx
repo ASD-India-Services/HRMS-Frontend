@@ -9,6 +9,10 @@ import {
 } from './SettingsIcons';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
 import api from '@/lib/api';
+import { Modal } from '@/components/ui/Modal';
+import { Button, IconButton, Switch } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
+import { Iconify } from '@/components/Iconify';
 
 export interface CategoryFilters {
   employee?: string;
@@ -106,23 +110,7 @@ function SwitchToggle({
   disabled?: boolean;
 }) {
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      disabled={disabled}
-      onClick={() => onChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500/30 ${
-        checked ? 'bg-blue-600' : 'bg-gray-200'
-      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-    >
-      <span
-        aria-hidden="true"
-        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
-          checked ? 'translate-x-5' : 'translate-x-0'
-        }`}
-      />
-    </button>
+    <Switch checked={checked} disabled={disabled} onClick={() => onChange(!checked)} />
   );
 }
 
@@ -370,16 +358,16 @@ export function AccessibilityTab() {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <LoaderIcon className="h-8 w-8 text-blue-600" />
+        <LoaderIcon className="h-8 w-8 text-primary-main" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-        <AlertCircleIcon className="mx-auto h-8 w-8 text-red-500" />
-        <p className="mt-2 text-sm text-red-700">
+      <div className="rounded-xl border border-error-light bg-error-lighter p-6 text-center">
+        <AlertCircleIcon className="mx-auto h-8 w-8 text-error-main" />
+        <p className="mt-2 text-sm text-error-dark">
           Failed to load accessibility settings: {(error as Error)?.message}
         </p>
       </div>
@@ -390,100 +378,87 @@ export function AccessibilityTab() {
     <div className="space-y-8">
       {/* Toast Notice */}
       {bannerNotice && (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 flex items-center justify-between shadow-xs">
+        <div className="rounded-xl border border-success-light bg-success-lighter px-4 py-3 text-sm text-success-dark flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2">
-            <CheckIcon className="h-4 w-4 text-emerald-600" />
+            <CheckIcon className="h-4 w-4 text-success-main" />
             <span>{bannerNotice}</span>
           </div>
-          <button
-            type="button"
-            onClick={() => setBannerNotice(null)}
-            className="text-xs font-semibold text-emerald-700 hover:text-emerald-900"
-          >
-            ✕
-          </button>
+          <IconButton icon="close" size="small" color="success" aria-label="Dismiss" onClick={() => setBannerNotice(null)} />
         </div>
       )}
 
       {/* ─── Main Restriction Accordion List ─────────────────────────────── */}
-      <div className="rounded-2xl border border-gray-200 bg-white shadow-xs divide-y divide-gray-200 overflow-hidden">
+      <div className="rounded-2xl border border-divider bg-surface-paper shadow-xs divide-y divide-divider overflow-hidden">
         {features.map((item) => {
           const isExpanded = !!expandedIds[item.id];
           const isMenuOpen = activeActionsId === item.id;
           const filters = item.filters || {};
 
           return (
-            <div key={item.id} className="transition-colors hover:bg-gray-50/30">
+            <div key={item.id} className="transition-colors hover:bg-surface-neutral/30">
               {/* Row Header matching screenshot: — Default Employee View [Actions ▼] */}
               <div className="flex items-center justify-between px-6 py-4">
-                <button
-                  type="button"
+                <Button
+                  variant="text"
+                  color="inherit"
                   onClick={() => toggleExpand(item.id)}
-                  className="flex flex-1 items-center gap-3 text-left focus:outline-none"
+                  startIcon={<Iconify icon={isExpanded ? 'minus' : 'plus'} />}
+                  className="!h-auto flex-1 !justify-start !px-0 !text-sm !font-semibold"
                 >
-                  {/* Indicator: — when expanded, + when collapsed */}
-                  <span className="flex h-5 w-5 items-center justify-center font-bold text-gray-500 text-base leading-none select-none">
-                    {isExpanded ? '—' : '+'}
-                  </span>
-
-                  {/* Feature Title */}
-                  <span className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">
-                    {item.label}
-                  </span>
-                </button>
+                  {item.label}
+                </Button>
 
                 {/* Right Actions Dropdown */}
                 <div className="relative">
-                  <button
+                  <Button variant="outlined" color="inherit" size="small"
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       setActiveActionsId(isMenuOpen ? null : item.id);
                     }}
-                    className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-xs hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                   >
                     <span>Actions</span>
-                    <ChevronDownIcon className="h-3.5 w-3.5 text-gray-500" />
-                  </button>
+                    <ChevronDownIcon className="h-3.5 w-3.5 text-ink-secondary" />
+                  </Button>
 
                   {/* Actions Dropdown Menu containing "Clear Filter" */}
                   {isMenuOpen && (
                     <div
                       ref={actionsMenuRef}
-                      className="absolute right-0 z-30 mt-1 w-44 rounded-xl border border-gray-200 bg-white py-1 shadow-lg ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-100"
+                      className="absolute right-0 z-30 mt-1 w-44 rounded-xl border border-divider bg-surface-paper py-1 shadow-lg ring-1 ring-grey-900/5 animate-in fade-in zoom-in-95 duration-100"
                     >
                       {/* Clear Filter option with confirmation */}
-                      <button
-                        type="button"
-                        onClick={() => handleOpenClearFilter(item)}
-                        className="flex w-full items-center justify-between px-3.5 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-red-600 transition-colors text-left"
-                      >
-                        <span>Clear Filter</span>
-                      </button>
+                      <Button variant="text" color="error" size="small" onClick={() => handleOpenClearFilter(item)} className="!w-full !justify-start !rounded-none">
+                        Clear Filter
+                      </Button>
 
-                      <div className="my-1 border-t border-gray-100" />
+                      <div className="my-1 border-t border-divider" />
 
-                      <button
-                        type="button"
+                      <Button
+                        variant="text"
+                        color="inherit"
+                        size="small"
                         onClick={() => {
                           setActiveActionsId(null);
                           handleToggleRestrictAll(item.id);
                         }}
-                        className="flex w-full items-center justify-between px-3.5 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 text-left"
+                        className="!w-full !justify-start !rounded-none"
                       >
-                        <span>{item.restrict_all ? 'Allow All' : 'Restrict All'}</span>
-                      </button>
+                        {item.restrict_all ? 'Allow All' : 'Restrict All'}
+                      </Button>
 
-                      <button
-                        type="button"
+                      <Button
+                        variant="text"
+                        color="inherit"
+                        size="small"
                         onClick={() => {
                           setActiveActionsId(null);
                           toggleExpand(item.id);
                         }}
-                        className="flex w-full items-center px-3.5 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50 text-left"
+                        className="!w-full !justify-start !rounded-none"
                       >
                         {isExpanded ? 'Collapse' : 'Expand'}
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -491,10 +466,10 @@ export function AccessibilityTab() {
 
               {/* Expanded Body Content */}
               {isExpanded && (
-                <div className="border-t border-gray-100 bg-white px-6 py-5 pl-14 space-y-6">
+                <div className="border-t border-divider bg-surface-paper px-6 py-5 pl-14 space-y-6">
                   {/* Restrict All Switch */}
                   <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-900">
+                    <label className="block text-sm font-semibold text-ink-primary">
                       Restrict All
                     </label>
                     <div>
@@ -509,11 +484,11 @@ export function AccessibilityTab() {
                   {!item.restrict_all && (
                     <div className="space-y-6 animate-in fade-in duration-150">
                       {/* Light-blue Banner matching the screenshot */}
-                      <div className="rounded-xl border border-sky-200 bg-sky-50/70 p-4 text-xs text-sky-950 leading-relaxed shadow-2xs">
-                        <p className="font-medium text-sky-900">
+                      <div className="rounded-xl border border-info-light bg-info-lighter/70 p-4 text-xs text-info-darker leading-relaxed shadow-2xs">
+                        <p className="font-medium text-info-darker">
                           Only those normal users/employees with any category mentioned in the form can access the <strong>'{item.label}'</strong> feature
                         </p>
-                        <p className="mt-1 text-sky-800">
+                        <p className="mt-1 text-info-dark">
                           If skip all the category fields in the form, then all normal users/employees can access the feature
                         </p>
                       </div>
@@ -524,15 +499,14 @@ export function AccessibilityTab() {
                         <div className="space-y-5">
                           {/* 1. Employee */}
                           <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+                            <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                               Employee
                             </label>
-                            <select
+                            <Select
                               value={filters.employee || ''}
                               onChange={(e) =>
                                 handleFilterFieldChange(item.id, 'employee', e.target.value)
                               }
-                              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             >
                               <option value="">Select Employee</option>
                               {employeeOptions.map((emp) => (
@@ -540,20 +514,19 @@ export function AccessibilityTab() {
                                   {emp.name}
                                 </option>
                               ))}
-                            </select>
+                            </Select>
                           </div>
 
                           {/* 2. Department */}
                           <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+                            <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                               Department
                             </label>
-                            <select
+                            <Select
                               value={filters.department || ''}
                               onChange={(e) =>
                                 handleFilterFieldChange(item.id, 'department', e.target.value)
                               }
-                              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             >
                               <option value="">Select Department</option>
                               {departmentOptions.map((dept) => (
@@ -561,20 +534,19 @@ export function AccessibilityTab() {
                                   {dept}
                                 </option>
                               ))}
-                            </select>
+                            </Select>
                           </div>
 
                           {/* 3. Employee Type (Permanent in screenshot) */}
                           <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+                            <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                               Employee Type
                             </label>
-                            <select
+                            <Select
                               value={filters.employee_type || ''}
                               onChange={(e) =>
                                 handleFilterFieldChange(item.id, 'employee_type', e.target.value)
                               }
-                              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             >
                               <option value="">Select Employee Type</option>
                               <option value="Permanent">Permanent</option>
@@ -583,20 +555,19 @@ export function AccessibilityTab() {
                               <option value="Internship">Internship</option>
                               <option value="Part-Time">Part-Time</option>
                               <option value="Freelance">Freelance</option>
-                            </select>
+                            </Select>
                           </div>
 
                           {/* 4. Tags */}
                           <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+                            <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                               Tags
                             </label>
-                            <select
+                            <Select
                               value={filters.tags || ''}
                               onChange={(e) =>
                                 handleFilterFieldChange(item.id, 'tags', e.target.value)
                               }
-                              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             >
                               <option value="">Select Tag</option>
                               <option value="Core Team">Core Team</option>
@@ -604,27 +575,26 @@ export function AccessibilityTab() {
                               <option value="HQ">HQ</option>
                               <option value="Remote">Remote</option>
                               <option value="Contractor">Contractor</option>
-                            </select>
+                            </Select>
                           </div>
 
                           {/* 5. Permissions */}
                           <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+                            <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                               Permissions
                             </label>
-                            <select
+                            <Select
                               value={filters.permissions || ''}
                               onChange={(e) =>
                                 handleFilterFieldChange(item.id, 'permissions', e.target.value)
                               }
-                              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             >
                               <option value="">Select Permission</option>
                               <option value="Standard User">Standard User</option>
                               <option value="Department Approver">Department Approver</option>
                               <option value="Manager View">Manager View</option>
                               <option value="Administrator">Administrator</option>
-                            </select>
+                            </Select>
                           </div>
                         </div>
 
@@ -632,15 +602,14 @@ export function AccessibilityTab() {
                         <div className="space-y-5">
                           {/* 1. Job Position */}
                           <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+                            <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                               Job Position
                             </label>
-                            <select
+                            <Select
                               value={filters.job_position || ''}
                               onChange={(e) =>
                                 handleFilterFieldChange(item.id, 'job_position', e.target.value)
                               }
-                              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             >
                               <option value="">Select Job Position</option>
                               {designationOptions.map((desig) => (
@@ -648,20 +617,19 @@ export function AccessibilityTab() {
                                   {desig}
                                 </option>
                               ))}
-                            </select>
+                            </Select>
                           </div>
 
                           {/* 2. Work Type */}
                           <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+                            <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                               Work Type
                             </label>
-                            <select
+                            <Select
                               value={filters.work_type || ''}
                               onChange={(e) =>
                                 handleFilterFieldChange(item.id, 'work_type', e.target.value)
                               }
-                              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             >
                               <option value="">Select Work Type</option>
                               <option value="Full-Time">Full-Time</option>
@@ -669,20 +637,19 @@ export function AccessibilityTab() {
                               <option value="On-site">On-site</option>
                               <option value="Remote">Remote</option>
                               <option value="Hybrid">Hybrid</option>
-                            </select>
+                            </Select>
                           </div>
 
                           {/* 3. Job Role */}
                           <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+                            <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                               Job Role
                             </label>
-                            <select
+                            <Select
                               value={filters.job_role || ''}
                               onChange={(e) =>
                                 handleFilterFieldChange(item.id, 'job_role', e.target.value)
                               }
-                              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             >
                               <option value="">Select Job Role</option>
                               <option value="Entry Level">Entry Level</option>
@@ -692,20 +659,19 @@ export function AccessibilityTab() {
                               <option value="Senior">Senior</option>
                               <option value="Lead">Lead</option>
                               <option value="Manager">Manager</option>
-                            </select>
+                            </Select>
                           </div>
 
                           {/* 4. Shift */}
                           <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+                            <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                               Shift
                             </label>
-                            <select
+                            <Select
                               value={filters.shift || ''}
                               onChange={(e) =>
                                 handleFilterFieldChange(item.id, 'shift', e.target.value)
                               }
-                              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             >
                               <option value="">Select Shift</option>
                               <option value="General Shift">General Shift (09:00 - 18:00)</option>
@@ -713,20 +679,19 @@ export function AccessibilityTab() {
                               <option value="Afternoon Shift">Afternoon Shift (14:00 - 23:00)</option>
                               <option value="Night Shift">Night Shift (22:00 - 07:00)</option>
                               <option value="Flexible">Flexible Shift</option>
-                            </select>
+                            </Select>
                           </div>
 
                           {/* 5. Exclude Employees */}
                           <div>
-                            <label className="block text-sm font-semibold text-gray-800 mb-1.5">
+                            <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                               Exclude Employees
                             </label>
-                            <select
+                            <Select
                               value={filters.exclude_employees || ''}
                               onChange={(e) =>
                                 handleFilterFieldChange(item.id, 'exclude_employees', e.target.value)
                               }
-                              className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             >
                               <option value="">Select Excluded Employee</option>
                               {employeeOptions.map((emp) => (
@@ -734,18 +699,17 @@ export function AccessibilityTab() {
                                   {emp.name}
                                 </option>
                               ))}
-                            </select>
+                            </Select>
                           </div>
                         </div>
                       </div>
 
                       {/* Save Filter Changes Button */}
                       <div className="pt-2 flex items-center gap-4">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => handleSaveFeature(item.id)}
                           disabled={savingFeatureId === item.id}
-                          className="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 transition-colors"
                         >
                           {savingFeatureId === item.id ? (
                             <>
@@ -754,10 +718,10 @@ export function AccessibilityTab() {
                           ) : (
                             'Save Changes'
                           )}
-                        </button>
+                        </Button>
 
                         {savedFeatureId === item.id && (
-                          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+                          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
                             <CheckIcon className="h-4 w-4" /> Saved successfully
                           </span>
                         )}
@@ -773,37 +737,35 @@ export function AccessibilityTab() {
 
       {/* ─── Clear Filter Confirmation Modal ─────────────────────────────── */}
       {clearFilterTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-100">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl ring-1 ring-black/5 space-y-4">
+        <Modal open onClose={() => setClearFilterTarget(null)} labelledBy="AccessibilityTab-modal-title-1" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 space-y-4 min-h-0 flex-1 overflow-y-auto">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-lighter text-primary-main">
                 <AlertCircleIcon className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-gray-900">Clear Filter Confirmation</h3>
-                <p className="text-xs text-gray-500">Reset category permissions</p>
+                <h3 id="AccessibilityTab-modal-title-1" className="text-lg font-semibold text-ink-primary">Clear Filter Confirmation</h3>
+                <p className="text-xs text-ink-secondary">Reset category permissions</p>
               </div>
             </div>
 
-            <p className="text-sm text-gray-700 leading-relaxed">
+            <p className="text-sm text-ink-primary leading-relaxed">
               Are you sure you want to clear all accessibility filters for <strong>'{clearFilterTarget.label}'</strong>?
               All selected departments, positions, employee types, and excluded employees will be removed.
             </p>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-gray-100">
-              <button
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-divider">
+              <Button variant="outlined" color="inherit" size="small"
                 type="button"
                 onClick={() => setClearFilterTarget(null)}
                 disabled={clearFilterSaving}
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none transition-colors"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button size="small"
                 type="button"
                 onClick={handleConfirmClearFilter}
                 disabled={clearFilterSaving}
-                className="inline-flex items-center justify-center rounded-md bg-blue-600 px-5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 transition-colors"
               >
                 {clearFilterSaving ? (
                   <>
@@ -812,61 +774,60 @@ export function AccessibilityTab() {
                 ) : (
                   'Yes, Clear Filter'
                 )}
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* ─── Secondary Section: Mobile Geofencing Interval ────────────────── */}
-      <section className="space-y-4 pt-4 border-t border-gray-200">
+      <section className="space-y-4 pt-4 border-t border-divider">
         <div>
-          <h3 className="text-lg font-bold tracking-tight text-gray-900">
+          <h3 className="text-lg font-bold tracking-tight text-ink-primary">
             Mobile Geofencing &amp; Location Verification
           </h3>
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-ink-secondary">
             Periodic background GPS synchronization frequency for attendance verification on mobile devices.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-6">
+        <div className="rounded-2xl border border-divider bg-surface-paper p-6 shadow-xs space-y-6">
           <div>
-            <label className="flex items-center gap-2 text-sm font-semibold text-gray-900">
-              <MapPinIcon className="h-4 w-4 text-blue-600" />
+            <label className="flex items-center gap-2 text-sm font-semibold text-ink-primary">
+              <MapPinIcon className="h-4 w-4 text-primary-main" />
               <span>Mobile Location Check Interval</span>
             </label>
-            <p className="mt-0.5 text-xs text-gray-500">
+            <p className="mt-0.5 text-xs text-ink-secondary">
               Interval at which the employee mobile app verifies ongoing presence inside the designated office coordinates.
             </p>
 
-            <select
+            <Select
               value={intervalMinutes}
               onChange={(e) => setIntervalMinutes(parseInt(e.target.value, 10) || 30)}
-              className="mt-2.5 w-full max-w-md rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="mt-2.5 max-w-md"
             >
               <option value={15}>15 Minutes (High Precision &amp; Frequent Verification)</option>
               <option value={30}>30 Minutes (Recommended Standard)</option>
               <option value={45}>45 Minutes (Balanced Performance)</option>
               <option value={60}>60 Minutes (Battery Saver Mode)</option>
-            </select>
+            </Select>
           </div>
 
-          <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-4 text-xs text-blue-900">
-            <div className="flex items-center gap-2 font-semibold text-blue-950">
-              <ShieldCheckIcon className="h-4 w-4 text-blue-600" />
+          <div className="rounded-xl border border-primary-lighter bg-primary-lighter/60 p-4 text-xs text-primary-darker">
+            <div className="flex items-center gap-2 font-semibold text-primary-darker">
+              <ShieldCheckIcon className="h-4 w-4 text-primary-main" />
               <span>Geofencing Boundary Enforcement</span>
             </div>
-            <p className="mt-1 text-blue-800">
+            <p className="mt-1 text-primary-dark">
               Branch coordinates, GPS radius, and designated Wi-Fi networks can be managed under <strong>Organization &gt; Branches</strong>.
             </p>
           </div>
 
           <div className="pt-2 flex items-center gap-4">
-            <button
+            <Button
               type="button"
               onClick={handleSaveLocation}
               disabled={savingLocation}
-              className="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 transition-colors"
             >
               {savingLocation ? (
                 <>
@@ -875,10 +836,10 @@ export function AccessibilityTab() {
               ) : (
                 'Save Changes'
               )}
-            </button>
+            </Button>
 
             {savedLocation && (
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
                 <CheckIcon className="h-4 w-4" /> Saved successfully
               </span>
             )}

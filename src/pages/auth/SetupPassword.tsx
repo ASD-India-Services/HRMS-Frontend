@@ -16,6 +16,10 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Iconify } from '@/components/Iconify';
+import { AuthLayout } from './AuthLayout';
 
 const IC_URL = import.meta.env.VITE_IDENTITY_CENTER_URL;
 
@@ -33,11 +37,11 @@ function getPasswordStrength(password: string): PasswordStrength {
   if (/\d/.test(password)) score++;
 
   const levels: PasswordStrength[] = [
-    { score: 0, label: 'Too Weak', color: 'bg-red-500' },
-    { score: 1, label: 'Weak', color: 'bg-orange-500' },
-    { score: 2, label: 'Fair', color: 'bg-yellow-500' },
-    { score: 3, label: 'Good', color: 'bg-blue-500' },
-    { score: 4, label: 'Strong', color: 'bg-green-500' },
+    { score: 0, label: 'Too Weak', color: 'bg-error-main' },
+    { score: 1, label: 'Weak', color: 'bg-warning-main' },
+    { score: 2, label: 'Fair', color: 'bg-warning-main' },
+    { score: 3, label: 'Good', color: 'bg-primary-main' },
+    { score: 4, label: 'Strong', color: 'bg-success-main' },
   ];
 
   return levels[score];
@@ -121,52 +125,48 @@ export default function SetupPassword() {
 
   if (tokenValid === null) {
     return (
-      <AuthPageWrapper>
+      <AuthLayout>
         <div className="flex items-center justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
-          <span className="ml-3 text-sm text-gray-600">Validating your setup link...</span>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-main border-t-transparent" />
+          <span className="ml-3 text-sm text-ink-secondary">Validating your setup link...</span>
         </div>
-      </AuthPageWrapper>
+      </AuthLayout>
     );
   }
 
   if (tokenValid === false) {
     return (
-      <AuthPageWrapper>
-        <div className="rounded-md bg-red-50 p-6 text-center">
-          <svg className="mx-auto h-12 w-12 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-          </svg>
-          <h2 className="mt-4 text-lg font-semibold text-red-800">Unable to Set Up Password</h2>
-          <p className="mt-2 text-sm text-red-700">{tokenError}</p>
+      <AuthLayout>
+        <div className="rounded-card bg-error-lighter p-6 text-center">
+          <Iconify icon="error" width={48} className="mx-auto text-error-main" />
+          <h2 className="mt-4 text-lg font-semibold text-error-dark">Unable to Set Up Password</h2>
+          <p className="mt-2 text-sm text-error-dark">{tokenError}</p>
         </div>
-      </AuthPageWrapper>
+      </AuthLayout>
     );
   }
 
   if (success) {
     return (
-      <AuthPageWrapper>
-        <div className="rounded-md bg-green-50 p-6 text-center">
-          <svg className="mx-auto h-12 w-12 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <h2 className="mt-4 text-lg font-semibold text-green-800">Password Set Successfully!</h2>
-          <p className="mt-2 text-sm text-green-700">
+      <AuthLayout>
+        <div className="rounded-card bg-success-lighter p-6 text-center">
+          <Iconify icon="success" width={48} className="mx-auto text-success-main" />
+          <h2 className="mt-4 text-lg font-semibold text-success-dark">Password Set Successfully!</h2>
+          <p className="mt-2 text-sm text-success-dark">
             Your account is ready. Redirecting to login...
           </p>
         </div>
-      </AuthPageWrapper>
+      </AuthLayout>
     );
   }
 
   // ─── Password form ───────────────────────────────────────────────────────
 
   return (
-    <AuthPageWrapper>
+    <AuthLayout>
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Set Up Your Password</h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <h1 className="text-2xl font-bold text-ink-primary">Set Up Your Password</h1>
+        <p className="mt-2 text-sm text-ink-secondary">
           Create a secure password for your account.
         </p>
       </div>
@@ -174,16 +174,16 @@ export default function SetupPassword() {
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
         {/* Password field */}
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="password" className="block text-sm font-medium text-ink-primary">
             Password
           </label>
-          <input
+          <Input
             id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="new-password"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="mt-1"
           />
 
           {/* Strength meter */}
@@ -194,12 +194,12 @@ export default function SetupPassword() {
                   <div
                     key={i}
                     className={`h-1.5 flex-1 rounded-full ${
-                      i < strength.score ? strength.color : 'bg-gray-200'
+                      i < strength.score ? strength.color : 'bg-grey-200'
                     }`}
                   />
                 ))}
               </div>
-              <p className={`mt-1 text-xs ${strength.score >= 3 ? 'text-green-600' : 'text-gray-500'}`}>
+              <p className={`mt-1 text-xs ${strength.score >= 3 ? 'text-success-main' : 'text-ink-secondary'}`}>
                 {strength.label}
               </p>
             </div>
@@ -209,7 +209,7 @@ export default function SetupPassword() {
           {password.length > 0 && passwordErrors.length > 0 && (
             <ul className="mt-2 space-y-0.5">
               {passwordErrors.map((err) => (
-                <li key={err} className="text-xs text-red-600">• {err}</li>
+                <li key={err} className="text-xs text-error-main">• {err}</li>
               ))}
             </ul>
           )}
@@ -217,50 +217,41 @@ export default function SetupPassword() {
 
         {/* Confirm password */}
         <div>
-          <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="confirm-password" className="block text-sm font-medium text-ink-primary">
             Confirm Password
           </label>
-          <input
+          <Input
             id="confirm-password"
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             autoComplete="new-password"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="mt-1"
           />
           {confirmPassword.length > 0 && !passwordsMatch && (
-            <p className="mt-1 text-xs text-red-600">Passwords do not match</p>
+            <p className="mt-1 text-xs text-error-main">Passwords do not match</p>
           )}
         </div>
 
         {/* Submit error */}
         {submitError && (
-          <div className="rounded-md bg-red-50 p-3">
-            <p className="text-sm text-red-800">{submitError}</p>
+          <div className="rounded-md bg-error-lighter p-3">
+            <p className="text-sm text-error-dark">{submitError}</p>
           </div>
         )}
 
         {/* Submit button */}
-        <button
+        <Button
           type="submit"
           disabled={!canSubmit || submitting}
-          className="w-full rounded-md bg-primary-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full"
         >
           {submitting ? 'Setting password...' : 'Set Password'}
-        </button>
+        </Button>
       </form>
-    </AuthPageWrapper>
+    </AuthLayout>
   );
 }
 
 // ─── Shared auth page layout ─────────────────────────────────────────────────
 
-function AuthPageWrapper({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
-        {children}
-      </div>
-    </div>
-  );
-}

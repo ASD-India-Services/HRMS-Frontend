@@ -7,6 +7,10 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Button } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
 
 const ENDPOINT = '/api/v1/employee-promotions/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -76,17 +80,13 @@ export default function Promotions() {
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
           {row.status === 'pending' && (
-            <button
-              onClick={() => handleApproveRow(row.id as string)}
-              disabled={approvingId === row.id}
-              className="inline-flex items-center rounded bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
-            >
+            <Button color="success" size="small" onClick={() => handleApproveRow(row.id as string)} disabled={approvingId === row.id}>
               {approvingId === row.id ? '...' : 'Approve'}
-            </button>
+            </Button>
           )}
           {row.status === 'completed' && (
-            <span className="inline-flex items-center rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-              ✓ Done
+            <span className="inline-flex items-center gap-1 rounded bg-success-lighter px-2 py-1 text-xs font-medium text-success-dark">
+              <Iconify icon="check" width={14} /> Done
             </span>
           )}
           <EditButton permission="promotions.edit" label="Edit" size="sm" onClick={() => setEditRecord(row)} />
@@ -116,13 +116,10 @@ export default function Promotions() {
 
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div><h1 className="text-2xl font-bold text-gray-900">Employee Promotions</h1><p className="mt-1 text-sm text-gray-600">Track and manage employee promotions</p></div>
-        <CreateButton permission="promotions.create" label="Create Promotion" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Employee Promotions" subtitle="Track and manage employee promotions" actions={<CreateButton permission="promotions.create" label="Create Promotion" onClick={() => setShowCreate(true)} />} />
       {processMessage && (
-        <div className="mb-4 rounded-md bg-blue-50 p-3 text-sm text-blue-700">
+        <div className="mb-4 rounded-md bg-primary-lighter p-3 text-sm text-primary-dark">
           {processMessage}
         </div>
       )}
@@ -167,6 +164,6 @@ export default function Promotions() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

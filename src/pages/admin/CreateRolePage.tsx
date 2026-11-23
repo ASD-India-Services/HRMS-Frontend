@@ -10,7 +10,7 @@
  */
 
 import { useState, useMemo, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import {
@@ -18,6 +18,13 @@ import {
   type PermissionItem,
   type PermissionSection,
 } from './PermissionSectionsGrid';
+import { Button, ButtonLink } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -46,17 +53,17 @@ function PermissionGridSkeleton() {
       {Array.from({ length: 4 }).map((_, groupIdx) => (
         <div
           key={groupIdx}
-          className="rounded-lg border border-gray-200 bg-white p-4"
+          className="rounded-card bg-surface-paper p-4 shadow-card"
         >
           <div className="mb-3 flex items-center gap-3">
-            <div className="h-5 w-32 animate-pulse rounded bg-gray-200" />
-            <div className="h-4 w-20 animate-pulse rounded bg-gray-200" />
+            <div className="h-5 w-32 animate-pulse rounded bg-grey-200" />
+            <div className="h-4 w-20 animate-pulse rounded bg-grey-200" />
           </div>
           <div className="ml-6 space-y-2">
             {Array.from({ length: 4 }).map((_, permIdx) => (
               <div key={permIdx} className="flex items-center gap-2">
-                <div className="h-4 w-4 animate-pulse rounded bg-gray-200" />
-                <div className="h-4 w-40 animate-pulse rounded bg-gray-200" />
+                <div className="h-4 w-4 animate-pulse rounded bg-grey-200" />
+                <div className="h-4 w-40 animate-pulse rounded bg-grey-200" />
               </div>
             ))}
           </div>
@@ -165,104 +172,88 @@ export default function CreateRolePage() {
 
   if (permsLoading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-4 h-4 w-28 animate-pulse rounded bg-gray-200" />
-        <div className="mb-2 h-7 w-48 animate-pulse rounded bg-gray-200" />
-        <div className="mb-6 h-4 w-64 animate-pulse rounded bg-gray-200" />
+      <PageContainer>
+        <div className="mb-4 h-4 w-28 animate-pulse rounded bg-grey-200" />
+        <div className="mb-2 h-7 w-48 animate-pulse rounded bg-grey-200" />
+        <div className="mb-6 h-4 w-64 animate-pulse rounded bg-grey-200" />
         <PermissionGridSkeleton />
-      </div>
+      </PageContainer>
     );
   }
 
   if (permsError) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <Link
-          to="/admin/roles"
-          className="mb-4 inline-flex items-center text-sm text-primary-600 hover:text-primary-800"
-        >
-          <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+      <PageContainer>
+        <ButtonLink to="/admin/roles" variant="text" color="inherit" size="small" className="mb-4 -ml-2.5" startIcon={<Iconify icon="arrow-left" />}>
           Back to Roles
-        </Link>
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">Failed to load permissions. Please try again.</p>
+        </ButtonLink>
+        <div className="rounded-card bg-error-lighter p-4">
+          <p className="text-sm text-error-dark">Failed to load permissions. Please try again.</p>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
   if (!allPermissions) return null;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <PageContainer>
       {/* Back link */}
-      <Link
-        to="/admin/roles"
-        className="mb-4 inline-flex items-center text-sm text-primary-600 hover:text-primary-800"
-      >
-        <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
+      <ButtonLink to="/admin/roles" variant="text" color="inherit" size="small" className="mb-4 -ml-2.5" startIcon={<Iconify icon="arrow-left" />}>
         Back to Roles
-      </Link>
+      </ButtonLink>
 
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Create Role</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Define a new role, set its data access scope, and configure permissions.
-        </p>
-      </div>
+      <PageHeader
+        title="Create Role"
+        subtitle="Define a new role, set its data access scope, and configure permissions."
+      />
 
       {/* Error notification */}
       {submitError && (
-        <div className="mb-6 flex items-center gap-2 rounded-md border border-red-200 bg-red-50 p-4">
-          <svg className="h-5 w-5 flex-shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3.75m9.303 3.376c-.866 1.5-.217 3.374-1.948 3.374H4.645c-1.73 0-2.813-1.874-1.948-3.374L10.051 3.378c.866-1.5 3.032-1.5 3.898 0l7.354 12.748ZM12 15.75h.007v.008H12v-.008Z" />
-          </svg>
-          <p className="text-sm text-red-800">{submitError}</p>
+        <div className="mb-6 flex items-center gap-2 rounded-card bg-error-lighter p-4">
+          <Iconify icon="warning" width={20} className="shrink-0 text-error-main" />
+          <p className="text-sm text-error-dark">{submitError}</p>
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
         {/* Name & Description Fields */}
-        <div className="mb-6 space-y-4 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <Card className="mb-6 space-y-4 p-6">
           <div>
-            <label htmlFor="role-name" className="block text-sm font-medium text-gray-700">
-              Role Name <span className="text-red-500">*</span>
+            <label htmlFor="role-name" className="block text-sm font-medium text-ink-primary">
+              Role Name <span className="text-error-main">*</span>
             </label>
-            <input
+            <Input
               id="role-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Department Head, HR Specialist, Team Lead"
               required
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="mt-1"
             />
           </div>
           <div>
-            <label htmlFor="role-description" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="role-description" className="block text-sm font-medium text-ink-primary">
               Description
             </label>
-            <textarea
+            <Textarea
               id="role-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Brief description of this role's purpose and authority"
               rows={2}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="mt-1"
             />
           </div>
-        </div>
+        </Card>
 
         {/* Data Scope Selection Box */}
-        <div className="mb-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <Card className="mb-8 p-6">
           <div className="mb-3">
-            <h2 className="text-base font-semibold text-gray-900">Data Access Scope</h2>
-            <p className="text-sm text-gray-500">
+            <h2 className="text-lg font-semibold text-ink-primary">Data Access Scope</h2>
+            <p className="text-sm text-ink-secondary">
               Define what employee data and records this role can view, edit, and approve.
             </p>
           </div>
@@ -272,8 +263,8 @@ export default function CreateRolePage() {
             <label
               className={`relative flex cursor-pointer flex-col rounded-lg border p-4 shadow-sm transition-all focus:outline-none ${
                 dataScope === 'organisation'
-                  ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-600'
-                  : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                  ? 'border-secondary-main bg-secondary-lighter/50 ring-2 ring-secondary-main'
+                  : 'border-divider bg-surface-paper hover:border-divider hover:bg-surface-neutral'
               }`}
             >
               <input
@@ -286,18 +277,18 @@ export default function CreateRolePage() {
               />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-dark">
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
                     </svg>
                   </span>
-                  <span className="font-semibold text-gray-900">Organisation-wide</span>
+                  <span className="font-semibold text-ink-primary">Organisation-wide</span>
                 </div>
-                <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${dataScope === 'organisation' ? 'border-indigo-600 bg-indigo-600' : 'border-gray-300'}`}>
-                  {dataScope === 'organisation' && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+                <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${dataScope === 'organisation' ? 'border-secondary-main bg-secondary-main' : 'border-divider'}`}>
+                  {dataScope === 'organisation' && <span className="h-1.5 w-1.5 rounded-full bg-surface-paper" />}
                 </span>
               </div>
-              <p className="mt-2 text-xs text-gray-600">
+              <p className="mt-2 text-xs text-ink-secondary">
                 Access across the <strong>entire organisation</strong> (e.g. HR Manager, Executive Admin, Operations Head).
               </p>
             </label>
@@ -306,8 +297,8 @@ export default function CreateRolePage() {
             <label
               className={`relative flex cursor-pointer flex-col rounded-lg border p-4 shadow-sm transition-all focus:outline-none ${
                 dataScope === 'department'
-                  ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-600'
-                  : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                  ? 'border-secondary-main bg-secondary-lighter/50 ring-2 ring-secondary-main'
+                  : 'border-divider bg-surface-paper hover:border-divider hover:bg-surface-neutral'
               }`}
             >
               <input
@@ -320,18 +311,18 @@ export default function CreateRolePage() {
               />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-dark">
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   </span>
-                  <span className="font-semibold text-gray-900">Own Department Only</span>
+                  <span className="font-semibold text-ink-primary">Own Department Only</span>
                 </div>
-                <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${dataScope === 'department' ? 'border-indigo-600 bg-indigo-600' : 'border-gray-300'}`}>
-                  {dataScope === 'department' && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+                <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${dataScope === 'department' ? 'border-secondary-main bg-secondary-main' : 'border-divider'}`}>
+                  {dataScope === 'department' && <span className="h-1.5 w-1.5 rounded-full bg-surface-paper" />}
                 </span>
               </div>
-              <p className="mt-2 text-xs text-gray-600">
+              <p className="mt-2 text-xs text-ink-secondary">
                 Restricted to employees in their <strong>own assigned department</strong> only (e.g. Department Head, Team Lead).
               </p>
             </label>
@@ -340,8 +331,8 @@ export default function CreateRolePage() {
             <label
               className={`relative flex cursor-pointer flex-col rounded-lg border p-4 shadow-sm transition-all focus:outline-none ${
                 dataScope === 'self'
-                  ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-600'
-                  : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                  ? 'border-secondary-main bg-secondary-lighter/50 ring-2 ring-secondary-main'
+                  : 'border-divider bg-surface-paper hover:border-divider hover:bg-surface-neutral'
               }`}
             >
               <input
@@ -354,54 +345,53 @@ export default function CreateRolePage() {
               />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary-lighter text-secondary-dark">
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </span>
-                  <span className="font-semibold text-gray-900">Normal Employee</span>
+                  <span className="font-semibold text-ink-primary">Normal Employee</span>
                 </div>
-                <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${dataScope === 'self' ? 'border-indigo-600 bg-indigo-600' : 'border-gray-300'}`}>
-                  {dataScope === 'self' && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+                <span className={`h-4 w-4 rounded-full border flex items-center justify-center ${dataScope === 'self' ? 'border-secondary-main bg-secondary-main' : 'border-divider'}`}>
+                  {dataScope === 'self' && <span className="h-1.5 w-1.5 rounded-full bg-surface-paper" />}
                 </span>
               </div>
-              <p className="mt-2 text-xs text-gray-600">
+              <p className="mt-2 text-xs text-ink-secondary">
                 Self-service mode: only accesses <strong>their own individual records</strong> (standard employee role).
               </p>
             </label>
           </div>
-        </div>
+        </Card>
 
         {/* Permission Grid */}
         <div className="mb-8 space-y-4">
-          <h2 className="text-base font-semibold text-gray-900">Module Permissions</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Module Permissions</h2>
           <PermissionSectionsGrid
             sections={sections}
             selectedIds={selectedIds}
             onTogglePermission={togglePermission}
             onToggleGroup={toggleModule}
-            accent="text-indigo-600 focus:ring-indigo-500"
+            accent="text-secondary-main focus:ring-secondary-main"
           />
         </div>
 
         {/* Submit Button */}
         <div className="flex items-center justify-end">
-          <button
+          <Button
             type="submit"
             disabled={!canSubmit}
-            className="inline-flex items-center rounded-md bg-primary-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {createMutation.isPending ? (
               <>
-                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-surface-paper border-t-transparent" />
                 Creating…
               </>
             ) : (
               'Create Role'
             )}
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+    </PageContainer>
   );
 }

@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
 import type { BonusPointSettingItem } from '@/hooks/useHRSettings';
-import { PlusIcon, PencilIcon, TrashIcon, CheckIcon, LoaderIcon, SearchIcon } from './SettingsIcons';
+import { PlusIcon, CheckIcon, LoaderIcon, SearchIcon } from './SettingsIcons';
+import { Modal } from '@/components/ui/Modal';
+import { Button, IconButton, Switch } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 
 const LOCAL_STORAGE_KEY = 'hrms_bonus_point_settings';
 
@@ -223,7 +227,7 @@ export function BonusPointSettingTab() {
     <div className="space-y-6 py-2">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="fixed top-5 right-5 z-50 flex items-center gap-2 rounded-lg bg-success-main px-4 py-2.5 text-sm font-medium text-primary-contrast shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
           <CheckIcon className="h-4 w-4" />
           <span>{notification}</span>
         </div>
@@ -232,38 +236,38 @@ export function BonusPointSettingTab() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Bonus Point Setting</h2>
-          <p className="mt-1 text-sm text-gray-500">
+          <h2 className="text-lg font-semibold text-ink-primary">Bonus Point Setting</h2>
+          <p className="mt-1 text-sm text-ink-secondary">
             Configure automated performance bonus point rules and criteria based on objective models.
           </p>
         </div>
-        <button
+        <Button
           type="button"
           onClick={handleOpenCreate}
-          className="inline-flex items-center justify-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors shrink-0"
+          className="shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
-          Create
-        </button>
+          + Create
+        </Button>
       </div>
 
-      <hr className="border-gray-200" />
+      <hr className="border-divider" />
 
       {/* Filter / Search Bar matching screenshot */}
       <div className="flex items-center justify-between gap-4">
         <div className="relative max-w-sm flex-1">
-          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
+          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-disabled" />
+          <Input
             type="text"
             placeholder="Search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-md border border-gray-300 bg-white pl-9 pr-3 py-1.5 text-sm text-gray-900 shadow-xs placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="pl-9 pr-3"
           />
         </div>
         {isLoading && (
-          <div className="flex items-center gap-1.5 text-xs text-gray-500">
-            <LoaderIcon className="h-3.5 w-3.5 animate-spin text-blue-600" />
+          <div className="flex items-center gap-1.5 text-xs text-ink-secondary">
+            <LoaderIcon className="h-3.5 w-3.5 animate-spin text-primary-main" />
             <span>Syncing...</span>
           </div>
         )}
@@ -271,99 +275,71 @@ export function BonusPointSettingTab() {
 
       {/* Table / Empty State matching screenshot */}
       {filteredSettings.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 px-4 rounded-lg border border-gray-200 bg-white shadow-xs text-center">
-          <p className="text-xl font-medium text-gray-700">No bonus point setting found</p>
-          <p className="mt-1 text-sm text-gray-400">
+        <div className="flex flex-col items-center justify-center py-20 px-4 rounded-lg border border-divider bg-surface-paper shadow-xs text-center">
+          <p className="text-xl font-medium text-ink-primary">No bonus point setting found</p>
+          <p className="mt-1 text-sm text-ink-disabled">
             Get started by creating a new bonus point configuration for your performance models.
           </p>
-          <button
+          <Button
             type="button"
             onClick={handleOpenCreate}
-            className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+            className="mt-4"
           >
             <PlusIcon className="h-4 w-4" />
-            Create
-          </button>
+            + Create
+          </Button>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-xs">
-          <table className="min-w-full divide-y divide-gray-200 text-left text-sm">
-            <thead className="bg-gray-50/70 text-xs font-semibold text-gray-900">
+        <div className="overflow-x-auto rounded-lg border border-divider bg-surface-paper shadow-xs">
+          <table className="min-w-full divide-y divide-divider text-left text-sm">
+            <thead className="bg-surface-neutral/70 text-xs font-semibold text-ink-primary">
               <tr>
-                <th scope="col" className="px-5 py-3.5 font-bold text-gray-900">
+                <th scope="col" className="px-5 py-3.5 font-bold text-ink-primary">
                   Model
                 </th>
-                <th scope="col" className="px-5 py-3.5 font-bold text-gray-900">
+                <th scope="col" className="px-5 py-3.5 font-bold text-ink-primary">
                   Applicable for
                 </th>
-                <th scope="col" className="px-5 py-3.5 font-bold text-gray-900">
+                <th scope="col" className="px-5 py-3.5 font-bold text-ink-primary">
                   Bonus for
                 </th>
-                <th scope="col" className="px-5 py-3.5 font-bold text-gray-900">
+                <th scope="col" className="px-5 py-3.5 font-bold text-ink-primary">
                   Field 1
                 </th>
-                <th scope="col" className="px-5 py-3.5 font-bold text-gray-900">
+                <th scope="col" className="px-5 py-3.5 font-bold text-ink-primary">
                   Conditions
                 </th>
-                <th scope="col" className="px-5 py-3.5 font-bold text-gray-900">
+                <th scope="col" className="px-5 py-3.5 font-bold text-ink-primary">
                   Field 2
                 </th>
-                <th scope="col" className="px-5 py-3.5 font-bold text-gray-900">
+                <th scope="col" className="px-5 py-3.5 font-bold text-ink-primary">
                   Points
                 </th>
-                <th scope="col" className="px-5 py-3.5 font-bold text-gray-900">
+                <th scope="col" className="px-5 py-3.5 font-bold text-ink-primary">
                   Is active
                 </th>
-                <th scope="col" className="px-5 py-3.5 font-bold text-gray-900 text-right">
+                <th scope="col" className="px-5 py-3.5 font-bold text-ink-primary text-right">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 bg-white text-gray-800">
+            <tbody className="divide-y divide-divider bg-surface-paper text-ink-primary">
               {filteredSettings.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-5 py-3.5 font-medium text-gray-900">{item.model}</td>
-                  <td className="px-5 py-3.5 text-gray-600">{item.applicable_for}</td>
-                  <td className="px-5 py-3.5 text-gray-600">{item.bonus_for}</td>
-                  <td className="px-5 py-3.5 text-gray-600">{item.field_1}</td>
-                  <td className="px-5 py-3.5 text-gray-600">{item.conditions}</td>
-                  <td className="px-5 py-3.5 text-gray-600">{item.field_2}</td>
-                  <td className="px-5 py-3.5 font-semibold text-gray-900">{item.points}</td>
+                <tr key={item.id} className="hover:bg-surface-neutral/50 transition-colors">
+                  <td className="px-5 py-3.5 font-medium text-ink-primary">{item.model}</td>
+                  <td className="px-5 py-3.5 text-ink-secondary">{item.applicable_for}</td>
+                  <td className="px-5 py-3.5 text-ink-secondary">{item.bonus_for}</td>
+                  <td className="px-5 py-3.5 text-ink-secondary">{item.field_1}</td>
+                  <td className="px-5 py-3.5 text-ink-secondary">{item.conditions}</td>
+                  <td className="px-5 py-3.5 text-ink-secondary">{item.field_2}</td>
+                  <td className="px-5 py-3.5 font-semibold text-ink-primary">{item.points}</td>
                   <td className="px-5 py-3.5">
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={item.is_active}
-                      onClick={() => handleToggleActive(item.id)}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${item.is_active ? 'bg-blue-600' : 'bg-gray-300'
-                        }`}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${item.is_active ? 'translate-x-5' : 'translate-x-0'
-                          }`}
-                      />
-                    </button>
+                    <Switch checked={!!item.is_active} onClick={() => handleToggleActive(item.id)} />
                   </td>
                   <td className="px-5 py-3.5 text-right">
-                    <div className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50/50 p-0.5">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenEdit(item)}
-                        title="Edit"
-                        className="rounded p-1.5 text-gray-500 hover:bg-white hover:text-blue-600 hover:shadow-xs transition-colors"
-                      >
-                        <PencilIcon className="h-4 w-4" />
-                      </button>
-                      <div className="h-4 w-px bg-gray-200 my-auto" />
-                      <button
-                        type="button"
-                        onClick={() => setDeleteId(item.id)}
-                        title="Delete"
-                        className="rounded p-1.5 text-red-500 hover:bg-white hover:text-red-700 hover:shadow-xs transition-colors"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
+                    <div className="inline-flex items-center gap-1">
+                      <IconButton icon="pencil" size="small" aria-label="Edit" title="Edit" onClick={() => handleOpenEdit(item)} />
+                      <IconButton icon="trash" size="small" color="error" aria-label="Delete" title="Delete" onClick={() => setDeleteId(item.id)} />
                     </div>
                   </td>
                 </tr>
@@ -377,181 +353,154 @@ export function BonusPointSettingTab() {
           MODAL: Create / Edit Bonus Point Setting matching screenshot
          ─────────────────────────────────────────────────────────── */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-2xl transition-all animate-in fade-in zoom-in-95 duration-150">
+        <Modal open onClose={() => setModalOpen(false)} labelledBy="BonusPointSettingTab-modal-title-1" size="lg" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
             {/* Modal Header Bar */}
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h3 className="text-base font-semibold text-gray-800">
+            <div className="flex items-center justify-between pb-3 border-b border-divider">
+              <h3 id="BonusPointSettingTab-modal-title-1" className="text-lg font-semibold text-ink-primary">
                 {editingItem ? 'Edit Bonus Point Setting' : 'Create Bonus Point Setting'}
               </h3>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
-              >
-                <span className="text-xl font-light leading-none">&times;</span>
-              </button>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setModalOpen(false)} />
             </div>
 
             <form onSubmit={handleSaveModal} className="space-y-5 pt-4">
               {/* Row 1: Model * & Applicable for */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Model *
                   </label>
-                  <select
+                  <Select
                     value={formModel}
                     onChange={(e) => setFormModel(e.target.value)}
                     required
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     {MODEL_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
                         {opt}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Applicable for
                   </label>
-                  <select
+                  <Select
                     value={formApplicableFor}
                     onChange={(e) => setFormApplicableFor(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     {APPLICABLE_FOR_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
                         {opt}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               {/* Row 2: Bonus for * & Field 1 */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Bonus for *
                   </label>
-                  <select
+                  <Select
                     value={formBonusFor}
                     onChange={(e) => setFormBonusFor(e.target.value)}
                     required
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     {BONUS_FOR_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
                         {opt}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Field 1
                   </label>
-                  <select
+                  <Select
                     value={formField1}
                     onChange={(e) => setFormField1(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     {FIELD_1_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
                         {opt}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               {/* Row 3: Conditions & Field 2 */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Conditions
                   </label>
-                  <select
+                  <Select
                     value={formConditions}
                     onChange={(e) => setFormConditions(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     {CONDITION_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
                         {opt}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Field 2
                   </label>
-                  <select
+                  <Select
                     value={formField2}
                     onChange={(e) => setFormField2(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     {FIELD_2_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
                         {opt}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
               </div>
 
               {/* Row 4: Points * & Is active */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 items-center">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Points *
                   </label>
-                  <input
+                  <Input
                     type="number"
                     value={formPoints}
                     onChange={(e) => setFormPoints(Number(e.target.value))}
                     min={0}
                     required
-                    className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">
+                  <label className="block text-sm font-semibold text-ink-primary mb-1.5">
                     Is active
                   </label>
                   <div className="pt-1">
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={formIsActive}
-                      onClick={() => setFormIsActive((prev) => !prev)}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${formIsActive ? 'bg-blue-600' : 'bg-gray-300'
-                        }`}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${formIsActive ? 'translate-x-5' : 'translate-x-0'
-                          }`}
-                      />
-                    </button>
+                    <Switch checked={formIsActive} onClick={() => setFormIsActive((prev) => !prev)} />
                   </div>
                 </div>
               </div>
 
               {/* Save Button */}
               <div className="flex justify-end pt-3">
-                <button
+                <Button
                   type="submit"
                   disabled={updateSettings.isPending}
-                  className="inline-flex items-center justify-center rounded-md bg-blue-600 px-7 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50"
                 >
                   {updateSettings.isPending ? (
                     <span className="flex items-center gap-1.5">
@@ -561,39 +510,37 @@ export function BonusPointSettingTab() {
                   ) : (
                     'Save'
                   )}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Delete Confirmation Modal */}
       {deleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-2xl transition-all">
-            <h3 className="text-lg font-bold text-gray-900">Delete Bonus Point Setting</h3>
-            <p className="mt-2 text-sm text-gray-500">
+        <Modal open onClose={() => setDeleteId(null)} labelledBy="BonusPointSettingTab-modal-title-2" size="sm" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+            <h3 id="BonusPointSettingTab-modal-title-2" className="text-lg font-semibold text-ink-primary">Delete Bonus Point Setting</h3>
+            <p className="mt-2 text-sm text-ink-secondary">
               Are you sure you want to delete this bonus point setting rule? This action cannot be undone.
             </p>
             <div className="mt-6 flex justify-end gap-3">
-              <button
+              <Button variant="outlined" color="inherit"
                 type="button"
                 onClick={() => setDeleteId(null)}
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={confirmDelete}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
               >
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

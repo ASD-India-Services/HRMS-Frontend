@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { CheckIcon, LoaderIcon, AlertCircleIcon, HashIcon, SparklesIcon } from './SettingsIcons';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 interface PrefixFieldDef {
   key: string;
@@ -131,16 +133,16 @@ export function PrefixNamingSeriesTab() {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <LoaderIcon className="h-8 w-8 text-blue-600" />
+        <LoaderIcon className="h-8 w-8 text-primary-main" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-        <AlertCircleIcon className="mx-auto h-8 w-8 text-red-500" />
-        <p className="mt-2 text-sm text-red-700">Failed to load prefixes: {(error as Error)?.message}</p>
+      <div className="rounded-xl border border-error-light bg-error-lighter p-6 text-center">
+        <AlertCircleIcon className="mx-auto h-8 w-8 text-error-main" />
+        <p className="mt-2 text-sm text-error-dark">Failed to load prefixes: {(error as Error)?.message}</p>
       </div>
     );
   }
@@ -148,19 +150,19 @@ export function PrefixNamingSeriesTab() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-bold tracking-tight text-gray-900">Prefixes & Naming Series</h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <h2 className="text-lg font-semibold text-ink-primary">Prefixes & Naming Series</h2>
+        <p className="mt-1 text-sm text-ink-secondary">
           Configure auto-generated identifier patterns for employees, applicants, leave requests, and claims.
         </p>
       </div>
 
       {/* Guide Banner */}
-      <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 p-4 text-xs text-amber-900 shadow-xs">
-        <SparklesIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+      <div className="flex items-start gap-3 rounded-xl border border-warning-light bg-warning-lighter/70 p-4 text-xs text-warning-darker shadow-xs">
+        <SparklesIcon className="mt-0.5 h-4 w-4 shrink-0 text-warning-main" />
         <div>
           <span className="font-semibold">How placeholder formatting works:</span>
-          <p className="mt-0.5 text-amber-800">
-            Use <code className="font-mono font-bold bg-amber-100 px-1 py-0.5 rounded text-amber-950">{'{####}'}</code> for zero-padded sequential numbers.
+          <p className="mt-0.5 text-warning-dark">
+            Use <code className="font-mono font-bold bg-warning-lighter px-1 py-0.5 rounded text-warning-darker">{'{####}'}</code> for zero-padded sequential numbers.
             For example, <code className="font-mono">EMP-{'{####}'}</code> generates <strong className="font-mono">EMP-0001</strong>, <strong className="font-mono">EMP-0002</strong>.
             Adding more hashes increases the padding width: <code className="font-mono">ORG-{'{######}'}</code> generates <strong className="font-mono">ORG-000001</strong>.
           </p>
@@ -168,7 +170,7 @@ export function PrefixNamingSeriesTab() {
       </div>
 
       {/* Prefix Fields Grid */}
-      <div className="divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white shadow-xs">
+      <div className="divide-y divide-divider rounded-2xl border border-divider bg-surface-paper shadow-xs">
         {PREFIX_FIELDS.map((field) => {
           const currentVal = patterns[field.key] || field.defaultPattern;
           const preview1 = generatePreview(currentVal, 1);
@@ -178,30 +180,30 @@ export function PrefixNamingSeriesTab() {
             <div key={field.key} className="grid grid-cols-1 md:grid-cols-12 gap-4 p-5 items-center">
               <div className="md:col-span-5">
                 <div className="flex items-center gap-2">
-                  <HashIcon className="h-4 w-4 text-gray-400" />
-                  <label className="text-sm font-semibold text-gray-900">{field.label}</label>
+                  <HashIcon className="h-4 w-4 text-ink-disabled" />
+                  <label className="text-sm font-semibold text-ink-primary">{field.label}</label>
                 </div>
-                <p className="mt-0.5 text-xs text-gray-500">{field.description}</p>
+                <p className="mt-0.5 text-xs text-ink-secondary">{field.description}</p>
               </div>
 
               <div className="md:col-span-4">
-                <input
+                <Input
                   type="text"
                   value={currentVal}
                   onChange={(e) => handleChange(field.key, e.target.value)}
                   placeholder={field.defaultPattern}
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2 font-mono text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="font-mono"
                 />
               </div>
 
               <div className="md:col-span-3 flex items-center justify-end md:justify-start gap-2">
-                <span className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">Preview:</span>
+                <span className="text-[11px] font-medium text-ink-disabled uppercase tracking-wider">Preview:</span>
                 <div className="flex items-center gap-1.5 font-mono text-xs">
-                  <span className="rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1 font-semibold text-gray-700">
+                  <span className="rounded-md border border-divider bg-surface-neutral px-2.5 py-1 font-semibold text-ink-primary">
                     {preview1}
                   </span>
-                  <span className="text-gray-300">...</span>
-                  <span className="rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 font-semibold text-blue-700">
+                  <span className="text-grey-300">...</span>
+                  <span className="rounded-md border border-primary-light bg-primary-lighter px-2.5 py-1 font-semibold text-primary-dark">
                     {preview2}
                   </span>
                 </div>
@@ -212,18 +214,17 @@ export function PrefixNamingSeriesTab() {
       </div>
 
       {formError && (
-        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+        <div className="rounded-lg bg-error-lighter p-3 text-sm text-error-dark">
           {formError}
         </div>
       )}
 
       {/* Save Button */}
       <div className="flex items-center gap-4">
-        <button
+        <Button
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 transition-colors"
         >
           {saving ? (
             <>
@@ -232,10 +233,10 @@ export function PrefixNamingSeriesTab() {
           ) : (
             'Save Changes'
           )}
-        </button>
+        </Button>
 
         {saved && (
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
             <CheckIcon className="h-4 w-4" /> Prefix configurations saved successfully
           </span>
         )}

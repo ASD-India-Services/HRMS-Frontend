@@ -15,6 +15,12 @@ import { CreateButton } from '@/components/ActionButton';
 import { BulkActions } from '@/components/BulkActions';
 import type { EmploymentStatus, EmploymentType } from '@/types/employee';
 import api from '@/lib/api';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 export function EmployeeDirectory() {
   const pageSize = useDefaultPaginationSize();
@@ -84,57 +90,42 @@ export function EmployeeDirectory() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      {/* Header — title left, actions right (same row) */}
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Employee Directory</h1>
-          <p className="mt-0.5 text-sm text-gray-600">
-            Browse and search employees across your organization
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <BulkActions
-            exportEndpoint="/api/v1/employees/export/"
-            importEndpoint="/api/v1/employees/import/"
-            csvHeaders="employee_id,first_name,last_name,email,phone,department,designation,employment_type,date_of_joining,status"
-            exportFilename="employees_export.csv"
-            exportPermission="employees.view"
-            importPermission="employees.create"
-            onImportSuccess={() => queryClient.invalidateQueries({ queryKey: ['employees'] })}
-          />
-          <CreateButton
-            label="Add Employee"
-            onClick={() => navigate('/employees/new')}
-            permission="employees.create"
-          />
-        </div>
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Employee Directory"
+        subtitle="Browse and search employees across your organization"
+        actions={
+          <>
+            <BulkActions
+              exportEndpoint="/api/v1/employees/export/"
+              importEndpoint="/api/v1/employees/import/"
+              csvHeaders="employee_id,first_name,last_name,email,phone,department,designation,employment_type,date_of_joining,status"
+              exportFilename="employees_export.csv"
+              exportPermission="employees.view"
+              importPermission="employees.create"
+              onImportSuccess={() => queryClient.invalidateQueries({ queryKey: ['employees'] })}
+            />
+            <CreateButton
+              label="Add Employee"
+              onClick={() => navigate('/employees/new')}
+              permission="employees.create"
+            />
+          </>
+        }
+      />
 
       {/* Search and Filters */}
       <div className="mb-6 space-y-4">
         {/* Search Bar */}
         <div className="relative">
-          <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-          <input
+          <Iconify icon="search" width={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-disabled" />
+          <Input
             type="text"
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search by name, department, or designation..."
-            className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            inputSize="small"
+            className="pl-10 pr-4"
             aria-label="Search employees"
           />
         </div>
@@ -153,9 +144,9 @@ export function EmployeeDirectory() {
 
       {/* Results count */}
       {data && (
-        <p className="mb-4 text-sm text-gray-500">
+        <p className="mb-4 text-sm text-ink-secondary">
           {data.count} employee{data.count !== 1 ? 's' : ''} found
-          {isFetching && <span className="ml-2 text-primary-600">Updating...</span>}
+          {isFetching && <span className="ml-2 text-primary-main">Updating...</span>}
         </p>
       )}
 
@@ -167,11 +158,13 @@ export function EmployeeDirectory() {
 
       {/* Empty State */}
       {data && data.results.length === 0 && (
-        <EmptyState
-          module="employees"
-          ctaPermission="employees.create"
-          onCtaClick={() => navigate('/employees/new')}
-        />
+        <Card>
+          <EmptyState
+            module="employees"
+            ctaPermission="employees.create"
+            onCtaClick={() => navigate('/employees/new')}
+          />
+        </Card>
       )}
 
       {/* Employee Grid */}
@@ -186,27 +179,25 @@ export function EmployeeDirectory() {
       {/* Pagination */}
       {totalPages > 1 && (
         <nav className="mt-8 flex items-center justify-between" aria-label="Pagination">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-ink-secondary">
             Page {page} of {totalPages}
           </p>
           <div className="flex gap-2">
-            <button
+            <Button variant="outlined" color="inherit"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Previous
-            </button>
-            <button
+            </Button>
+            <Button variant="outlined" color="inherit"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
-            </button>
+            </Button>
           </div>
         </nav>
       )}
-    </div>
+    </PageContainer>
   );
 }

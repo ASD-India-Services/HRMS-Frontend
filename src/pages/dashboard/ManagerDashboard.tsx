@@ -12,7 +12,8 @@
 import { MetricsSection } from './MetricsSection';
 import { ChartsGrid } from './ChartsGrid';
 import { Can } from '@/components/Can';
-import { Link } from 'react-router-dom';
+import { ButtonLink } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
 import type { DateRange } from './DateRangeFilter';
 
 interface ManagerDashboardProps {
@@ -25,28 +26,19 @@ export function ManagerDashboard({ dateRange }: ManagerDashboardProps) {
       {/* Quick Action Bar for Managers */}
       <div className="flex flex-wrap items-center gap-3">
         <Can permissions={['leaves.approve']}>
-          <Link
-            to="/leaves/approvals"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 transition-colors"
-          >
-            ⏳ Review Leave Approvals
-          </Link>
+          <ButtonLink to="/leaves/approvals" startIcon={<Iconify icon="leaveApprovals" />}>
+            Review Leave Approvals
+          </ButtonLink>
         </Can>
         <Can permissions={['attendance_register.view']}>
-          <Link
-            to="/attendance-register"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
-          >
-            📋 Attendance Register
-          </Link>
+          <ButtonLink to="/attendance-register" variant="outlined" color="inherit" startIcon={<Iconify icon="attendanceRegister" />}>
+            Attendance Register
+          </ButtonLink>
         </Can>
         <Can permissions={['expenses.approve']}>
-          <Link
-            to="/expenses/approvals"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
-          >
-            🧾 Expense Approvals
-          </Link>
+          <ButtonLink to="/expenses/approvals" variant="outlined" color="inherit" startIcon={<Iconify icon="expenseApprovals" />}>
+            Expense Approvals
+          </ButtonLink>
         </Can>
       </div>
 

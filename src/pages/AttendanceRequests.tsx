@@ -9,6 +9,13 @@ import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { Modal } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Tabs } from '@/components/ui/Tabs';
+import { Iconify } from '@/components/Iconify';
 
 const ENDPOINT = '/api/v1/attendance/requests/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -28,11 +35,11 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     render: (value: unknown) => {
       const status = value as string;
       const config: Record<string, { bg: string; text: string; label: string }> = {
-        pending: { bg: 'bg-amber-100', text: 'text-amber-800', label: 'Pending' },
-        approved: { bg: 'bg-green-100', text: 'text-green-800', label: 'Approved' },
-        rejected: { bg: 'bg-red-100', text: 'text-red-800', label: 'Rejected' },
+        pending: { bg: 'bg-warning-lighter', text: 'text-warning-dark', label: 'Pending' },
+        approved: { bg: 'bg-success-lighter', text: 'text-success-dark', label: 'Approved' },
+        rejected: { bg: 'bg-error-lighter', text: 'text-error-dark', label: 'Rejected' },
       };
-      const { bg, text, label } = config[status] ?? { bg: 'bg-gray-100', text: 'text-gray-800', label: status };
+      const { bg, text, label } = config[status] ?? { bg: 'bg-surface-neutral', text: 'text-ink-primary', label: status };
       return (
         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${bg} ${text}`}>
           {label}
@@ -141,28 +148,14 @@ export default function AttendanceRequests() {
             {isPending && (
               <>
                 {canApproveThis && (
-                  <button
-                    type="button"
-                    onClick={() => setApproveId(row.id as string)}
-                    className="inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 hover:bg-green-100 transition-colors"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
+                  <Button size="small" variant="soft" color="success" startIcon={<Iconify icon="check" width={16} />} onClick={() => setApproveId(row.id as string)}>
                     Approve
-                  </button>
+                  </Button>
                 )}
                 {canRejectThis && (
-                  <button
-                    type="button"
-                    onClick={() => setRejectId(row.id as string)}
-                    className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/20 hover:bg-red-100 transition-colors"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                  <Button size="small" variant="soft" color="error" startIcon={<Iconify icon="close" width={16} />} onClick={() => setRejectId(row.id as string)}>
                     Reject
-                  </button>
+                  </Button>
                 )}
               </>
             )}
@@ -197,46 +190,19 @@ export default function AttendanceRequests() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Attendance Requests</h1>
-          <p className="mt-1 text-sm text-gray-600">Manage attendance correction requests</p>
-        </div>
-        <CreateButton permission="attendance_requests.create" label="Create Request" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Attendance Requests" subtitle="Manage attendance correction requests" actions={<CreateButton permission="attendance_requests.create" label="Create Request" onClick={() => setShowCreate(true)} />} />
 
       {isApproverOrAdmin && (
-        <div className="mb-4 border-b border-gray-200" role="tablist">
-          <nav className="-mb-px flex gap-4">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={viewTab === 'mine'}
-              onClick={() => { setViewTab('mine'); setPage(1); }}
-              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-                viewTab === 'mine'
-                  ? 'border-primary-500 text-primary-600 font-semibold'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-              }`}
-            >
-              My Requests
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={viewTab === 'approvals'}
-              onClick={() => { setViewTab('approvals'); setPage(1); }}
-              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-                viewTab === 'approvals'
-                  ? 'border-primary-500 text-primary-600 font-semibold'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-              }`}
-            >
-              Team Approvals
-            </button>
-          </nav>
-        </div>
+        <Tabs
+          aria-label="Request views"
+          items={[
+            { value: 'mine', label: 'My Requests' },
+            { value: 'approvals', label: 'Team Approvals' },
+          ]}
+          value={viewTab}
+          onChange={(v) => { setViewTab(v); setPage(1); }}
+        />
       )}
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
@@ -297,40 +263,31 @@ export default function AttendanceRequests() {
 
       {/* Reject Dialog */}
       {rejectId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true">
-          <div className="fixed inset-0 bg-black/50" onClick={() => { setRejectId(null); setRejectReason(''); }} aria-hidden="true" />
-          <div className="relative z-10 w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Reject Request</h3>
-            <p className="text-sm text-gray-600 mb-4">
+        <Modal open onClose={() => { setRejectId(null); setRejectReason(''); }} labelledBy="AttendanceRequests-modal-title-1" closeOnEscape={false}>
+          <div className="relative z-10 w-full max-w-md rounded-xl bg-surface-paper p-6 shadow-xl">
+            <h3 id="AttendanceRequests-modal-title-1" className="text-lg font-semibold text-ink-primary mb-2">Reject Request</h3>
+            <p className="text-sm text-ink-secondary mb-4">
               Please provide a reason for rejecting this attendance request.
             </p>
-            <textarea
+            <Textarea
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Rejection reason..."
               rows={3}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500"
             />
             <div className="mt-4 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => { setRejectId(null); setRejectReason(''); }}
-                className="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
-              >
-                Cancel
-              </button>
-              <button
+              <Button variant="text" color="inherit" onClick={() => { setRejectId(null); setRejectReason(''); }}>Cancel</Button>
+              <Button color="error"
                 type="button"
                 onClick={handleReject}
                 disabled={!rejectReason.trim() || rejectLoading}
-                className="rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-500 disabled:opacity-50"
               >
                 {rejectLoading ? 'Rejecting...' : 'Reject'}
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
-    </div>
+    </PageContainer>
   );
 }

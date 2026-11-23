@@ -1,4 +1,6 @@
 import type { AttendanceRecord } from '@/hooks/useAttendance'
+import { Card } from '@/components/ui/Card'
+import { Iconify } from '@/components/Iconify'
 
 interface AttendanceStatusProps {
   record: AttendanceRecord | null | undefined
@@ -12,13 +14,13 @@ interface AttendanceStatusProps {
 export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm animate-pulse">
-        <div className="h-5 w-40 bg-gray-200 rounded mb-4" />
+      <div className="rounded-lg border border-divider bg-surface-paper p-6 shadow-sm animate-pulse">
+        <div className="h-5 w-40 bg-grey-200 rounded mb-4" />
         <div className="grid grid-cols-2 gap-4">
-          <div className="h-16 bg-gray-100 rounded" />
-          <div className="h-16 bg-gray-100 rounded" />
-          <div className="h-16 bg-gray-100 rounded" />
-          <div className="h-16 bg-gray-100 rounded" />
+          <div className="h-16 bg-surface-neutral rounded" />
+          <div className="h-16 bg-surface-neutral rounded" />
+          <div className="h-16 bg-surface-neutral rounded" />
+          <div className="h-16 bg-surface-neutral rounded" />
         </div>
       </div>
     )
@@ -41,15 +43,15 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
   const isCurrentlyIn = record?.is_currently_punched_in ?? (!!record?.check_in && !record?.check_out)
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-ink-primary">
             Today&apos;s Attendance
           </h2>
           {isCurrentlyIn && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-success-lighter text-success-dark">
+              <span className="h-1.5 w-1.5 rounded-full bg-success-main animate-pulse" />
               Active Session
             </span>
           )}
@@ -62,21 +64,17 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
           label="First Check In"
           value={checkInTime}
           icon={
-            <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-            </svg>
+            <Iconify icon="arrow-right" width={20} className="text-success-main" />
           }
           subtext={record?.is_late ? 'Late entry' : undefined}
-          subtextColor="text-amber-600"
+          subtextColor="text-warning-main"
         />
 
         <InfoCard
           label="Last Check Out"
           value={isCurrentlyIn ? 'Active Now' : checkOutTime}
           icon={
-            <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
+            <Iconify icon="logout" width={20} className="text-error-main" />
           }
         />
 
@@ -84,9 +82,7 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
           label="Total Hours"
           value={workingHours}
           icon={
-            <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <Iconify icon="attendance" width={20} className="text-primary-main" />
           }
         />
 
@@ -94,24 +90,21 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
           label="Location"
           value={record?.is_outside_geofence ? 'Outside fence' : record?.check_in ? 'Captured' : 'Not available'}
           icon={
-            <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+            <Iconify icon="geoLocations" width={20} className="text-secondary-main" />
           }
           subtext={record?.is_outside_geofence ? 'Outside geo-fence' : undefined}
-          subtextColor={record?.is_outside_geofence ? 'text-red-600' : 'text-gray-500'}
+          subtextColor={record?.is_outside_geofence ? 'text-error-main' : 'text-ink-secondary'}
         />
       </div>
 
       {/* Multiple Sessions Breakdown */}
       {sessions.length > 0 && (
-        <div className="mt-5 border-t border-gray-100 pt-4">
+        <div className="mt-5 border-t border-divider pt-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-800">
+            <h3 className="text-sm font-semibold text-ink-primary">
               Today&apos;s Sessions ({sessions.length})
             </h3>
-            <span className="text-xs text-gray-500 font-medium">
+            <span className="text-xs text-ink-secondary font-medium">
               Cumulative Hours: {workingHours}
             </span>
           </div>
@@ -122,44 +115,44 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
               return (
                 <div
                   key={sess.id || idx}
-                  className={`flex flex-col sm:flex-row sm:items-center justify-between p-2.5 rounded-md border text-sm transition-colors ${
+                  className={`flex flex-col sm:flex-row sm:items-center justify-between p-2.5 rounded-lg text-sm transition-colors ${
                     active
-                      ? 'bg-emerald-50/50 border-emerald-200'
-                      : 'bg-gray-50 border-gray-100 hover:bg-gray-100/60'
+                      ? 'bg-success-lighter/50'
+                      : 'bg-surface-neutral hover:bg-surface-neutral/60'
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white text-xs font-bold text-gray-600 border border-gray-200">
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-surface-paper text-xs font-bold text-ink-secondary">
                       {idx + 1}
                     </span>
-                    <span className="font-medium text-gray-800">
-                      {formatTime(sess.check_in_time)} → {sess.check_out_time ? formatTime(sess.check_out_time) : 'Active Now'}
+                    <span className="inline-flex items-center gap-1 font-medium text-ink-primary">
+                      {formatTime(sess.check_in_time)} <Iconify icon="arrow-right" width={14} /> {sess.check_out_time ? formatTime(sess.check_out_time) : 'Active Now'}
                     </span>
                     {active && (
-                      <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-success-lighter text-success-dark">
                         In Progress
                       </span>
                     )}
                     {sess.is_auto_checkout && (
                       <span
                         title={sess.auto_checkout_reason || 'Auto checked out'}
-                        className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] font-semibold bg-amber-100 text-amber-800"
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-warning-lighter text-warning-dark"
                       >
-                        ⚡ Auto-out
+                        <Iconify icon="refresh" width={12} /> Auto-out
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 mt-1 sm:mt-0 text-xs text-gray-500">
+                  <div className="flex items-center gap-2 mt-1 sm:mt-0 text-xs text-ink-secondary">
                     {sess.duration_hours != null ? (
-                      <span className="font-semibold text-gray-700">
+                      <span className="font-semibold text-ink-primary">
                         {formatWorkingHours(sess.duration_hours)}
                       </span>
                     ) : (
-                      <span className="text-emerald-600 font-medium">Tracking...</span>
+                      <span className="text-success-main font-medium">Tracking...</span>
                     )}
                     {sess.auto_checkout_reason && (
-                      <span className="text-[11px] text-amber-600 italic">
+                      <span className="text-[11px] text-warning-main italic">
                         ({sess.auto_checkout_reason})
                       </span>
                     )}
@@ -170,16 +163,16 @@ export function AttendanceStatus({ record, isLoading }: AttendanceStatusProps) {
           </div>
         </div>
       )}
-    </div>
+    </Card>
   )
 }
 
 function StatusBadge({ status }: { status: string }) {
   const config: Record<string, { bg: string; text: string; label: string }> = {
-    present: { bg: 'bg-green-100', text: 'text-green-800', label: 'Present' },
-    absent: { bg: 'bg-gray-100', text: 'text-gray-800', label: 'Not Marked' },
-    half_day: { bg: 'bg-amber-100', text: 'text-amber-800', label: 'Half Day' },
-    on_leave: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'On Leave' },
+    present: { bg: 'bg-success-lighter', text: 'text-success-dark', label: 'Present' },
+    absent: { bg: 'bg-surface-neutral', text: 'text-ink-primary', label: 'Not Marked' },
+    half_day: { bg: 'bg-warning-lighter', text: 'text-warning-dark', label: 'Half Day' },
+    on_leave: { bg: 'bg-primary-lighter', text: 'text-primary-dark', label: 'On Leave' },
   }
 
   const { bg, text, label } = config[status] ?? config.absent
@@ -199,16 +192,16 @@ interface InfoCardProps {
   subtextColor?: string
 }
 
-function InfoCard({ label, value, icon, subtext, subtextColor = 'text-gray-500' }: InfoCardProps) {
+function InfoCard({ label, value, icon, subtext, subtextColor = 'text-ink-secondary' }: InfoCardProps) {
   return (
-    <div className="rounded-md bg-gray-50 p-3">
+    <div className="rounded-lg bg-surface-neutral p-3">
       <div className="flex items-center gap-2 mb-1">
         {icon}
-        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+        <span className="text-xs font-medium text-ink-secondary uppercase tracking-wide">
           {label}
         </span>
       </div>
-      <p className="text-lg font-semibold text-gray-900">{value}</p>
+      <p className="text-lg font-semibold text-ink-primary">{value}</p>
       {subtext && (
         <p className={`text-xs mt-0.5 ${subtextColor}`}>{subtext}</p>
       )}

@@ -12,6 +12,9 @@
  */
 
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
+import { Iconify } from '@/components/Iconify';
+import { Button } from '@/components/ui/Button';
+import { StateView } from '@/components/ui/StateView';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -120,7 +123,7 @@ const FALLBACK_MESSAGE = {
 
 /**
  * EmptyState renders a centered empty state with an illustration, title,
- * description, and an optional permission-gated CTA button.
+ * description, and an optional permission-gated CTA button (built on the shared StateView).
  */
 export function EmptyState({
   module,
@@ -143,62 +146,19 @@ export function EmptyState({
     (ctaPermission == null || hasPermission(ctaPermission));
 
   return (
-    <div
-      className="flex flex-col items-center justify-center py-12 text-center"
+    <StateView
       role="status"
       aria-label={displayTitle}
-    >
-      {/* Illustration — generic empty box/folder icon */}
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-8 w-8 text-gray-400"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          {/* Open box / folder icon */}
-          <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-        </svg>
-      </div>
-
-      {/* Title */}
-      <h3 className="text-sm font-medium text-gray-900">
-        {displayTitle}
-      </h3>
-
-      {/* Description */}
-      <p className="mt-1 max-w-sm text-sm text-gray-500">
-        {displayDescription}
-      </p>
-
-      {/* CTA Button — hidden when user lacks create permission */}
-      {showCta && (
-        <button
-          type="button"
-          onClick={onCtaClick}
-          className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          {displayCtaLabel}
-        </button>
-      )}
-    </div>
+      icon="inbox"
+      title={displayTitle}
+      description={displayDescription}
+      action={
+        showCta ? (
+          <Button startIcon={<Iconify icon="plus" />} onClick={onCtaClick}>
+            {displayCtaLabel}
+          </Button>
+        ) : undefined
+      }
+    />
   );
 }

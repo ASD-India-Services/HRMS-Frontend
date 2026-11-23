@@ -18,7 +18,7 @@ export default defineConfig({
         name: 'DigiHRMS',
         short_name: 'DigiHRMS',
         description: 'Human Resource Management System',
-        theme_color: '#1d4ed8',
+        theme_color: '#00A76F',
         background_color: '#ffffff',
         display: 'standalone',
         scope: '/',
@@ -116,6 +116,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@platform/auth-sdk': path.resolve(__dirname, '../Auth-sdk'),
       // Force ALL react imports (including from @platform/auth-sdk) to use
       // the single React instance from this project's node_modules.
       // Without this, the linked auth-sdk resolves its own react@19.2.7,

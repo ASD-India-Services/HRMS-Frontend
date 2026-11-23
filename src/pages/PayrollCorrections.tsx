@@ -7,6 +7,9 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Button } from '@/components/ui/Button';
 
 const ENDPOINT = '/api/v1/payroll-corrections/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -27,12 +30,12 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     render: (value: unknown) => {
       const status = value as string;
       const colors: Record<string, string> = {
-        draft: 'bg-gray-100 text-gray-700',
-        submitted: 'bg-yellow-100 text-yellow-800',
-        applied: 'bg-green-100 text-green-800',
+        draft: 'bg-surface-neutral text-ink-primary',
+        submitted: 'bg-warning-lighter text-warning-dark',
+        applied: 'bg-success-lighter text-success-dark',
       };
       return (
-        <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${colors[status] || 'bg-gray-100 text-gray-700'}`}>
+        <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${colors[status] || 'bg-surface-neutral text-ink-primary'}`}>
           {status.charAt(0).toUpperCase() + status.slice(1)}
         </span>
       );
@@ -91,13 +94,9 @@ export default function PayrollCorrections() {
       render: (_value: unknown, row: Record<string, unknown>) => (
         <div className="flex items-center gap-1">
           {row.status === 'submitted' && (
-            <button
-              type="button"
-              onClick={() => setApplyId(row.id as string)}
-              className="inline-flex items-center rounded-md bg-green-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-700"
-            >
+            <Button color="success" size="small" onClick={() => setApplyId(row.id as string)}>
               Apply
-            </button>
+            </Button>
           )}
           {row.status !== 'applied' && (
             <>
@@ -106,7 +105,7 @@ export default function PayrollCorrections() {
             </>
           )}
           {row.status === 'applied' && (
-            <span className="text-xs text-gray-400 italic">Completed</span>
+            <span className="text-xs text-ink-disabled italic">Completed</span>
           )}
         </div>
       ),
@@ -132,14 +131,8 @@ export default function PayrollCorrections() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Payroll Corrections</h1>
-          <p className="mt-1 text-sm text-gray-600">Manage salary correction entries</p>
-        </div>
-        <CreateButton permission="payroll_corrections.create" label="Create Correction" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Payroll Corrections" subtitle="Manage salary correction entries" actions={<CreateButton permission="payroll_corrections.create" label="Create Correction" onClick={() => setShowCreate(true)} />} />
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
       {queryResult.data && queryResult.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={queryResult.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
@@ -193,6 +186,6 @@ export default function PayrollCorrections() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

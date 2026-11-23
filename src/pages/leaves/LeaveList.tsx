@@ -7,7 +7,7 @@
  */
 
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useLeaveApplications, useCancelLeave } from '@/hooks/useLeaves';
 import { useHrmsPermissions } from '@/hooks/useHrmsPermissions';
@@ -18,6 +18,12 @@ import { BulkActions } from '@/components/BulkActions';
 import api from '@/lib/api';
 import type { LeaveApplicationStatus } from '@/types/leave';
 import { formatDate } from '@/utils/formatters';
+import { Button, ButtonLink } from '@/components/ui/Button';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Tabs } from '@/components/ui/Tabs';
+import { Iconify } from '@/components/Iconify';
 
 const STATUS_TABS: { label: string; value: LeaveApplicationStatus | '' }[] = [
   { label: 'All', value: '' },
@@ -28,11 +34,11 @@ const STATUS_TABS: { label: string; value: LeaveApplicationStatus | '' }[] = [
 ];
 
 const statusStyles: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  approved: 'bg-green-100 text-green-800',
-  rejected: 'bg-red-100 text-red-800',
-  cancelled: 'bg-gray-100 text-gray-800',
-  draft: 'bg-blue-100 text-blue-800',
+  pending: 'bg-warning-lighter text-warning-dark',
+  approved: 'bg-success-lighter text-success-dark',
+  rejected: 'bg-error-lighter text-error-dark',
+  cancelled: 'bg-surface-neutral text-ink-primary',
+  draft: 'bg-primary-lighter text-primary-dark',
 };
 
 export function LeaveList() {
@@ -63,25 +69,20 @@ export function LeaveList() {
   const cancelLeave = useCancelLeave();
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Leave Applications</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            {isManagerOrAdmin
-              ? 'View all team leave applications and apply for your own leave'
-              : 'View and manage your leave requests'}
-          </p>
-        </div>
-        <Link
-          to="/leaves/apply"
-          className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-        >
-          Apply for Leave
-        </Link>
-      </div>
-
+    <PageContainer>
+      <PageHeader
+        title="Leave Applications"
+        subtitle={
+          isManagerOrAdmin
+            ? 'View all team leave applications and apply for your own leave'
+            : 'View and manage your leave requests'
+        }
+        actions={
+          <ButtonLink to="/leaves/apply" startIcon={<Iconify icon="plus" />}>
+            Apply for Leave
+          </ButtonLink>
+        }
+      />
       {/* Bulk Export */}
       <BulkActions
         exportEndpoint="/api/v1/leaves/applications/export/"
@@ -91,26 +92,12 @@ export function LeaveList() {
       />
 
       {/* Status Tabs */}
-      <div className="mb-4 border-b border-gray-200" role="tablist" aria-label="Filter by status">
-        <nav className="-mb-px flex gap-4">
-          {STATUS_TABS.map((tab) => (
-            <button
-              key={tab.value}
-              role="tab"
-              aria-selected={activeStatus === tab.value}
-              onClick={() => { setActiveStatus(tab.value); setPage(1); }}
-              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-                activeStatus === tab.value
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-      </div>
-
+      <Tabs
+        aria-label="Filter by status"
+        items={STATUS_TABS}
+        value={activeStatus}
+        onChange={(value) => { setActiveStatus(value); setPage(1); }}
+      />
       {/* Content */}
       {isLoading ? (
         <TableSkeleton columns={6} rows={5} />
@@ -119,64 +106,64 @@ export function LeaveList() {
       ) : data && data.results.length > 0 ? (
         <>
           {/* Table */}
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <Card className="overflow-hidden">
+            <table className="min-w-full divide-y divide-divider">
+              <thead className="bg-surface-neutral">
                 <tr>
                   {isManagerOrAdmin && (
-                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Applied By</th>
+                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Applied By</th>
                   )}
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Leave Type</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">From</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">To</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Days</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Status</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Leave Type</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">From</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">To</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Days</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Status</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">
                     {isManagerOrAdmin ? 'Approved / Rejected By' : 'Applied On'}
                   </th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Actions</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-divider">
                 {data.results.map((application) => (
-                  <tr key={application.id} className="hover:bg-gray-50">
+                  <tr key={application.id} className="hover:bg-surface-neutral">
                     {isManagerOrAdmin && (
-                      <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
+                      <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-primary">
                         <div>
                           <p className="font-medium">
                             {application.employee.first_name} {application.employee.last_name}
                           </p>
                           {application.employee.department && (
-                            <p className="text-xs text-gray-500">{application.employee.department.name}</p>
+                            <p className="text-xs text-ink-secondary">{application.employee.department.name}</p>
                           )}
                         </div>
                       </td>
                     )}
-                    <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-ink-primary">
                       {application.leave_type.name}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary">
                       {formatDate(application.from_date)}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary">
                       {formatDate(application.to_date)}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary">
                       {application.total_days}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusStyles[application.status] || 'bg-gray-100 text-gray-800'}`}>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusStyles[application.status] || 'bg-surface-neutral text-ink-primary'}`}>
                         {application.status}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary">
                       {isManagerOrAdmin ? (
                         application.approved_by ? (
-                          <span className="text-gray-700">
+                          <span className="text-ink-primary">
                             {application.approved_by.first_name} {application.approved_by.last_name}
                           </span>
                         ) : (
-                          <span className="italic text-gray-400">Pending</span>
+                          <span className="italic text-ink-disabled">Pending</span>
                         )
                       ) : (
                         formatDate(application.created_at)
@@ -190,51 +177,50 @@ export function LeaveList() {
                         const canCancel = isOwnApplication && (application.status === 'pending' || (application.status === 'approved' && !isCompleted));
                         if (canCancel) {
                           return (
-                            <button
+                            <Button
+                              variant="text"
+                              color="error"
+                              size="small"
                               onClick={() => {
                                 if (confirm('Are you sure you want to cancel this leave application?')) {
                                   cancelLeave.mutate(application.id);
                                 }
                               }}
-                              className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 border border-red-200"
                               disabled={cancelLeave.isPending}
                             >
                               Cancel
-                            </button>
+                            </Button>
                           );
                         }
                         if (isCompleted) {
-                          return <span className="text-xs text-gray-400">Completed</span>;
+                          return <span className="text-xs text-ink-disabled">Completed</span>;
                         }
-                        return <span className="text-xs text-gray-400">–</span>;
+                        return <span className="text-xs text-ink-disabled">–</span>;
                       })()}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-
+          </Card>
           {/* Pagination */}
           <div className="mt-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-ink-secondary">
               Showing {data.results.length} of {data.count} applications
             </p>
             <div className="flex gap-2">
-              <button
+              <Button variant="outlined" color="inherit"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!data.previous}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Previous
-              </button>
-              <button
+              </Button>
+              <Button variant="outlined" color="inherit"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data.next}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next
-              </button>
+              </Button>
             </div>
           </div>
         </>
@@ -245,6 +231,6 @@ export function LeaveList() {
           onCtaClick={() => navigate('/leaves/apply')}
         />
       )}
-    </div>
+    </PageContainer>
   );
 }

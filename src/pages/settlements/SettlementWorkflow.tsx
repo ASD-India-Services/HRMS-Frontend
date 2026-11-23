@@ -25,6 +25,8 @@ import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import { formatDate } from '@/utils/formatters';
 import type { CrudEndpoints } from '@/hooks/useCrud';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const createFields: FieldConfig[] = [
   { key: 'employee_id', label: 'Employee', type: 'select', optionsEndpoint: '/api/v1/employees/', optionsLabelKey: 'full_name', required: true },
@@ -90,7 +92,7 @@ function useSettlementColumns(): ColumnDef<Settlement>[] {
         header: 'Final Amount',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm font-medium text-gray-900">
+          <span className="text-sm font-medium text-ink-primary">
             {formatCurrency(value as number)}
           </span>
         ),
@@ -100,7 +102,7 @@ function useSettlementColumns(): ColumnDef<Settlement>[] {
         header: 'Separation Date',
         sortable: true,
         render: (value: unknown) => (
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-ink-primary">
             {value ? formatDate(value as string) : '—'}
           </span>
         ),
@@ -166,16 +168,14 @@ function SettlementWorkflowContent() {
   const queryResult = settlementCrud.useList(apiParams);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Full & Final Settlements</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Manage employee exit settlements — submit, approve, or reject final payouts.
-          </p>
-        </div>
-        <CreateButton permission="settlements.create" label="Create Settlement" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Full & Final Settlements"
+        subtitle="Manage employee exit settlements — submit, approve, or reject final payouts."
+        actions={
+          <CreateButton permission="settlements.create" label="Create Settlement" onClick={() => setShowCreate(true)} />
+        }
+      />
 
       <FilterBar
         filters={settlementFilters}
@@ -207,6 +207,6 @@ function SettlementWorkflowContent() {
         onSubmit={(data) => createMutation.mutate(data)}
         isLoading={createMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

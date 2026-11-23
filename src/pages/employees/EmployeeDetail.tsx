@@ -20,12 +20,18 @@ import type { FieldConfig } from '@/components/CrudModal';
 import { PropertyHistoryTimeline } from './components/PropertyHistoryTimeline';
 import { formatDate } from '@/utils/formatters';
 import api from '@/lib/api';
+import { Button, ButtonLink } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 const statusColors: Record<string, string> = {
-  active: 'bg-green-100 text-green-800',
-  on_notice: 'bg-yellow-100 text-yellow-800',
-  terminated: 'bg-red-100 text-red-800',
-  retired: 'bg-gray-100 text-gray-800',
+  active: 'bg-success-lighter text-success-dark',
+  on_notice: 'bg-warning-lighter text-warning-dark',
+  terminated: 'bg-error-lighter text-error-dark',
+  retired: 'bg-surface-neutral text-ink-primary',
 };
 
 const statusLabels: Record<string, string> = {
@@ -93,35 +99,32 @@ export function EmployeeDetail() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
-        <span className="ml-3 text-gray-600">Loading employee details...</span>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-main border-t-transparent" />
+        <span className="ml-3 text-ink-secondary">Loading employee details...</span>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">
+      <PageContainer maxWidth="lg">
+        <div className="rounded-card bg-error-lighter p-4">
+          <p className="text-sm text-error-dark">
             Failed to load employee details.{' '}
             {error instanceof Error ? error.message : 'Please try again.'}
           </p>
         </div>
-        <Link
-          to="/employees"
-          className="mt-4 inline-flex items-center text-sm text-primary-600 hover:text-primary-700"
-        >
-          ← Back to Employee Directory
-        </Link>
-      </div>
+        <ButtonLink to="/employees" variant="text" size="small" className="mt-4 -ml-2.5" startIcon={<Iconify icon="arrow-left" />}>
+          Back to Employee Directory
+        </ButtonLink>
+      </PageContainer>
     );
   }
 
   if (!employee) return null;
 
   const fullName = `${employee.first_name} ${employee.last_name}`;
-  const statusColor = statusColors[employee.status] ?? 'bg-gray-100 text-gray-800';
+  const statusColor = statusColors[employee.status] ?? 'bg-surface-neutral text-ink-primary';
   const statusLabel = statusLabels[employee.status] ?? employee.status;
 
   const effectiveNoticeDays = employee.notice_period_days ?? hrSettings?.notice_period_days ?? 30;
@@ -140,58 +143,46 @@ export function EmployeeDetail() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
-      {/* Breadcrumb */}
-      <nav className="mb-6 text-sm text-gray-500" aria-label="Breadcrumb">
-        <Link to="/employees" className="hover:text-primary-600">
-          Employees
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="text-gray-900">{fullName}</span>
-      </nav>
-
-      {/* Header Card */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-          {employee.photo ? (
-            <img
-              src={employee.photo}
-              alt={fullName}
-              className="h-20 w-20 rounded-full object-cover"
-            />
-          ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary-100 text-xl font-semibold text-primary-700">
-              {getInitials(employee.first_name, employee.last_name)}
-            </div>
-          )}
-          <div className="flex-1">
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">{fullName}</h1>
-              <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColor}`}
-              >
-                {statusLabel}
+    <PageContainer maxWidth="lg">
+      <PageHeader
+        breadcrumb={
+          <nav aria-label="Breadcrumb">
+            <Link to="/employees" className="hover:text-primary-main">
+              Employees
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-ink-primary">{fullName}</span>
+          </nav>
+        }
+        title={
+          <span className="flex items-center gap-3">
+            {employee.photo ? (
+              <img
+                src={employee.photo}
+                alt={fullName}
+                className="h-14 w-14 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary-lighter text-lg font-semibold text-primary-dark">
+                {getInitials(employee.first_name, employee.last_name)}
               </span>
-            </div>
-            <p className="mt-1 text-sm text-gray-600">
-              {employee.designation?.title || 'No Designation'} · {employee.department?.name || 'No Department'}
-            </p>
-            <div className="mt-1.5 flex flex-wrap items-center gap-2.5 text-xs">
-              <span className="text-gray-500">
-                Employee ID: <strong className="font-semibold text-gray-700">{employee.employee_id}</strong>
-              </span>
-              {employee.badge_id && (
-                <span className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-xs font-semibold text-slate-700">
-                  <svg className="h-3 w-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.364a4.125 4.125 0 00-6.338 0" />
-                  </svg>
-                  Badge: {employee.badge_id}
-                </span>
-              )}
-            </div>
-          </div>
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2">
+            )}
+            <span>{fullName}</span>
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColor}`}
+            >
+              {statusLabel}
+            </span>
+          </span>
+        }
+        subtitle={
+          <>
+            {employee.designation?.title || 'No Designation'} · {employee.department?.name || 'No Department'}
+            <span className="mt-0.5 block text-xs text-ink-disabled">Employee ID: {employee.employee_id}</span>
+          </>
+        }
+        actions={
+          <>
             <Can permissions={['roles.manage']}>
               <ActionButton
                 label="Create Login"
@@ -207,26 +198,16 @@ export function EmployeeDetail() {
               onClick={() => setShowPromote(true)}
               permission="employees.edit"
             />
-            <Link
+            <ButtonLink
               to={`/org-chart?employee=${employee.id}`}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-xs hover:bg-gray-50 transition-colors"
+              variant="outlined"
+              color="inherit"
+              size="small"
               title="View this employee's reporting hierarchy in the Org Chart"
+              startIcon={<Iconify icon="orgChart" />}
             >
-              <svg className="h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7.5 3.75A1.5 1.5 0 0 0 6 5.25v1.5a1.5 1.5 0 0 0 1.5 1.5h1.5A1.5 1.5 0 0 0 10.5 6.75v-1.5A1.5 1.5 0 0 0 9 3.75h-1.5ZM12 8.25v3.75m0 0H6.75A2.25 2.25 0 0 0 4.5 14.25v1.5a1.5 1.5 0 0 0 1.5 1.5h1.5a1.5 1.5 0 0 0 1.5-1.5v-1.5A2.25 2.25 0 0 0 6.75 12H12m0 0h5.25A2.25 2.25 0 0 1 19.5 14.25v1.5a1.5 1.5 0 0 1-1.5 1.5h-1.5a1.5 1.5 0 0 1-1.5-1.5v-1.5a2.25 2.25 0 0 1-2.25-2.25" />
-              </svg>
-              <span>Org Chart</span>
-            </Link>
-            <Link
-              to={`/employees/${employee.id}/lifecycle`}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-xs hover:bg-gray-50 transition-colors"
-              title="View full lifecycle actions, transfers, promotions, and history timeline"
-            >
-              <svg className="h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Lifecycle & History</span>
-            </Link>
+              Org Chart
+            </ButtonLink>
             <EditButton
               label="Edit"
               onClick={() => navigate(`/employees/${employee.id}/edit`)}
@@ -239,9 +220,9 @@ export function EmployeeDetail() {
               permission="employees.delete"
               size="sm"
             />
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Notice Period Alert Banner — Shown when employee is currently On Notice */}
       {isOnNotice && (
@@ -296,113 +277,123 @@ export function EmployeeDetail() {
       )}
 
       {/* Employee Status Change — visible to users with employees.edit permission */}
-      <div className="mt-4">
+      <div>
         <EmployeeStatusChange
           employeeId={employee.id}
           currentStatus={employee.status as any}
-          onStatusChanged={() => {}}
+          onStatusChanged={() => { }}
         />
       </div>
 
       {/* Detail Sections */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Personal Information */}
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Personal Information</h2>
-          <dl className="space-y-3">
-            <DetailRow label="Email" value={employee.email} />
-            <DetailRow label="Phone" value={employee.phone} />
-            <DetailRow label="Personal Email" value={employee.personal_email} />
-            <DetailRow label="Date of Birth" value={formatDate(employee.date_of_birth)} />
-            <DetailRow label="Gender" value={employee.gender} capitalize />
-            <DetailRow label="Marital Status" value={employee.marital_status} capitalize />
-            <DetailRow label="Blood Group" value={employee.blood_group} />
-            <DetailRow label="Nationality" value={employee.nationality} />
-          </dl>
-        </section>
+        <Card>
+          <CardHeader title="Personal Information" className="pb-4" />
+          <CardContent className="pt-4">
+            <dl className="space-y-3">
+              <DetailRow label="Email" value={employee.email} />
+              <DetailRow label="Phone" value={employee.phone} />
+              <DetailRow label="Personal Email" value={employee.personal_email} />
+              <DetailRow label="Date of Birth" value={formatDate(employee.date_of_birth)} />
+              <DetailRow label="Gender" value={employee.gender} capitalize />
+              <DetailRow label="Marital Status" value={employee.marital_status} capitalize />
+              <DetailRow label="Blood Group" value={employee.blood_group} />
+              <DetailRow label="Nationality" value={employee.nationality} />
+            </dl>
+          </CardContent>
+        </Card>
 
         {/* Employment Details */}
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Employment Details</h2>
-          <dl className="space-y-3">
-            <DetailRow label="Department" value={employee.department?.name} />
-            <DetailRow label="Designation" value={employee.designation?.title} />
-            <DetailRow label="Grade" value={employee.grade?.name} />
-            <DetailRow label="Branch" value={employee.branch?.name} />
-            <DetailRow
-              label="Employment Type"
-              value={employee.employment_type?.replace('_', ' ')}
-              capitalize
-            />
-            <DetailRow label="Work Type" value={(employee as any).work_type} />
-            <DetailRow label="Date of Joining" value={formatDate(employee.date_of_joining)} />
-            <DetailRow label="Probation End" value={formatDate(employee.probation_end_date)} />
-            <DetailRow label="Confirmation Date" value={formatDate(employee.confirmation_date)} />
-            <DetailRow
-              label="Notice Period"
-              value={`${effectiveNoticeDays} days ${isCustomNotice ? '(Custom)' : '(Company Policy)'}`}
-            />
-            {employee.badge_id && (
-              <DetailRow label="Security Badge ID" value={employee.badge_id} />
-            )}
-            {employee.date_of_leaving && (
+        <Card>
+          <CardHeader title="Employment Details" className="pb-4" />
+          <CardContent className="pt-4">
+            <dl className="space-y-3">
+              <DetailRow label="Department" value={employee.department?.name} />
+              <DetailRow label="Designation" value={employee.designation?.title} />
+              <DetailRow label="Grade" value={employee.grade?.name} />
+              <DetailRow label="Branch" value={employee.branch?.name} />
               <DetailRow
-                label={isOnNotice ? 'Expected Relieving Date' : 'Date of Leaving'}
-                value={formatDate(employee.date_of_leaving)}
+                label="Employment Type"
+                value={employee.employment_type?.replace('_', ' ')}
+                capitalize
               />
-            )}
-          </dl>
-        </section>
+              <DetailRow label="Work Type" value={(employee as any).work_type} />
+              <DetailRow label="Date of Joining" value={formatDate(employee.date_of_joining)} />
+              <DetailRow label="Probation End" value={formatDate(employee.probation_end_date)} />
+              <DetailRow label="Confirmation Date" value={formatDate(employee.confirmation_date)} />
+              <DetailRow
+                label="Notice Period"
+                value={`${effectiveNoticeDays} days ${isCustomNotice ? '(Custom)' : '(Company Policy)'}`}
+              />
+              {employee.badge_id && (
+                <DetailRow label="Security Badge ID" value={employee.badge_id} />
+              )}
+              {employee.date_of_leaving && (
+                <DetailRow
+                  label={isOnNotice ? 'Expected Relieving Date' : 'Date of Leaving'}
+                  value={formatDate(employee.date_of_leaving)}
+                />
+              )}
+            </dl>
+          </CardContent>
+        </Card>
 
         {/* Address */}
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Address</h2>
-          <dl className="space-y-3">
-            <DetailRow label="Address" value={employee.address} />
-            <DetailRow label="City" value={employee.city} />
-            <DetailRow label="State" value={employee.state} />
-            <DetailRow label="Country" value={employee.country} />
-            <DetailRow label="PIN Code" value={employee.pincode} />
-          </dl>
-        </section>
+        <Card>
+          <CardHeader title="Address" className="pb-4" />
+          <CardContent className="pt-4">
+            <dl className="space-y-3">
+              <DetailRow label="Address" value={employee.address} />
+              <DetailRow label="City" value={employee.city} />
+              <DetailRow label="State" value={employee.state} />
+              <DetailRow label="Country" value={employee.country} />
+              <DetailRow label="PIN Code" value={employee.pincode} />
+            </dl>
+          </CardContent>
+        </Card>
 
         {/* Emergency Contact */}
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Emergency Contact</h2>
-          <dl className="space-y-3">
-            <DetailRow label="Name" value={employee.emergency_contact_name} />
-            <DetailRow label="Phone" value={employee.emergency_contact_phone} />
-            <DetailRow label="Relation" value={employee.emergency_contact_relation} capitalize />
-          </dl>
-        </section>
+        <Card>
+          <CardHeader title="Emergency Contact" className="pb-4" />
+          <CardContent className="pt-4">
+            <dl className="space-y-3">
+              <DetailRow label="Name" value={employee.emergency_contact_name} />
+              <DetailRow label="Phone" value={employee.emergency_contact_phone} />
+              <DetailRow label="Relation" value={employee.emergency_contact_relation} capitalize />
+            </dl>
+          </CardContent>
+        </Card>
 
         {/* Reporting Hierarchy */}
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm lg:col-span-2">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Reporting Hierarchy</h2>
-          {employee.reporting_manager ? (
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-600">
-                {getInitials(
-                  employee.reporting_manager.first_name,
-                  employee.reporting_manager.last_name
-                )}
+        <Card className="lg:col-span-2">
+          <CardHeader title="Reporting Hierarchy" className="pb-4" />
+          <CardContent className="pt-4">
+            {employee.reporting_manager ? (
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-neutral text-sm font-semibold text-ink-secondary">
+                  {getInitials(
+                    employee.reporting_manager.first_name,
+                    employee.reporting_manager.last_name
+                  )}
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-ink-primary">
+                    <Link
+                      to={`/employees/${employee.reporting_manager.id}`}
+                      className="hover:text-primary-main hover:underline"
+                    >
+                      {employee.reporting_manager.first_name} {employee.reporting_manager.last_name}
+                    </Link>
+                  </p>
+                  <p className="text-xs text-ink-secondary">Reporting Manager</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">
-                  <Link
-                    to={`/employees/${employee.reporting_manager.id}`}
-                    className="hover:text-primary-600 hover:underline"
-                  >
-                    {employee.reporting_manager.first_name} {employee.reporting_manager.last_name}
-                  </Link>
-                </p>
-                <p className="text-xs text-gray-500">Reporting Manager</p>
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500">No reporting manager assigned.</p>
-          )}
-        </section>
+            ) : (
+              <p className="text-sm text-ink-secondary">No reporting manager assigned.</p>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Permissions Panel — visible only to admins with roles.manage permission */}
         <Can permissions={['roles.manage']}>
@@ -441,26 +432,22 @@ export function EmployeeDetail() {
 
       {/* Provision Account Modal */}
       {showProvisionModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="provision-dialog-title"
+        <Modal
+          open
+          onClose={() => {
+            if (!provisionMutation.isPending) {
+              setShowProvisionModal(false);
+              setProvisionResult(null);
+            }
+          }}
+          labelledBy="provision-dialog-title"
+          size="sm"
+          closeOnEscape={false}
         >
-          <div
-            className="fixed inset-0 bg-black/50 transition-opacity"
-            onClick={() => {
-              if (!provisionMutation.isPending) {
-                setShowProvisionModal(false);
-                setProvisionResult(null);
-              }
-            }}
-            aria-hidden="true"
-          />
-          <div className="relative z-10 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+          <div className="min-h-0 flex-1 overflow-y-auto p-6">
             <h2
               id="provision-dialog-title"
-              className="text-lg font-semibold text-gray-900"
+              className="text-lg font-semibold text-ink-primary"
             >
               Create Login Account
             </h2>
@@ -468,56 +455,55 @@ export function EmployeeDetail() {
             {provisionResult ? (
               /* Success result view */
               <div className="mt-4">
-                <div className="rounded-md bg-green-50 p-4">
-                  <p className="text-sm font-medium text-green-800">
+                <div className="rounded-card bg-success-lighter p-4">
+                  <p className="text-sm font-medium text-success-dark">
                     {provisionResult.message}
                   </p>
                 </div>
                 <dl className="mt-4 space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <dt className="text-gray-500">Email</dt>
-                    <dd className="font-medium text-gray-900">{provisionResult.email}</dd>
+                    <dt className="text-ink-secondary">Email</dt>
+                    <dd className="font-medium text-ink-primary">{provisionResult.email}</dd>
                   </div>
                   {provisionResult.email_sent && (
-                    <p className="mt-2 text-xs text-green-600">
+                    <p className="mt-2 text-xs text-success-main">
                       A password setup link has been sent to the employee&apos;s email.
                     </p>
                   )}
                   {provisionResult.already_existed && (
-                    <p className="mt-2 text-xs text-gray-500">
+                    <p className="mt-2 text-xs text-ink-secondary">
                       Account already existed — no new credentials were created.
                     </p>
                   )}
                 </dl>
                 <div className="mt-6 flex justify-end">
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       setShowProvisionModal(false);
                       setProvisionResult(null);
                     }}
-                    className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                   >
                     Done
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
               /* Confirmation view */
               <div className="mt-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-ink-secondary">
                   This will create a login account for{' '}
                   <span className="font-medium">{fullName}</span> and send a password
                   setup link to <span className="font-medium">{employee.email}</span>.
                 </p>
-                <p className="mt-2 text-xs text-gray-500">
+                <p className="mt-2 text-xs text-ink-secondary">
                   The employee will receive an email with a link to set up their own password.
                   The link expires in 72 hours.
                 </p>
 
                 {provisionMutation.isError && (
-                  <div className="mt-3 rounded-md bg-red-50 p-3">
-                    <p className="text-sm text-red-800">
+                  <div className="mt-3 rounded-card bg-error-lighter p-3">
+                    <p className="text-sm text-error-dark">
                       {(provisionMutation.error as any)?.response?.data?.error ||
                         'Failed to provision account. Please try again.'}
                     </p>
@@ -525,51 +511,26 @@ export function EmployeeDetail() {
                 )}
 
                 <div className="mt-6 flex justify-end gap-3">
-                  <button
+                  <Button variant="outlined" color="inherit"
                     type="button"
                     onClick={() => setShowProvisionModal(false)}
                     disabled={provisionMutation.isPending}
-                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50"
                   >
                     Cancel
-                  </button>
-                  <button
-                    type="button"
+                  </Button>
+                  <Button
                     onClick={() => provisionMutation.mutate()}
-                    disabled={provisionMutation.isPending}
-                    className="inline-flex items-center rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    loading={provisionMutation.isPending}
                   >
-                    {provisionMutation.isPending && (
-                      <svg
-                        className="mr-2 h-4 w-4 animate-spin"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                        />
-                      </svg>
-                    )}
                     Send Setup Link
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
           </div>
-        </div>
+        </Modal>
       )}
-    </div>
+    </PageContainer>
   );
 }
 
@@ -585,9 +546,9 @@ function DetailRow({
 }) {
   return (
     <div className="flex justify-between gap-4">
-      <dt className="text-sm text-gray-500">{label}</dt>
+      <dt className="text-sm text-ink-secondary">{label}</dt>
       <dd
-        className={`text-sm font-medium text-gray-900 text-right ${capitalize ? 'capitalize' : ''}`}
+        className={`text-sm font-medium text-ink-primary text-right ${capitalize ? 'capitalize' : ''}`}
       >
         {value || '--'}
       </dd>

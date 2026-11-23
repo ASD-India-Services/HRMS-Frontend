@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { CheckIcon, LoaderIcon, AlertCircleIcon } from './SettingsIcons';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
+import { Button } from '@/components/ui/Button';
+import { Select } from '@/components/ui/Select';
 
 export const DATE_FORMAT_OPTIONS = [
   // Dash / Hyphen (-) separated
@@ -158,16 +160,16 @@ export function DateTimeFormatTab() {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <LoaderIcon className="h-8 w-8 text-blue-600" />
+        <LoaderIcon className="h-8 w-8 text-primary-main" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-        <AlertCircleIcon className="mx-auto h-8 w-8 text-red-500" />
-        <p className="mt-2 text-sm text-red-700">Failed to load format settings: {(error as Error)?.message}</p>
+      <div className="rounded-xl border border-error-light bg-error-lighter p-6 text-center">
+        <AlertCircleIcon className="mx-auto h-8 w-8 text-error-main" />
+        <p className="mt-2 text-sm text-error-dark">Failed to load format settings: {(error as Error)?.message}</p>
       </div>
     );
   }
@@ -188,34 +190,32 @@ export function DateTimeFormatTab() {
       {/* ─── 1. Date Format Section ────────────────────────────────────────── */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-gray-900">Date Format</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Date Format</h2>
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-800">
+          <label className="block text-sm font-semibold text-ink-primary">
             Select Date Format:
           </label>
 
           <div className="mt-2.5 flex flex-wrap items-center gap-4">
             <div className="w-full max-w-md">
-              <select
+              <Select
                 value={selectedDateFormat}
                 onChange={(e) => setSelectedDateFormat(e.target.value)}
-                className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               >
                 {DATE_FORMAT_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
-            <button
+            <Button
               type="button"
               onClick={handleSaveDateFormat}
               disabled={savingDate}
-              className="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 transition-colors"
             >
               {savingDate ? (
                 <>
@@ -224,10 +224,10 @@ export function DateTimeFormatTab() {
               ) : (
                 'Save Date Format'
               )}
-            </button>
+            </Button>
 
             {savedDate && (
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
                 <CheckIcon className="h-4 w-4" /> Saved successfully
               </span>
             )}
@@ -235,46 +235,44 @@ export function DateTimeFormatTab() {
 
           {/* Current Date Format line matching screenshot */}
           <p className="mt-4 text-sm">
-            <span className="font-bold text-blue-600">Current Date Format : </span>
-            <span className="font-medium text-gray-900 ml-1">{currentDateDisplay}</span>
+            <span className="font-bold text-primary-main">Current Date Format : </span>
+            <span className="font-medium text-ink-primary ml-1">{currentDateDisplay}</span>
           </p>
         </div>
       </section>
 
       {/* ─── Horizontal Divider ──────────────────────────────────────────── */}
-      <hr className="my-8 border-gray-200" />
+      <hr className="my-8 border-divider" />
 
       {/* ─── 2. Time Format Section ────────────────────────────────────────── */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-gray-900">Time Format</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Time Format</h2>
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-800">
+          <label className="block text-sm font-semibold text-ink-primary">
             Select Time Format:
           </label>
 
           <div className="mt-2.5 flex flex-wrap items-center gap-4">
             <div className="w-full max-w-md">
-              <select
+              <Select
                 value={selectedTimeFormat}
                 onChange={(e) => setSelectedTimeFormat(e.target.value)}
-                className="w-full rounded-md border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               >
                 {TIME_FORMAT_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
-            <button
+            <Button
               type="button"
               onClick={handleSaveTimeFormat}
               disabled={savingTime}
-              className="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 disabled:opacity-50 transition-colors"
             >
               {savingTime ? (
                 <>
@@ -283,10 +281,10 @@ export function DateTimeFormatTab() {
               ) : (
                 'Save Time Format'
               )}
-            </button>
+            </Button>
 
             {savedTime && (
-              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+              <span className="inline-flex items-center gap-1.5 text-sm font-medium text-success-main">
                 <CheckIcon className="h-4 w-4" /> Saved successfully
               </span>
             )}
@@ -294,8 +292,8 @@ export function DateTimeFormatTab() {
 
           {/* Current Time Format line matching screenshot */}
           <p className="mt-4 text-sm">
-            <span className="font-bold text-blue-600">Current Time Format : </span>
-            <span className="font-medium text-gray-900 ml-1">{currentTimeDisplay}</span>
+            <span className="font-bold text-primary-main">Current Time Format : </span>
+            <span className="font-medium text-ink-primary ml-1">{currentTimeDisplay}</span>
           </p>
         </div>
       </section>

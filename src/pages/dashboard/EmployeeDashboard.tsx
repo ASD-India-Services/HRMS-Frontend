@@ -9,7 +9,10 @@
  * automatically hide when the user lacks the required permission.
  */
 
-import { Link } from 'react-router-dom';
+import { ButtonLink } from '@/components/ui/Button';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
+import { EmptyState } from '@/components/EmptyState';
 import { useAttendanceToday } from '@/hooks/useAttendance';
 import { useLeaveBalances, useLeaveApplications } from '@/hooks/useLeaves';
 import { useExpenseClaims } from '@/hooks/useExpenses';
@@ -39,114 +42,101 @@ export function EmployeeDashboard() {
       {/* Quick Action Bar */}
       <div className="flex flex-wrap items-center gap-3">
         <Can permissions={['leaves.view']}>
-          <Link
-            to="/my-leaves/apply"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 transition-colors"
-          >
-            ✈️ Apply for Leave
-          </Link>
+          <ButtonLink to="/my-leaves/apply" startIcon={<Iconify icon="leaves" />}>
+            Apply for Leave
+          </ButtonLink>
         </Can>
         <Can permissions={['attendance.view']}>
-          <Link
-            to="/my-attendance"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
-          >
-            ⏰ My Attendance Logs
-          </Link>
+          <ButtonLink to="/my-attendance" variant="outlined" color="inherit" startIcon={<Iconify icon="attendance" />}>
+            My Attendance Logs
+          </ButtonLink>
         </Can>
         <Can permissions={['expenses.view']}>
-          <Link
-            to="/expenses/new"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
-          >
-            🧾 Submit Expense
-          </Link>
+          <ButtonLink to="/expenses/new" variant="outlined" color="inherit" startIcon={<Iconify icon="expenses" />}>
+            Submit Expense
+          </ButtonLink>
         </Can>
         <Can permissions={['payroll.view']}>
-          <Link
-            to="/payroll"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
-          >
-            📄 View Payslips
-          </Link>
+          <ButtonLink to="/payroll" variant="outlined" color="inherit" startIcon={<Iconify icon="salarySlips" />}>
+            View Payslips
+          </ButtonLink>
         </Can>
       </div>
 
       {/* Top Row */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Attendance Widget */}
         <Can permissions={['attendance.view']}>
-          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">⏱️</span>
-                <h2 className="text-base font-semibold text-gray-900">Today's Attendance</h2>
-              </div>
-              <span
-                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                  isCheckedOut
-                    ? 'bg-gray-100 text-gray-800'
-                    : isCheckedIn
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-amber-100 text-amber-800'
-                }`}
-              >
-                {isCheckedOut ? 'Checked Out' : isCheckedIn ? 'Checked In' : 'Not Clocked In'}
-              </span>
-            </div>
-
-            {attendanceLoading ? (
-              <div className="h-24 animate-pulse rounded bg-gray-100" />
-            ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 rounded-lg bg-gray-50 p-3 text-center">
-                  <div>
-                    <p className="text-xs text-gray-500">Check In</p>
-                    <p className="mt-1 text-sm font-bold text-gray-900">{fmtTime(attendanceToday?.check_in ?? null)}</p>
+          <Card>
+            <CardHeader
+              title="Today's Attendance"
+              action={
+                <span
+                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                    isCheckedOut
+                      ? 'bg-surface-neutral text-ink-primary'
+                      : isCheckedIn
+                      ? 'bg-success-lighter text-success-dark'
+                      : 'bg-warning-lighter text-warning-dark'
+                  }`}
+                >
+                  {isCheckedOut ? 'Checked Out' : isCheckedIn ? 'Checked In' : 'Not Clocked In'}
+                </span>
+              }
+            />
+            <CardContent>
+              {attendanceLoading ? (
+                <div className="h-24 animate-pulse rounded bg-surface-neutral" />
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4 rounded-lg bg-surface-neutral p-3 text-center">
+                    <div>
+                      <p className="text-xs text-ink-secondary">Check In</p>
+                      <p className="mt-1 text-sm font-bold text-ink-primary">{fmtTime(attendanceToday?.check_in ?? null)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-ink-secondary">Check Out</p>
+                      <p className="mt-1 text-sm font-bold text-ink-primary">{fmtTime(attendanceToday?.check_out ?? null)}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Check Out</p>
-                    <p className="mt-1 text-sm font-bold text-gray-900">{fmtTime(attendanceToday?.check_out ?? null)}</p>
-                  </div>
+                  <CheckInButton record={attendanceToday} />
                 </div>
-
-                <CheckInButton record={attendanceToday} />
-              </div>
-            )}
-          </div>
+              )}
+            </CardContent>
+          </Card>
         </Can>
 
         {/* Leave Balances Widget */}
         <Can permissions={['leaves.view']}>
-          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm lg:col-span-2">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">🌴</span>
-                <h2 className="text-base font-semibold text-gray-900">My Leave Balances</h2>
-              </div>
-              <Link to="/my-leaves" className="text-xs font-medium text-primary-600 hover:text-primary-800">
-                View All →
-              </Link>
-            </div>
-
-            {balancesLoading ? (
-              <div className="h-24 animate-pulse rounded bg-gray-100" />
-            ) : balances.length === 0 ? (
-              <p className="text-sm text-gray-500 py-4 text-center">No leave balance records available.</p>
-            ) : (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {balances.slice(0, 6).map((b, i) => (
-                  <div key={b.id ?? i} className="rounded-lg border border-gray-100 bg-gray-50/50 p-3">
-                    <p className="text-xs font-medium text-gray-500 truncate">{b.leave_type_name}</p>
-                    <p className="mt-1 text-xl font-bold text-gray-900">
-                      {b.available_balance ?? b.remaining_days ?? 0}
-                      <span className="text-xs font-normal text-gray-400 ml-1">days</span>
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <Card>
+            <CardHeader
+              title="My Leave Balances"
+              action={
+                <ButtonLink to="/my-leaves" variant="text" size="small" endIcon={<Iconify icon="arrow-right" />}>
+                  View All
+                </ButtonLink>
+              }
+            />
+            <CardContent>
+              {balancesLoading ? (
+                <div className="h-24 animate-pulse rounded bg-surface-neutral" />
+              ) : balances.length === 0 ? (
+                <EmptyState module="leaves" title="No leave balances" description="No leave balance records available." />
+              ) : (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {balances.slice(0, 6).map((b, i) => (
+                    <div key={b.id ?? i} className="rounded-lg bg-surface-neutral p-3">
+                      <p className="text-xs font-medium text-ink-secondary truncate">{b.leave_type_name}</p>
+                      <p className="mt-1 text-xl font-bold text-ink-primary">
+                        {b.available_balance ?? b.remaining_days ?? 0}
+                        <span className="text-xs font-normal text-ink-disabled ml-1">days</span>
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </Can>
       </div>
 
@@ -154,92 +144,98 @@ export function EmployeeDashboard() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Recent Leave Applications */}
         <Can permissions={['leaves.view']}>
-          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
-              <h3 className="text-sm font-semibold text-gray-900">Recent Leave Requests</h3>
-              <Link to="/my-leaves" className="text-xs font-medium text-primary-600 hover:text-primary-800">
-                View History →
-              </Link>
-            </div>
-
-            {appsLoading ? (
-              <div className="space-y-2">
-                <div className="h-8 animate-pulse rounded bg-gray-100" />
-                <div className="h-8 animate-pulse rounded bg-gray-100" />
-              </div>
-            ) : !applicationsData?.results?.length ? (
-              <p className="text-xs text-gray-500 py-4 text-center">No recent leave requests found.</p>
-            ) : (
-              <div className="space-y-3">
-                {applicationsData.results.slice(0, 4).map((app) => (
-                  <div key={app.id} className="flex items-center justify-between rounded-lg bg-gray-50 p-2.5 text-xs">
-                    <div>
-                      <p className="font-semibold text-gray-800">{app.leave_type.name}</p>
-                      <p className="text-gray-500">
-                        {formatDate(app.from_date)} → {formatDate(app.to_date)} ({app.total_days} {app.total_days === 1 ? 'day' : 'days'})
-                      </p>
+          <Card>
+            <CardHeader
+              title="Recent Leave Requests"
+              action={
+                <ButtonLink to="/my-leaves" variant="text" size="small" endIcon={<Iconify icon="arrow-right" />}>
+                  View History
+                </ButtonLink>
+              }
+            />
+            <CardContent>
+              {appsLoading ? (
+                <div className="space-y-2">
+                  <div className="h-8 animate-pulse rounded bg-surface-neutral" />
+                  <div className="h-8 animate-pulse rounded bg-surface-neutral" />
+                </div>
+              ) : !applicationsData?.results?.length ? (
+                <EmptyState module="leaves" title="No recent leave requests" description="No recent leave requests found." />
+              ) : (
+                <div className="space-y-3">
+                  {applicationsData.results.slice(0, 4).map((app) => (
+                    <div key={app.id} className="flex items-center justify-between rounded-lg bg-surface-neutral p-2.5 text-xs">
+                      <div>
+                        <p className="font-semibold text-ink-primary">{app.leave_type.name}</p>
+                        <p className="inline-flex items-center gap-1 text-ink-secondary">
+                          {formatDate(app.from_date)} <Iconify icon="arrow-right" width={12} /> {formatDate(app.to_date)} ({app.total_days} {app.total_days === 1 ? 'day' : 'days'})
+                        </p>
+                      </div>
+                      <span
+                        className={`rounded-full px-2 py-0.5 font-medium capitalize ${
+                          app.status === 'approved'
+                            ? 'bg-success-lighter text-success-dark'
+                            : app.status === 'rejected'
+                            ? 'bg-error-lighter text-error-dark'
+                            : 'bg-warning-lighter text-warning-dark'
+                        }`}
+                      >
+                        {app.status}
+                      </span>
                     </div>
-                    <span
-                      className={`rounded-full px-2 py-0.5 font-medium capitalize ${
-                        app.status === 'approved'
-                          ? 'bg-green-100 text-green-800'
-                          : app.status === 'rejected'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-amber-100 text-amber-800'
-                      }`}
-                    >
-                      {app.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </Can>
 
         {/* Recent Expenses */}
         <Can permissions={['expenses.view']}>
-          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
-              <h3 className="text-sm font-semibold text-gray-900">Recent Expense Claims</h3>
-              <Link to="/expenses" className="text-xs font-medium text-primary-600 hover:text-primary-800">
-                View All →
-              </Link>
-            </div>
-
-            {expensesLoading ? (
-              <div className="space-y-2">
-                <div className="h-8 animate-pulse rounded bg-gray-100" />
-                <div className="h-8 animate-pulse rounded bg-gray-100" />
-              </div>
-            ) : !expensesData?.results?.length ? (
-              <p className="text-xs text-gray-500 py-4 text-center">No recent expense claims submitted.</p>
-            ) : (
-              <div className="space-y-3">
-                {expensesData.results.slice(0, 4).map((exp) => (
-                  <div key={exp.id} className="flex items-center justify-between rounded-lg bg-gray-50 p-2.5 text-xs">
-                    <div>
-                      <p className="font-semibold text-gray-800">{exp.expense_type.name}</p>
-                      <p className="text-gray-500">₹{exp.amount} · {formatDate(exp.expense_date)}</p>
+          <Card>
+            <CardHeader
+              title="Recent Expense Claims"
+              action={
+                <ButtonLink to="/expenses" variant="text" size="small" endIcon={<Iconify icon="arrow-right" />}>
+                  View All
+                </ButtonLink>
+              }
+            />
+            <CardContent>
+              {expensesLoading ? (
+                <div className="space-y-2">
+                  <div className="h-8 animate-pulse rounded bg-surface-neutral" />
+                  <div className="h-8 animate-pulse rounded bg-surface-neutral" />
+                </div>
+              ) : !expensesData?.results?.length ? (
+                <EmptyState module="expenses" title="No recent expense claims" description="No recent expense claims submitted." />
+              ) : (
+                <div className="space-y-3">
+                  {expensesData.results.slice(0, 4).map((exp) => (
+                    <div key={exp.id} className="flex items-center justify-between rounded-lg bg-surface-neutral p-2.5 text-xs">
+                      <div>
+                        <p className="font-semibold text-ink-primary">{exp.expense_type.name}</p>
+                        <p className="text-ink-secondary">₹{exp.amount} · {formatDate(exp.expense_date)}</p>
+                      </div>
+                      <span
+                        className={`rounded-full px-2 py-0.5 font-medium capitalize ${
+                          exp.status === 'approved'
+                            ? 'bg-success-lighter text-success-dark'
+                            : exp.status === 'rejected'
+                            ? 'bg-error-lighter text-error-dark'
+                            : exp.status === 'paid'
+                            ? 'bg-primary-lighter text-primary-dark'
+                            : 'bg-warning-lighter text-warning-dark'
+                        }`}
+                      >
+                        {exp.status}
+                      </span>
                     </div>
-                    <span
-                      className={`rounded-full px-2 py-0.5 font-medium capitalize ${
-                        exp.status === 'approved'
-                          ? 'bg-green-100 text-green-800'
-                          : exp.status === 'rejected'
-                          ? 'bg-red-100 text-red-800'
-                          : exp.status === 'paid'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-amber-100 text-amber-800'
-                      }`}
-                    >
-                      {exp.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </Can>
       </div>
     </div>

@@ -18,11 +18,11 @@ interface StatusBadgeProps {
 }
 
 const COLOR_CLASSES: Record<string, string> = {
-  gray: 'bg-gray-100 text-gray-700',
-  yellow: 'bg-yellow-100 text-yellow-800',
-  blue: 'bg-blue-100 text-blue-700',
-  green: 'bg-green-100 text-green-800',
-  red: 'bg-red-100 text-red-700',
+  gray: 'bg-surface-neutral text-ink-primary',
+  yellow: 'bg-warning-lighter text-warning-dark',
+  blue: 'bg-primary-lighter text-primary-dark',
+  green: 'bg-success-lighter text-success-dark',
+  red: 'bg-error-lighter text-error-dark',
 };
 
 export function StatusBadge({ status, config }: StatusBadgeProps) {
@@ -30,7 +30,7 @@ export function StatusBadge({ status, config }: StatusBadgeProps) {
 
   if (!statusDef) {
     return (
-      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700">
+      <span className="inline-flex items-center rounded-full bg-surface-neutral px-2.5 py-0.5 text-xs font-medium text-ink-primary">
         {status}
       </span>
     );

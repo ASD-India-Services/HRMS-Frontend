@@ -11,6 +11,9 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { DataTable, Pagination, FilterBar, useFilterSync } from '@/components/DataTable';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import api from '@/lib/api';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
 import { formatDateTime } from '@/utils/formatters';
 
 interface AuditLogEntry {
@@ -83,16 +86,16 @@ const columns: ColumnDef<AuditLogEntry>[] = [
     render: (value: unknown) => {
       const action = value as string;
       const colorMap: Record<string, string> = {
-        create: 'bg-green-100 text-green-800',
-        update: 'bg-blue-100 text-blue-800',
-        delete: 'bg-red-100 text-red-800',
-        approve: 'bg-emerald-100 text-emerald-800',
-        reject: 'bg-orange-100 text-orange-800',
-        login: 'bg-gray-100 text-gray-800',
-        status_change: 'bg-purple-100 text-purple-800',
+        create: 'bg-success-lighter text-success-dark',
+        update: 'bg-primary-lighter text-primary-dark',
+        delete: 'bg-error-lighter text-error-dark',
+        approve: 'bg-success-lighter text-success-dark',
+        reject: 'bg-warning-lighter text-warning-dark',
+        login: 'bg-surface-neutral text-ink-primary',
+        status_change: 'bg-secondary-lighter text-secondary-dark',
       };
       return (
-        <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${colorMap[action] || 'bg-gray-100 text-gray-800'}`}>
+        <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${colorMap[action] || 'bg-surface-neutral text-ink-primary'}`}>
           {action.replace('_', ' ')}
         </span>
       );
@@ -130,16 +133,11 @@ export default function AuditLogs() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Audit Logs</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Track all changes and actions performed across the HRMS platform
-        </p>
-      </div>
+    <PageContainer>
+      <PageHeader title="Audit Logs" subtitle="Track all changes and actions performed across the HRMS platform" />
 
-      <div className="rounded-lg border border-gray-200 bg-white">
-        <div className="border-b border-gray-200 p-4">
+      <Card>
+        <div className="border-b border-divider p-4">
           <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
         </div>
 
@@ -151,7 +149,7 @@ export default function AuditLogs() {
 
         {/* Expanded detail row */}
         {expandedId && queryResult.data?.results && (
-          <div className="border-t border-gray-100 bg-gray-50 px-6 py-4">
+          <div className="border-t border-divider bg-surface-neutral px-6 py-4">
             {(() => {
               const entry = queryResult.data.results.find((r) => r.id === expandedId);
               if (!entry) return null;
@@ -163,34 +161,34 @@ export default function AuditLogs() {
                 <div className="space-y-3">
                   {entry.record_id && (
                     <div className="text-sm">
-                      <span className="font-medium text-gray-700">Record ID:</span>{' '}
-                      <code className="rounded bg-gray-200 px-1.5 py-0.5 text-xs">{entry.record_id}</code>
+                      <span className="font-medium text-ink-primary">Record ID:</span>{' '}
+                      <code className="rounded bg-grey-200 px-1.5 py-0.5 text-xs">{entry.record_id}</code>
                     </div>
                   )}
                   {entry.ip_address && (
                     <div className="text-sm">
-                      <span className="font-medium text-gray-700">IP Address:</span>{' '}
-                      <span className="text-gray-600">{entry.ip_address}</span>
+                      <span className="font-medium text-ink-primary">IP Address:</span>{' '}
+                      <span className="text-ink-secondary">{entry.ip_address}</span>
                     </div>
                   )}
                   {hasChanges && (
                     <div>
-                      <span className="text-sm font-medium text-gray-700">Changes:</span>
-                      <pre className="mt-1 overflow-x-auto rounded-md bg-gray-900 p-3 text-xs text-gray-100">
+                      <span className="text-sm font-medium text-ink-primary">Changes:</span>
+                      <pre className="mt-1 overflow-x-auto rounded-md bg-grey-900 p-3 text-xs text-grey-100">
                         {JSON.stringify(entry.changes, null, 2)}
                       </pre>
                     </div>
                   )}
                   {hasMetadata && (
                     <div>
-                      <span className="text-sm font-medium text-gray-700">Metadata:</span>
-                      <pre className="mt-1 overflow-x-auto rounded-md bg-gray-900 p-3 text-xs text-gray-100">
+                      <span className="text-sm font-medium text-ink-primary">Metadata:</span>
+                      <pre className="mt-1 overflow-x-auto rounded-md bg-grey-900 p-3 text-xs text-grey-100">
                         {JSON.stringify(entry.metadata, null, 2)}
                       </pre>
                     </div>
                   )}
                   {!hasChanges && !hasMetadata && !entry.record_id && (
-                    <p className="text-sm text-gray-500">No additional details available.</p>
+                    <p className="text-sm text-ink-secondary">No additional details available.</p>
                   )}
                 </div>
               );
@@ -207,7 +205,7 @@ export default function AuditLogs() {
             onPageSizeChange={setPageSize}
           />
         )}
-      </div>
-    </div>
+      </Card>
+    </PageContainer>
   );
 }

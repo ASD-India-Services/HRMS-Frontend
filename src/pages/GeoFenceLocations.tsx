@@ -9,6 +9,10 @@ import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
 import { GEOFENCE_LOCATIONS } from '@/lib/endpoints';
 import { getCurrentPosition, isGeolocationSupported } from '@/utils/geolocation';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Iconify } from '@/components/Iconify';
+import { Button } from '@/components/ui/Button';
 
 const crud = createCrudHooks<Record<string, unknown>>({
   queryKey: 'geofence-locations',
@@ -154,16 +158,8 @@ export default function GeoFenceLocations() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Geo-Fence Locations</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Configure allowed check-in locations with radius-based validation
-          </p>
-        </div>
-        <CreateButton permission="geofence_locations.create" label="Add Location" onClick={handleOpenCreate} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Geo-Fence Locations" subtitle="Configure allowed check-in locations with radius-based validation" actions={<CreateButton permission="geofence_locations.create" label="Add Location" onClick={handleOpenCreate} />} />
 
       <FilterBar filters={filters} values={filterValues} onChange={setFilter} onClearAll={clearFilters} />
       <DataTable queryResult={queryResult} columns={columnsWithActions} />
@@ -214,19 +210,17 @@ export default function GeoFenceLocations() {
       {/* Use My Current Location floating button (visible when modal is open) */}
       {(showCreate || editRecord) && (
         <div className="fixed bottom-6 right-6 z-[60]">
-          <button
-            type="button"
+          <Button
+            color="secondary"
+            startIcon={<Iconify icon="geoLocations" />}
             onClick={handleUseCurrentLocation}
             disabled={locationLoading}
-            className="inline-flex items-center gap-2 rounded-full bg-purple-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+            className="rounded-full shadow-z24"
           >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-            </svg>
             {locationLoading ? 'Locating...' : 'Use My Current Location'}
-          </button>
+          </Button>
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }

@@ -18,6 +18,13 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { LeaveApplicationStatus } from '@/types/leave';
 import { formatDate } from '@/utils/formatters';
+import { Modal } from '@/components/ui/Modal';
+import { Button, IconButton } from '@/components/ui/Button';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { Tabs } from '@/components/ui/Tabs';
+import { Iconify } from '@/components/Iconify';
 
 const STATUS_TABS: { label: string; value: LeaveApplicationStatus | '' }[] = [
   { label: 'All', value: '' },
@@ -28,11 +35,11 @@ const STATUS_TABS: { label: string; value: LeaveApplicationStatus | '' }[] = [
 ];
 
 const statusStyles: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  approved: 'bg-green-100 text-green-800',
-  rejected: 'bg-red-100 text-red-800',
-  cancelled: 'bg-gray-100 text-gray-800',
-  draft: 'bg-blue-100 text-blue-800',
+  pending: 'bg-warning-lighter text-warning-dark',
+  approved: 'bg-success-lighter text-success-dark',
+  rejected: 'bg-error-lighter text-error-dark',
+  cancelled: 'bg-surface-neutral text-ink-primary',
+  draft: 'bg-primary-lighter text-primary-dark',
 };
 
 export default function MyLeaves() {
@@ -73,34 +80,23 @@ function MyLeavesContent() {
   const [cancelId, setCancelId] = useState<string | null>(null);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      {/* Header */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Leaves</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            View your leave balances, track request statuses, and apply for leaves.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => setIsApplyModalOpen(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-        >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          Apply for Leave
-        </button>
-      </div>
-
+    <PageContainer>
+      <PageHeader
+        title="My Leaves"
+        subtitle="View your leave balances, track request statuses, and apply for leaves."
+        actions={
+          <Button onClick={() => setIsApplyModalOpen(true)} startIcon={<Iconify icon="plus" />}>
+            Apply for Leave
+          </Button>
+        }
+      />
       {/* Leave Balances Section */}
       <section className="mb-8" aria-label="My Leave Balances">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700 uppercase tracking-wider">Leave Balances</h2>
+        <h2 className="mb-4 text-lg font-semibold text-ink-primary">Leave Balances</h2>
         {balancesLoading ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-28 animate-pulse rounded-lg bg-gray-100" />
+              <div key={i} className="h-28 animate-pulse rounded-card bg-surface-neutral" />
             ))}
           </div>
         ) : balances && balances.length > 0 ? (
@@ -110,41 +106,25 @@ function MyLeavesContent() {
             ))}
           </div>
         ) : (
-          <div className="rounded-lg border border-dashed border-gray-300 p-4 text-center text-sm text-gray-500">
-            No leave balance information available for the current period.
-          </div>
+          <Card>
+            <EmptyState module="leaves" title="No leave balances" description="No leave balance information available for the current period." />
+          </Card>
         )}
       </section>
 
       {/* History Section Header & Tabs */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">My Leave Applications</h2>
-      </div>
+      <h2 className="mb-4 text-lg font-semibold text-ink-primary">My Leave Applications</h2>
 
       {/* Status Filter Tabs */}
-      <div className="mb-4 border-b border-gray-200" role="tablist" aria-label="Filter applications by status">
-        <nav className="-mb-px flex gap-4">
-          {STATUS_TABS.map((tab) => (
-            <button
-              key={tab.value}
-              role="tab"
-              aria-selected={activeStatus === tab.value}
-              onClick={() => {
-                setActiveStatus(tab.value);
-                setPage(1);
-              }}
-              className={`border-b-2 px-1 pb-3 text-sm font-medium transition-colors ${
-                activeStatus === tab.value
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-      </div>
-
+      <Tabs
+        aria-label="Filter applications by status"
+        items={STATUS_TABS}
+        value={activeStatus}
+        onChange={(value) => {
+          setActiveStatus(value);
+          setPage(1);
+        }}
+      />
       {/* Applications Table */}
       {isLoading ? (
         <TableSkeleton columns={7} rows={5} />
@@ -152,44 +132,44 @@ function MyLeavesContent() {
         <ErrorState onRetry={refetch} />
       ) : data && data.results.length > 0 ? (
         <>
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <Card className="overflow-hidden">
+            <table className="min-w-full divide-y divide-divider">
+              <thead className="bg-surface-neutral">
                 <tr>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Leave Type</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">From</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">To</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Days</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Status</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Reason</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Applied On</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Actions</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Leave Type</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">From</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">To</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Days</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Status</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Reason</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Applied On</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-divider">
                 {data.results.map((application) => (
-                  <tr key={application.id} className="hover:bg-gray-50">
-                    <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-900">
+                  <tr key={application.id} className="hover:bg-surface-neutral">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm font-medium text-ink-primary">
                       {application.leave_type.name}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary">
                       {formatDate(application.from_date)}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary">
                       {formatDate(application.to_date)}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600 font-semibold">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary font-semibold">
                       {application.total_days}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusStyles[application.status] || 'bg-gray-100 text-gray-800'}`}>
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusStyles[application.status] || 'bg-surface-neutral text-ink-primary'}`}>
                         {application.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 max-w-[200px] truncate">
+                    <td className="px-4 py-3 text-sm text-ink-secondary max-w-[200px] truncate">
                       {application.reason || '—'}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-ink-secondary">
                       {formatDate(application.created_at)}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm">
@@ -199,47 +179,46 @@ function MyLeavesContent() {
                         const canCancel = !hasStarted && (application.status === 'pending' || application.status === 'approved');
                         if (canCancel) {
                           return (
-                            <button
+                            <Button
+                              variant="text"
+                              color="error"
+                              size="small"
                               onClick={() => setCancelId(application.id)}
-                              className="rounded px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50 border border-red-200 transition-colors"
                               disabled={cancelLeave.isPending}
                             >
                               Cancel
-                            </button>
+                            </Button>
                           );
                         }
                         if (hasStarted && (application.status === 'approved' || application.status === 'pending')) {
-                          return <span className="text-xs text-gray-400">Started</span>;
+                          return <span className="text-xs text-ink-disabled">Started</span>;
                         }
-                        return <span className="text-xs text-gray-400">–</span>;
+                        return <span className="text-xs text-ink-disabled">–</span>;
                       })()}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-
+          </Card>
           {/* Pagination */}
           <div className="mt-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-ink-secondary">
               Showing {data.results.length} of {data.count} applications
             </p>
             <div className="flex gap-2">
-              <button
+              <Button variant="outlined" color="inherit"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={!data.previous}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Previous
-              </button>
-              <button
+              </Button>
+              <Button variant="outlined" color="inherit"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!data.next}
-                className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Next
-              </button>
+              </Button>
             </div>
           </div>
         </>
@@ -253,19 +232,11 @@ function MyLeavesContent() {
 
       {/* Apply for Leave Modal */}
       {isApplyModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-500 bg-opacity-75 flex items-center justify-center p-4">
-          <div className="relative w-full max-w-3xl rounded-xl bg-white p-6 shadow-2xl transition-all">
-            <div className="mb-4 flex items-center justify-between border-b pb-3">
-              <h2 className="text-xl font-bold text-gray-900">Apply for Leave</h2>
-              <button
-                type="button"
-                onClick={() => setIsApplyModalOpen(false)}
-                className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-              >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+        <Modal open onClose={() => setIsApplyModalOpen(false)} labelledBy="MyLeaves-modal-title-1" size="lg" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+            <div className="mb-4 flex items-center justify-between border-b border-divider pb-3">
+              <h2 id="MyLeaves-modal-title-1" className="text-xl font-bold text-ink-primary">Apply for Leave</h2>
+              <IconButton icon="close" size="small" aria-label="Close" onClick={() => setIsApplyModalOpen(false)} />
             </div>
 
             <LeaveApply
@@ -277,7 +248,7 @@ function MyLeavesContent() {
               onCancel={() => setIsApplyModalOpen(false)}
             />
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Cancel Leave Confirmation Dialog */}
@@ -297,6 +268,6 @@ function MyLeavesContent() {
         variant="destructive"
         isLoading={cancelLeave.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

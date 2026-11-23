@@ -16,6 +16,11 @@ import type { FieldConfig } from '@/components/CrudModal';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { JobOpening, JobOpeningStatus } from '@/types/recruitment';
+import { Button, IconButton, buttonClasses } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 import { formatDate } from '@/utils/formatters';
 
 const JOB_OPENING_FIELDS: FieldConfig[] = [
@@ -40,10 +45,10 @@ const JOB_OPENING_FIELDS: FieldConfig[] = [
 ];
 
 const STATUS_BADGES: Record<JobOpeningStatus, { label: string; className: string }> = {
-  open: { label: 'Open', className: 'bg-green-100 text-green-800' },
-  closed: { label: 'Closed', className: 'bg-gray-100 text-gray-800' },
-  on_hold: { label: 'On Hold', className: 'bg-yellow-100 text-yellow-800' },
-  cancelled: { label: 'Cancelled', className: 'bg-red-100 text-red-800' },
+  open: { label: 'Open', className: 'bg-success-lighter text-success-dark' },
+  closed: { label: 'Closed', className: 'bg-surface-neutral text-ink-primary' },
+  on_hold: { label: 'On Hold', className: 'bg-warning-lighter text-warning-dark' },
+  cancelled: { label: 'Cancelled', className: 'bg-error-lighter text-error-dark' },
 };
 
 interface JobOpeningsProps {
@@ -162,8 +167,8 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Job Openings</h2>
-          <p className="mt-0.5 text-sm text-gray-500">
+          <h2 className="text-lg font-semibold text-ink-primary">Job Openings</h2>
+          <p className="mt-0.5 text-sm text-ink-secondary">
             {data ? `${data.count} opening${data.count !== 1 ? 's' : ''}` : 'Loading...'}
           </p>
         </div>
@@ -176,7 +181,7 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-disabled"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -184,19 +189,19 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          <input
+          <Input
             type="text"
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search job openings..."
-            className="w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="pl-10 pr-4"
             aria-label="Search job openings"
           />
         </div>
-        <select
+        <Select
+          selectSize="small"
           value={status}
           onChange={(e) => { setStatus(e.target.value as JobOpeningStatus | ''); setPage(1); }}
-          className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           aria-label="Filter by status"
         >
           <option value="">All Statuses</option>
@@ -204,16 +209,14 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
           <option value="closed">Closed</option>
           <option value="on_hold">On Hold</option>
           <option value="cancelled">Cancelled</option>
-        </select>
+        </Select>
       </div>
 
       {/* Action Error Alert */}
       {actionError && !deletingOpening && !editingOpening && (
-        <div className="mb-4 flex items-center justify-between rounded-lg bg-red-50 p-3 text-sm text-red-700 border border-red-200">
+        <div className="mb-4 flex items-center justify-between rounded-lg bg-error-lighter p-3 text-sm text-error-dark border border-error-light">
           <span>{actionError}</span>
-          <button onClick={() => setActionError(null)} className="text-red-500 hover:text-red-700 font-bold ml-2">
-            ✕
-          </button>
+          <IconButton icon="close" size="small" color="error" aria-label="Dismiss" onClick={() => setActionError(null)} />
         </div>
       )}
 
@@ -230,43 +233,43 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
 
       {/* Table */}
       {data && data.results.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <Card className="overflow-hidden">
+          <table className="min-w-full divide-y divide-divider">
+            <thead className="bg-surface-neutral">
               <tr>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Position</th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Department</th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Vacancies</th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Status</th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Posted</th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Closes</th>
-                <th scope="col" className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Apply Link</th>
-                <th scope="col" className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Action</th>
+                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-ink-secondary">Position</th>
+                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-ink-secondary">Department</th>
+                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-ink-secondary">Vacancies</th>
+                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-ink-secondary">Status</th>
+                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-ink-secondary">Posted</th>
+                <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-ink-secondary">Closes</th>
+                <th scope="col" className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-ink-secondary">Apply Link</th>
+                <th scope="col" className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-ink-secondary">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-divider">
               {data.results.map((opening) => {
                 const badge = STATUS_BADGES[opening.status];
                 return (
                   <tr
                     key={opening.id}
-                    className="cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="cursor-pointer hover:bg-surface-neutral transition-colors"
                     onClick={() => onSelectOpening?.(opening.id)}
                   >
                     <td className="px-4 py-3">
-                      <div className="text-sm font-medium text-gray-900">{opening.title}</div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-sm font-medium text-ink-primary">{opening.title}</div>
+                      <div className="text-xs text-ink-secondary">
                         {(typeof opening.designation === 'object' && (opening.designation?.title || opening.designation?.name)) ||
                           (opening as any).designation_name ||
                           ''}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
+                    <td className="px-4 py-3 text-sm text-ink-secondary">
                       {(typeof opening.department === 'object' && opening.department?.name) ||
                         (opening as any).department_name ||
                         '—'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
+                    <td className="px-4 py-3 text-sm text-ink-secondary">
                       {opening.filled ?? 0}/{opening.vacancies}
                     </td>
                     <td className="px-4 py-3">
@@ -274,36 +277,35 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
                         {badge.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
+                    <td className="px-4 py-3 text-sm text-ink-secondary">
                       {formatDate(opening.posted_on)}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
+                    <td className="px-4 py-3 text-sm text-ink-secondary">
                       {opening.closes_on ? formatDate(opening.closes_on) : '—'}
                     </td>
                     <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end">
-                        <button
+                        <Button variant="outlined" color="inherit" size="small"
                           type="button"
                           onClick={(e) => handleCopyApplyLink(opening.id, e)}
-                          className="inline-flex items-center gap-1 rounded bg-white px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-100 hover:text-primary-700 border border-gray-200 shadow-xs transition-colors"
                           title="Copy Direct Candidate Application Link"
                         >
                           {copiedJobId === opening.id ? (
                             <>
-                              <svg className="h-3.5 w-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="h-3.5 w-3.5 text-success-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>
-                              <span className="text-green-700 font-semibold">Copied!</span>
+                              <span className="text-success-dark font-semibold">Copied!</span>
                             </>
                           ) : (
                             <>
-                              <svg className="h-3.5 w-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="h-3.5 w-3.5 text-ink-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
                               <span>Apply Link</span>
                             </>
                           )}
-                        </button>
+                        </Button>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
@@ -311,44 +313,36 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
                         <Link
                           to={`/recruitment/stages?job=${opening.id}`}
                           onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center justify-center p-1.5 rounded-md text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 border border-gray-200 shadow-xs transition-colors cursor-pointer"
+                          className={buttonClasses({ variant: 'text', color: 'inherit', size: 'small', iconOnly: true })}
                           title="Configure Hiring Stages"
                           aria-label={`Configure stages for ${opening.title}`}
                         >
-                          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
-                          </svg>
+                          <Iconify icon="settings" width={18} />
                         </Link>
-                        <button
-                          type="button"
+                        <IconButton
+                          icon="pencil"
+                          size="small"
+                          color="inherit"
                           onClick={(e) => {
                             e.stopPropagation();
                             setActionError(null);
                             setEditingOpening(opening);
                           }}
-                          className="inline-flex items-center justify-center p-1.5 rounded-md text-gray-500 hover:text-blue-600 hover:bg-blue-50 border border-gray-200 shadow-xs transition-colors cursor-pointer"
                           title="Edit Job Opening"
                           aria-label={`Edit ${opening.title}`}
-                        >
-                          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                        </button>
-                        <button
-                          type="button"
+                        />
+                        <IconButton
+                          icon="trash"
+                          size="small"
+                          color="error"
                           onClick={(e) => {
                             e.stopPropagation();
                             setActionError(null);
                             setDeletingOpening(opening);
                           }}
-                          className="inline-flex items-center justify-center p-1.5 rounded-md text-gray-500 hover:text-rose-600 hover:bg-rose-50 border border-gray-200 shadow-xs transition-colors cursor-pointer"
                           title="Delete Job Opening"
                           aria-label={`Delete ${opening.title}`}
-                        >
-                          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
+                        />
                       </div>
                     </td>
                   </tr>
@@ -359,34 +353,32 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
 
           {/* Fetching indicator */}
           {isFetching && !isLoading && (
-            <div className="border-t border-gray-100 bg-gray-50 px-4 py-2 text-center text-xs text-primary-600">
+            <div className="border-t border-divider bg-surface-neutral px-4 py-2 text-center text-xs text-primary-main">
               Updating...
             </div>
           )}
-        </div>
+        </Card>
       )}
 
       {/* Pagination */}
       {totalPages > 1 && (
         <nav className="mt-4 flex items-center justify-between" aria-label="Job openings pagination">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-ink-secondary">
             Page {page} of {totalPages}
           </p>
           <div className="flex gap-2">
-            <button
+            <Button type="button" variant="outlined" color="inherit"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Previous
-            </button>
-            <button
+            </Button>
+            <Button type="button" variant="outlined" color="inherit"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
-            </button>
+            </Button>
           </div>
         </nav>
       )}

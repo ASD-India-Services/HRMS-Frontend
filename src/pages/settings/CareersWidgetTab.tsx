@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useHRSettings } from '@/hooks/useHRSettings';
-import { CheckIcon, CopyIcon, InfoIcon } from './SettingsIcons';
+import { Button, ButtonLink } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { Tabs } from '@/components/ui/Tabs';
+import { CheckIcon, CopyIcon, ExternalLinkIcon, InfoIcon } from './SettingsIcons';
 
 export function CareersWidgetTab() {
   const { data: settings } = useHRSettings();
@@ -48,178 +51,137 @@ export function CareersWidgetTab() {
   };
 
   return (
-    <div className="space-y-6 py-2">
+    <div className="space-y-6">
       <div>
-        <div className="flex items-center gap-2">
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">Careers Website Integration</h2>
-          <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="text-xl font-bold text-ink-primary">Careers Website Integration</h2>
+          <span className="inline-flex items-center rounded-full bg-success-lighter px-2.5 py-0.5 text-xs font-semibold text-success-dark">
             Live Jobs Sync
           </span>
         </div>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-ink-secondary">
           Embed your open job openings into your company website's existing careers page. Candidates apply directly from your website into the DigiHRMS recruitment pipeline.
         </p>
       </div>
 
-      <hr className="border-gray-200" />
-
       {/* Integration Method Selector */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <button
-          type="button"
-          onClick={() => setActiveTab('widget')}
-          className={`relative rounded-xl border p-4 text-left transition-all ${
-            activeTab === 'widget'
-              ? 'border-blue-600 bg-blue-50/50 ring-2 ring-blue-500/20'
-              : 'border-gray-200 bg-white hover:border-gray-300'
-          }`}
-        >
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-bold text-gray-900">Option 2: Drop-In JavaScript Widget</span>
-            <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
-              Recommended
-            </span>
-          </div>
-          <p className="text-xs text-gray-500 leading-relaxed">
-            Lightweight 15 KB snippet that loads live job cards via AJAX and injects them directly into your blank section. 100% native look & feel without iframes or extra scrollbars.
-          </p>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('iframe')}
-          className={`relative rounded-xl border p-4 text-left transition-all ${
-            activeTab === 'iframe'
-              ? 'border-blue-600 bg-blue-50/50 ring-2 ring-blue-500/20'
-              : 'border-gray-200 bg-white hover:border-gray-300'
-          }`}
-        >
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-bold text-gray-900">Option 1: Responsive iFrame</span>
-            <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-600">
-              Sandboxed
-            </span>
-          </div>
-          <p className="text-xs text-gray-500 leading-relaxed">
-            Seamless iframe with auto-height postMessage resizing. Ideal if your website builder restricts external JavaScript or requires an isolated iframe.
-          </p>
-        </button>
+      <div>
+        <Tabs
+          aria-label="Integration method"
+          className="!mb-3"
+          value={activeTab}
+          onChange={setActiveTab}
+          items={[
+            { value: 'widget', label: 'Option 2: Drop-In JavaScript Widget' },
+            { value: 'iframe', label: 'Option 1: Responsive iFrame' },
+          ]}
+        />
+        <p className="text-sm text-ink-secondary">
+          {activeTab === 'widget'
+            ? 'Recommended. Lightweight 15 KB snippet that loads live job cards via AJAX and injects them directly into your blank section. Native look and feel without iframes or extra scrollbars.'
+            : 'Sandboxed. Seamless iframe with auto-height postMessage resizing. Ideal if your website builder restricts external JavaScript or requires an isolated iframe.'}
+        </p>
       </div>
 
       {/* Customization Options Bar */}
-      <div className="rounded-xl border border-gray-200 bg-gray-50/80 p-4">
+      <Card className="bg-surface-neutral p-4 shadow-none">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <label className="text-xs font-bold uppercase tracking-wider text-gray-700">
-              Button & Accent Color:
+            <label htmlFor="careers-accent-color" className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
+              Button & Accent Color
             </label>
             <div className="flex items-center gap-2">
               <input
+                id="careers-accent-color"
                 type="color"
                 value={primaryColor}
                 onChange={(e) => setPrimaryColor(e.target.value)}
-                className="h-8 w-8 rounded-md border border-gray-300 cursor-pointer p-0.5 bg-white"
+                className="h-9 w-9 cursor-pointer rounded-lg border border-grey-500/30 bg-surface-paper p-0.5"
                 title="Choose brand accent color"
               />
-              <span className="text-xs font-mono font-medium text-gray-600 uppercase">{primaryColor}</span>
+              <span className="font-mono text-xs font-medium uppercase text-ink-secondary">{primaryColor}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <a
+            <ButtonLink
               href="/test-widget.html"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-xs hover:bg-gray-50 transition-colors"
+              variant="outlined"
+              color="inherit"
+              size="small"
+              endIcon={<ExternalLinkIcon />}
             >
-              <span>Test Widget Demo</span>
-              <span className="text-gray-400">↗</span>
-            </a>
-            <a
+              Test Widget Demo
+            </ButtonLink>
+            <ButtonLink
               href={`/careers/embed?tenant=${tenantSlug}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-xs hover:bg-gray-50 transition-colors"
+              variant="outlined"
+              color="inherit"
+              size="small"
+              endIcon={<ExternalLinkIcon />}
             >
-              <span>Full Portal View</span>
-              <span className="text-gray-400">↗</span>
-            </a>
+              Full Portal View
+            </ButtonLink>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Embed Code Snippet Box */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <label className="text-xs font-bold uppercase tracking-wider text-gray-700">
+        <div className="flex items-center justify-between gap-3">
+          <label htmlFor="careers-snippet" className="text-xs font-semibold uppercase tracking-wider text-ink-secondary">
             {activeTab === 'widget' ? 'Drop-In Widget Code Snippet' : 'Responsive iFrame Code Snippet'}
           </label>
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors"
-          >
-            {copied ? (
-              <>
-                <CheckIcon className="h-4 w-4" />
-                <span>Copied to Clipboard!</span>
-              </>
-            ) : (
-              <>
-                <CopyIcon className="h-4 w-4" />
-                <span>Copy Code</span>
-              </>
-            )}
-          </button>
+          <Button size="small" onClick={handleCopy} startIcon={copied ? <CheckIcon /> : <CopyIcon />}>
+            {copied ? 'Copied to Clipboard!' : 'Copy Code'}
+          </Button>
         </div>
-
-        <div className="relative">
-          <textarea
-            readOnly
-            rows={activeTab === 'widget' ? 4 : 12}
-            value={currentSnippet}
-            onClick={(e) => (e.target as HTMLTextAreaElement).select()}
-            className="w-full rounded-xl border border-gray-300 bg-slate-900 p-4 font-mono text-xs text-emerald-400 shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500/50 select-all leading-relaxed"
-          />
-        </div>
+        <textarea
+          id="careers-snippet"
+          readOnly
+          rows={activeTab === 'widget' ? 4 : 12}
+          value={currentSnippet}
+          onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+          className="w-full select-all rounded-lg border border-grey-500/30 bg-surface-neutral p-4 font-mono text-xs leading-relaxed text-ink-primary focus:outline-none focus:ring-2 focus:ring-primary-main/40"
+        />
       </div>
 
       {/* 3-Step Setup Instructions */}
-      <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-5 space-y-3">
-        <h3 className="text-sm font-bold text-blue-900 flex items-center gap-2">
-          <InfoIcon className="h-4 w-4 text-blue-600 shrink-0" />
+      <div className="space-y-3 rounded-lg bg-info-lighter p-5">
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-info-darker">
+          <InfoIcon className="h-4 w-4 shrink-0 text-info-dark" />
           <span>How to install into your website's blank careers section</span>
         </h3>
-        <ol className="list-decimal list-inside space-y-2 text-xs sm:text-sm text-blue-950/80 leading-relaxed pl-1">
+        <ol className="list-inside list-decimal space-y-2 pl-1 text-sm leading-relaxed text-ink-secondary">
           <li>
-            <strong>Open your website editor:</strong> In WordPress, Webflow, Squarespace, Wix, or your custom HTML, navigate to your existing careers page.
+            <strong className="text-ink-primary">Open your website editor:</strong> In WordPress, Webflow, Squarespace, Wix, or your custom HTML, navigate to your existing careers page.
           </li>
           <li>
-            <strong>Add a Custom HTML/Code block:</strong> Locate the blank/empty section where you want jobs to appear and insert a custom HTML block.
+            <strong className="text-ink-primary">Add a Custom HTML/Code block:</strong> Locate the blank/empty section where you want jobs to appear and insert a custom HTML block.
           </li>
           <li>
-            <strong>Paste & Publish:</strong> Paste the copied snippet above into that block and publish your page. Live job openings and application forms will automatically appear inside that section!
+            <strong className="text-ink-primary">Paste & Publish:</strong> Paste the copied snippet above into that block and publish your page. Live job openings and application forms will automatically appear inside that section!
           </li>
         </ol>
       </div>
 
       {/* Feature Highlights */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-        <div className="rounded-xl border border-gray-200 bg-white p-4">
-          <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Real-Time Sync</div>
-          <p className="text-xs text-gray-600">Whenever HR publishes or closes a job in HRMS, your website updates immediately without touching code.</p>
-        </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-4">
-          <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Direct Pipeline Flow</div>
-          <p className="text-xs text-gray-600">Candidate applications and resume uploads flow directly into the Recruitment Pipeline under the Applied stage.</p>
-        </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-4">
-          <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Zero Style Conflicts</div>
-          <p className="text-xs text-gray-600">Styles are isolated to the container, preserving your company website's original navbar, fonts, and footer.</p>
-        </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {[
+          ['Real-Time Sync', 'Whenever HR publishes or closes a job in HRMS, your website updates immediately without touching code.'],
+          ['Direct Pipeline Flow', 'Candidate applications and resume uploads flow directly into the Recruitment Pipeline under the Applied stage.'],
+          ['Zero Style Conflicts', "Styles are isolated to the container, preserving your company website's original navbar, fonts, and footer."],
+        ].map(([title, text]) => (
+          <Card key={title} className="p-4">
+            <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-ink-secondary">{title}</div>
+            <p className="text-xs text-ink-secondary">{text}</p>
+          </Card>
+        ))}
       </div>
     </div>
   );
 }
-
-

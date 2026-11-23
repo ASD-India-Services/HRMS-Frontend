@@ -11,6 +11,15 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import { formatCurrency, formatDate } from '@/utils/formatters';
+import { Modal } from '@/components/ui/Modal';
+import { Button, IconButton } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Iconify } from '@/components/Iconify';
+import { Card } from '@/components/ui/Card';
 
 const RULES_ENDPOINT = '/api/v1/gratuity/rules/';
 const rulesCrud = createCrudHooks<Record<string, unknown>>({
@@ -81,103 +90,94 @@ function RuleFormModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">{title}</h2>
+    <Modal open onClose={onClose} labelledBy="gratuity-rule-modal-title" size="lg" closeOnEscape={false}>
+      <div className="p-6 min-h-0 flex-1 overflow-y-auto">
+        <h2 id="gratuity-rule-modal-title" className="mb-4 text-lg font-semibold text-ink-primary">{title}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Rule Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Rule Name *</label>
-            <input type="text" required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="e.g., India Standard Gratuity" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" />
+            <label className="block text-sm font-medium text-ink-primary mb-1">Rule Name *</label>
+            <Input type="text" required value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="e.g., India Standard Gratuity"/>
           </div>
 
           {/* Region */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Region *</label>
-            <select value={form.region} onChange={e => setForm(p => ({ ...p, region: e.target.value }))} className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
+            <label className="block text-sm font-medium text-ink-primary mb-1">Region *</label>
+            <Select value={form.region} onChange={e => setForm(p => ({ ...p, region: e.target.value }))}>
               <option value="india">India</option>
               <option value="uae">UAE</option>
               <option value="custom">Custom</option>
-            </select>
+            </Select>
           </div>
 
           {/* Salary Components */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Salary Components (comma-separated) *</label>
-            <input type="text" required value={form.salary_components} onChange={e => setForm(p => ({ ...p, salary_components: e.target.value }))} placeholder="Basic, DA" className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" />
-            <p className="mt-1 text-xs text-gray-400">These salary components will be summed to get the base salary for calculation</p>
+            <label className="block text-sm font-medium text-ink-primary mb-1">Salary Components (comma-separated) *</label>
+            <Input type="text" required value={form.salary_components} onChange={e => setForm(p => ({ ...p, salary_components: e.target.value }))} placeholder="Basic, DA"/>
+            <p className="mt-1 text-xs text-ink-disabled">These salary components will be summed to get the base salary for calculation</p>
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Describe this gratuity rule" rows={2} className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm" />
+            <label className="block text-sm font-medium text-ink-primary mb-1">Description</label>
+            <Textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Describe this gratuity rule" rows={2}/>
           </div>
 
           {/* Active */}
-          <label className="flex items-center gap-2 text-sm text-gray-700">
-            <input type="checkbox" checked={form.is_active} onChange={e => setForm(p => ({ ...p, is_active: e.target.checked }))} className="rounded border-gray-300" />
+          <label className="flex items-center gap-2 text-sm text-ink-primary">
+            <input type="checkbox" checked={form.is_active} onChange={e => setForm(p => ({ ...p, is_active: e.target.checked }))} className="rounded border-divider" />
             Active
           </label>
 
           {/* Slabs */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-medium text-gray-700">Slabs (Service Year Tiers)</h4>
-              <button type="button" onClick={addSlab} className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2.5 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100">
-                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                Add Slab
-              </button>
+              <h4 className="text-sm font-medium text-ink-primary">Slabs (Service Year Tiers)</h4>
+              <Button variant="soft" size="small" startIcon={<Iconify icon="plus" />} onClick={addSlab}>Add Slab
+              </Button>
             </div>
-            <p className="text-xs text-gray-400">Define multipliers for different service year ranges. Set "To Years" to 0 for unlimited (no upper cap).</p>
+            <p className="text-xs text-ink-disabled">Define multipliers for different service year ranges. Set "To Years" to 0 for unlimited (no upper cap).</p>
 
             {form.slabs.length === 0 && (
-              <p className="text-xs text-gray-400 italic">No slabs added yet. Add at least one slab.</p>
+              <p className="text-xs text-ink-disabled italic">No slabs added yet. Add at least one slab.</p>
             )}
 
             {form.slabs.map((slab, idx) => (
-              <div key={idx} className="flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 p-3">
+              <div key={idx} className="flex items-center gap-2 rounded-md border border-divider bg-surface-neutral p-3">
                 <div className="flex-1">
-                  <label className="block text-xs text-gray-500 mb-0.5">From Years</label>
-                  <input type="number" step="0.01" min="0" value={slab.from_years} onChange={e => updateSlab(idx, 'from_years', e.target.value)} className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm" />
+                  <label className="block text-xs text-ink-secondary mb-0.5">From Years</label>
+                  <Input type="number" step="0.01" min="0" value={slab.from_years} onChange={e => updateSlab(idx, 'from_years', e.target.value)}/>
                 </div>
                 <div className="flex-1">
-                  <label className="block text-xs text-gray-500 mb-0.5">To Years (0 = ∞)</label>
-                  <input type="number" step="0.01" min="0" value={slab.to_years} onChange={e => updateSlab(idx, 'to_years', e.target.value)} className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm" />
+                  <label className="block text-xs text-ink-secondary mb-0.5">To Years (0 = ∞)</label>
+                  <Input type="number" step="0.01" min="0" value={slab.to_years} onChange={e => updateSlab(idx, 'to_years', e.target.value)}/>
                 </div>
                 <div className="flex-1">
-                  <label className="block text-xs text-gray-500 mb-0.5">Multiplier</label>
-                  <input type="number" step="0.0001" min="0" value={slab.multiplier} onChange={e => updateSlab(idx, 'multiplier', e.target.value)} placeholder="e.g., 0.5769" className="w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm" />
+                  <label className="block text-xs text-ink-secondary mb-0.5">Multiplier</label>
+                  <Input type="number" step="0.0001" min="0" value={slab.multiplier} onChange={e => updateSlab(idx, 'multiplier', e.target.value)} placeholder="e.g., 0.5769"/>
                 </div>
-                <button type="button" onClick={() => removeSlab(idx)} className="mt-4 rounded p-1 text-red-500 hover:bg-red-50" aria-label="Remove slab">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                </button>
+                <IconButton icon="trash" size="small" color="error" onClick={() => removeSlab(idx)} aria-label="Remove slab" className="mt-4" />
               </div>
             ))}
 
             {/* Quick preset for India */}
             {form.slabs.length === 0 && form.region === 'india' && (
-              <button
-                type="button"
-                onClick={() => setForm(p => ({ ...p, slabs: [{ from_years: 0, to_years: 5, multiplier: 0 }, { from_years: 5, to_years: 0, multiplier: 0.5769 }] }))}
-                className="text-xs text-blue-600 hover:text-blue-800 underline"
-              >
+              <Button variant="text" size="small" onClick={() => setForm(p => ({ ...p, slabs: [{ from_years: 0, to_years: 5, multiplier: 0 }, { from_years: 5, to_years: 0, multiplier: 0.5769 }] }))}>
                 Use India standard preset (0-5 yrs: not eligible, 5+ yrs: 15/26 days per year)
-              </button>
+              </Button>
             )}
           </div>
 
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <button type="button" onClick={onClose} className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
-            <button type="submit" disabled={isLoading || !form.name.trim()} className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">
+            <Button variant="outlined" color="inherit" onClick={onClose}>Cancel</Button>
+            <Button type="submit" disabled={isLoading || !form.name.trim()}>
               {isLoading ? 'Saving...' : 'Save'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -298,71 +298,68 @@ export default function Gratuity() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Gratuity</h1>
-        <p className="mt-1 text-sm text-gray-600">Configure gratuity rules and calculate end-of-service benefits</p>
-      </div>
+    <PageContainer>
+      <PageHeader title="Gratuity" subtitle="Configure gratuity rules and calculate end-of-service benefits" />
 
       {/* Calculator */}
-      <div className="mb-8 rounded-lg border border-gray-200 bg-white p-6">
-        <h2 className="mb-2 text-lg font-semibold text-gray-900">Calculate Gratuity</h2>
-        <p className="mb-4 text-sm text-gray-500">Select an employee and rule to calculate their gratuity.</p>
+      <Card className="mb-8 p-6">
+        <h2 className="mb-2 text-lg font-semibold text-ink-primary">Calculate Gratuity</h2>
+        <p className="mb-4 text-sm text-ink-secondary">Select an employee and rule to calculate their gratuity.</p>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Employee</label>
-            <select value={selectedEmployee} onChange={e => { setSelectedEmployee(e.target.value); setCalcResult(null); }} className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
+            <label className="mb-1 block text-sm font-medium text-ink-primary">Employee</label>
+            <Select value={selectedEmployee} onChange={e => { setSelectedEmployee(e.target.value); setCalcResult(null); }}>
               <option value="">Select employee</option>
               {employeeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
+            </Select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Gratuity Rule</label>
-            <select value={selectedRule} onChange={e => { setSelectedRule(e.target.value); setCalcResult(null); }} className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm">
+            <label className="mb-1 block text-sm font-medium text-ink-primary">Gratuity Rule</label>
+            <Select value={selectedRule} onChange={e => { setSelectedRule(e.target.value); setCalcResult(null); }}>
               <option value="">Select rule</option>
               {ruleOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
+            </Select>
           </div>
           <div className="flex items-end">
-            <button onClick={handleCalculate} disabled={calculating || !selectedEmployee || !selectedRule} className="w-full rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50">
+            <Button type="button" onClick={handleCalculate} disabled={calculating || !selectedEmployee || !selectedRule} className="w-full">
               {calculating ? 'Calculating...' : 'Calculate'}
-            </button>
+            </Button>
           </div>
         </div>
 
-        {calcError && <div className="mt-4 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">{calcError}</div>}
+        {calcError && <div className="mt-4 rounded-md bg-error-lighter border border-error-light p-3 text-sm text-error-dark">{calcError}</div>}
 
         {calcResult && (
-          <div className="mt-6 rounded-lg border border-green-200 bg-green-50 p-5">
-            <h3 className="text-base font-semibold text-green-900 mb-3">Result</h3>
+          <div className="mt-6 rounded-lg border border-success-light bg-success-lighter p-5">
+            <h3 className="text-base font-semibold text-success-darker mb-3">Result</h3>
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4 text-sm">
-              <div><p className="text-xs text-gray-500">Employee</p><p className="font-medium">{calcResult.employee_name}</p></div>
-              <div><p className="text-xs text-gray-500">Joined</p><p className="font-medium">{calcResult.date_of_joining ? formatDate(calcResult.date_of_joining) : '—'}</p></div>
-              <div><p className="text-xs text-gray-500">Years of Service</p><p className="font-medium">{calcResult.years_of_service} yrs</p></div>
-              <div><p className="text-xs text-gray-500">Base Salary</p><p className="font-medium">{formatCurrency(parseFloat(calcResult.base_salary))}</p></div>
-              <div><p className="text-xs text-gray-500">Components</p><p className="font-medium">{calcResult.salary_components_used.join(', ')}</p></div>
-              <div><p className="text-xs text-gray-500">Multiplier</p><p className="font-medium">×{calcResult.applicable_multiplier}</p></div>
-              <div><p className="text-xs text-gray-500">Slab Range</p><p className="font-medium">{calcResult.slab_from_years}–{parseFloat(calcResult.slab_to_years) === 0 ? '∞' : calcResult.slab_to_years} yrs</p></div>
-              <div><p className="text-xs text-gray-500">Rule</p><p className="font-medium">{calcResult.rule_name}</p></div>
+              <div><p className="text-xs text-ink-secondary">Employee</p><p className="font-medium">{calcResult.employee_name}</p></div>
+              <div><p className="text-xs text-ink-secondary">Joined</p><p className="font-medium">{calcResult.date_of_joining ? formatDate(calcResult.date_of_joining) : '—'}</p></div>
+              <div><p className="text-xs text-ink-secondary">Years of Service</p><p className="font-medium">{calcResult.years_of_service} yrs</p></div>
+              <div><p className="text-xs text-ink-secondary">Base Salary</p><p className="font-medium">{formatCurrency(parseFloat(calcResult.base_salary))}</p></div>
+              <div><p className="text-xs text-ink-secondary">Components</p><p className="font-medium">{calcResult.salary_components_used.join(', ')}</p></div>
+              <div><p className="text-xs text-ink-secondary">Multiplier</p><p className="font-medium">×{calcResult.applicable_multiplier}</p></div>
+              <div><p className="text-xs text-ink-secondary">Slab Range</p><p className="font-medium">{calcResult.slab_from_years}–{parseFloat(calcResult.slab_to_years) === 0 ? '∞' : calcResult.slab_to_years} yrs</p></div>
+              <div><p className="text-xs text-ink-secondary">Rule</p><p className="font-medium">{calcResult.rule_name}</p></div>
             </div>
-            <div className="mt-4 rounded-md bg-green-100 p-4 text-center">
-              <p className="text-sm text-green-700">Gratuity Payable</p>
-              <p className="text-2xl font-bold text-green-900">{formatCurrency(parseFloat(calcResult.gratuity_amount))}</p>
-              <p className="mt-1 text-xs text-green-600">= {formatCurrency(parseFloat(calcResult.base_salary))} × {calcResult.applicable_multiplier} × {calcResult.years_of_service}</p>
+            <div className="mt-4 rounded-md bg-success-lighter p-4 text-center">
+              <p className="text-sm text-success-dark">Gratuity Payable</p>
+              <p className="text-2xl font-bold text-success-darker">{formatCurrency(parseFloat(calcResult.gratuity_amount))}</p>
+              <p className="mt-1 text-xs text-success-main">= {formatCurrency(parseFloat(calcResult.base_salary))} × {calcResult.applicable_multiplier} × {calcResult.years_of_service}</p>
             </div>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Rules Table */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <Card className="p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Gratuity Rules</h2>
+          <h2 className="text-lg font-semibold text-ink-primary">Gratuity Rules</h2>
           <CreateButton permission="gratuity.create" label="Create Rule" onClick={() => setShowCreate(true)} />
         </div>
         <DataTable queryResult={rulesQuery} columns={columnsWithActions} />
         {rulesQuery.data && rulesQuery.data.count > 0 && <Pagination page={page} pageSize={pageSize} totalCount={rulesQuery.data.count} onPageChange={setPage} onPageSizeChange={setPageSize} />}
-      </div>
+      </Card>
 
       {/* Create Modal */}
       <RuleFormModal isOpen={showCreate} onClose={() => setShowCreate(false)} title="Create Gratuity Rule" initialValues={emptyForm} onSubmit={handleCreate} isLoading={createMutation.isPending} />
@@ -372,6 +369,6 @@ export default function Gratuity() {
 
       {/* Delete */}
       <ConfirmDialog isOpen={!!deleteId} onClose={() => setDeleteId(null)} onConfirm={() => { deleteMutation.mutate(deleteId!, { onSuccess: () => setDeleteId(null) }); }} title="Delete Gratuity Rule" message="Are you sure? This will delete the rule and all its slabs." confirmLabel="Delete" variant="destructive" isLoading={deleteMutation.isPending} />
-    </div>
+    </PageContainer>
   );
 }

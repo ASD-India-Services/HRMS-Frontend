@@ -12,6 +12,15 @@ import {
   useDeleteBonusPoint,
   type EmployeeBonusPoint,
 } from '@/hooks/useEmployeeBonusPoints';
+import { Modal } from '@/components/ui/Modal';
+import { Button, IconButton } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card } from '@/components/ui/Card';
+import { StateView } from '@/components/ui/StateView';
+import { Iconify } from '@/components/Iconify';
 
 type GroupByOption =
   | 'Select'
@@ -267,56 +276,43 @@ export default function EmployeeBonusPoints() {
   const activeGroupsCount = groupByField === 'Select' ? 0 : 1;
 
   return (
-    <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-4">
-      {/* ── Top Bar matching Screenshot 1 & 3 ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
-          Employee Bonus Point
-        </h1>
-
-        <div className="flex items-center gap-2 self-end sm:self-auto">
+    <PageContainer>
+      <PageHeader title="Employee Bonus Point" actions={
+        <>
+<div className="flex items-center gap-2 self-end sm:self-auto">
           {/* Search Input matching Screenshot 1 */}
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-gray-400">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <input
+            <Iconify icon="search" width={16} className="pointer-events-none absolute left-2.5 top-2.5 text-ink-disabled" />
+            <Input
               type="text"
               placeholder="Search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 pr-3 py-1.5 text-xs border border-gray-300 rounded-sm bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 w-44 sm:w-56"
+              className="pl-8 pr-3 w-44 sm:w-56"
             />
           </div>
 
           {/* Group By(1) Popover Trigger Button */}
           <div className="relative" ref={groupByRef}>
-            <button
-              type="button"
+            <Button variant="outlined" color="inherit" size="small"
+              startIcon={<Iconify icon="chart" />}
               onClick={() => setIsGroupByOpen((prev) => !prev)}
-              className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded-sm bg-white hover:bg-gray-50 text-xs font-normal text-gray-700 shadow-2xs transition-colors cursor-pointer"
             >
-              <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              <span>Group By({activeGroupsCount})</span>
-            </button>
+              Group By({activeGroupsCount})
+            </Button>
 
             {/* Popover matching Screenshot 3 */}
             {isGroupByOpen && (
-              <div className="absolute right-0 top-full mt-1 w-64 bg-white border border-gray-200 rounded-sm shadow-xl z-50 p-3 animate-in fade-in zoom-in-95 duration-100">
-                <div className="text-xs font-bold text-gray-800 mb-2">Group By</div>
+              <div className="absolute right-0 top-full mt-1 w-64 bg-surface-paper border border-divider rounded-sm shadow-xl z-50 p-3 animate-in fade-in zoom-in-95 duration-100">
+                <div className="text-xs font-bold text-ink-primary mb-2">Group By</div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-medium text-gray-700 w-12">Field</span>
-                  <select
+                  <span className="text-xs font-medium text-ink-primary w-12">Field</span>
+                  <Select
                     value={groupByField}
                     onChange={(e) => {
                       setGroupByField(e.target.value as GroupByOption);
                       setIsGroupByOpen(false);
                     }}
-                    className="w-full text-xs border border-gray-300 rounded-sm px-2 py-1.5 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="Select">Select</option>
                     <option value="Employee">Employee</option>
@@ -325,7 +321,7 @@ export default function EmployeeBonusPoints() {
                     <option value="Job Position">Job Position</option>
                     <option value="Employement Type">Employement Type</option>
                     <option value="Company">Company</option>
-                  </select>
+                  </Select>
                 </div>
               </div>
             )}
@@ -333,129 +329,98 @@ export default function EmployeeBonusPoints() {
 
           {/* + Create Button (Blue) */}
           {canCreate && (
-            <button
-              type="button"
+            <Button size="small"
+              startIcon={<Iconify icon="plus" />}
               onClick={handleOpenCreate}
-              className="flex items-center gap-1.5 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-sm shadow-2xs transition-colors cursor-pointer"
             >
-              <span>+ Create</span>
-            </button>
+              Create
+            </Button>
           )}
         </div>
-      </div>
+        </>
+      } />
 
       {/* ── Active Filter Bar ── */}
       {groupByField !== 'Select' && (
         <div className="flex items-center justify-end gap-2 pt-1 pb-1">
           {/* White Filters: Badge */}
-          <span className="bg-white border border-gray-300 text-gray-700 text-[11px] font-bold px-3 py-1 rounded-full shadow-2xs">
+          <span className="rounded-full bg-surface-neutral px-3 py-1 text-[11px] font-bold text-ink-primary">
             Filters:
           </span>
 
-          {/* Active Field Chip with ⓧ */}
-          <div className="bg-white border border-gray-300 text-gray-800 text-xs px-2.5 py-0.5 rounded-full flex items-center gap-1.5 shadow-2xs">
-            <span className="text-gray-900 font-normal">Field : {groupByField}</span>
-            <button
-              type="button"
-              onClick={() => setGroupByField('Select')}
-              className="text-gray-400 hover:text-gray-600 font-bold text-xs ml-0.5 transition-colors cursor-pointer"
-              title="Remove filter"
-            >
-              ⓧ
-            </button>
-          </div>
+          {/* Active Field Chip */}
+          <span className="inline-flex items-center gap-1 rounded-full bg-surface-neutral py-0.5 pl-3 pr-1 text-xs text-ink-primary">
+            Field : {groupByField}
+            <IconButton icon="close" size="small" onClick={() => setGroupByField('Select')} aria-label="Remove filter" />
+          </span>
 
           {/* Save Button (White) */}
-          <button
-            type="button"
+          <Button variant="outlined" color="inherit" size="small"
+            startIcon={<Iconify icon="download" />}
             onClick={() => {
               setSavedNotification('View preferences saved.');
               setTimeout(() => setSavedNotification(''), 3000);
             }}
-            className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 text-xs px-3 py-1 rounded-sm flex items-center gap-1 font-medium transition-colors shadow-2xs cursor-pointer"
           >
-            <svg className="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-            </svg>
-            <span>Save</span>
-          </button>
+            Save
+          </Button>
 
-          {/* Clear Button (White ✕) */}
-          <button
-            type="button"
-            onClick={() => setGroupByField('Select')}
-            className="bg-white hover:bg-gray-50 text-gray-500 hover:text-gray-700 border border-gray-300 text-xs px-2.5 py-1 rounded-sm font-bold transition-colors shadow-2xs cursor-pointer"
-            title="Clear filters"
-          >
-            ✕
-          </button>
+          {/* Clear Button */}
+          <IconButton icon="close" size="small" onClick={() => setGroupByField('Select')} aria-label="Clear filters" />
         </div>
       )}
 
       {savedNotification && (
-        <div className="text-right text-xs text-emerald-600 font-medium">
+        <div className="text-right text-xs text-success-main font-medium">
           {savedNotification}
         </div>
       )}
 
       {/* ── Main Content Area: Empty State or Grouped / Flat View ── */}
       {isLoading ? (
-        <div className="bg-white border border-gray-200 rounded-sm p-16 text-center shadow-xs">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
-          <p className="text-xs text-gray-500">Loading employee bonus points...</p>
-        </div>
+        <Card className="p-16 text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-main mb-2"></div>
+          <p className="text-xs text-ink-secondary">Loading employee bonus points...</p>
+        </Card>
       ) : filteredBonusPoints.length === 0 ? (
         /* Empty State exactly matching Screenshot 1 */
-        <div className="bg-white border border-gray-200 rounded-sm py-28 px-4 flex flex-col items-center justify-center text-center shadow-xs">
-          <svg
-            className="w-16 h-16 text-slate-400 stroke-1 mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <circle cx="11" cy="11" r="7" strokeWidth="1.5" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M21 21l-5-5" />
-          </svg>
-
-          <h2 className="text-xl font-bold text-gray-900 mb-1 tracking-tight">
-            No Records found
-          </h2>
-          <p className="text-xs text-gray-500 font-normal">
-            No records found.
-          </p>
-
-          {canCreate && (
-            <button
-              onClick={handleOpenCreate}
-              className="mt-4 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-sm shadow-2xs transition-colors"
-            >
-              + Award First Bonus Point
-            </button>
-          )}
-        </div>
+        <Card>
+          <StateView
+            icon="search"
+            title="No Records found"
+            description="No records found."
+            action={
+              canCreate && (
+                <Button size="small" startIcon={<Iconify icon="plus" />} onClick={handleOpenCreate}>
+                  Award First Bonus Point
+                </Button>
+              )
+            }
+          />
+        </Card>
       ) : groupByField !== 'Select' && groupedData ? (
         /* Grouped View */
         <div className="space-y-4">
           {groupedData.map((group) => (
-            <div
+            <Card
               key={group.groupKey}
-              className="bg-white border border-gray-200 rounded-sm shadow-xs overflow-hidden"
+              className="overflow-hidden"
             >
               {/* Group Header */}
-              <div className="px-4 py-3 bg-gray-50/75 border-b border-gray-200 flex flex-wrap items-center justify-between gap-2">
+              <div className="px-4 py-3 bg-surface-neutral/75 border-b border-divider flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm text-gray-900">{group.groupTitle}</span>
+                  <span className="font-bold text-sm text-ink-primary">{group.groupTitle}</span>
                   {group.subTitle && (
-                    <span className="text-xs text-gray-500 font-normal">({group.subTitle})</span>
+                    <span className="text-xs text-ink-secondary font-normal">({group.subTitle})</span>
                   )}
-                  <span className="text-[11px] text-gray-400 font-medium ml-1">
+                  <span className="text-[11px] text-ink-disabled font-medium ml-1">
                     • {group.items.length} {group.items.length === 1 ? 'record' : 'records'}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                    ⭐ Total: {group.totalPoints} pts
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-warning-lighter text-warning-dark border border-warning-light">
+                    <Iconify icon="bonusPoints" width={14} /> Total: {group.totalPoints} pts
                   </span>
                 </div>
               </div>
@@ -463,7 +428,7 @@ export default function EmployeeBonusPoints() {
               {/* Group Table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-gray-100/50 border-b border-gray-200 text-gray-600 uppercase text-[10px] font-semibold tracking-wider">
+                  <thead className="bg-surface-neutral/50 border-b border-divider text-ink-secondary uppercase text-[10px] font-semibold tracking-wider">
                     <tr>
                       {groupByField !== 'Employee' && <th className="py-2.5 px-4">Employee</th>}
                       <th className="py-2.5 px-4">Bonus Points</th>
@@ -473,55 +438,37 @@ export default function EmployeeBonusPoints() {
                       {(canEdit || canDelete) && <th className="py-2.5 px-4 text-right">Actions</th>}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 bg-white">
+                  <tbody className="divide-y divide-divider bg-surface-paper">
                     {group.items.map((item) => (
-                      <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                      <tr key={item.id} className="hover:bg-surface-neutral transition-colors">
                         {groupByField !== 'Employee' && (
                           <td className="py-2.5 px-4">
-                            <div className="font-semibold text-gray-900">{item.employee_name}</div>
-                            <div className="text-[11px] text-gray-400">{item.employee_code}</div>
+                            <div className="font-semibold text-ink-primary">{item.employee_name}</div>
+                            <div className="text-[11px] text-ink-disabled">{item.employee_code}</div>
                           </td>
                         )}
                         <td className="py-2.5 px-4">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-primary-lighter text-primary-dark border border-primary-light">
                             +{item.points} pts
                           </span>
                         </td>
-                        <td className="py-2.5 px-4 text-gray-800 font-medium max-w-xs truncate">
+                        <td className="py-2.5 px-4 text-ink-primary font-medium max-w-xs truncate">
                           {item.based_on}
                         </td>
-                        <td className="py-2.5 px-4 text-gray-600">
+                        <td className="py-2.5 px-4 text-ink-secondary">
                           {item.created_by_name || 'System / Admin'}
                         </td>
-                        <td className="py-2.5 px-4 text-gray-500 whitespace-nowrap">
+                        <td className="py-2.5 px-4 text-ink-secondary whitespace-nowrap">
                           {formatDate(item.created_at)}
                         </td>
                         {(canEdit || canDelete) && (
                           <td className="py-2.5 px-4 text-right whitespace-nowrap">
                             <div className="flex items-center justify-end gap-1.5">
                               {canEdit && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleOpenEdit(item)}
-                                  className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
-                                  title="Edit Bonus Point"
-                                >
-                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                  </svg>
-                                </button>
+                                <IconButton icon="pencil" size="small" onClick={() => handleOpenEdit(item)} aria-label="Edit Bonus Point" />
                               )}
                               {canDelete && (
-                                <button
-                                  type="button"
-                                  onClick={() => setDeleteConfirmId(item.id)}
-                                  className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                                  title="Delete Bonus Point"
-                                >
-                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                  </svg>
-                                </button>
+                                <IconButton icon="trash" size="small" color="error" onClick={() => setDeleteConfirmId(item.id)} aria-label="Delete Bonus Point" />
                               )}
                             </div>
                           </td>
@@ -531,15 +478,15 @@ export default function EmployeeBonusPoints() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       ) : (
         /* Flat List View (when Group By is Select) */
-        <div className="bg-white border border-gray-200 rounded-sm shadow-xs overflow-hidden">
+        <Card className="overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 border-b border-gray-200 text-gray-600 uppercase text-[10px] font-semibold tracking-wider">
+              <thead className="bg-surface-neutral border-b border-divider text-ink-secondary uppercase text-[10px] font-semibold tracking-wider">
                 <tr>
                   <th className="py-2.5 px-4">Employee</th>
                   <th className="py-2.5 px-4">Department &amp; Role</th>
@@ -550,57 +497,39 @@ export default function EmployeeBonusPoints() {
                   {(canEdit || canDelete) && <th className="py-2.5 px-4 text-right">Actions</th>}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 bg-white">
+              <tbody className="divide-y divide-divider bg-surface-paper">
                 {filteredBonusPoints.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={item.id} className="hover:bg-surface-neutral transition-colors">
                     <td className="py-2.5 px-4">
-                      <div className="font-semibold text-gray-900">{item.employee_name}</div>
-                      <div className="text-[11px] text-gray-400">{item.employee_code}</div>
+                      <div className="font-semibold text-ink-primary">{item.employee_name}</div>
+                      <div className="text-[11px] text-ink-disabled">{item.employee_code}</div>
                     </td>
                     <td className="py-2.5 px-4">
-                      <div className="text-gray-800 font-medium">{item.designation_name || '—'}</div>
-                      <div className="text-[11px] text-gray-500">{item.department_name || '—'}</div>
+                      <div className="text-ink-primary font-medium">{item.designation_name || '—'}</div>
+                      <div className="text-[11px] text-ink-secondary">{item.department_name || '—'}</div>
                     </td>
                     <td className="py-2.5 px-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-bold bg-primary-lighter text-primary-dark border border-primary-light">
                         +{item.points} pts
                       </span>
                     </td>
-                    <td className="py-2.5 px-4 text-gray-800 font-medium max-w-sm truncate">
+                    <td className="py-2.5 px-4 text-ink-primary font-medium max-w-sm truncate">
                       {item.based_on}
                     </td>
-                    <td className="py-2.5 px-4 text-gray-600">
+                    <td className="py-2.5 px-4 text-ink-secondary">
                       {item.created_by_name || 'System / Admin'}
                     </td>
-                    <td className="py-2.5 px-4 text-gray-500 whitespace-nowrap">
+                    <td className="py-2.5 px-4 text-ink-secondary whitespace-nowrap">
                       {formatDate(item.created_at)}
                     </td>
                     {(canEdit || canDelete) && (
                       <td className="py-2.5 px-4 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
                           {canEdit && (
-                            <button
-                              type="button"
-                              onClick={() => handleOpenEdit(item)}
-                              className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
-                              title="Edit"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                              </svg>
-                            </button>
+                            <IconButton icon="pencil" size="small" onClick={() => handleOpenEdit(item)} aria-label="Edit" />
                           )}
                           {canDelete && (
-                            <button
-                              type="button"
-                              onClick={() => setDeleteConfirmId(item.id)}
-                              className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                              title="Delete"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                            </button>
+                            <IconButton icon="trash" size="small" color="error" onClick={() => setDeleteConfirmId(item.id)} aria-label="Delete" />
                           )}
                         </div>
                       </td>
@@ -610,34 +539,31 @@ export default function EmployeeBonusPoints() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* ── Create / Edit Modal matching Screenshot 2 ── */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-sm border border-gray-200 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h3 className="text-base font-bold text-gray-900 tracking-tight">
-                {editingRecord ? 'Edit Employee Bonus Point' : 'Create Employee Bonus Point'}
-              </h3>
-              <button
-                type="button"
-                onClick={() => {
+        <Modal open onClose={() => {
                   setIsModalOpen(false);
                   resetForm();
-                }}
-                className="text-gray-400 hover:text-gray-600 text-lg font-semibold leading-none cursor-pointer"
-              >
-                ✕
-              </button>
+                }} labelledBy="EmployeeBonusPoints-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-divider">
+              <h3 id="EmployeeBonusPoints-modal-title-1" className="text-base font-bold text-ink-primary tracking-tight">
+                {editingRecord ? 'Edit Employee Bonus Point' : 'Create Employee Bonus Point'}
+              </h3>
+              <IconButton icon="close" size="small" onClick={() => {
+                  setIsModalOpen(false);
+                  resetForm();
+                }} aria-label="Close" />
             </div>
 
             {/* Modal Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {formError && (
-                <div className="p-2.5 rounded bg-red-50 border border-red-200 text-xs text-red-700">
+                <div className="p-2.5 rounded bg-error-lighter border border-error-light text-xs text-error-dark">
                   {formError}
                 </div>
               )}
@@ -645,13 +571,12 @@ export default function EmployeeBonusPoints() {
               {/* Row 1: Employee and Bonus point * */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-800 mb-1.5">
+                  <label className="block text-xs font-semibold text-ink-primary mb-1.5">
                     Employee
                   </label>
-                  <select
+                  <Select
                     value={selectedEmployeeId}
                     onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                    className="w-full text-xs border border-gray-300 rounded-sm p-2 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                   >
                     <option value="">Select Employee</option>
                     {employees.map((emp: any) => {
@@ -663,19 +588,18 @@ export default function EmployeeBonusPoints() {
                         </option>
                       );
                     })}
-                  </select>
+                  </Select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-800 mb-1.5">
+                  <label className="block text-xs font-semibold text-ink-primary mb-1.5">
                     Bonus point *
                   </label>
-                  <input
+                  <Input
                     type="number"
                     min="0"
                     value={points}
                     onChange={(e) => setPoints(parseInt(e.target.value, 10) || 0)}
-                    className="w-full text-xs border border-gray-300 rounded-sm p-2 bg-white text-gray-800 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                     required
                   />
                 </div>
@@ -683,32 +607,30 @@ export default function EmployeeBonusPoints() {
 
               {/* Row 2: Based on * */}
               <div>
-                <label className="block text-xs font-semibold text-gray-800 mb-1.5">
+                <label className="block text-xs font-semibold text-ink-primary mb-1.5">
                   Based on *
                 </label>
-                <input
+                <Input
                   type="text"
                   placeholder="Based On"
                   value={basedOn}
                   onChange={(e) => setBasedOn(e.target.value)}
-                  className="w-full text-xs border border-gray-300 rounded-sm p-2 bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-2xs"
                   required
                 />
               </div>
 
               {/* Modal Footer with Blue Save Button matching Screenshot 2 */}
               <div className="pt-4 flex items-center justify-end">
-                <button
+                <Button size="small"
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-sm shadow-2xs transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   {createMutation.isPending || updateMutation.isPending ? 'Saving...' : 'Save'}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* ── Delete Confirmation Dialog ── */}
@@ -722,7 +644,7 @@ export default function EmployeeBonusPoints() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }
 

@@ -14,11 +14,16 @@
  */
 
 import { useState, useMemo, useCallback } from 'react';
-import type { ColumnDef, DataTableProps } from '@/types/datatable';
+import type { DataTableProps } from '@/types/datatable';
 import { ColumnVisibilityMenu } from './ColumnVisibilityMenu';
 import { BulkActionToolbar } from './BulkActionToolbar';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
+import { Iconify } from '@/components/Iconify';
+import { Button, IconButton } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Card } from '@/components/ui/Card';
 import {
   formatDate,
   formatDateTime,
@@ -45,7 +50,6 @@ function getNestedValue<T>(row: T, key: string): unknown {
   }
   return value;
 }
-
 /**
  * Automatically format cell values when no custom col.render is provided,
  * detecting ISO date / datetime strings according to HR Settings.
@@ -229,49 +233,44 @@ export function DataTable<T extends Record<string, unknown>>({
   // Sort control bar rendered above the table
   const renderToolbar = () => {
     return (
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+      <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 px-4 py-3">
         {/* Left side: Search + Sort */}
         <div className="flex items-center gap-3">
           {/* Search input */}
           <div className="relative">
-            <svg
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-            </svg>
-            <input
+            <Iconify
+              icon="search"
+              width={16}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-disabled"
+            />
+            <Input
               type="text"
+              inputSize="small"
               value={tableSearch}
               onChange={(e) => setTableSearch(e.target.value)}
               placeholder="Search in table..."
-              className="w-48 rounded-md border border-gray-300 bg-white pl-8 pr-3 py-1 text-xs text-gray-700 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-56 pl-9 pr-9"
             />
             {tableSearch && (
-              <button
-                type="button"
+              <IconButton
+                icon="close"
+                size="small"
                 onClick={() => setTableSearch('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-1 top-1/2 -translate-y-1/2"
                 aria-label="Clear search"
-              >
-                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-              </button>
+              />
             )}
           </div>
-
           {/* Sort controls */}
           {sortableColumns.length > 0 && (
             <div className="flex items-center gap-2">
-              <label className="text-xs text-gray-500 font-medium">Sort:</label>
-              <select
+              <label className="text-xs text-ink-secondary font-medium">Sort:</label>
+              <Select
+                selectSize="small"
                 value={sort.key}
                 onChange={(e) => handleSortColumnChange(e.target.value)}
-                className="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                aria-label="Sort by"
+                className="w-40"
               >
                 <option value="">None</option>
                 {sortableColumns.map((col) => (
@@ -279,30 +278,18 @@ export function DataTable<T extends Record<string, unknown>>({
                     {col.header}
                   </option>
                 ))}
-              </select>
+              </Select>
               {sort.key && (
-                <button
-                  type="button"
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  size="small"
+                  startIcon={<Iconify icon={sort.direction === 'asc' ? 'chevron-up' : 'chevron-down'} />}
                   onClick={handleSortDirectionToggle}
-                  className="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   aria-label={sort.direction === 'asc' ? 'Sort ascending' : 'Sort descending'}
                 >
-                  {sort.direction === 'asc' ? (
-                    <>
-                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                      </svg>
-                      A→Z
-                    </>
-                  ) : (
-                    <>
-                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                      </svg>
-                      Z→A
-                    </>
-                  )}
-                </button>
+                  {sort.direction === 'asc' ? 'A→Z' : 'Z→A'}
+                </Button>
               )}
             </div>
           )}
@@ -314,7 +301,7 @@ export function DataTable<T extends Record<string, unknown>>({
           hiddenColumns={hiddenColumns}
           onToggle={handleColumnVisibilityChange}
         />
-      </div>
+      </Card>
     );
   };
 
@@ -328,7 +315,7 @@ export function DataTable<T extends Record<string, unknown>>({
           if (el) el.indeterminate = someSelected;
         }}
         onChange={(e) => handleSelectAll(e.target.checked)}
-        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+        className="h-4 w-4 rounded border-grey-500/30 text-primary-main focus:ring-primary-main"
         aria-label="Select all rows"
       />
     </th>
@@ -344,7 +331,7 @@ export function DataTable<T extends Record<string, unknown>>({
           handleSelectRow(rowId, e.target.checked);
         }}
         onClick={(e) => e.stopPropagation()}
-        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+        className="h-4 w-4 rounded border-grey-500/30 text-primary-main focus:ring-primary-main"
         aria-label={`Select row ${rowId}`}
       />
     </td>
@@ -374,11 +361,13 @@ export function DataTable<T extends Record<string, unknown>>({
   if (rawData.length === 0) {
     return (
       <div className="w-full">
-        <EmptyState
-          module=""
-          title="No records found"
-          description="Try adjusting your filters or adding new data."
-        />
+        <Card>
+          <EmptyState
+            module=""
+            title="No records found"
+            description="Try adjusting your filters or adding new data."
+          />
+        </Card>
       </div>
     );
   }
@@ -388,11 +377,13 @@ export function DataTable<T extends Record<string, unknown>>({
     return (
       <div className="w-full">
         {renderToolbar()}
-        <EmptyState
-          module=""
-          title="No results found"
-          description="No results match your search. Try a different term."
-        />
+        <Card>
+          <EmptyState
+            module=""
+            title="No results found"
+            description="No results match your search. Try a different term."
+          />
+        </Card>
       </div>
     );
   }
@@ -410,22 +401,22 @@ export function DataTable<T extends Record<string, unknown>>({
         />
       )}
 
-      <div className="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+      <Card className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-divider">
+          <thead className="bg-surface-neutral">
             <tr>
               {selectable && renderCheckboxHeader()}
               {visibleColumns.map((col) => (
                 <th
                   key={String(col.key)}
-                  className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-4 py-3 text-left text-sm font-semibold text-ink-secondary"
                 >
                   {col.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-surface-paper divide-y divide-divider">
             {data.map((row, rowIdx) => {
               const rowId = (row as Record<string, unknown>).id as string;
               const isSelected = selectable && rowId && selectedIds.includes(rowId);
@@ -434,10 +425,10 @@ export function DataTable<T extends Record<string, unknown>>({
                   key={rowId ?? rowIdx}
                   className={`${
                     isSelected
-                      ? 'bg-indigo-50'
+                      ? 'bg-primary-lighter'
                       : onRowClick
-                        ? 'cursor-pointer hover:bg-indigo-50 transition-colors'
-                        : 'hover:bg-gray-50 transition-colors'
+                        ? 'cursor-pointer hover:bg-primary-main/10 transition-colors'
+                        : 'hover:bg-surface-neutral transition-colors'
                   } ${isSelected && onRowClick ? 'cursor-pointer' : ''}`}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                 >
@@ -448,7 +439,7 @@ export function DataTable<T extends Record<string, unknown>>({
                     return (
                       <td
                         key={String(col.key)}
-                        className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap"
+                        className="px-4 py-3 text-sm text-ink-primary whitespace-nowrap"
                       >
                         {rendered}
                       </td>
@@ -459,7 +450,7 @@ export function DataTable<T extends Record<string, unknown>>({
             })}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }

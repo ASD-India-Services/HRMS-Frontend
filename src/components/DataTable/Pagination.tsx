@@ -11,6 +11,9 @@
  */
 
 import { useMemo } from 'react';
+import { Button } from '@/components/ui/Button';
+import { Iconify } from '@/components/Iconify';
+import { Select } from '@/components/ui/Select';
 
 export interface PaginationProps {
   /** Current page number (1-based) */
@@ -82,9 +85,9 @@ export function Pagination({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-gray-200 bg-white">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-divider bg-surface-paper">
       {/* Results summary */}
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-ink-secondary">
         {totalCount === 0 ? (
           <span>No results</span>
         ) : (
@@ -100,99 +103,77 @@ export function Pagination({
       <div className="flex items-center gap-4">
         {/* Page size selector */}
         <div className="flex items-center gap-2">
-          <label htmlFor="page-size-select" className="text-sm text-gray-600">
+          <label htmlFor="page-size-select" className="text-sm text-ink-secondary">
             Rows per page:
           </label>
-          <select
+          <Select
             id="page-size-select"
+            selectSize="small"
             value={pageSize}
             onChange={handlePageSizeChange}
-            className="rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-20"
           >
             {computedPageSizeOptions.map((size) => (
               <option key={size} value={size}>
                 {size}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {/* Page navigation */}
         <nav className="flex items-center gap-1" aria-label="Pagination">
           {/* Previous button */}
-          <button
+          <Button
+            variant="text"
+            color="inherit"
+            size="small"
+            startIcon={<Iconify icon="arrow-left" />}
             onClick={() => onPageChange(page - 1)}
             disabled={isFirstPage}
             aria-label="Previous page"
-            className={`inline-flex items-center rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
-              isFirstPage
-                ? 'cursor-not-allowed text-gray-300'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
           >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-            </svg>
-            <span className="sr-only sm:not-sr-only sm:ml-1">Prev</span>
-          </button>
+            <span className="sr-only sm:not-sr-only">Prev</span>
+          </Button>
 
           {/* Page number buttons */}
           {pageNumbers.map((pageNum, idx) =>
             pageNum === 'ellipsis' ? (
               <span
                 key={`ellipsis-${idx}`}
-                className="px-2 py-1.5 text-sm text-gray-500"
+                className="px-2 py-1.5 text-sm text-ink-secondary"
                 aria-hidden="true"
               >
                 …
               </span>
             ) : (
-              <button
+              <Button
                 key={pageNum}
+                variant={pageNum === page ? 'contained' : 'text'}
+                color={pageNum === page ? 'primary' : 'inherit'}
+                size="small"
                 onClick={() => onPageChange(pageNum)}
                 aria-label={`Page ${pageNum}`}
                 aria-current={pageNum === page ? 'page' : undefined}
-                className={`inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors min-w-[2rem] ${
-                  pageNum === page
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
+                className="min-w-[2rem]"
               >
                 {pageNum}
-              </button>
+              </Button>
             )
           )}
 
           {/* Next button */}
-          <button
+          <Button
+            variant="text"
+            color="inherit"
+            size="small"
+            endIcon={<Iconify icon="arrow-right" />}
             onClick={() => onPageChange(page + 1)}
             disabled={isLastPage}
             aria-label="Next page"
-            className={`inline-flex items-center rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
-              isLastPage
-                ? 'cursor-not-allowed text-gray-300'
-                : 'text-gray-700 hover:bg-gray-100'
-            }`}
           >
-            <span className="sr-only sm:not-sr-only sm:mr-1">Next</span>
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-            </svg>
-          </button>
+            <span className="sr-only sm:not-sr-only">Next</span>
+          </Button>
         </nav>
       </div>
     </div>

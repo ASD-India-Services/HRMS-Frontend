@@ -12,6 +12,8 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import api from '@/lib/api';
 import type { ColumnDef } from '@/types/datatable';
 import type { FieldConfig } from '@/components/CrudModal';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
 
 const deptCrud = createCrudHooks<Record<string, unknown>>({
   queryKey: 'departments',
@@ -76,14 +78,8 @@ export default function Departments() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Departments</h1>
-          <p className="mt-1 text-sm text-gray-600">Manage organizational departments</p>
-        </div>
-        <CreateButton permission="departments.create" label="Add Department" onClick={() => setShowCreate(true)} />
-      </div>
+    <PageContainer>
+      <PageHeader title="Departments" subtitle="Manage organizational departments" actions={<CreateButton permission="departments.create" label="Add Department" onClick={() => setShowCreate(true)} />} />
 
       <FilterBar
         filters={departmentCrudConfig.filters}
@@ -128,6 +124,6 @@ export default function Departments() {
         variant="destructive"
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

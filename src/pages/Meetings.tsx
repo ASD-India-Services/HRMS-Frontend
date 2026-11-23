@@ -15,6 +15,16 @@ import {
   useCompleteMeeting,
 } from '@/hooks/useMeetings';
 import type { Meeting } from '@/hooks/useMeetings';
+import { Modal } from '@/components/ui/Modal';
+import { Button, IconButton } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
+import { Card } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { StateView } from '@/components/ui/StateView';
 
 interface EmployeeOption {
   id: string;
@@ -103,9 +113,9 @@ function SelectTagInput({
   return (
     <div className="relative" ref={containerRef}>
       {/* Label matching screenshot */}
-      <label className="block text-xs font-semibold text-gray-800 mb-1">
+      <label className="block text-xs font-semibold text-ink-primary mb-1">
         {label}
-        {required && <span className="text-red-500 ml-0.5">*</span>}
+        {required && <span className="text-error-main ml-0.5">*</span>}
       </label>
 
       {/* Top box with scrollbar and cursor matching media_1794384923180_0cefc9d9.png */}
@@ -114,7 +124,7 @@ function SelectTagInput({
           setIsOpen(true);
           inputRef.current?.focus();
         }}
-        className="w-full min-h-[36px] max-h-[70px] overflow-y-scroll border border-gray-300 rounded-sm bg-white px-2 py-1 flex flex-wrap items-center gap-1 cursor-text shadow-2xs hover:border-gray-400 focus-within:border-blue-500 transition-colors"
+        className="w-full min-h-[36px] max-h-[70px] overflow-y-scroll border border-divider rounded-sm bg-surface-paper px-2 py-1 flex flex-wrap items-center gap-1 cursor-text shadow-2xs hover:border-grey-400 focus-within:border-primary-main transition-colors"
       >
         {selectedIds.map((id) => {
           const opt = options.find((o) => o.id === id);
@@ -122,16 +132,9 @@ function SelectTagInput({
           return (
             <span
               key={id}
-              className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded border border-gray-300 bg-white text-xs text-gray-800 shadow-2xs shrink-0 select-none"
+              className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded border border-divider bg-surface-paper text-xs text-ink-primary shadow-2xs shrink-0 select-none"
             >
-              <button
-                type="button"
-                onClick={(e) => handleRemove(id, e)}
-                className="text-gray-400 hover:text-gray-700 font-bold text-xs leading-none cursor-pointer"
-                title="Remove"
-              >
-                ×
-              </button>
+              <IconButton icon="close" size="small" onClick={(e) => handleRemove(id, e)} aria-label="Remove" />
               <span>{text}</span>
             </span>
           );
@@ -149,7 +152,7 @@ function SelectTagInput({
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder={selectedIds.length === 0 ? placeholder : ''}
-          className="outline-none bg-transparent text-xs text-gray-900 min-w-[30px] grow py-0.5"
+          className="outline-none bg-transparent text-xs text-ink-primary min-w-[30px] grow py-0.5"
         />
       </div>
 
@@ -158,9 +161,9 @@ function SelectTagInput({
 
       {/* Pure text dropdown list matching media_1794384923180_0cefc9d9.png */}
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full mt-0.5 z-50 bg-white border border-gray-300 shadow-lg max-h-52 overflow-y-scroll rounded-sm animate-in fade-in duration-75">
+        <div className="absolute left-0 right-0 top-full mt-0.5 z-50 bg-surface-paper border border-divider shadow-lg max-h-52 overflow-y-scroll rounded-sm animate-in fade-in duration-75">
           {filteredOptions.length === 0 ? (
-            <div className="px-3 py-2 text-xs text-gray-400 text-center">No options found</div>
+            <div className="px-3 py-2 text-xs text-ink-disabled text-center">No options found</div>
           ) : (
             filteredOptions.map((opt, idx) => {
               const isSelected = selectedIds.includes(opt.id);
@@ -171,9 +174,9 @@ function SelectTagInput({
                     e.stopPropagation();
                     handleSelect(opt.id);
                   }}
-                  className={`px-3 py-1.5 text-xs text-gray-800 cursor-pointer transition-colors ${
-                    idx === 0 && !searchTerm ? 'bg-gray-100 hover:bg-gray-100' : 'hover:bg-gray-100'
-                  } ${isSelected ? 'font-semibold bg-blue-50/70 text-blue-900' : ''}`}
+                  className={`px-3 py-1.5 text-xs text-ink-primary cursor-pointer transition-colors ${
+                    idx === 0 && !searchTerm ? 'bg-surface-neutral hover:bg-surface-neutral' : 'hover:bg-surface-neutral'
+                  } ${isSelected ? 'font-semibold bg-primary-lighter/70 text-primary-darker' : ''}`}
                 >
                   {opt.label}
                 </div>
@@ -451,96 +454,56 @@ export default function Meetings() {
   }, [employeeOptions, deptFilterId]);
 
   return (
-    <div className="p-6 bg-slate-50 min-h-screen">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Meetings</h1>
+    <PageContainer>
+      <PageHeader
+        title="Meetings"
+        subtitle="Schedule, run and review team meetings."
+        actions={
+          canCreate && (
+            <Button startIcon={<Iconify icon="plus" />} onClick={handleOpenCreate}>
+              Create
+            </Button>
+          )
+        }
+      />
+
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <div className="relative">
+          <Input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search meetings..."
+            inputSize="small"
+            className="w-56 pl-8 pr-3 sm:w-72"
+          />
+          <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
         </div>
-
-        {/* Right Top Actions */}
-        <div className="flex items-center gap-3">
-          {/* Search Box */}
-          <div className="relative">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search meetings..."
-              className="text-xs w-48 sm:w-56 pl-8 pr-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-xs"
-            />
-            <svg
-              className="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-
-          {/* Status Filter */}
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="text-xs py-2 px-3 border border-gray-300 rounded-md bg-white text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-xs"
-          >
-            <option value="">All Statuses</option>
-            <option value="scheduled">Scheduled</option>
-            <option value="in_progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-
-          {/* Blue + Create Button matching requirement & permissions */}
-          {canCreate && (
-            <button
-              type="button"
-              onClick={handleOpenCreate}
-              className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs font-semibold px-4 py-2 rounded-md shadow-xs transition-colors cursor-pointer"
-            >
-              <span>+ Create</span>
-            </button>
-          )}
-        </div>
+        <Select selectSize="small" className="w-48" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="">All Statuses</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="in_progress">In Progress</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </Select>
       </div>
 
       {/* Main Content Area */}
-      <div className="bg-white border border-gray-200 rounded-lg shadow-xs overflow-hidden">
+      <Card className="overflow-hidden">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-24 text-gray-500">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-3" />
+          <div className="flex flex-col items-center justify-center py-24 text-ink-secondary">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-main mb-3" />
             <p className="text-xs font-medium">Loading meetings...</p>
           </div>
         ) : meetings.length === 0 ? (
           /* Empty State matching Screenshot 1 */
-          <div className="py-28 flex flex-col items-center justify-center text-center">
-            {/* Magnifying Glass Icon matching Screenshot 1 */}
-            <div className="mb-4">
-              <svg
-                className="w-16 h-16 text-slate-400 stroke-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="11" cy="11" r="7" strokeWidth="2.2" />
-                <path d="M16.5 16.5L21 21" strokeWidth="2.2" strokeLinecap="round" />
-              </svg>
-            </div>
-            <h3 className="text-base font-bold text-gray-900 mb-1">No Records found.</h3>
-            <p className="text-xs text-gray-500">There is no meetings has been created.</p>
-          </div>
+          <StateView icon="search" title="No records found" description="Try adjusting your filters or adding new data." />
         ) : (
           /* Meetings Table */
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-gray-50/80 border-b border-gray-200 text-gray-700 font-semibold">
+                <tr className="bg-surface-neutral/80 border-b border-divider text-ink-primary font-semibold">
                   <th className="py-3 px-4 min-w-[200px]">Title</th>
                   <th className="py-3 px-3 min-w-[170px]">Date &amp; Time</th>
                   <th className="py-3 px-3 min-w-[160px]">Managers</th>
@@ -550,7 +513,7 @@ export default function Meetings() {
                   <th className="py-3 px-3 text-center min-w-[110px]">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-divider">
                 {meetings.map((m) => {
                   const isScheduled = m.status === 'scheduled';
                   const isInProgress = m.status === 'in_progress';
@@ -558,13 +521,13 @@ export default function Meetings() {
                   const isCancelled = m.status === 'cancelled';
 
                   return (
-                    <tr key={m.id} className="hover:bg-blue-50/20 transition-colors">
+                    <tr key={m.id} className="hover:bg-primary-lighter/20 transition-colors">
                       {/* Title & Description */}
                       <td className="py-3 px-4">
                         <div className="flex flex-col">
-                          <span className="font-semibold text-gray-900 text-xs">{m.title}</span>
+                          <span className="font-semibold text-ink-primary text-xs">{m.title}</span>
                           {m.description && (
-                            <span className="text-[11px] text-gray-500 truncate max-w-xs">
+                            <span className="text-[11px] text-ink-secondary truncate max-w-xs">
                               {m.description}
                             </span>
                           )}
@@ -572,7 +535,7 @@ export default function Meetings() {
                       </td>
 
                       {/* Date & Time */}
-                       <td className="py-3 px-3 text-gray-700 whitespace-nowrap font-medium">
+                      <td className="py-3 px-3 text-ink-primary whitespace-nowrap font-medium">
                         {formatDateTime(m.date) !== '—' ? formatDateTime(m.date) : (m.formatted_date || m.date)}
                       </td>
 
@@ -583,13 +546,13 @@ export default function Meetings() {
                             m.managers_details.map((mgr) => (
                               <span
                                 key={mgr.id}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-slate-100 text-slate-800 font-medium border border-slate-200"
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-surface-neutral text-ink-primary font-medium border border-divider"
                               >
-                                👤 {mgr.full_name}
+                                <Iconify icon="user" width={12} /> {mgr.full_name}
                               </span>
                             ))
                           ) : (
-                            <span className="text-gray-400 text-xs">—</span>
+                            <span className="text-ink-disabled text-xs">—</span>
                           )}
                         </div>
                       </td>
@@ -597,20 +560,20 @@ export default function Meetings() {
                       {/* Employees Attendees */}
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                          <span className="text-xs font-bold text-primary-dark bg-primary-lighter px-2 py-0.5 rounded-md border border-primary-light">
                             {m.employees_details?.length || m.employees?.length || 0} Attendees
                           </span>
                           {m.employees_details?.slice(0, 2).map((emp) => (
                             <span
                               key={emp.id}
-                              className="text-[11px] text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded truncate max-w-[110px]"
+                              className="text-[11px] text-ink-secondary bg-surface-neutral px-1.5 py-0.5 rounded truncate max-w-[110px]"
                               title={emp.full_name}
                             >
                               {emp.first_name}
                             </span>
                           ))}
                           {(m.employees_details?.length || 0) > 2 && (
-                            <span className="text-[11px] text-gray-400">
+                            <span className="text-[11px] text-ink-disabled">
                               +{(m.employees_details?.length || 0) - 2} more
                             </span>
                           )}
@@ -618,13 +581,13 @@ export default function Meetings() {
                       </td>
 
                       {/* Question Template */}
-                      <td className="py-3 px-3 text-gray-700">
+                      <td className="py-3 px-3 text-ink-primary">
                         {m.question_template_name ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[11px] font-medium">
-                            📝 {m.question_template_name}
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary-lighter text-secondary-dark border border-secondary-light text-[11px] font-medium">
+                            <Iconify icon="policies" width={12} /> {m.question_template_name}
                           </span>
                         ) : (
-                          <span className="text-gray-400 text-[11px]">None</span>
+                          <span className="text-ink-disabled text-[11px]">None</span>
                         )}
                       </td>
 
@@ -633,12 +596,12 @@ export default function Meetings() {
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                             isCompleted
-                              ? 'bg-green-100 text-green-700'
+                              ? 'bg-success-lighter text-success-dark'
                               : isCancelled
-                              ? 'bg-red-100 text-red-700'
+                              ? 'bg-error-lighter text-error-dark'
                               : isInProgress
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-blue-100 text-blue-700'
+                              ? 'bg-warning-lighter text-warning-dark'
+                              : 'bg-primary-lighter text-primary-dark'
                           }`}
                         >
                           {m.status_display || m.status}
@@ -647,79 +610,34 @@ export default function Meetings() {
 
                       {/* Actions */}
                       <td className="py-3 px-3 text-center">
-                        <div className="inline-flex items-center border border-gray-200 rounded divide-x divide-gray-200 bg-white shadow-2xs">
+                        <div className="inline-flex items-center gap-1">
                           {/* View details */}
-                          <button
-                            type="button"
-                            onClick={() => setSelectedMeeting(m)}
-                            className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
-                            title="View Meeting Details"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                          </button>
+                          <IconButton icon="eye" size="small" onClick={() => setSelectedMeeting(m)} aria-label="View Meeting Details" />
 
                           {/* Edit button */}
                           {canEdit && (
-                            <button
-                              type="button"
+                            <IconButton
+                              icon="pencil"
+                              size="small"
                               onClick={() => handleOpenEdit(m)}
                               disabled={isCompleted || isCancelled}
-                              className={`p-1.5 transition-colors ${
-                                isCompleted || isCancelled
-                                  ? 'text-gray-300 cursor-not-allowed'
-                                  : 'text-gray-500 hover:text-blue-600 hover:bg-blue-50 cursor-pointer'
-                              }`}
-                              title={isCompleted || isCancelled ? 'Completed or cancelled meeting cannot be edited' : 'Edit Meeting'}
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                            </button>
+                              aria-label={isCompleted || isCancelled ? 'Completed or cancelled meeting cannot be edited' : 'Edit Meeting'}
+                            />
                           )}
 
                           {/* Complete button */}
                           {canEdit && isScheduled && (
-                            <button
-                              type="button"
-                              onClick={() => handleCompleteMeeting(m.id)}
-                              className="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 transition-colors cursor-pointer"
-                              title="Mark Completed"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                            </button>
+                            <IconButton icon="check" size="small" color="success" onClick={() => handleCompleteMeeting(m.id)} aria-label="Mark Completed" />
                           )}
 
                           {/* Cancel button */}
                           {canEdit && isScheduled && (
-                            <button
-                              type="button"
-                              onClick={() => handleCancelMeeting(m.id)}
-                              className="p-1.5 text-gray-500 hover:text-orange-600 hover:bg-orange-50 transition-colors cursor-pointer"
-                              title="Cancel Meeting"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                              </svg>
-                            </button>
+                            <IconButton icon="leaveBlock" size="small" color="warning" onClick={() => handleCancelMeeting(m.id)} aria-label="Cancel Meeting" />
                           )}
 
                           {/* Delete button */}
                           {canDelete && (
-                            <button
-                              type="button"
-                              onClick={() => handleDelete(m.id)}
-                              className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                              title="Delete Meeting"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                            </button>
+                            <IconButton icon="trash" size="small" color="error" onClick={() => handleDelete(m.id)} aria-label="Delete Meeting" />
                           )}
                         </div>
                       </td>
@@ -730,28 +648,22 @@ export default function Meetings() {
             </table>
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Create / Edit Modal Matching Screenshot 2 */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-xl bg-white rounded-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100 flex flex-col max-h-[92vh]">
+        <Modal open onClose={() => setIsModalOpen(false)} labelledBy="Meetings-modal-title-1" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="flex flex-col min-h-0 flex-1 overflow-y-auto">
             {/* Modal Header matching Screenshot 2: Meetings title with X */}
-            <div className="flex items-center justify-between p-5 border-b border-gray-200 shrink-0">
-              <h2 className="text-lg font-bold text-gray-900">Meetings</h2>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 text-lg font-bold p-1 cursor-pointer"
-              >
-                ✕
-              </button>
+            <div className="flex items-center justify-between p-5 border-b border-divider shrink-0">
+              <h2 id="Meetings-modal-title-1" className="text-lg font-bold text-ink-primary">Meetings</h2>
+              <IconButton icon="close" size="small" onClick={() => setIsModalOpen(false)} aria-label="Close" />
             </div>
 
             {/* Modal Form matching Screenshot 2 */}
             <form onSubmit={handleSubmit} className="p-6 space-y-3.5 overflow-y-auto grow">
               {formError && (
-                <div className="p-2.5 bg-red-50 border border-red-200 rounded text-xs text-red-700 font-medium">
+                <div className="p-2.5 bg-error-lighter border border-error-light rounded text-xs text-error-dark font-medium">
                   {formError}
                 </div>
               )}
@@ -760,30 +672,28 @@ export default function Meetings() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Title * */}
                 <div>
-                  <label className="block text-xs font-semibold text-gray-800 mb-1">
+                  <label className="block text-xs font-semibold text-ink-primary mb-1">
                     Title *
                   </label>
-                  <input
+                  <Input
                     type="text"
                     required
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Title"
-                    className="w-full text-xs px-3 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:border-blue-500 text-gray-900 shadow-2xs"
                   />
                 </div>
 
                 {/* Date * */}
                 <div>
-                  <label className="block text-xs font-semibold text-gray-800 mb-1">
+                  <label className="block text-xs font-semibold text-ink-primary mb-1">
                     Date *
                   </label>
-                  <input
+                  <Input
                     type="datetime-local"
                     required
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="w-full text-xs px-3 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:border-blue-500 text-gray-900 shadow-2xs"
                   />
                 </div>
               </div>
@@ -797,49 +707,36 @@ export default function Meetings() {
                 options={filteredEmployeeOptions}
                 placeholder=""
                 footerRight={
-                  <button
-                    type="button"
-                    onClick={() => setIsDeptFilterOpen(!isDeptFilterOpen)}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#f95932] hover:text-[#d8431f] transition-colors cursor-pointer"
-                  >
+                  <Button variant="text" color="error" size="small" onClick={() => setIsDeptFilterOpen(!isDeptFilterOpen)}>
                     <span className="text-sm leading-none font-bold">⊝</span>
                     <span>Filter</span>
-                  </button>
+                  </Button>
                 }
               />
 
               {/* Department quick filter dropdown */}
               {isDeptFilterOpen && (
-                <div className="p-2 bg-orange-50/80 border border-orange-200 rounded text-xs space-y-1.5 animate-in fade-in duration-100">
+                <div className="p-2 bg-warning-lighter/80 border border-warning-light rounded text-xs space-y-1.5 animate-in fade-in duration-100">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-orange-950 text-[11px]">Filter Employees by Department:</span>
+                    <span className="font-semibold text-warning-darker text-[11px]">Filter Employees by Department:</span>
                     <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => {
+                      <Button variant="text" onClick={() => {
                           const ids = filteredEmployeesByDept.map((e: any) => e.id);
                           setSelectedEmployees(Array.from(new Set([...selectedEmployees, ...ids])));
-                        }}
-                        className="text-[11px] font-bold text-blue-600 hover:text-blue-800 cursor-pointer"
-                      >
+                        }}>
                         Select All in Dept
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
+                      </Button>
+                      <Button variant="text" color="inherit" size="small" startIcon={<Iconify icon="close" />} onClick={() => {
                           setDeptFilterId('');
                           setIsDeptFilterOpen(false);
-                        }}
-                        className="text-[11px] text-gray-500 hover:text-gray-700 cursor-pointer"
-                      >
-                        ✕ Close
-                      </button>
+                        }}>
+                        Close
+                      </Button>
                     </div>
                   </div>
-                  <select
+                  <Select
                     value={deptFilterId}
                     onChange={(e) => setDeptFilterId(e.target.value)}
-                    className="w-full text-xs py-1 px-2 border border-orange-300 rounded bg-white text-gray-800"
                   >
                     <option value="">All Departments</option>
                     {departments.map((d: any) => (
@@ -847,7 +744,7 @@ export default function Meetings() {
                         {d.name}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
               )}
 
@@ -867,7 +764,7 @@ export default function Meetings() {
                   <span className="inline-flex items-center gap-1.5">
                     <span>Answerable Employees</span>
                     <span
-                      className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-gray-400 text-white text-[10px] font-bold cursor-help"
+                      className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-grey-400 text-primary-contrast text-[10px] font-bold cursor-help"
                       title="Employees who must prepare responses or reports for this meeting"
                     >
                       i
@@ -882,13 +779,12 @@ export default function Meetings() {
 
               {/* Question Template matching Screenshot 2 */}
               <div>
-                <label className="block text-xs font-semibold text-gray-800 mb-1">
+                <label className="block text-xs font-semibold text-ink-primary mb-1">
                   Question template
                 </label>
-                <select
+                <Select
                   value={selectedTemplate}
                   onChange={(e) => setSelectedTemplate(e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:border-blue-500 shadow-2xs"
                 >
                   <option value="">---Choose Question template---</option>
                   {questionTemplates.map((t) => (
@@ -896,112 +792,99 @@ export default function Meetings() {
                       {t.name}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
 
               {/* Description / Agenda (Collapsible so it doesn't clutter the form) */}
               <div className="pt-0.5">
                 {description.trim() ? (
                   <div>
-                    <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                    <label className="block text-[11px] font-semibold text-ink-secondary mb-1">
                       Notes / Description (Optional)
                     </label>
-                    <textarea
+                    <Textarea
                       rows={2}
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="Meeting notes or agenda..."
-                      className="w-full text-xs px-2.5 py-1.5 border border-gray-300 rounded bg-white text-gray-800 focus:outline-none focus:border-blue-500"
                     />
                   </div>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => setDescription(' ')}
-                    className="text-[11px] text-gray-400 hover:text-gray-600 underline cursor-pointer"
-                  >
-                    + Add notes (optional)
-                  </button>
+                  <Button variant="text" color="inherit" startIcon={<Iconify icon="plus" />} onClick={() => setDescription(' ')}>Add notes (optional)
+                  </Button>
                 )}
               </div>
 
               {/* Modal Footer with Blue Save button matching requirement */}
               <div className="flex justify-end pt-2 shrink-0">
-                <button
+                <Button size="small"
                   type="submit"
                   disabled={createMutation.isPending || updateMutation.isPending}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs px-6 py-2 rounded shadow-sm transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   {createMutation.isPending || updateMutation.isPending ? 'Saving...' : 'Save'}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Meeting Detail Modal */}
       {selectedMeeting && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-lg bg-white rounded-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-100">
-            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-gray-900">Meeting Details</h3>
-              <button
-                type="button"
-                onClick={() => setSelectedMeeting(null)}
-                className="text-gray-400 hover:text-gray-600 text-sm font-bold cursor-pointer"
-              >
-                ✕
-              </button>
+        <Modal open onClose={() => setSelectedMeeting(null)} labelledBy="Meetings-modal-title-2" closeOnEscape={false} closeOnOverlayClick={false}>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <div className="p-4 border-b border-divider flex items-center justify-between">
+              <h3 id="Meetings-modal-title-2" className="text-sm font-bold text-ink-primary">Meeting Details</h3>
+              <IconButton icon="close" size="small" onClick={() => setSelectedMeeting(null)} aria-label="Close" />
             </div>
 
             <div className="p-5 space-y-4 text-xs">
               <div>
-                <span className="font-bold text-gray-700 block text-[11px] uppercase tracking-wider mb-0.5">
+                <span className="font-bold text-ink-primary block text-[11px] uppercase tracking-wider mb-0.5">
                   Title
                 </span>
-                <span className="text-base font-bold text-gray-900">{selectedMeeting.title}</span>
+                <span className="text-base font-bold text-ink-primary">{selectedMeeting.title}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="font-bold text-gray-700 block text-[11px] uppercase tracking-wider mb-0.5">
+                  <span className="font-bold text-ink-primary block text-[11px] uppercase tracking-wider mb-0.5">
                     Date &amp; Time
                   </span>
-                  <span className="text-gray-800 font-medium">
+                  <span className="text-ink-primary font-medium">
                     {formatDateTime(selectedMeeting.date) !== '—'
                       ? formatDateTime(selectedMeeting.date)
                       : (selectedMeeting.formatted_date || selectedMeeting.date)}
                   </span>
                 </div>
                 <div>
-                  <span className="font-bold text-gray-700 block text-[11px] uppercase tracking-wider mb-0.5">
+                  <span className="font-bold text-ink-primary block text-[11px] uppercase tracking-wider mb-0.5">
                     Status
                   </span>
-                  <span className="text-gray-800 font-medium">{selectedMeeting.status_display}</span>
+                  <span className="text-ink-primary font-medium">{selectedMeeting.status_display}</span>
                 </div>
               </div>
 
               <div>
-                <span className="font-bold text-gray-700 block text-[11px] uppercase tracking-wider mb-1">
+                <span className="font-bold text-ink-primary block text-[11px] uppercase tracking-wider mb-1">
                   Managers / Hosts
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedMeeting.managers_details?.map((m) => (
-                    <span key={m.id} className="bg-slate-100 text-slate-800 px-2 py-0.5 rounded text-xs font-medium">
-                      👤 {m.full_name}
+                    <span key={m.id} className="inline-flex items-center gap-1 bg-surface-neutral text-ink-primary px-2 py-0.5 rounded text-xs font-medium">
+                      <Iconify icon="user" width={12} /> {m.full_name}
                     </span>
                   ))}
                 </div>
               </div>
 
               <div>
-                <span className="font-bold text-gray-700 block text-[11px] uppercase tracking-wider mb-1">
+                <span className="font-bold text-ink-primary block text-[11px] uppercase tracking-wider mb-1">
                   Attendees ({selectedMeeting.employees_details?.length || 0})
                 </span>
-                <div className="max-h-28 overflow-y-auto p-2 bg-gray-50 rounded border border-gray-200 flex flex-wrap gap-1.5">
+                <div className="max-h-28 overflow-y-auto p-2 bg-surface-neutral rounded border border-divider flex flex-wrap gap-1.5">
                   {selectedMeeting.employees_details?.map((e) => (
-                    <span key={e.id} className="bg-white border border-gray-200 text-gray-800 px-2 py-0.5 rounded text-xs">
+                    <span key={e.id} className="bg-surface-paper border border-divider text-ink-primary px-2 py-0.5 rounded text-xs">
                       {e.full_name}
                     </span>
                   ))}
@@ -1010,12 +893,12 @@ export default function Meetings() {
 
               {selectedMeeting.answerable_employees_details && selectedMeeting.answerable_employees_details.length > 0 && (
                 <div>
-                  <span className="font-bold text-gray-700 block text-[11px] uppercase tracking-wider mb-1">
+                  <span className="font-bold text-ink-primary block text-[11px] uppercase tracking-wider mb-1">
                     Answerable Employees
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {selectedMeeting.answerable_employees_details.map((e) => (
-                      <span key={e.id} className="bg-amber-50 text-amber-900 border border-amber-200 px-2 py-0.5 rounded text-xs">
+                      <span key={e.id} className="bg-warning-lighter text-warning-darker border border-warning-light px-2 py-0.5 rounded text-xs">
                         {e.full_name}
                       </span>
                     ))}
@@ -1025,36 +908,35 @@ export default function Meetings() {
 
               {selectedMeeting.question_template_name && (
                 <div>
-                  <span className="font-bold text-gray-700 block text-[11px] uppercase tracking-wider mb-0.5">
+                  <span className="font-bold text-ink-primary block text-[11px] uppercase tracking-wider mb-0.5">
                     Question Template
                   </span>
-                  <span className="text-purple-700 font-medium">📝 {selectedMeeting.question_template_name}</span>
+                  <span className="inline-flex items-center gap-1 text-secondary-dark font-medium"><Iconify icon="policies" width={14} /> {selectedMeeting.question_template_name}</span>
                 </div>
               )}
 
               {selectedMeeting.description && (
                 <div>
-                  <span className="font-bold text-gray-700 block text-[11px] uppercase tracking-wider mb-0.5">
+                  <span className="font-bold text-ink-primary block text-[11px] uppercase tracking-wider mb-0.5">
                     Description / Agenda
                   </span>
-                  <p className="p-3 bg-gray-50 rounded text-gray-800 whitespace-pre-wrap border border-gray-200">
+                  <p className="p-3 bg-surface-neutral rounded text-ink-primary whitespace-pre-wrap border border-divider">
                     {selectedMeeting.description}
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="p-4 bg-gray-50 border-t border-gray-200 flex justify-end">
-              <button
+            <div className="p-4 bg-surface-neutral border-t border-divider flex justify-end">
+              <Button size="small"
                 type="button"
                 onClick={() => setSelectedMeeting(null)}
-                className="px-4 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded shadow-xs"
               >
                 Close
-              </button>
+              </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Delete Meeting Confirmation Dialog */}
@@ -1080,7 +962,7 @@ export default function Meetings() {
         variant="destructive"
         isLoading={cancelMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }
 

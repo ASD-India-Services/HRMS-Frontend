@@ -42,8 +42,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent mx-auto" />
-          <p className="text-sm text-gray-500">Loading...</p>
+          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary-main border-t-transparent mx-auto" />
+          <p className="text-sm text-ink-secondary">Loading...</p>
         </div>
       </div>
     );
@@ -53,8 +53,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent mx-auto" />
-          <p className="text-sm text-gray-500">Redirecting to login...</p>
+          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary-main border-t-transparent mx-auto" />
+          <p className="text-sm text-ink-secondary">Redirecting to login...</p>
         </div>
       </div>
     );

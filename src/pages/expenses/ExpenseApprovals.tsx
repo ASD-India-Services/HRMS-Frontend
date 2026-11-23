@@ -17,6 +17,9 @@ import { WorkflowEngine } from '@/components/WorkflowEngine/WorkflowEngine';
 import { Can } from '@/components/Can';
 import type { ColumnDef } from '@/types/datatable';
 import { formatCurrency, formatDate } from '@/utils/formatters';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { IconButton } from '@/components/ui/Button';
 
 /** Expense claim record shape for the approvals view */
 interface ExpenseClaimRecord {
@@ -115,24 +118,22 @@ export function ExpenseApprovals() {
     <Can
       permissions={['expenses.view']}
       fallback={
-        <div className="mx-auto max-w-5xl px-4 py-8">
-          <div className="rounded-lg border border-red-200 bg-red-50 p-8 text-center">
-            <h2 className="text-lg font-semibold text-red-800">Access Denied</h2>
-            <p className="mt-2 text-sm text-red-600">
+        <PageContainer maxWidth="lg">
+          <div className="rounded-card bg-error-lighter p-8 text-center">
+            <h2 className="text-lg font-semibold text-error-dark">Access Denied</h2>
+            <p className="mt-2 text-sm text-error-main">
               You do not have permission to view expense approvals.
             </p>
           </div>
-        </div>
+        </PageContainer>
       }
     >
-      <div className="mx-auto max-w-7xl px-4 py-8">
+      <PageContainer>
         {/* Page header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Expense Approvals</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Review and approve or reject pending expense claims
-          </p>
-        </div>
+        <PageHeader
+          title="Expense Approvals"
+          subtitle="Review and approve or reject pending expense claims"
+        />
 
         {/* Filter bar */}
         <FilterBar
@@ -168,7 +169,7 @@ export function ExpenseApprovals() {
             onPageSizeChange={setPageSize}
           />
         )}
-      </div>
+      </PageContainer>
     </Can>
   );
 }
@@ -188,19 +189,19 @@ function ExpandedClaimDetail({ claimId, claims, onCollapse }: ExpandedClaimDetai
   const formattedDate = formatDate(claim.expense_date);
 
   return (
-    <div className="mt-4 rounded-lg border border-indigo-200 bg-indigo-50/30 p-5 shadow-sm">
+    <div className="mt-4 rounded-card bg-secondary-lighter/30 p-6">
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-gray-900">
+          <h3 className="text-sm font-semibold text-ink-primary">
             {claim.title}
           </h3>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-ink-secondary">
             <span className="font-medium">{claim.employee_name}</span>
             {claim.department && (
-              <span className="text-gray-500"> · {claim.department}</span>
+              <span className="text-ink-secondary"> · {claim.department}</span>
             )}
           </p>
-          <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-gray-700">
+          <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-ink-primary">
             <span>
               <span className="font-medium">Type:</span> {claim.expense_type_name || claim.expense_type}
             </span>
@@ -212,22 +213,14 @@ function ExpandedClaimDetail({ claimId, claims, onCollapse }: ExpandedClaimDetai
             </span>
           </div>
           {claim.description && (
-            <p className="mt-2 text-sm text-gray-500">{claim.description}</p>
+            <p className="mt-2 text-sm text-ink-secondary">{claim.description}</p>
           )}
         </div>
-        <button
-          onClick={onCollapse}
-          className="rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 transition-colors"
-          aria-label="Close detail panel"
-        >
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+        <IconButton icon="close" size="small" onClick={onCollapse} aria-label="Close detail panel" />
       </div>
 
       {/* Workflow actions */}
-      <div className="mt-4 border-t border-indigo-100 pt-4">
+      <div className="mt-4 border-t border-secondary-lighter pt-4">
         <WorkflowEngine<ExpenseClaimRecord>
           config={expenseApprovalWorkflow}
           record={claim}

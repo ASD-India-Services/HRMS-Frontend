@@ -34,13 +34,13 @@ function TimelineSkeleton() {
       {[1, 2, 3].map((i) => (
         <div key={i} className="flex gap-3 animate-pulse">
           <div className="flex flex-col items-center">
-            <div className="h-3 w-3 rounded-full bg-gray-200" />
-            {i < 3 && <div className="w-0.5 flex-1 bg-gray-200 mt-1" />}
+            <div className="h-3 w-3 rounded-full bg-grey-200" />
+            {i < 3 && <div className="w-0.5 flex-1 bg-grey-200 mt-1" />}
           </div>
           <div className="flex-1 space-y-2 pb-4">
-            <div className="h-4 w-32 bg-gray-200 rounded" />
-            <div className="h-3 w-48 bg-gray-200 rounded" />
-            <div className="h-3 w-24 bg-gray-200 rounded" />
+            <div className="h-4 w-32 bg-grey-200 rounded" />
+            <div className="h-3 w-48 bg-grey-200 rounded" />
+            <div className="h-3 w-24 bg-grey-200 rounded" />
           </div>
         </div>
       ))}
@@ -63,15 +63,15 @@ export function WorkflowTimeline({ recordId, endpoint, config }: WorkflowTimelin
 
   if (isError) {
     return (
-      <div className="rounded-md bg-red-50 p-3" role="alert">
-        <p className="text-sm text-red-700">Failed to load timeline. Please try again.</p>
+      <div className="rounded-md bg-error-lighter p-3" role="alert">
+        <p className="text-sm text-error-dark">Failed to load timeline. Please try again.</p>
       </div>
     );
   }
 
   if (!entries || entries.length === 0) {
     return (
-      <div className="py-4 text-center text-sm text-gray-500">
+      <div className="py-4 text-center text-sm text-ink-secondary">
         No status changes recorded
       </div>
     );
@@ -93,7 +93,7 @@ export function WorkflowTimeline({ recordId, endpoint, config }: WorkflowTimelin
               {/* Vertical connecting line */}
               {!isLast && (
                 <span
-                  className="absolute left-[5px] top-3 -ml-px h-full w-0.5 bg-gray-200"
+                  className="absolute left-[5px] top-3 -ml-px h-full w-0.5 bg-grey-200"
                   aria-hidden="true"
                 />
               )}
@@ -101,13 +101,13 @@ export function WorkflowTimeline({ recordId, endpoint, config }: WorkflowTimelin
               <div className="relative flex items-start gap-3">
                 {/* Timeline dot */}
                 <div className="flex h-3 w-3 items-center justify-center mt-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-gray-400 ring-2 ring-white" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-grey-400 ring-2 ring-surface-paper" />
                 </div>
 
                 {/* Entry content */}
                 <div className="min-w-0 flex-1">
                   {/* Action label */}
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-ink-primary">
                     {entry.action}
                   </p>
 
@@ -115,7 +115,7 @@ export function WorkflowTimeline({ recordId, endpoint, config }: WorkflowTimelin
                   <div className="mt-1 flex items-center gap-1.5 flex-wrap">
                     <StatusBadge status={entry.from_status} config={config} />
                     <svg
-                      className="h-3 w-3 text-gray-400 shrink-0"
+                      className="h-3 w-3 text-ink-disabled shrink-0"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -131,13 +131,13 @@ export function WorkflowTimeline({ recordId, endpoint, config }: WorkflowTimelin
                   </div>
 
                   {/* Actor and timestamp */}
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-1 text-xs text-ink-secondary">
                     {entry.actor.name} &middot; {formatTimestamp(entry.timestamp)}
                   </p>
 
                   {/* Reason (if provided) */}
                   {entry.reason && (
-                    <p className="mt-1 text-xs text-gray-600 italic">
+                    <p className="mt-1 text-xs text-ink-secondary italic">
                       &ldquo;{entry.reason}&rdquo;
                     </p>
                   )}

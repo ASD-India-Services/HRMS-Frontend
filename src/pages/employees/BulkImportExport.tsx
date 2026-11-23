@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { Button } from '@/components/ui/Button';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
+import { Iconify } from '@/components/Iconify';
 
 interface ImportResult {
   created: number;
@@ -83,105 +88,88 @@ export default function BulkImportExport() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <PageContainer>
       {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Employee Import / Export
-        </h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Bulk import employees from a CSV file or export the current employee
-          list.
-        </p>
-      </div>
+      <PageHeader
+        title="Employee Import / Export"
+        subtitle="Bulk import employees from a CSV file or export the current employee list."
+      />
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* ─── Export Card ─────────────────────────────────────────── */}
-        <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Export Employees
-          </h2>
-          <p className="mt-1 text-sm text-gray-600">
-            Download a CSV file containing all employee records. This can be
-            used as a backup or to edit records in bulk.
-          </p>
-          <div className="mt-4">
-            <button
+        <Card>
+          <CardHeader
+            title="Export Employees"
+            subtitle="Download a CSV file containing all employee records. This can be used as a backup or to edit records in bulk."
+          />
+          <CardContent>
+            <Button
               onClick={handleExport}
               disabled={exporting}
-              className="rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 disabled:opacity-50"
+              startIcon={<Iconify icon="download" />}
             >
               {exporting ? 'Exporting...' : 'Download CSV'}
-            </button>
+            </Button>
             {exportError && (
-              <p className="mt-2 text-sm text-red-600">{exportError}</p>
+              <p className="mt-2 text-sm text-error-main">{exportError}</p>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* ─── Import Card ─────────────────────────────────────────── */}
-        <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Import Employees
-          </h2>
-          <p className="mt-1 text-sm text-gray-600">
-            Upload a CSV file to create or update employees in bulk. Existing
-            employees (matched by email) will be updated.
-          </p>
-
-          <div className="mt-4 space-y-3">
-            <button
-              onClick={handleDownloadTemplate}
-              className="text-sm font-medium text-primary-600 hover:text-primary-500 underline"
-            >
+        <Card>
+          <CardHeader
+            title="Import Employees"
+            subtitle="Upload a CSV file to create or update employees in bulk. Existing employees (matched by email) will be updated."
+          />
+          <CardContent className="space-y-3">
+            <Button variant="text" size="small" className="-ml-2.5" onClick={handleDownloadTemplate} startIcon={<Iconify icon="download" />}>
               Download CSV Template
-            </button>
+            </Button>
 
             <div className="flex items-center gap-4">
               <input
                 type="file"
                 accept=".csv"
                 onChange={handleFileChange}
-                className="block text-sm text-gray-500 file:mr-4 file:rounded file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100"
+                className="block text-sm text-ink-secondary file:mr-4 file:rounded file:border-0 file:bg-primary-lighter file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-dark hover:file:bg-primary-lighter"
               />
-              <button
+              <Button
                 onClick={handleUpload}
                 disabled={!file || importMutation.isPending}
-                className="rounded-md bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 disabled:opacity-50"
+                startIcon={<Iconify icon="upload" />}
               >
                 {importMutation.isPending ? 'Uploading...' : 'Upload'}
-              </button>
+              </Button>
             </div>
 
             {importMutation.isError && (
-              <p className="text-sm text-red-600">
+              <p className="text-sm text-error-main">
                 Upload failed. Please check your file and try again.
               </p>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
-
       {/* ─── Results ────────────────────────────────────────────────── */}
       {importResult && (
-        <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Import Results
-          </h3>
-          <div className="mt-3 flex gap-6">
-            <div className="rounded-md bg-green-50 px-4 py-2">
-              <span className="text-sm font-medium text-green-800">
+        <Card className="mt-6">
+          <CardHeader title="Import Results" />
+          <CardContent>
+          <div className="flex gap-6">
+            <div className="rounded-lg bg-success-lighter px-4 py-2">
+              <span className="text-sm font-medium text-success-dark">
                 Created: {importResult.created}
               </span>
             </div>
-            <div className="rounded-md bg-blue-50 px-4 py-2">
-              <span className="text-sm font-medium text-blue-800">
+            <div className="rounded-lg bg-primary-lighter px-4 py-2">
+              <span className="text-sm font-medium text-primary-dark">
                 Updated: {importResult.updated}
               </span>
             </div>
             {importResult.errors.length > 0 && (
-              <div className="rounded-md bg-red-50 px-4 py-2">
-                <span className="text-sm font-medium text-red-800">
+              <div className="rounded-lg bg-error-lighter px-4 py-2">
+                <span className="text-sm font-medium text-error-dark">
                   Errors: {importResult.errors.length}
                 </span>
               </div>
@@ -190,26 +178,26 @@ export default function BulkImportExport() {
 
           {importResult.errors.length > 0 && (
             <div className="mt-4">
-              <h4 className="text-sm font-medium text-gray-700">
+              <h4 className="text-sm font-medium text-ink-primary">
                 Error Details
               </h4>
-              <div className="mt-2 overflow-auto rounded-md border border-red-200">
-                <table className="min-w-full divide-y divide-red-200 text-sm">
-                  <thead className="bg-red-50">
+              <div className="mt-2 overflow-auto rounded-lg bg-error-lighter/40">
+                <table className="min-w-full divide-y divide-error-light text-sm">
+                  <thead className="bg-error-lighter">
                     <tr>
-                      <th className="px-4 py-2 text-left font-medium text-red-800">
+                      <th className="px-4 py-2 text-left font-medium text-error-dark">
                         Row
                       </th>
-                      <th className="px-4 py-2 text-left font-medium text-red-800">
+                      <th className="px-4 py-2 text-left font-medium text-error-dark">
                         Error
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-red-100">
+                  <tbody className="divide-y divide-error-lighter">
                     {importResult.errors.map((err, idx) => (
                       <tr key={idx}>
-                        <td className="px-4 py-2 text-red-700">{err.row}</td>
-                        <td className="px-4 py-2 text-red-700">
+                        <td className="px-4 py-2 text-error-dark">{err.row}</td>
+                        <td className="px-4 py-2 text-error-dark">
                           {err.message}
                         </td>
                       </tr>
@@ -219,8 +207,9 @@ export default function BulkImportExport() {
               </div>
             </div>
           )}
-        </div>
+          </CardContent>
+        </Card>
       )}
-    </div>
+    </PageContainer>
   );
 }

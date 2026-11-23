@@ -2,6 +2,9 @@ import { useMemo, useState } from 'react';
 import { createCrudHooks } from '@/hooks/useCrud';
 import { DataTable, Pagination, useFilterSync } from '@/components/DataTable';
 import type { ColumnDef, FilterConfig } from '@/types/datatable';
+import { PageContainer } from '@/components/ui/PageContainer';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Tabs } from '@/components/ui/Tabs';
 
 const TABS = ['Tax Declarations', 'Tax Proof Submissions', 'Benefit Applications'] as const;
 type Tab = (typeof TABS)[number];
@@ -88,32 +91,13 @@ export default function TaxBenefits() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Tax & Benefits</h1>
-        <p className="mt-1 text-sm text-gray-600">Tax declarations, proof submissions, and employee benefits</p>
-      </div>
+    <PageContainer>
+      <PageHeader title="Tax & Benefits" subtitle="Tax declarations, proof submissions, and employee benefits" />
 
       {/* Tabs */}
-      <div className="mb-6 border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
-          {TABS.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium ${
-                activeTab === tab
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </nav>
-      </div>
+      <Tabs items={TABS.map((tab) => ({ value: tab, label: tab }))} value={activeTab} onChange={setActiveTab} aria-label="Tax and benefits tabs" />
 
       {getActiveContent()}
-    </div>
+    </PageContainer>
   );
 }
