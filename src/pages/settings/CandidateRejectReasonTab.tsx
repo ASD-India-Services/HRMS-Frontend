@@ -103,8 +103,8 @@ export function CandidateRejectReasonTab() {
     const branchList = Array.isArray(branchesData)
       ? branchesData
       : Array.isArray((branchesData as any)?.results)
-      ? (branchesData as any).results
-      : [];
+        ? (branchesData as any).results
+        : [];
     branchList.forEach((b: any) => {
       if (b?.name) {
         add(b.name);
@@ -128,9 +128,9 @@ export function CandidateRejectReasonTab() {
             ...item,
             company:
               !item.company ||
-              item.company.includes('Synergon') ||
-              item.company === 'G7 Synergon PVT. LTD. CRO' ||
-              item.company === 'G7synogen'
+                item.company.includes('Synergon') ||
+                item.company === 'G7 Synergon PVT. LTD. CRO' ||
+                item.company === 'G7synogen'
                 ? 'DigiHRMS'
                 : item.company,
           }));
@@ -155,9 +155,9 @@ export function CandidateRejectReasonTab() {
     if (needsUpdate) {
       const updated = reasons.map((r) =>
         !r.company ||
-        r.company.includes('Synergon') ||
-        r.company === 'G7 Synergon PVT. LTD. CRO' ||
-        r.company === 'G7synogen'
+          r.company.includes('Synergon') ||
+          r.company === 'G7 Synergon PVT. LTD. CRO' ||
+          r.company === 'G7synogen'
           ? { ...r, company: currentCompany }
           : r
       );
@@ -245,12 +245,12 @@ export function CandidateRejectReasonTab() {
       const updated = reasons.map((r) =>
         r.id === editingReason.id
           ? {
-              ...r,
-              title: formTitle.trim(),
-              company: companyToSave,
-              description: formDescription.trim(),
-              isActive: formIsActive,
-            }
+            ...r,
+            title: formTitle.trim(),
+            company: companyToSave,
+            description: formDescription.trim(),
+            isActive: formIsActive,
+          }
           : r
       );
       saveToStorage(updated, 'Reject reason updated successfully');
@@ -298,7 +298,7 @@ export function CandidateRejectReasonTab() {
           className="shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
-          + Create
+          Create
         </Button>
       </div>
 

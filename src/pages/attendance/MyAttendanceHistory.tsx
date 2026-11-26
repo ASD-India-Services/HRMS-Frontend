@@ -158,6 +158,7 @@ export default function MyAttendanceHistory() {
                       }`}>
                         {r.status === 'on_leave' ? 'On Leave' : r.status === 'half_day' ? 'Half Day' : r.status}
                         {r.is_late && ' (Late)'}
+                        {r.is_early_out && ' (Early Out)'}
                       </span>
                     </td>
                   </tr>

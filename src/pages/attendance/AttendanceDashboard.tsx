@@ -49,6 +49,8 @@ interface AttendanceRecord {
   check_out?: string | null;
   status?: string;
   is_late?: boolean;
+  is_early_out?: boolean;
+  early_out_reason?: string;
   working_hours?: string | number | null;
   overtime?: string | number | null;
 }
@@ -248,7 +250,7 @@ export default function AttendanceDashboard() {
           onTimeDeptCounts[dept] = (onTimeDeptCounts[dept] || 0) + 1;
         }
 
-        if (r.check_out || r.status === 'half_day') {
+        if (r.is_early_out) {
           earlyOutDeptCounts[dept] = (earlyOutDeptCounts[dept] || 0) + 1;
         }
       }

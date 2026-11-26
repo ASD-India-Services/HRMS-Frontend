@@ -31,6 +31,8 @@ export interface Employee {
   date_of_joining: string;
   notice_period_days?: number;
   badge_id?: string;
+  history_tags?: string[];
+  custom_fields?: Record<string, unknown>;
   reporting_manager?: {
     id: string;
     first_name: string;

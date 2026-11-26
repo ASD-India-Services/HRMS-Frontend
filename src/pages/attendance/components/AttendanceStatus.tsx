@@ -1,6 +1,7 @@
 import type { AttendanceRecord } from '@/hooks/useAttendance'
 import { Card } from '@/components/ui/Card'
 import { Iconify } from '@/components/Iconify'
+import { formatTime } from '@/utils/formatters'
 
 interface AttendanceStatusProps {
   record: AttendanceRecord | null | undefined
@@ -207,26 +208,6 @@ function InfoCard({ label, value, icon, subtext, subtextColor = 'text-ink-second
       )}
     </div>
   )
-}
-
-function formatTime(timeStr: string): string {
-  try {
-    // Backend returns time as "HH:MM:SS" or "HH:MM:SS.microseconds"
-    const match = timeStr.match(/^(\d{2}):(\d{2})/)
-    if (match) {
-      const h = parseInt(match[1], 10)
-      const m = match[2]
-      const ampm = h >= 12 ? 'PM' : 'AM'
-      const h12 = h % 12 || 12
-      return `${h12}:${m} ${ampm}`
-    }
-    // Fallback: try parsing as full ISO date
-    const date = new Date(timeStr)
-    if (isNaN(date.getTime())) return timeStr
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-  } catch {
-    return timeStr
-  }
 }
 
 function formatWorkingHours(hours: number | string): string {

@@ -68,7 +68,10 @@ export function RoleGatedRoute({
     normalizedRole === 'admin' ||
     normalizedRole === 'administrator' ||
     normalizedRole === 'org admin' ||
-    normalizedRole === 'superadmin';
+    normalizedRole === 'superadmin' ||
+    normalizedRole === 'hr' ||
+    normalizedRole === 'hr_manager' ||
+    normalizedRole === 'hr manager';
 
   if (isAdmin) {
     return <>{children}</>;

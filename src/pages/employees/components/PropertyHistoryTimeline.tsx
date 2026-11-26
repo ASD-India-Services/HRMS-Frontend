@@ -20,7 +20,7 @@ interface PropertyHistoryTimelineProps {
 
 export function PropertyHistoryTimeline({
   employeeId,
-  title = 'Work Information & History Tracking',
+  title = 'Employee History Tracking',
   compact = false,
 }: PropertyHistoryTimelineProps) {
   const [filterType, setFilterType] = useState<string>('all');
@@ -90,7 +90,7 @@ export function PropertyHistoryTimeline({
             )}
           </div>
           <p className="mt-1 text-xs text-gray-500">
-            Audit trail of monitored work information changes (configured in General Settings)
+            Audit trail of monitored employee fields and lifecycle changes (configured in General Settings)
           </p>
         </div>
 
@@ -162,7 +162,7 @@ export function PropertyHistoryTimeline({
           <p className="mt-1 text-xs text-gray-500 max-w-md mx-auto">
             {filterType !== 'all'
               ? `No changes recorded under "${filterType}".`
-              : 'When Work Information Tracking is enabled in General Settings, any modifications to monitored fields (Department, Designation, Manager, etc.) will be logged here automatically.'}
+              : 'When monitored fields are configured in General Settings > Employee History Tracking, any modifications to employee fields (Department, Designation, Manager, etc.) will be logged here automatically.'}
           </p>
         </div>
       )}

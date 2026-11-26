@@ -523,7 +523,7 @@ export const GOALS = {
   DELETE: (id: string) => `/api/v1/goals/${id}/`,
 } as const;
 
-// ─── Exit Interviews ─────────────────────────────────────────────────────────
+// ─── Exit Interviews & Resignations ──────────────────────────────────────────
 
 export const EXIT_INTERVIEWS = {
   LIST: '/api/v1/exit-interviews/',
@@ -531,6 +531,16 @@ export const EXIT_INTERVIEWS = {
   DETAIL: (id: string) => `/api/v1/exit-interviews/${id}/`,
   UPDATE: (id: string) => `/api/v1/exit-interviews/${id}/`,
   DELETE: (id: string) => `/api/v1/exit-interviews/${id}/`,
+} as const;
+
+export const RESIGNATION_REQUESTS = {
+  LIST: '/api/v1/resignation-requests/',
+  CREATE: '/api/v1/resignation-requests/',
+  DETAIL: (id: string) => `/api/v1/resignation-requests/${id}/`,
+  APPROVE: (id: string) => `/api/v1/resignation-requests/${id}/approve/`,
+  REJECT: (id: string) => `/api/v1/resignation-requests/${id}/reject/`,
+  CANCEL: (id: string) => `/api/v1/resignation-requests/${id}/cancel/`,
+  DELETE: (id: string) => `/api/v1/resignation-requests/${id}/`,
 } as const;
 
 // ─── Payroll Periods & Corrections ──────────────────────────────────────────

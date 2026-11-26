@@ -33,12 +33,15 @@ export function getCachedHRSettings(): Partial<HRSettings> {
     // fallback to individual keys
   }
 
+  const cleanDateFormat = (directDateFormat || parsed.date_format || 'DD/MM/YYYY').replace(/^["']|["']$/g, '').trim();
+  const cleanTimeFormat = (directTimeFormat || parsed.time_format || '12h').replace(/^["']|["']$/g, '').trim();
+
   return {
     ...parsed,
     currency_symbol: directCurrencySymbol || parsed.currency_symbol || '₹',
     currency_position: (directCurrencyPosition || parsed.currency_position || 'Prefix') as any,
-    date_format: directDateFormat || parsed.date_format || 'DD/MM/YYYY',
-    time_format: directTimeFormat || parsed.time_format || '12h',
+    date_format: cleanDateFormat,
+    time_format: cleanTimeFormat,
   };
 }
 
@@ -113,20 +116,49 @@ export function formatDate(
   let month: number;
   let year: number;
 
-  if (typeof dateInput === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateInput.trim())) {
-    const parts = dateInput.trim().split('-');
-    year = parseInt(parts[0], 10);
-    month = parseInt(parts[1], 10);
-    day = parseInt(parts[2], 10);
+  if (typeof dateInput === 'string') {
+    const trimmed = dateInput.trim();
+    const isoMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2})(?::(\d{2}))?)?/);
+    if (isoMatch) {
+      const hours = isoMatch[4];
+      const minutes = isoMatch[5];
+      const seconds = isoMatch[6];
+      // Date-only or midnight UTC/local: prevent cross-timezone day shifting
+      const isMidnight = !hours || (hours === '00' && minutes === '00' && (!seconds || seconds === '00'));
+      if (isMidnight) {
+        year = parseInt(isoMatch[1], 10);
+        month = parseInt(isoMatch[2], 10);
+        day = parseInt(isoMatch[3], 10);
+      } else {
+        const d = new Date(trimmed);
+        if (isNaN(d.getTime())) {
+          year = parseInt(isoMatch[1], 10);
+          month = parseInt(isoMatch[2], 10);
+          day = parseInt(isoMatch[3], 10);
+        } else {
+          day = d.getDate();
+          month = d.getMonth() + 1;
+          year = d.getFullYear();
+        }
+      }
+    } else {
+      const d = new Date(trimmed);
+      if (isNaN(d.getTime())) return String(dateInput);
+      day = d.getDate();
+      month = d.getMonth() + 1;
+      year = d.getFullYear();
+    }
+  } else if (dateInput instanceof Date) {
+    if (isNaN(dateInput.getTime())) return '—';
+    day = dateInput.getDate();
+    month = dateInput.getMonth() + 1;
+    year = dateInput.getFullYear();
   } else {
-    const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
-    if (isNaN(d.getTime())) return String(dateInput);
-    day = d.getDate();
-    month = d.getMonth() + 1;
-    year = d.getFullYear();
+    return String(dateInput);
   }
 
-  const pattern = (formatPattern || getCachedHRSettings().date_format || 'DD/MM/YYYY').toUpperCase();
+  const rawPattern = formatPattern || getCachedHRSettings().date_format || 'DD/MM/YYYY';
+  const pattern = rawPattern.replace(/^["']|["']$/g, '').trim().toUpperCase();
 
   const dayStr = String(day).padStart(2, '0');
   const monthStr = String(month).padStart(2, '0');
@@ -211,35 +243,46 @@ export function formatTime(
   let minutes = 0;
 
   if (typeof timeInput === 'string') {
-    if (timeInput.includes('T') || timeInput.includes('-')) {
-      const d = new Date(timeInput);
+    const trimmed = timeInput.trim();
+    if (trimmed.includes('T') || (trimmed.includes('-') && trimmed.includes(':'))) {
+      const d = new Date(trimmed);
       if (!isNaN(d.getTime())) {
         hours = d.getHours();
         minutes = d.getMinutes();
       } else {
         return timeInput;
       }
-    } else if (timeInput.includes(':')) {
-      const parts = timeInput.split(':');
+    } else if (trimmed.includes(':')) {
+      const isPM = /pm/i.test(trimmed);
+      const isAM = /am/i.test(trimmed);
+      const clean = trimmed.replace(/[^0-9:]/g, '');
+      const parts = clean.split(':');
       hours = parseInt(parts[0], 10) || 0;
       minutes = parseInt(parts[1], 10) || 0;
+      if (isPM && hours < 12) hours += 12;
+      if (isAM && hours === 12) hours = 0;
     } else {
       return timeInput;
     }
   } else if (timeInput instanceof Date) {
+    if (isNaN(timeInput.getTime())) return '—';
     hours = timeInput.getHours();
     minutes = timeInput.getMinutes();
+  } else {
+    return String(timeInput);
   }
 
-  const pattern = (formatPattern || getCachedHRSettings().time_format || '12h').toLowerCase();
+  const rawPattern = formatPattern || getCachedHRSettings().time_format || '12h';
+  const pattern = rawPattern.replace(/^["']|["']$/g, '').trim().toLowerCase();
+  const is24h = pattern === '24h' || pattern.includes('24');
 
-  if (pattern === '12h' || pattern.includes('12')) {
-    const period = hours >= 12 ? 'PM' : 'AM';
-    const h12 = hours % 12 || 12;
-    return `${h12}:${String(minutes).padStart(2, '0')} ${period}`;
+  if (is24h) {
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
   }
 
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const h12 = hours % 12 || 12;
+  return `${String(h12).padStart(2, '0')}:${String(minutes).padStart(2, '0')} ${period}`;
 }
 
 export function formatDateTime(
@@ -258,7 +301,9 @@ export function formatDateTime(
 
 export function isIsoDateString(val: unknown): boolean {
   if (typeof val !== 'string') return false;
-  return /^\d{4}-\d{2}-\d{2}$/.test(val.trim());
+  const trimmed = val.trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return true;
+  return /^\d{4}-\d{2}-\d{2}[T ]00:00(?::00(?:\.0+)?)?(?:Z|[+-]\d{2}:?\d{2})?$/.test(trimmed);
 }
 
 export function isIsoDateTimeString(val: unknown): boolean {

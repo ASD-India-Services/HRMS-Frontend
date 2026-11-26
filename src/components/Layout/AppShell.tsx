@@ -13,6 +13,7 @@ import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
+import { useHRSettings } from '@/hooks/useHRSettings';
 
 /** Loading fallback shown during route transitions */
 function PageLoader() {
@@ -26,6 +27,9 @@ function PageLoader() {
 export function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Load organization HR settings (date format, time format, currency, pagination) on startup
+  useHRSettings();
 
   return (
     <div className="flex h-screen w-full max-w-full overflow-hidden bg-surface-default">

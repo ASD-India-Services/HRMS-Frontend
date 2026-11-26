@@ -121,7 +121,43 @@ export function EmployeePermissionTab() {
     return map;
   }, [sections]);
 
-  // 4. Overrides map state (stored in localStorage)
+  // Flattened all permissions map code -> PermissionItem
+  const allPermsByCode = useMemo(() => {
+    const map = new Map<string, PermissionItem>();
+    sections.forEach((sec) => {
+      sec.common.forEach((p) => map.set(p.code, p));
+      sec.subsections.forEach((sub) => {
+        sub.permissions.forEach((p) => map.set(p.code, p));
+      });
+    });
+    return map;
+  }, [sections]);
+
+  // 4. Server-synced role assignments for all employees
+  const { data: assignmentsData, refetch: refetchAssignments } = useQuery<
+    Record<
+      string,
+      {
+        role_id: string;
+        role_name: string;
+        data_scope: DataScope;
+        permissions_override: string[];
+      }
+    >
+  >({
+    queryKey: ['employee-role-assignments'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/api/v1/employees/role-assignments/');
+        return res.data || {};
+      } catch {
+        return {};
+      }
+    },
+    staleTime: 30 * 1000,
+  });
+
+  // Overrides map state (stored in localStorage as fallback)
   const [employeePermsMap, setEmployeePermsMap] = useState<Record<string, StoredEmployeePerms>>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -140,10 +176,30 @@ export function EmployeePermissionTab() {
   // Helper to determine initial role & permissions for an employee
   const getEmployeeConfig = useCallback(
     (employee: Employee): StoredEmployeePerms => {
+      // 1. Check server assignments first
+      const serverAssignment = assignmentsData?.[employee.id];
+      if (serverAssignment) {
+        const role = roles.find(
+          (r) => r.id === serverAssignment.role_id || r.name === serverAssignment.role_name
+        );
+        const rolePermIds = (role?.permissions || []).map((p) => p.id);
+        const overridePermIds = (serverAssignment.permissions_override || [])
+          .map((code) => allPermsByCode.get(code)?.id)
+          .filter(Boolean) as string[];
+        const combined = Array.from(new Set([...rolePermIds, ...overridePermIds]));
+        return {
+          roleId: role?.id || serverAssignment.role_id,
+          roleName: serverAssignment.role_name,
+          dataScope: serverAssignment.data_scope || role?.data_scope || 'self',
+          selectedPermissionIds: combined,
+        };
+      }
+
+      // 2. Check local storage fallback
       const existing = employeePermsMap[employee.id];
       if (existing) return existing;
 
-      // Guess default role based on designation / title
+      // 3. Guess default role based on designation / title
       const title = (employee.designation?.title || '').toLowerCase();
       let defaultRole = roles.find((r) => r.name === 'employee') || roles[0];
 
@@ -151,7 +207,7 @@ export function EmployeePermissionTab() {
         const found = roles.find((r) => r.name === 'department_head' || r.name === 'hr_manager');
         if (found) defaultRole = found;
       } else if (title.includes('admin') || title.includes('director')) {
-        const found = roles.find((r) => r.name === 'admin');
+        const found = roles.find((r) => r.name === 'admin' || r.name === 'org_admin');
         if (found) defaultRole = found;
       }
 
@@ -165,7 +221,7 @@ export function EmployeePermissionTab() {
         selectedPermissionIds: rolePermIds,
       };
     },
-    [employeePermsMap, roles]
+    [assignmentsData, employeePermsMap, roles, allPermsByCode]
   );
 
   // Filter / Search states for Employee List
@@ -173,6 +229,22 @@ export function EmployeePermissionTab() {
 
   // Active view: List view vs Employee Detail View
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+
+  // Single employee role assignment query from backend
+  const { data: selectedEmpAssignment } = useQuery({
+    queryKey: ['employee-role-assignment', selectedEmployee?.id],
+    queryFn: async () => {
+      if (!selectedEmployee) return null;
+      try {
+        const res = await api.get(`/api/v1/employees/${selectedEmployee.id}/role-assignment/`);
+        return res.data;
+      } catch {
+        return null;
+      }
+    },
+    enabled: !!selectedEmployee,
+    staleTime: 10 * 1000,
+  });
 
   // Detail view active editing state
   const [activeRoleName, setActiveRoleName] = useState<string>('employee');
@@ -187,31 +259,48 @@ export function EmployeePermissionTab() {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  // When an employee is selected, initialize the editing state
+  // When an employee or their server assignment is loaded, initialize the editing state
   useEffect(() => {
     if (selectedEmployee) {
-      const cfg = getEmployeeConfig(selectedEmployee);
-      setActiveRoleName(cfg.roleName);
-      setActiveDataScope(cfg.dataScope);
+      if (selectedEmpAssignment) {
+        const role =
+          roles.find(
+            (r) => r.id === selectedEmpAssignment.role || r.name === selectedEmpAssignment.role_name
+          ) ||
+          roles.find((r) => r.name === 'employee') ||
+          roles[0];
 
-      // If stored perms are empty but role has perms, seed from role
-      if (cfg.selectedPermissionIds && cfg.selectedPermissionIds.length > 0) {
-        setActiveSelectedIds(new Set(cfg.selectedPermissionIds));
+        setActiveRoleName(selectedEmpAssignment.role_name || role.name);
+        setActiveDataScope(selectedEmpAssignment.data_scope || role.data_scope || 'self');
+
+        const rolePermIds = (role.permissions || []).map((p) => p.id);
+        const overridePermIds = (selectedEmpAssignment.permissions_override || [])
+          .map((code: string) => allPermsByCode.get(code)?.id)
+          .filter(Boolean) as string[];
+
+        setActiveSelectedIds(new Set([...rolePermIds, ...overridePermIds]));
       } else {
-        const matchingRole = roles.find((r) => r.name === cfg.roleName || r.id === cfg.roleId);
-        if (matchingRole && matchingRole.permissions && matchingRole.permissions.length > 0) {
-          setActiveSelectedIds(new Set(matchingRole.permissions.map((p) => p.id)));
+        const cfg = getEmployeeConfig(selectedEmployee);
+        setActiveRoleName(cfg.roleName);
+        setActiveDataScope(cfg.dataScope);
+
+        if (cfg.selectedPermissionIds && cfg.selectedPermissionIds.length > 0) {
+          setActiveSelectedIds(new Set(cfg.selectedPermissionIds));
         } else {
-          // If no permissions in role yet, check first few view permissions as sensible default
-          const defaultViews = Array.from(allPermsById.values())
-            .filter((p) => p.code.endsWith('.view'))
-            .map((p) => p.id);
-          setActiveSelectedIds(new Set(defaultViews.slice(0, 8)));
+          const matchingRole = roles.find((r) => r.name === cfg.roleName || r.id === cfg.roleId);
+          if (matchingRole && matchingRole.permissions && matchingRole.permissions.length > 0) {
+            setActiveSelectedIds(new Set(matchingRole.permissions.map((p) => p.id)));
+          } else {
+            const defaultViews = Array.from(allPermsById.values())
+              .filter((p) => p.code.endsWith('.view'))
+              .map((p) => p.id);
+            setActiveSelectedIds(new Set(defaultViews.slice(0, 8)));
+          }
         }
       }
       setPermSearch('');
     }
-  }, [selectedEmployee, getEmployeeConfig, roles, allPermsById]);
+  }, [selectedEmployee, selectedEmpAssignment, getEmployeeConfig, roles, allPermsById, allPermsByCode]);
 
   // When admin switches the Base Role dropdown in detail view
   const handleRoleChange = (newRoleName: string) => {
@@ -265,7 +354,7 @@ export function EmployeePermissionTab() {
     const targetRole = roles.find((r) => r.name === activeRoleName) || roles[0];
     const permArray = Array.from(activeSelectedIds);
 
-    // 1. Update localStorage
+    // 1. Update localStorage for offline fallback
     const updatedMap: Record<string, StoredEmployeePerms> = {
       ...employeePermsMap,
       [selectedEmployee.id]: {
@@ -277,25 +366,28 @@ export function EmployeePermissionTab() {
     };
     saveOverridesMap(updatedMap);
 
-    // 2. Attempt backend role assignment sync if endpoint is available
+    // 2. Map selected permission IDs to permission codes
+    const selectedCodes = permArray
+      .map((id) => allPermsById.get(id)?.code)
+      .filter(Boolean) as string[];
+
+    // 3. Save to backend via atomic PUT
     try {
       await api.put(`/api/v1/employees/${selectedEmployee.id}/role-assignment/`, {
         role_id: targetRole.id,
+        permissions_override: selectedCodes,
       });
-      // also patch overrides
-      const overrideCodes = permArray
-        .map((id) => allPermsById.get(id)?.code)
-        .filter(Boolean) as string[];
 
-      await api.patch(`/api/v1/employees/${selectedEmployee.id}/role-assignment/`, {
-        permissions_override: overrideCodes,
-      });
-    } catch {
-      // local save succeeds even if server accounts are not fully provisioned
+      await queryClient.invalidateQueries({ queryKey: ['employee-role-assignments'] });
+      await queryClient.invalidateQueries({ queryKey: ['employee-role-assignment', selectedEmployee.id] });
+      await queryClient.invalidateQueries({ queryKey: ['hrms-permissions'] });
+
+      showToast(`Permissions updated successfully for ${selectedEmployee.first_name} ${selectedEmployee.last_name}`);
+    } catch (err: any) {
+      const errMsg = err?.response?.data?.error || err?.message || 'Failed to save employee permissions';
+      showToast(`Error: ${errMsg}`);
     } finally {
       setIsSaving(false);
-      showToast(`Permissions updated successfully for ${selectedEmployee.first_name} ${selectedEmployee.last_name}`);
-      queryClient.invalidateQueries({ queryKey: ['hrms-permissions'] });
     }
   };
 
@@ -392,24 +484,28 @@ export function EmployeePermissionTab() {
     };
     saveOverridesMap(updatedMap);
 
-    // Attempt backend sync
+    const selectedCodes = permArray
+      .map((id) => allPermsById.get(id)?.code)
+      .filter(Boolean) as string[];
+
+    // Attempt backend sync via atomic PUT
     try {
       await api.put(`/api/v1/employees/${assignTargetEmpId}/role-assignment/`, {
         role_id: targetRole.id,
+        permissions_override: selectedCodes,
       });
-      const overrideCodes = permArray
-        .map((id) => allPermsById.get(id)?.code)
-        .filter(Boolean) as string[];
 
-      await api.patch(`/api/v1/employees/${assignTargetEmpId}/role-assignment/`, {
-        permissions_override: overrideCodes,
-      });
-    } catch {
-      // Local fallback persists immediately
+      await queryClient.invalidateQueries({ queryKey: ['employee-role-assignments'] });
+      await queryClient.invalidateQueries({ queryKey: ['employee-role-assignment', assignTargetEmpId] });
+      await queryClient.invalidateQueries({ queryKey: ['hrms-permissions'] });
+
+      showToast(`Permissions successfully assigned to ${targetEmp.first_name} ${targetEmp.last_name}`);
+    } catch (err: any) {
+      const errMsg = err?.response?.data?.error || err?.message || 'Failed to assign permissions';
+      showToast(`Error: ${errMsg}`);
+    } finally {
+      setIsAssignModalOpen(false);
     }
-
-    setIsAssignModalOpen(false);
-    showToast(`Permissions successfully assigned to ${targetEmp.first_name} ${targetEmp.last_name}`);
   };
 
   const filteredAssignSections = useMemo(() => {

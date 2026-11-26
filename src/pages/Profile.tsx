@@ -16,10 +16,14 @@ import { formatDate } from '@/utils/formatters';
 import type { EmployeeDetail, EmployeeProfileUpdate } from '@/types/employee';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card } from '@/components/ui/Card';
 import { Iconify } from '@/components/Iconify';
+import { cx } from '@/components/ui/cx';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '@/components/ui/Modal';
+import { PropertyHistoryTimeline } from './employees/components/PropertyHistoryTimeline';
 
 function useCurrentEmployee() {
   return useQuery({
@@ -55,6 +59,7 @@ export default function Profile() {
   const isProfileEditRestricted = !isAdmin && !!hrSettings?.account_restrictions?.restrict_profile_edit;
   // If not restricted, user can edit profile
   const canEditProfile = !isProfileEditRestricted;
+  const isReadOnlyEmployee = !isAdmin;
 
   const startEditing = () => {
     if (isProfileEditRestricted) return;
@@ -81,6 +86,126 @@ export default function Profile() {
     setIsEditing(false);
     setFormData({});
     setErrorMessage(null);
+  };
+
+  // Resignation request query
+  const { data: resignationData, refetch: refetchResignations } = useQuery({
+    queryKey: ['resignation-requests', 'mine'],
+    queryFn: async () => {
+      const res = await api.get('/api/v1/resignation-requests/?mine=true');
+      const results = Array.isArray(res.data) ? res.data : (res.data?.results || []);
+      return results as any[];
+    },
+  });
+
+  const latestResignation = resignationData && resignationData.length > 0 ? resignationData[0] : null;
+
+  const [isResignationModalOpen, setIsResignationModalOpen] = useState(false);
+  const [resignationSubmitting, setResignationSubmitting] = useState(false);
+  const [isCancellingResignation, setIsCancellingResignation] = useState(false);
+  const defaultNoticePeriod = hrSettings?.notice_period_days ?? employee?.notice_period_days ?? 30;
+  const [resignationForm, setResignationForm] = useState({
+    resignation_date: new Date().toISOString().split('T')[0],
+    notice_period_days: defaultNoticePeriod,
+    requested_relieving_date: '',
+    reason: '',
+  });
+
+  const handleOpenResignationModal = () => {
+    const today = new Date();
+    const noticeDays = hrSettings?.notice_period_days ?? employee?.notice_period_days ?? 30;
+    const relieving = new Date(today);
+    relieving.setDate(relieving.getDate() + noticeDays);
+    setResignationForm({
+      resignation_date: today.toISOString().split('T')[0],
+      notice_period_days: noticeDays,
+      requested_relieving_date: relieving.toISOString().split('T')[0],
+      reason: '',
+    });
+    setIsResignationModalOpen(true);
+  };
+
+  const handleResignationDateChange = (dateStr: string) => {
+    const d = new Date(dateStr);
+    const noticeDays = resignationForm.notice_period_days || 30;
+    if (!isNaN(d.getTime())) {
+      const relieving = new Date(d);
+      relieving.setDate(relieving.getDate() + noticeDays);
+      setResignationForm((prev) => ({
+        ...prev,
+        resignation_date: dateStr,
+        requested_relieving_date: relieving.toISOString().split('T')[0],
+      }));
+    } else {
+      setResignationForm((prev) => ({ ...prev, resignation_date: dateStr }));
+    }
+  };
+
+  const handleNoticeDaysChange = (days: number) => {
+    const d = new Date(resignationForm.resignation_date);
+    if (!isNaN(d.getTime())) {
+      const relieving = new Date(d);
+      relieving.setDate(relieving.getDate() + days);
+      setResignationForm((prev) => ({
+        ...prev,
+        notice_period_days: days,
+        requested_relieving_date: relieving.toISOString().split('T')[0],
+      }));
+    } else {
+      setResignationForm((prev) => ({ ...prev, notice_period_days: days }));
+    }
+  };
+
+  const submitResignation = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resignationForm.resignation_date) {
+      alert('Resignation date is required.');
+      return;
+    }
+    setResignationSubmitting(true);
+    try {
+      const payload: Record<string, any> = { ...resignationForm };
+      if (employee?.id) {
+        payload.employee = employee.id;
+      }
+      await api.post('/api/v1/resignation-requests/', payload);
+      setIsResignationModalOpen(false);
+      refetchResignations();
+      setSuccessMessage('Resignation request submitted successfully.');
+      setTimeout(() => setSuccessMessage(null), 4000);
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.error ||
+        err?.response?.data?.detail ||
+        (typeof err?.response?.data === 'string' ? err.response.data : null) ||
+        'Failed to submit resignation request.';
+      setErrorMessage(msg);
+      setTimeout(() => setErrorMessage(null), 5000);
+    } finally {
+      setResignationSubmitting(false);
+    }
+  };
+
+  const cancelResignation = async (id: string | number) => {
+    if (!window.confirm('Are you sure you want to cancel your resignation request?')) {
+      return;
+    }
+    setIsCancellingResignation(true);
+    try {
+      await api.post(`/api/v1/resignation-requests/${id}/cancel/`);
+      refetchResignations();
+      setSuccessMessage('Resignation request cancelled successfully.');
+      setTimeout(() => setSuccessMessage(null), 4000);
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.error ||
+        err?.response?.data?.detail ||
+        'Failed to cancel resignation request.';
+      setErrorMessage(msg);
+      setTimeout(() => setErrorMessage(null), 5000);
+    } finally {
+      setIsCancellingResignation(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -167,6 +292,35 @@ export default function Profile() {
                     {employee.department.name}
                   </span>
                 )}
+                {(() => {
+                  const tags = (employee as any).history_tags || (employee as any).custom_fields?.history_tags;
+                  if (Array.isArray(tags) && tags.length > 0) {
+                    return tags.map((tagTitle: string) => {
+                      const tagItem = hrSettings?.history_tags?.find(
+                        (t) => t.title.toLowerCase() === tagTitle.toLowerCase()
+                      );
+                      const isHighlighted = tagItem ? tagItem.highlight : false;
+                      return (
+                        <span
+                          key={tagTitle}
+                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            isHighlighted
+                              ? 'bg-amber-100 text-amber-900 border border-amber-300 font-semibold shadow-xs'
+                              : 'bg-surface-neutral text-ink-primary border border-divider'
+                          }`}
+                          title={isHighlighted ? 'Highlighted History Tag' : 'History Tag'}
+                        >
+                          <Iconify
+                            icon={isHighlighted ? 'solar:shield-star-bold' : 'solar:tag-outline'}
+                            className={`w-3.5 h-3.5 ${isHighlighted ? 'text-amber-600' : 'text-ink-secondary'}`}
+                          />
+                          {tagTitle}
+                        </span>
+                      );
+                    });
+                  }
+                  return null;
+                })()}
               </div>
             )}
           </div>
@@ -189,6 +343,41 @@ export default function Profile() {
               )}
               <InfoRow label="Date of Joining" value={employee.date_of_joining ? formatDate(employee.date_of_joining) : '--'} />
               <InfoRow label="Employment Type" value={employee.employment_type?.replace('_', ' ')} capitalize />
+              {(() => {
+                const tags = (employee as any).history_tags || (employee as any).custom_fields?.history_tags;
+                if (Array.isArray(tags) && tags.length > 0) {
+                  return (
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-sm text-ink-secondary">History Tags</dt>
+                      <dd className="flex flex-wrap gap-1.5 justify-end">
+                        {tags.map((tagTitle: string) => {
+                          const tagItem = hrSettings?.history_tags?.find(
+                            (t) => t.title.toLowerCase() === tagTitle.toLowerCase()
+                          );
+                          const isHighlighted = tagItem ? tagItem.highlight : false;
+                          return (
+                            <span
+                              key={tagTitle}
+                              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
+                                isHighlighted
+                                  ? 'bg-amber-100 text-amber-900 border border-amber-300 font-semibold'
+                                  : 'bg-surface-neutral text-ink-secondary border border-divider'
+                              }`}
+                            >
+                              <Iconify
+                                icon={isHighlighted ? 'solar:shield-star-bold' : 'solar:tag-outline'}
+                                className={`w-3 h-3 ${isHighlighted ? 'text-amber-600' : 'text-ink-disabled'}`}
+                              />
+                              {tagTitle}
+                            </span>
+                          );
+                        })}
+                      </dd>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </>
           )}
         </dl>
@@ -269,6 +458,105 @@ export default function Profile() {
               </div>
             ) : (
               <p className="text-sm text-ink-secondary">No reporting manager assigned.</p>
+            )}
+          </Card>
+
+          {/* Resignation & Notice Period */}
+          <Card className="mt-6 p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border-light pb-4">
+              <div>
+                <h2 className="text-lg font-semibold text-ink-primary">Resignation & Notice Period</h2>
+                <p className="text-xs text-ink-secondary">Notice Period: {hrSettings?.notice_period_days ?? employee.notice_period_days ?? 30} days</p>
+              </div>
+              {(!latestResignation || latestResignation.status === 'cancelled' || latestResignation.status === 'rejected') && (
+                hrSettings?.resignation_request ? (
+                  <Button
+                    type="button"
+                    onClick={handleOpenResignationModal}
+                    className="bg-error-main hover:bg-error-dark text-white text-xs px-3 py-1.5 self-start sm:self-auto"
+                  >
+                    <Iconify icon="logout" className="w-4 h-4 mr-1.5" />
+                    Submit Resignation Request
+                  </Button>
+                ) : (
+                  <span className="text-xs text-ink-disabled italic">
+                    Self-service resignation is currently disabled in organization settings.
+                  </span>
+                )
+              )}
+            </div>
+
+            {latestResignation ? (
+              <div className="mt-4 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-surface-neutral p-4">
+                  <div className="flex items-center gap-3">
+                    <span className={cx(
+                      "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize",
+                      latestResignation.status === 'approved' && "bg-emerald-100 text-emerald-800",
+                      latestResignation.status === 'pending' && "bg-amber-100 text-amber-800",
+                      latestResignation.status === 'rejected' && "bg-red-100 text-red-800",
+                      latestResignation.status === 'cancelled' && "bg-slate-100 text-slate-800",
+                    )}>
+                      {latestResignation.status}
+                    </span>
+                    <span className="text-sm font-medium text-ink-primary">
+                      Requested on {formatDate(latestResignation.resignation_date)}
+                    </span>
+                  </div>
+                  {latestResignation.status === 'pending' && (
+                    <Button
+                      variant="outlined"
+                      color="inherit"
+                      size="sm"
+                      onClick={() => cancelResignation(latestResignation.id)}
+                      disabled={isCancellingResignation}
+                      className="text-xs text-red-600 hover:bg-red-50 border-red-200"
+                    >
+                      {isCancellingResignation ? 'Cancelling...' : 'Cancel Request'}
+                    </Button>
+                  )}
+                </div>
+
+                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <dt className="text-xs text-ink-secondary">Notice Period</dt>
+                    <dd className="font-medium text-ink-primary">{latestResignation.notice_period_days} days</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-ink-secondary">Requested Relieving Date</dt>
+                    <dd className="font-medium text-ink-primary">{formatDate(latestResignation.requested_relieving_date)}</dd>
+                  </div>
+                  {latestResignation.approved_relieving_date && (
+                    <div>
+                      <dt className="text-xs text-ink-secondary">Confirmed Relieving Date</dt>
+                      <dd className="font-semibold text-emerald-700">{formatDate(latestResignation.approved_relieving_date)}</dd>
+                    </div>
+                  )}
+                  {latestResignation.approver_name && (
+                    <div>
+                      <dt className="text-xs text-ink-secondary">Approver</dt>
+                      <dd className="font-medium text-ink-primary">{latestResignation.approver_name}</dd>
+                    </div>
+                  )}
+                  {latestResignation.rejection_reason && (
+                    <div className="sm:col-span-2 rounded bg-red-50 p-3 text-xs text-red-800">
+                      <strong>Rejection Reason:</strong> {latestResignation.rejection_reason}
+                    </div>
+                  )}
+                  {latestResignation.reason && (
+                    <div className="sm:col-span-2">
+                      <dt className="text-xs text-ink-secondary">Reason</dt>
+                      <dd className="text-sm text-ink-primary whitespace-pre-line mt-1 bg-surface-neutral p-3 rounded">
+                        {latestResignation.reason}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+            ) : (
+              <p className="mt-4 text-sm text-ink-secondary">
+                No active resignation request.
+              </p>
             )}
           </Card>
         </>
@@ -381,6 +669,111 @@ export default function Profile() {
           </p>
         </Card>
       )}
+
+      {/* Employee History Tracking Timeline */}
+      {employee && (
+        <div className="mt-6">
+          <PropertyHistoryTimeline employeeId={employee.id} />
+        </div>
+      )}
+      {/* Resignation Request Modal */}
+      <Modal
+        open={isResignationModalOpen}
+        onClose={() => setIsResignationModalOpen(false)}
+        labelledBy="resignation-modal-title"
+        size="md"
+      >
+        <form onSubmit={submitResignation}>
+          <ModalHeader className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Iconify icon="logout" className="w-5 h-5 text-red-500" />
+              <h2 id="resignation-modal-title" className="text-lg font-semibold text-ink-primary">
+                Submit Resignation Request
+              </h2>
+            </div>
+            <button type="button" onClick={() => setIsResignationModalOpen(false)} className="text-ink-secondary hover:text-ink-primary">
+              <Iconify icon="close" width={18} />
+            </button>
+          </ModalHeader>
+          <ModalBody>
+            <div className="space-y-4">
+              <div className="rounded-md bg-amber-50 p-3 text-xs text-amber-800">
+                Please review your notice period before submitting. Your reporting manager and HR will be notified to review and approve your request.
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-ink-primary mb-1">
+                  Resignation Date <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="date"
+                  value={resignationForm.resignation_date}
+                  onChange={(e) => handleResignationDateChange(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-ink-primary mb-1">
+                  Notice Period (days) <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={resignationForm.notice_period_days}
+                  onChange={(e) => handleNoticeDaysChange(parseInt(e.target.value, 10) || 0)}
+                  required
+                />
+                <p className="text-xs text-ink-disabled mt-1">
+                  Auto-filled from Settings ({hrSettings?.notice_period_days ?? 30} days configured).
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-ink-primary mb-1">
+                  Requested Relieving Date
+                </label>
+                <Input
+                  type="date"
+                  value={resignationForm.requested_relieving_date}
+                  onChange={(e) => setResignationForm((prev) => ({ ...prev, requested_relieving_date: e.target.value }))}
+                />
+                <p className="text-xs text-ink-disabled mt-1">Calculated based on resignation date + notice period</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-ink-primary mb-1">
+                  Reason for Resignation
+                </label>
+                <Textarea
+                  rows={4}
+                  value={resignationForm.reason}
+                  onChange={(e) => setResignationForm((prev) => ({ ...prev, reason: e.target.value }))}
+                  placeholder="Provide reason or comments for your resignation..."
+                />
+              </div>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              type="button"
+              variant="outlined"
+              color="inherit"
+              onClick={() => setIsResignationModalOpen(false)}
+              disabled={resignationSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={resignationSubmitting}
+              className="bg-error-main hover:bg-error-dark text-white"
+            >
+              {resignationSubmitting ? 'Submitting...' : 'Submit Resignation'}
+            </Button>
+          </ModalFooter>
+        </form>
+      </Modal>
     </PageContainer>
   );
 }

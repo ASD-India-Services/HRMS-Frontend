@@ -5,7 +5,7 @@ import { DEPARTMENTS, DESIGNATIONS, BRANCHES, SHIFTS } from '@/lib/endpoints';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { useWorkRecords } from '@/hooks/useWorkRecords';
 import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
-import { formatDate } from '@/utils/formatters';
+import { formatDate, formatTime } from '@/utils/formatters';
 import type {
   WorkRecordDay,
   EmployeeWorkRecord,
@@ -999,7 +999,7 @@ export default function WorkRecords() {
             {hoveredCell.record.check_in && (
               <div className="text-[11px] text-grey-300">
                 <span className="font-medium text-ink-disabled">In / Out: </span>
-                {hoveredCell.record.check_in} - {hoveredCell.record.check_out || '--:--'}
+                {formatTime(hoveredCell.record.check_in)} - {hoveredCell.record.check_out ? formatTime(hoveredCell.record.check_out) : '--:--'}
               </div>
             )}
             {hoveredCell.record.shift_name && (

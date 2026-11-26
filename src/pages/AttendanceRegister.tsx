@@ -14,6 +14,7 @@ import type { ColumnDef, FilterConfig } from '@/types/datatable';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatCard } from '@/components/ui/StatCard';
+import { formatTime } from '@/utils/formatters';
 
 const ENDPOINT = '/api/v1/attendance/register/';
 
@@ -60,8 +61,8 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     sortable: true,
     render: (v: unknown) => statusBadge(v as string),
   },
-  { key: 'check_in', header: 'Check In', sortable: true, render: (v: unknown) => (v ? String(v).slice(0, 5) : '—') },
-  { key: 'check_out', header: 'Check Out', sortable: true, render: (v: unknown) => (v ? String(v).slice(0, 5) : '—') },
+  { key: 'check_in', header: 'Check In', sortable: true, render: (v: unknown) => (v ? formatTime(v as string) : '—') },
+  { key: 'check_out', header: 'Check Out', sortable: true, render: (v: unknown) => (v ? formatTime(v as string) : '—') },
   {
     key: 'working_hours',
     header: 'Hours',
@@ -76,7 +77,30 @@ const columns: ColumnDef<Record<string, unknown>>[] = [
     key: 'is_late',
     header: 'Late',
     sortable: true,
-    render: (v: unknown) => (v ? <span className="text-error-main font-medium text-xs">Late</span> : ''),
+    render: (v: unknown) => (v ? <span className="text-error-main font-medium text-xs">Late</span> : '—'),
+  },
+  {
+    key: 'is_early_out',
+    header: 'Early Out',
+    sortable: false,
+    render: (v: unknown) => (v ? <span className="text-amber-600 font-medium text-xs">Early</span> : '—'),
+  },
+  {
+    key: 'is_auto_validated',
+    header: 'Validation',
+    sortable: false,
+    render: (v: unknown, row: Record<string, unknown>) => {
+      if (!row.check_in) return <span className="text-ink-secondary text-xs">—</span>;
+      return v ? (
+        <span className="inline-flex items-center rounded-full bg-success-lighter px-2 py-0.5 text-xs font-semibold text-success-dark">
+          Auto-Validated
+        </span>
+      ) : (
+        <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
+          After Cut-Off
+        </span>
+      );
+    },
   },
 ];
 

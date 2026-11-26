@@ -135,9 +135,10 @@ export function GdriveBackupTab() {
     setTestResult(null);
 
     try {
-      const res = await api.post('/hr-settings/current/gdrive-backup/test/', {
+      const res = await api.post('/api/v1/hr-settings/gdrive-backup/test/', {
         gdrive_folder_id: gdriveFolderId.trim(),
         service_account_filename: serviceAccountFilename,
+        service_account_file_data: serviceAccountFileData,
       });
       setTestResult({
         status: 'success',

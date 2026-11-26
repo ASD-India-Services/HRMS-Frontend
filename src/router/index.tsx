@@ -760,10 +760,10 @@ export const router = createBrowserRouter([
         element: gated('appraisals_enabled', 'Appraisals', 'performance_feedback.view', <PerformanceFeedback />),
       },
 
-      // ─── Exit Interviews ───────────────────────────────────────
+      // ─── Exit & Resignations ────────────────────────────────────
       {
         path: 'exit-interviews',
-        element: permGated('exit_interviews.view', <ExitInterviews />),
+        element: permGatedAny(['exit_interviews.view', 'resignation.view'], <ExitInterviews />),
       },
 
       // ─── Payroll Periods & Corrections ─────────────────────────

@@ -4,22 +4,12 @@
  */
 
 import type { ShiftType } from '@/types/shift';
+import { formatTime } from '@/utils/formatters';
 
 interface ShiftCardProps {
   shiftType: ShiftType;
   /** Optional compact mode for calendar cell display */
   compact?: boolean;
-}
-
-/**
- * Format a time string (HH:MM:SS) to a human-readable format (h:mm AM/PM).
- */
-function formatTime(time: string | undefined | null): string {
-  if (!time) return '—';
-  const [hours, minutes] = time.split(':').map(Number);
-  const period = hours >= 12 ? 'PM' : 'AM';
-  const displayHours = hours % 12 || 12;
-  return `${displayHours}:${String(minutes).padStart(2, '0')} ${period}`;
 }
 
 export function ShiftCard({ shiftType, compact = false }: ShiftCardProps) {

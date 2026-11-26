@@ -30,20 +30,21 @@ import { ButtonLink, IconButton } from '@/components/ui/Button';
 import { Iconify } from '@/components/Iconify';
 
 /** Roles that see the full organisation-wide admin/HR dashboard */
-const ADMIN_ROLES = ['org_admin', 'hr_manager'];
+const ADMIN_ROLES = ['org_admin', 'hr_manager', 'hr', 'admin', 'administrator', 'superadmin', 'org admin'];
 
 /** Roles that see the manager/team-lead dashboard */
-const MANAGER_ROLES = ['manager', 'dept_head', 'hod', 'department_head'];
+const MANAGER_ROLES = ['manager', 'dept_head', 'hod', 'department_head', 'team_lead', 'team lead'];
 
 export default function Dashboard() {
-  const { name } = useUser();
+  const { name, role: authRole } = useUser();
   const { roleName, isLoading: permLoading } = useHrmsPermissionsContext();
   const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange);
   const [bannerDismissed, setBannerDismissed] = useState(
     () => localStorage.getItem('org-setup-banner-dismissed') === 'true',
   );
 
-  const isOrgAdmin = roleName === 'org_admin';
+  const effectiveRole = (roleName || authRole || '').toLowerCase().trim();
+  const isOrgAdmin = effectiveRole === 'org_admin' || effectiveRole === 'admin';
   const showSetupBanner = isOrgAdmin && !bannerDismissed;
 
   const dismissBanner = () => {
@@ -52,8 +53,8 @@ export default function Dashboard() {
   };
 
   // Determine which sub-dashboard to render
-  const isAdmin = roleName ? ADMIN_ROLES.includes(roleName) : false;
-  const isManager = roleName ? MANAGER_ROLES.includes(roleName) : false;
+  const isAdmin = effectiveRole ? ADMIN_ROLES.includes(effectiveRole) : false;
+  const isManager = effectiveRole ? MANAGER_ROLES.includes(effectiveRole) : false;
 
   // Welcome subtitle varies by tier
   const subtitle = isAdmin

@@ -142,7 +142,7 @@ export function HistoryTagsTab() {
           className="shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
-          + Create
+          Create
         </Button>
       </div>
 

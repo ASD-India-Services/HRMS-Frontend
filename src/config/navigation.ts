@@ -241,7 +241,7 @@ export const navigationConfig: NavGroup[] = [
       { label: 'Overtime Types', href: '/overtime-types', icon: ICONS.overtimeTypes, requiredPermission: 'overtime_types.view' },
       { label: 'Overtime Categories', href: '/overtime-categories', icon: ICONS.overtimeTypes, requiredPermission: 'overtime_categories.view' },
       { label: 'Settlements', href: '/settlements', icon: ICONS.settlements, requiredPermission: 'settlements.view', featureFlag: 'settlements_enabled' },
-      { label: 'Exit Interviews', href: '/exit-interviews', icon: ICONS.exitInterviews, requiredPermission: 'exit_interviews.view', featureFlag: null },
+      { label: 'Resignations & Exit', href: '/exit-interviews', icon: ICONS.exitInterviews, requiredPermission: 'exit_interviews.view', requiredAnyPermission: ['exit_interviews.view', 'resignation.view'], featureFlag: null },
       { label: 'Holiday Assignments', href: '/holiday-assignments', icon: ICONS.holidayAssignments, requiredPermission: 'holiday_assignments.view', featureFlag: null },
       { label: 'Holiday Lists', href: '/holiday-lists', icon: ICONS.holidayLists, requiredPermission: 'holidays.view' },
       { label: 'Health Insurance', href: '/health-insurance', icon: ICONS.healthInsurance, requiredPermission: 'health_insurance.view' },
@@ -321,8 +321,8 @@ export function getFilteredNavigation(
         // Check permission access: any-of list takes precedence when provided.
         if (item.requiredAnyPermission && item.requiredAnyPermission.length > 0) {
           if (!item.requiredAnyPermission.some((p) => hasPermission(p))) return false;
-        } else if (!hasPermission(item.requiredPermission)) {
-          return false;
+        } else if (item.requiredPermission) {
+          if (!hasPermission(item.requiredPermission)) return false;
         }
         // Check feature flag
         if (item.featureFlag && !hasFeature(item.featureFlag)) return false;

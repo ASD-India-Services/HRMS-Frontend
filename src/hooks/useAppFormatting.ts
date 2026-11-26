@@ -8,8 +8,8 @@ import {
   formatCurrency as baseFormatCurrency,
   formatDate as baseFormatDate,
   formatTime as baseFormatTime,
-  FormatCurrencyOptions,
 } from '@/utils/formatters';
+import type { FormatCurrencyOptions } from '@/utils/formatters';
 
 export function useAppFormatting() {
   const { data: settings } = useHRSettings();

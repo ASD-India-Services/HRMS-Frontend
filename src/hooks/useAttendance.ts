@@ -34,6 +34,8 @@ export interface AttendanceRecord {
   shift: string | null
   is_late: boolean
   late_reason: string
+  is_early_out?: boolean
+  early_out_reason?: string
   is_outside_geofence: boolean
   sessions?: AttendanceSession[]
   active_session?: AttendanceSession | null

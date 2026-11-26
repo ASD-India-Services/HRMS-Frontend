@@ -19,6 +19,8 @@ export interface OvertimeSlip {
   hours: number;
   reason: string;
   status: string;
+  approved_by?: string;
+  approved_at?: string;
   created_at: string;
   updated_at: string;
 }

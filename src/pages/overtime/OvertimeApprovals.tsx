@@ -85,11 +85,18 @@ function useOvertimeColumns(): ColumnDef<OvertimeSlip>[] {
         header: 'Status & Actions',
         sortable: false,
         render: (_value: unknown, row: OvertimeSlip) => (
-          <WorkflowEngine
-            config={overtimeApprovalWorkflow}
-            record={{ ...row, id: row.id, status: row.status }}
-            invalidateKeys={[[overtimeSlipsCrudConfig.queryKey, 'list']]}
-          />
+          <div className="space-y-1">
+            <WorkflowEngine
+              config={overtimeApprovalWorkflow}
+              record={{ ...row, id: row.id, status: row.status }}
+              invalidateKeys={[[overtimeSlipsCrudConfig.queryKey, 'list']]}
+            />
+            {row.status === 'approved' && row.approved_by && (
+              <div className="text-[11px] text-ink-secondary">
+                By: <span className="font-medium text-ink-primary">{row.approved_by}</span>
+              </div>
+            )}
+          </div>
         ),
       },
     ],

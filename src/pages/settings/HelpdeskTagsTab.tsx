@@ -5,22 +5,13 @@ import {
   useUpdateHelpdeskTag,
   useDeleteHelpdeskTag,
 } from '@/hooks/useHelpdesk';
-import type { HelpdeskTag } from '@/types/helpdesk';
+import { DEFAULT_HELPDESK_TAGS, type HelpdeskTag } from '@/types/helpdesk';
 import { PlusIcon, CheckIcon, LoaderIcon, SearchIcon } from './SettingsIcons';
 import { Modal } from '@/components/ui/Modal';
 import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
-const DEFAULT_TAGS: HelpdeskTag[] = [
-  { id: '1', title: 'Horilla', color: '#000000' },
-  { id: '2', title: 'Asset', color: '#4fc3f7' },
-  { id: '3', title: 'Request', color: '#afb42b' },
-  { id: '4', title: 'Allocation', color: '#00838f' },
-  { id: '5', title: 'Recruitment', color: '#ef9a9a' },
-  { id: '6', title: 'Stage', color: '#b39ddb' },
-  { id: '7', title: 'Manager', color: '#00bfa5' },
-  { id: '8', title: 'Attendance', color: '#9fa8da' },
-];
+const DEFAULT_TAGS: HelpdeskTag[] = DEFAULT_HELPDESK_TAGS;
 
 const PRESET_COLORS = [
   '#000000',
@@ -189,7 +180,7 @@ export function HelpdeskTagsTab() {
           className="shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
-          + Create
+          Create
         </Button>
       </div>
 
@@ -341,9 +332,8 @@ export function HelpdeskTagsTab() {
                             variant="text"
                             color="inherit"
                             onClick={() => setFormColor(c)}
-                            className={`!h-5 !w-5 !min-w-0 !rounded-full !p-0 border border-grey-900/15 hover:scale-110 ${
-                              formColor.toLowerCase() === c.toLowerCase() ? 'ring-2 ring-primary-main ring-offset-1 scale-110' : ''
-                            }`}
+                            className={`!h-5 !w-5 !min-w-0 !rounded-full !p-0 border border-grey-900/15 hover:scale-110 ${formColor.toLowerCase() === c.toLowerCase() ? 'ring-2 ring-primary-main ring-offset-1 scale-110' : ''
+                              }`}
                             style={{ backgroundColor: c }}
                             title={c}
                             aria-label={c}

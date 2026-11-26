@@ -15,7 +15,7 @@
  * Requirements: 16.1, 16.2, 16.3, 16.4
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { usePermissions, useUser } from '@platform/auth-sdk';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
@@ -71,19 +71,27 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
     normalizedRole === 'admin' ||
     normalizedRole === 'administrator' ||
     normalizedRole === 'org admin' ||
-    normalizedRole === 'superadmin';
+    normalizedRole === 'superadmin' ||
+    normalizedRole === 'hr' ||
+    normalizedRole === 'hr_manager' ||
+    normalizedRole === 'hr manager';
 
   // org_admin and other admin roles see everything; other roles are checked against their actual permissions
-  const effectiveHasPermission = isAdmin
-    ? () => true
-    : hasPermission;
+  const effectiveHasPermission = useCallback(
+    (perm: string) => (isAdmin ? true : hasPermission(perm)),
+    [isAdmin, hasPermission],
+  );
 
-  const effectiveHasFeature = isAdmin
-    ? () => true
-    : hasFeature;
+  const effectiveHasFeature = useCallback(
+    (flag: string) => (isAdmin ? true : hasFeature(flag)),
+    [isAdmin, hasFeature],
+  );
 
   // Filter navigation based on HRMS permissions and feature flags
-  const visibleGroups = getFilteredNavigation(effectiveHasPermission, effectiveHasFeature);
+  const visibleGroups = useMemo(
+    () => getFilteredNavigation(effectiveHasPermission, effectiveHasFeature),
+    [effectiveHasPermission, effectiveHasFeature],
+  );
 
   // Track which groups are expanded (map of group label -> boolean)
   // By default all visible groups are expanded so all navigation features are immediately accessible
@@ -101,10 +109,13 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
       g.items.some((item) => location.pathname === item.href || location.pathname.startsWith(item.href + '/'))
     );
     if (active) {
-      setExpandedGroups((prev) => ({
-        ...prev,
-        [active.label]: true,
-      }));
+      setExpandedGroups((prev) => {
+        if (prev[active.label]) return prev;
+        return {
+          ...prev,
+          [active.label]: true,
+        };
+      });
     }
   }, [location.pathname, visibleGroups]);
 
