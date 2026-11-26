@@ -3,6 +3,7 @@
  * Requirements: 24.2
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState } from 'react';
 import { useTrainingEvent, useEnrollInEvent, useCompleteEnrollment } from '@/hooks/useTraining';
 import { Button } from '@/components/ui/Button';
@@ -305,7 +306,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
           <CardHeader title={`Participants (${event.enrollments.length})`} className="pb-4" />
           <CardContent className="pt-0">
           <div className="overflow-hidden rounded-lg">
-            <table className="min-w-full divide-y divide-divider">
+            <HRMSTable className="min-w-full divide-y divide-divider">
               <thead className="bg-surface-neutral">
                 <tr>
                   <th scope="col" className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-ink-secondary">Name</th>
@@ -337,7 +338,7 @@ export function TrainingDetail({ eventId, employeeId, onBack }: TrainingDetailPr
                   );
                 })}
               </tbody>
-            </table>
+            </HRMSTable>
           </div>
           </CardContent>
         </Card>

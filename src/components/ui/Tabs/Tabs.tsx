@@ -1,9 +1,9 @@
 /**
- * Tabs — underlined tab strip used for status / view filters. Renders role="tablist" with
+ * Tabs — shared segmented tab control used for status / view filters. Renders role="tablist" with
  * role="tab" Buttons (aria-selected) so existing keyboard and test semantics stay the same.
  */
 import type { ReactNode } from 'react';
-import { Button } from '../Button';
+import { SegmentedButton } from '../SegmentedControl/SegmentedControl';
 import { cx } from '../cx';
 
 export interface TabItem<T extends string> {
@@ -21,25 +21,21 @@ export interface TabsProps<T extends string> {
 
 export function Tabs<T extends string>({ items, value, onChange, className, ...rest }: TabsProps<T>) {
   return (
-    <div role="tablist" aria-label={rest['aria-label']} className={cx('mb-6 flex flex-wrap gap-6 border-b border-divider', className)}>
+    <div role="tablist" aria-label={rest['aria-label']} className={cx('mt-4 mb-6 flex max-w-full flex-nowrap items-center gap-2 overflow-x-auto pb-1', className)}>
       {items.map((item) => {
         const selected = item.value === value;
         return (
-          <Button
+          <SegmentedButton
             key={item.value}
+            type="button"
             role="tab"
             aria-selected={selected}
             aria-current={selected ? 'page' : undefined}
-            variant="text"
-            color="inherit"
+            selected={selected}
             onClick={() => onChange(item.value)}
-            className={cx(
-              '-mb-px !h-11 !rounded-none border-b-2 !px-1 !font-semibold hover:!bg-transparent',
-              selected ? 'border-primary-main !text-primary-main' : 'border-transparent',
-            )}
           >
             {item.label}
-          </Button>
+          </SegmentedButton>
         );
       })}
     </div>

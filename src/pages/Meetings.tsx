@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
@@ -19,6 +20,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { SegmentedControl } from '@/components/ui/SegmentedControl/SegmentedControl';
 import { Textarea } from '@/components/ui/Textarea';
 import { Card } from '@/components/ui/Card';
 import { Iconify } from '@/components/Iconify';
@@ -467,8 +469,20 @@ export default function Meetings() {
         }
       />
 
-      <div className="mb-4 flex flex-wrap items-center gap-3">
-        <div className="relative">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <SegmentedControl
+          aria-label="Filter meetings by status"
+          value={statusFilter}
+          onChange={setStatusFilter}
+          items={[
+            { value: '', label: 'All Statuses' },
+            { value: 'scheduled', label: 'Scheduled' },
+            { value: 'in_progress', label: 'In Progress' },
+            { value: 'completed', label: 'Completed' },
+            { value: 'cancelled', label: 'Cancelled' },
+          ]}
+        />
+        <div className="relative ml-auto">
           <Input
             type="text"
             value={search}
@@ -479,13 +493,6 @@ export default function Meetings() {
           />
           <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
         </div>
-        <Select selectSize="small" className="w-48" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="">All Statuses</option>
-          <option value="scheduled">Scheduled</option>
-          <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
-        </Select>
       </div>
 
       {/* Main Content Area */}
@@ -501,7 +508,7 @@ export default function Meetings() {
         ) : (
           /* Meetings Table */
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <HRMSTable className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-surface-neutral/80 border-b border-divider text-ink-primary font-semibold">
                   <th className="py-3 px-4 min-w-[200px]">Title</th>
@@ -645,7 +652,7 @@ export default function Meetings() {
                   );
                 })}
               </tbody>
-            </table>
+            </HRMSTable>
           </div>
         )}
       </Card>

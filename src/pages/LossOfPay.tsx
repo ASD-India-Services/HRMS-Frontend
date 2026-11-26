@@ -6,6 +6,7 @@
  * - Scoped rates: different deduction amounts for all/department/grade/employee
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
@@ -379,7 +380,7 @@ export default function LossOfPay() {
             {/* Rates Table */}
             {policy.rates && policy.rates.length > 0 ? (
               <div className="overflow-hidden rounded-md border border-divider">
-                <table className="min-w-full divide-y divide-divider">
+                <HRMSTable className="min-w-full divide-y divide-divider">
                   <thead className="bg-surface-neutral">
                     <tr>
                       <th className="px-4 py-2 text-left text-xs font-medium uppercase text-ink-secondary">Scope</th>
@@ -408,7 +409,7 @@ export default function LossOfPay() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </HRMSTable>
               </div>
             ) : (
               <p className="text-sm text-ink-secondary text-center py-4 border border-dashed border-divider rounded-md">

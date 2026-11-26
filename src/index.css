@@ -7,18 +7,22 @@
  * Mapped in tailwind.config.ts; do not use raw values in components.
  */
 :root {
-  --primary-lighter: 200 250 214;
-  --primary-light: 91 228 155;
-  --primary-main: 0 167 111;
-  --primary-dark: 0 120 103;
-  --primary-darker: 0 75 80;
+  /* DigiHRMS Pine (#285C48), blended with white and black per the brand scale. */
+  --primary-lighter: 234 239 237;
+  --primary-light: 180 198 191;
+  --primary-main: 40 92 72;
+  --primary-dark: 28 64 50;
+  --primary-darker: 12 28 22;
+  /* Pine 100: 10% Pine + 90% white. */
+  --pine-table-header: 234 239 237;
   --primary-contrast: 255 255 255;
-  --secondary-lighter: 239 214 255;
-  --secondary-light: 198 132 255;
-  --secondary-main: 142 51 255;
-  --secondary-dark: 81 25 183;
-  --secondary-darker: 39 9 122;
-  --secondary-contrast: 255 255 255;
+  /* DigiHRMS Sage (#C7D7C6) and its supporting tints. */
+  --secondary-lighter: 249 251 249;
+  --secondary-light: 210 223 209;
+  --secondary-main: 199 215 198;
+  --secondary-dark: 169 183 168;
+  --secondary-darker: 139 151 139;
+  --secondary-contrast: 13 18 31;
   --info-lighter: 202 253 245;
   --info-light: 97 243 243;
   --info-main: 0 184 217;
@@ -43,20 +47,20 @@
   --error-dark: 183 29 24;
   --error-darker: 122 9 22;
   --error-contrast: 255 255 255;
-  --grey-50: 252 253 253;
-  --grey-100: 249 250 251;
-  --grey-200: 244 246 248;
-  --grey-300: 223 227 232;
-  --grey-400: 196 205 213;
-  --grey-500: 145 158 171;
-  --grey-600: 99 115 129;
-  --grey-700: 69 79 91;
-  --grey-800: 28 37 46;
-  --grey-900: 20 26 33;
+  --grey-50: 250 250 251;
+  --grey-100: 245 246 247;
+  --grey-200: 231 232 234;
+  --grey-300: 214 216 220;
+  --grey-400: 177 179 184;
+  --grey-500: 127 127 127;
+  --grey-600: 99 99 99;
+  --grey-700: 69 69 69;
+  --grey-800: 28 31 39;
+  --grey-900: 13 18 31;
 
-  --ink-primary: 28 37 46;
-  --ink-secondary: 99 115 129;
-  --ink-disabled: 145 158 171;
+  --ink-primary: 13 18 31;
+  --ink-secondary: 127 127 127;
+  --ink-disabled: 145 145 145;
   --surface-paper: 255 255 255;
   --surface-default: 255 255 255;
   --surface-neutral: 244 246 248;
@@ -106,7 +110,7 @@ body {
   max-width: 100%;
   height: 100%;
   overflow-x: hidden !important;
-  font-family: 'Public Sans Variable', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-family: 'DM Sans Variable', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -120,4 +124,41 @@ body {
 
 *, *::before, *::after {
   box-sizing: border-box;
+}
+
+/* Shared data table treatment across HRMS. Rich text tables are authored content. */
+#root .hrms-table {
+  border: 1px solid rgb(var(--grey-300));
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+#root .hrms-table thead {
+  background-color: rgb(var(--pine-table-header));
+}
+
+#root .hrms-table thead th {
+  background-color: rgb(var(--pine-table-header));
+  padding: 0.8rem 1.25rem;
+  color: rgb(var(--ink-primary));
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.35;
+  border-bottom: 1px solid rgb(var(--grey-300));
+  white-space: nowrap;
+}
+
+#root .hrms-table tbody td {
+  padding: 1rem 1.25rem;
+  color: rgb(var(--ink-primary));
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  border-bottom: 1px solid rgb(var(--grey-300));
+  vertical-align: middle;
+}
+
+#root .hrms-table tbody tr:last-child td {
+  border-bottom: 0;
 }

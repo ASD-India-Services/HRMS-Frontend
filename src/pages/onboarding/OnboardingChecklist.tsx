@@ -7,7 +7,7 @@
 import { useState } from 'react';
 import { useOnboardingTasks, useUpdateOnboardingTask } from '@/hooks/useOnboarding';
 import type { OnboardingTask, OnboardingTaskStatus } from '@/types/onboarding';
-import { Select } from '@/components/ui/Select';
+import { SegmentedControl } from '@/components/ui/SegmentedControl/SegmentedControl';
 import { IconButton } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { EmptyState } from '@/components/EmptyState';
@@ -86,17 +86,18 @@ export function OnboardingChecklist({ employeeId }: OnboardingChecklistProps) {
 
       {/* Status filter */}
       <div className="mb-4">
-        <Select
+        <SegmentedControl
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as OnboardingTaskStatus | '')}
+          onChange={(value) => setStatusFilter(value as OnboardingTaskStatus | '')}
           aria-label="Filter tasks by status"
-        >
-          <option value="">All Tasks</option>
-          <option value="pending">Pending</option>
-          <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
-          <option value="skipped">Skipped</option>
-        </Select>
+          items={[
+            { value: '', label: 'All Tasks' },
+            { value: 'pending', label: 'Pending' },
+            { value: 'in_progress', label: 'In Progress' },
+            { value: 'completed', label: 'Completed' },
+            { value: 'skipped', label: 'Skipped' },
+          ]}
+        />
       </div>
 
       {/* Loading */}

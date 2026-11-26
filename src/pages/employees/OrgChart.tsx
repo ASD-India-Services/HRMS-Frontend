@@ -769,7 +769,7 @@ export default function OrgChart() {
       />
 
       {/* ─── Toolbar: search, filters & zoom controls ───────────────────── */}
-      <Card className="flex min-w-0 max-w-full flex-wrap items-center justify-between gap-2 p-3">
+      <div className="mb-4 flex min-w-0 max-w-full flex-wrap items-center justify-between gap-2">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
           {/* Select Employee to Focus Dropdown */}
           {viewMode === 'reporting' && (
@@ -794,7 +794,7 @@ export default function OrgChart() {
           )}
 
           {/* Search Input */}
-          <div className="relative min-w-[160px] max-w-[220px]">
+          <div className="relative order-last ml-auto min-w-[160px] max-w-[220px]">
             <Iconify icon="search" width={16} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-disabled" />
             <Input
               inputSize="small"
@@ -837,7 +837,7 @@ export default function OrgChart() {
           <IconButton icon="minus" size="small" onClick={handleZoomOut} aria-label="Zoom out" title="Zoom out" />
           <IconButton icon="plus" size="small" onClick={handleZoomIn} aria-label="Zoom in" title="Zoom in" />
         </div>
-      </Card>
+      </div>
 
       {/* ─── Focused Sub-Tree Breadcrumb Bar ─────────────────────────────── */}
       {focusedNode && viewMode === 'reporting' && (

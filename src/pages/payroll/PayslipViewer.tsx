@@ -3,6 +3,7 @@
  * Requirements: 27.4
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState } from 'react';
 import { useSalarySlips, useSalarySlipDetail, downloadPayslip } from '@/hooks/usePayroll';
 import { PayslipCard } from './components/PayslipCard';
@@ -57,7 +58,7 @@ function ComponentTable({ title, components, variant }: {
       <div className={`px-4 py-2.5 ${headerBg}`}>
         <h4 className="text-sm font-semibold text-ink-primary">{title}</h4>
       </div>
-      <table className="min-w-full divide-y divide-divider">
+      <HRMSTable className="min-w-full divide-y divide-divider">
         <thead>
           <tr>
             <th scope="col" className="px-4 py-2 text-left text-xs font-medium uppercase text-ink-secondary">Component</th>
@@ -82,7 +83,7 @@ function ComponentTable({ title, components, variant }: {
             <td className={`px-4 py-2 text-right text-sm font-bold ${textColor}`}>{formatCurrency(total)}</td>
           </tr>
         </tfoot>
-      </table>
+      </HRMSTable>
     </div>
   );
 }

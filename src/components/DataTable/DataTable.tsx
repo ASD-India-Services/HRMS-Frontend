@@ -4,7 +4,7 @@
  * Renders a table from ColumnDef[] configuration with support for:
  * - Sortable columns with ascending/descending/none toggle
  * - Row click handler for navigation
- * - Column visibility via hidden prop and user-controlled toggles
+ * - Column visibility via the hidden column configuration
  * - Custom cell rendering via column.render function
  * - Loading, empty, and error states delegated to sub-components
  * - Row selection with checkbox column and "select all" toggle
@@ -13,9 +13,9 @@
  * Requirements: 17.1, 17.3, 3.4
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState, useMemo, useCallback } from 'react';
 import type { DataTableProps } from '@/types/datatable';
-import { ColumnVisibilityMenu } from './ColumnVisibilityMenu';
 import { BulkActionToolbar } from './BulkActionToolbar';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
@@ -92,19 +92,13 @@ export function DataTable<T extends Record<string, unknown>>({
 }: DataTableProps<T>) {
   const [sort, setSort] = useState<SortState>({ key: '', direction: null });
   const [tableSearch, setTableSearch] = useState('');
-  const [hiddenColumns, setHiddenColumns] = useState<Set<string>>(() => {
-    // Initialize from columns that have hidden: true
-    const hidden = new Set<string>();
-    for (const col of columns) {
-      if (col.hidden) {
-        hidden.add(String(col.key));
-      }
-    }
-    return hidden;
-  });
+  const hiddenColumns = useMemo(
+    () => new Set(columns.filter((column) => column.hidden).map((column) => String(column.key))),
+    [columns],
+  );
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  // Visible columns: exclude hidden by default + user-toggled columns
+  // Visible columns: exclude columns hidden in the table configuration.
   const visibleColumns = useMemo(
     () => columns.filter((col) => !hiddenColumns.has(String(col.key))),
     [columns, hiddenColumns]
@@ -135,19 +129,6 @@ export function DataTable<T extends Record<string, unknown>>({
         key: prev.key,
         direction: prev.direction === 'asc' ? 'desc' : 'asc',
       };
-    });
-  }, []);
-
-  // Column visibility toggle handler
-  const handleColumnVisibilityChange = useCallback((columnKey: string, visible: boolean) => {
-    setHiddenColumns((prev) => {
-      const next = new Set(prev);
-      if (visible) {
-        next.delete(columnKey);
-      } else {
-        next.add(columnKey);
-      }
-      return next;
     });
   }, []);
 
@@ -233,9 +214,9 @@ export function DataTable<T extends Record<string, unknown>>({
   // Sort control bar rendered above the table
   const renderToolbar = () => {
     return (
-      <Card className="mb-4 flex flex-wrap items-center justify-between gap-3 px-4 py-3">
-        {/* Left side: Search + Sort */}
-        <div className="flex items-center gap-3">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div data-table-filter-slot="true" className="min-w-0 flex-1" />
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-3">
           {/* Search input */}
           <div className="relative">
             <Iconify
@@ -294,14 +275,7 @@ export function DataTable<T extends Record<string, unknown>>({
             </div>
           )}
         </div>
-
-        {/* Right side: Column visibility */}
-        <ColumnVisibilityMenu
-          columns={columns}
-          hiddenColumns={hiddenColumns}
-          onToggle={handleColumnVisibilityChange}
-        />
-      </Card>
+      </div>
     );
   };
 
@@ -401,15 +375,19 @@ export function DataTable<T extends Record<string, unknown>>({
         />
       )}
 
-      <Card className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-divider">
+      <Card className="overflow-x-auto rounded-xl shadow-sm">
+        <HRMSTable className="min-w-full divide-y divide-divider">
           <thead className="bg-surface-neutral">
             <tr>
               {selectable && renderCheckboxHeader()}
               {visibleColumns.map((col) => (
                 <th
                   key={String(col.key)}
-                  className="px-4 py-3 text-left text-sm font-semibold text-ink-secondary"
+                  className={`px-4 py-3 text-left text-sm font-semibold text-ink-secondary ${
+                    typeof col.header === 'string' && /\bactions?\b/i.test(col.header)
+                      ? 'w-20 text-right'
+                      : ''
+                  }`}
                 >
                   {col.header}
                 </th>
@@ -436,10 +414,13 @@ export function DataTable<T extends Record<string, unknown>>({
                   {visibleColumns.map((col) => {
                     const value = getNestedValue(row, String(col.key));
                     const rendered = col.render ? col.render(value, row) : formatAutoCellValue(value, String(col.key));
+                    const isActionsColumn = typeof col.header === 'string' && /\bactions?\b/i.test(col.header);
                     return (
                       <td
                         key={String(col.key)}
-                        className="px-4 py-3 text-sm text-ink-primary whitespace-nowrap"
+                        className={`px-4 py-3 text-sm text-ink-primary whitespace-nowrap ${
+                          isActionsColumn ? 'w-20 text-right' : ''
+                        }`}
                       >
                         {rendered}
                       </td>
@@ -449,7 +430,7 @@ export function DataTable<T extends Record<string, unknown>>({
               );
             })}
           </tbody>
-        </table>
+        </HRMSTable>
       </Card>
     </div>
   );

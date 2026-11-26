@@ -3,6 +3,7 @@
  * Requirements: 27.6
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useExpenseClaims } from '@/hooks/useExpenses';
@@ -73,7 +74,7 @@ export function ExpenseList() {
         <>
           {/* Table */}
           <Card className="overflow-hidden">
-            <table className="min-w-full divide-y divide-divider">
+            <HRMSTable className="min-w-full divide-y divide-divider">
               <thead className="bg-surface-neutral">
                 <tr>
                   <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Expense Type</th>
@@ -110,7 +111,7 @@ export function ExpenseList() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </HRMSTable>
           </Card>
           {/* Pagination */}
           <div className="mt-4 flex items-center justify-between">

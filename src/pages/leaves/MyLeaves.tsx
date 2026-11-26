@@ -4,6 +4,7 @@
  * and submit new leave applications via an interactive form or modal.
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLeaveApplications, useLeaveBalances, useCancelLeave } from '@/hooks/useLeaves';
@@ -133,7 +134,7 @@ function MyLeavesContent() {
       ) : data && data.results.length > 0 ? (
         <>
           <Card className="overflow-hidden">
-            <table className="min-w-full divide-y divide-divider">
+            <HRMSTable className="min-w-full divide-y divide-divider">
               <thead className="bg-surface-neutral">
                 <tr>
                   <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Leave Type</th>
@@ -199,7 +200,7 @@ function MyLeavesContent() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </HRMSTable>
           </Card>
           {/* Pagination */}
           <div className="mt-4 flex items-center justify-between">

@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
@@ -281,7 +282,7 @@ export default function EmployeeBonusPoints() {
         <>
 <div className="flex items-center gap-2 self-end sm:self-auto">
           {/* Search Input matching Screenshot 1 */}
-          <div className="relative">
+          <div className="relative order-last ml-auto">
             <Iconify icon="search" width={16} className="pointer-events-none absolute left-2.5 top-2.5 text-ink-disabled" />
             <Input
               type="text"
@@ -427,7 +428,7 @@ export default function EmployeeBonusPoints() {
 
               {/* Group Table */}
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
+                <HRMSTable className="w-full text-left text-xs">
                   <thead className="bg-surface-neutral/50 border-b border-divider text-ink-secondary uppercase text-[10px] font-semibold tracking-wider">
                     <tr>
                       {groupByField !== 'Employee' && <th className="py-2.5 px-4">Employee</th>}
@@ -476,7 +477,7 @@ export default function EmployeeBonusPoints() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </HRMSTable>
               </div>
             </Card>
           ))}
@@ -485,7 +486,7 @@ export default function EmployeeBonusPoints() {
         /* Flat List View (when Group By is Select) */
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <HRMSTable className="w-full text-left text-xs">
               <thead className="bg-surface-neutral border-b border-divider text-ink-secondary uppercase text-[10px] font-semibold tracking-wider">
                 <tr>
                   <th className="py-2.5 px-4">Employee</th>
@@ -537,7 +538,7 @@ export default function EmployeeBonusPoints() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </HRMSTable>
           </div>
         </Card>
       )}

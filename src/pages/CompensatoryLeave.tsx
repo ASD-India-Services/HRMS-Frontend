@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
@@ -29,6 +30,7 @@ import { Iconify } from '@/components/Iconify';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Tabs } from '@/components/ui/Tabs';
+import { SegmentedButton } from '@/components/ui/SegmentedControl/SegmentedControl';
 import { StateView } from '@/components/ui/StateView';
 
 export default function CompensatoryLeave() {
@@ -389,7 +391,7 @@ export default function CompensatoryLeave() {
         actions={
         <>
           {/* Search Input */}
-          <div className="relative">
+          <div className="relative order-last">
             <Input
               type="text"
               value={search}
@@ -405,28 +407,26 @@ export default function CompensatoryLeave() {
 
           {/* Filter Button */}
           <div className="relative">
-            <Button
-              variant={statusFilter ? 'soft' : 'outlined'}
-              color={statusFilter ? 'primary' : 'inherit'}
-              size="small"
-              startIcon={<Iconify icon="filter" />}
+            <SegmentedButton
+              selected={Boolean(statusFilter) || isFilterOpen}
+              aria-expanded={isFilterOpen}
+              aria-haspopup="true"
               onClick={() => setIsFilterOpen(!isFilterOpen)}
             >
+              <Iconify icon="filter" className="mr-2" />
               Filter {statusFilter && `(${statusFilter})`}
-            </Button>
+            </SegmentedButton>
 
             {isFilterOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-surface-paper border border-divider rounded-md shadow-xl p-3 z-30">
                 <p className="text-[11px] font-bold text-ink-secondary uppercase tracking-wider mb-2">
                   Filter by Status
                 </p>
-                <div className="space-y-1">
+                <div className="flex flex-col items-stretch gap-2">
                   {['', 'approved', 'requested', 'rejected'].map((s) => (
-                    <Button
+                    <SegmentedButton
                       key={s}
-                      size="small"
-                      variant={statusFilter === s ? 'contained' : 'text'}
-                      color={statusFilter === s ? 'primary' : 'inherit'}
+                      selected={statusFilter === s}
                       className="w-full !justify-start"
                       onClick={() => {
                         setStatusFilter(s);
@@ -435,7 +435,7 @@ export default function CompensatoryLeave() {
                       }}
                     >
                       {s === '' ? 'All Statuses' : s.charAt(0).toUpperCase() + s.slice(1)}
-                    </Button>
+                    </SegmentedButton>
                   ))}
                 </div>
               </div>
@@ -506,7 +506,7 @@ export default function CompensatoryLeave() {
         ) : (
           /* Table View matching Screenshots 2 & 4 */
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <HRMSTable className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-surface-neutral/80 border-b border-divider text-ink-primary font-semibold">
                   <th className="py-3 px-4 min-w-[200px]">
@@ -676,7 +676,7 @@ export default function CompensatoryLeave() {
                   );
                 })}
               </tbody>
-            </table>
+            </HRMSTable>
           </div>
         )}
 

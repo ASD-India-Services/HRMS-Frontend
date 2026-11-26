@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
@@ -18,6 +19,7 @@ import { Select } from '@/components/ui/Select';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Iconify } from '@/components/Iconify';
+import { SegmentedButton } from '@/components/ui/SegmentedControl/SegmentedControl';
 import { StateView } from '@/components/ui/StateView';
 
 const WEEK_OPTIONS = [
@@ -254,7 +256,7 @@ export default function CompanyLeaves() {
         <>
 <div className="flex items-center gap-2.5 self-end sm:self-auto">
           {/* Search Input with Q icon */}
-          <div className="relative">
+          <div className="relative order-last">
             <Iconify icon="search" width={16} className="pointer-events-none absolute left-2.5 top-2.5 text-ink-disabled" />
             <Input
               type="text"
@@ -267,18 +269,18 @@ export default function CompanyLeaves() {
 
           {/* Filter Popover Button */}
           <div className="relative" ref={filterRef}>
-            <Button
-              variant="outlined"
-              color="inherit"
-              size="small"
-              startIcon={<Iconify icon="filter" />}
+            <SegmentedButton
+              selected={hasActiveFilters || isFilterOpen}
+              aria-expanded={isFilterOpen}
+              aria-haspopup="true"
               onClick={() => setIsFilterOpen(!isFilterOpen)}
             >
+              <Iconify icon="filter" className="mr-2" />
               Filter
               {hasActiveFilters && (
                 <span className="h-1.5 w-1.5 rounded-full bg-primary-main" />
               )}
-            </Button>
+            </SegmentedButton>
 
             {/* Filter Dropdown / Card (Matching Screenshot 3) */}
             {isFilterOpen && (
@@ -356,7 +358,7 @@ export default function CompanyLeaves() {
       {/* Main Table (Matching Screenshot 2) */}
       <div className="bg-surface-paper border border-grey-300/90 rounded-xs shadow-2xs overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-divider text-left">
+          <HRMSTable className="min-w-full divide-y divide-divider text-left">
             <thead>
               <tr className="bg-surface-paper">
                 <th
@@ -418,7 +420,7 @@ export default function CompanyLeaves() {
                 ))
               )}
             </tbody>
-          </table>
+          </HRMSTable>
         </div>
 
         {/* Pagination Bar (Matching Screenshot 2) */}

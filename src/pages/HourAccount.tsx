@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
@@ -22,6 +23,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { StateView } from '@/components/ui/StateView';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
+import { SegmentedButton } from '@/components/ui/SegmentedControl/SegmentedControl';
 
 const MONTH_NAMES = [
   'January',
@@ -1147,7 +1149,7 @@ export default function HourAccountPage() {
             </Button>
           </div>
           {/* Search Box */}
-          <div className="relative">
+          <div className="relative order-last ml-auto">
             <Input
               type="text"
               value={search}
@@ -1160,12 +1162,12 @@ export default function HourAccountPage() {
 
           {/* Filter Button */}
           <div className="relative" ref={filterBtnRef}>
-            <Button variant="outlined" color="inherit" size="small" startIcon={<Iconify icon="filter" />} onClick={() => {
+            <SegmentedButton selected={showFilterPopover || activeFiltersCount > 0} aria-expanded={showFilterPopover} aria-haspopup="true" onClick={() => {
                 setShowFilterPopover(!showFilterPopover);
                 setShowGroupByPopover(false);
                 setShowActionsMenu(false);
-              }}><span>Filter{activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}</span>
-            </Button>
+              }}><Iconify icon="filter" className="mr-2" /><span>Filter{activeFiltersCount > 0 ? `(${activeFiltersCount})` : ''}</span>
+            </SegmentedButton>
 
             {/* Filter Popover */}
             {showFilterPopover && (
@@ -1998,7 +2000,7 @@ export default function HourAccountPage() {
                             {/* Expanded Week Table */}
                             {isWeekExpanded && (
                               <div className="border-t border-divider overflow-x-auto">
-                                <table className="w-full text-left text-sm">
+                                <HRMSTable className="w-full text-left text-sm">
                                   <thead className="bg-surface-neutral text-xs font-semibold text-ink-primary uppercase tracking-wider border-b border-divider">
                                     <tr>
                                       <th className="w-10 px-4 py-3">
@@ -2088,7 +2090,7 @@ export default function HourAccountPage() {
                                       );
                                     })}
                                   </tbody>
-                                </table>
+                                </HRMSTable>
                               </div>
                             )}
                           </div>
@@ -2128,7 +2130,7 @@ export default function HourAccountPage() {
                         No records for this group.
                       </div>
                     ) : (
-                      <table className="w-full text-left text-sm">
+                      <HRMSTable className="w-full text-left text-sm">
                         <thead className="bg-surface-neutral text-xs font-semibold text-ink-primary uppercase tracking-wider border-b border-divider">
                           <tr>
                             <th className="w-10 px-4 py-3">
@@ -2218,7 +2220,7 @@ export default function HourAccountPage() {
                             );
                           })}
                         </tbody>
-                      </table>
+                      </HRMSTable>
                     )}
                   </div>
                 )}

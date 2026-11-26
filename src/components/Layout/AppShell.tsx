@@ -10,8 +10,10 @@
 
 import { useState, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
+import type { ReactNode } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { PageTitleContext } from './PageTitleContext';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 
 /** Loading fallback shown during route transitions */
@@ -26,8 +28,10 @@ function PageLoader() {
 export function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [pageTitle, setPageTitle] = useState<ReactNode>('');
 
   return (
+    <PageTitleContext.Provider value={{ title: pageTitle, setTitle: setPageTitle }}>
     <div className="flex h-screen w-full max-w-full overflow-hidden bg-surface-default">
       {/* Offline banner */}
       <OfflineIndicator />
@@ -56,5 +60,6 @@ export function AppShell() {
         </main>
       </div>
     </div>
+    </PageTitleContext.Provider>
   );
 }

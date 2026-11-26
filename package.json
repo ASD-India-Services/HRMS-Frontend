@@ -12,6 +12,8 @@
     "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
     "@fontsource-variable/public-sans": "^5.3.0",
     "@iconify/react": "^6.0.4",
     "@platform/auth-sdk": "file:../Auth-sdk",

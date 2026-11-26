@@ -199,7 +199,7 @@ export default function FAQs() {
         actions={
           <>
             {/* Search Input */}
-            <div className="relative">
+            <div className="relative order-last ml-auto">
               <Input
                 type="text"
                 value={searchTerm}

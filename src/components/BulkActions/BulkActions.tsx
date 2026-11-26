@@ -4,6 +4,7 @@
  * Permission-gated via useHrmsPermissionsContext.
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState, useCallback, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
@@ -220,7 +221,7 @@ export function BulkActions({
 
               {importResult.errors.length > 0 && (
                 <div className="mt-2 max-h-40 overflow-auto rounded-md border border-error-light">
-                  <table className="min-w-full divide-y divide-error-light text-xs">
+                  <HRMSTable className="min-w-full divide-y divide-error-light text-xs">
                     <thead className="bg-error-lighter">
                       <tr>
                         <th className="px-3 py-1.5 text-left font-medium text-error-dark">Row</th>
@@ -235,7 +236,7 @@ export function BulkActions({
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                  </HRMSTable>
                 </div>
               )}
             </div>

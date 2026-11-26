@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import api from '@/lib/api';
@@ -182,7 +183,7 @@ export default function BulkImportExport() {
                 Error Details
               </h4>
               <div className="mt-2 overflow-auto rounded-lg bg-error-lighter/40">
-                <table className="min-w-full divide-y divide-error-light text-sm">
+                <HRMSTable className="min-w-full divide-y divide-error-light text-sm">
                   <thead className="bg-error-lighter">
                     <tr>
                       <th className="px-4 py-2 text-left font-medium text-error-dark">
@@ -203,7 +204,7 @@ export default function BulkImportExport() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </HRMSTable>
               </div>
             </div>
           )}

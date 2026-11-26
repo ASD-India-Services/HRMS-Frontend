@@ -9,9 +9,11 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import type { FilterConfig } from '@/types/datatable';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
+import { SegmentedControl } from '@/components/ui/SegmentedControl/SegmentedControl';
 
 export interface FilterBarProps {
   /** Filter configuration array */
@@ -57,12 +59,37 @@ export function FilterBar({ filters, values, onChange, onClearAll }: FilterBarPr
   // Skip search-type filters — DataTable has a built-in search bar
   const nonSearchFilters = filters.filter((f) => f.type !== 'search');
   const hasActiveFilters = Object.values(values).some((v) => v !== '');
+  const fallbackRef = useRef<HTMLDivElement>(null);
+  const toolbarTargetRef = useRef<HTMLElement | null>(null);
+  const [toolbarTarget, setToolbarTarget] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const page = fallbackRef.current?.closest<HTMLElement>('[data-page-container]');
+    if (!page) return;
+
+    const findToolbar = () => {
+      if (toolbarTargetRef.current && !toolbarTargetRef.current.isConnected) {
+        toolbarTargetRef.current = null;
+        setToolbarTarget(null);
+      }
+      const target = page.querySelector<HTMLElement>('[data-table-filter-slot]');
+      if (target && target !== toolbarTargetRef.current) {
+        toolbarTargetRef.current = target;
+        setToolbarTarget(target);
+      }
+    };
+
+    findToolbar();
+    const observer = new MutationObserver(findToolbar);
+    observer.observe(page, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
 
   // Don't render anything if only search filters exist
   if (nonSearchFilters.length === 0 && !hasActiveFilters) return null;
 
-  return (
-    <div className="flex flex-wrap items-center gap-3 mb-4">
+  const controls = (
+    <div className="flex min-w-0 flex-wrap items-center gap-2">
       {nonSearchFilters.map((filter) => (
         <FilterInput
           key={filter.key}
@@ -79,6 +106,10 @@ export function FilterBar({ filters, values, onChange, onClearAll }: FilterBarPr
       )}
     </div>
   );
+
+  return toolbarTarget
+    ? createPortal(controls, toolbarTarget)
+    : <div ref={fallbackRef} className="mb-4">{controls}</div>;
 }
 
 interface FilterInputProps {
@@ -108,42 +139,57 @@ function FilterInput({ config, value, onChange }: FilterInputProps) {
         />
       );
 
-    case 'select':
-      return (
-        <div className="flex flex-col">
-          <Select
-            selectSize="small"
+    case 'select': {
+      const options = config.options ?? [];
+      const selectableOptions = options.filter((option) => option.value !== '');
+      // Short fixed option sets work better as the shared segmented filter control.
+      // Keep larger lists in a select so the toolbar stays compact.
+      if (selectableOptions.length > 0 && selectableOptions.length <= 3) {
+        const segmentedOptions = [
+          { value: '', label: allLabel(config.label) },
+          ...selectableOptions,
+        ];
+        return (
+          <SegmentedControl
+            items={segmentedOptions}
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={onChange}
             aria-label={config.label}
-          >
-            <option value="">{allLabel(config.label)}</option>
-            {config.options?.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </Select>
-        </div>
+          />
+        );
+      }
+      return (
+        <Select
+          selectSize="small"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          aria-label={config.label}
+        >
+          <option value="">{allLabel(config.label)}</option>
+          {config.options?.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </Select>
       );
+    }
 
     case 'multi-select':
       return (
-        <div className="flex flex-col">
-          <Select
-            selectSize="small"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            aria-label={config.label}
-          >
-            <option value="">{allLabel(config.label)}</option>
-            {config.options?.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </Select>
-        </div>
+        <Select
+          selectSize="small"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          aria-label={config.label}
+        >
+          <option value="">{allLabel(config.label)}</option>
+          {config.options?.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </Select>
       );
 
     case 'date-range':

@@ -4,6 +4,7 @@
  * Requirements: 27.5
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState, useMemo } from 'react';
 import { useShiftAssignments } from '@/hooks/useShifts';
 import { ShiftCard } from './components/ShiftCard';
@@ -147,7 +148,7 @@ export function ShiftRoster() {
             <EmptyState module="shifts" title="No shift assignments" description="No shift assignments found for this period." />
           </Card>
         ) : (
-          <table className="min-w-full border-collapse">
+          <HRMSTable className="min-w-full border-collapse">
             <thead>
               <tr>
                 <th className="sticky left-0 z-10 border-b border-divider bg-surface-neutral px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-ink-secondary">
@@ -211,7 +212,7 @@ export function ShiftRoster() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </HRMSTable>
         )}
       </div>
 

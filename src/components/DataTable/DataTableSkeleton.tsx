@@ -7,6 +7,7 @@
  * Requirements: 17.4
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 interface DataTableSkeletonProps {
   /** Number of columns to render */
   columnCount: number;
@@ -17,7 +18,7 @@ interface DataTableSkeletonProps {
 export function DataTableSkeleton({ columnCount, rowCount = 5 }: DataTableSkeletonProps) {
   return (
     <div className="overflow-x-auto border border-divider rounded-lg">
-      <table className="min-w-full divide-y divide-divider">
+      <HRMSTable className="min-w-full divide-y divide-divider">
         <thead className="bg-surface-neutral">
           <tr>
             {Array.from({ length: columnCount }).map((_, colIdx) => (
@@ -41,7 +42,7 @@ export function DataTableSkeleton({ columnCount, rowCount = 5 }: DataTableSkelet
             </tr>
           ))}
         </tbody>
-      </table>
+      </HRMSTable>
     </div>
   );
 }
