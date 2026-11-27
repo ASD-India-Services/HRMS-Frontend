@@ -19,16 +19,26 @@ import { useExpenseClaims } from '@/hooks/useExpenses';
 import { Can } from '@/components/Can';
 import { CheckInButton } from '@/pages/attendance/components/CheckInButton';
 import { formatDate, formatTime } from '@/utils/formatters';
+import { DashboardMetricCard } from '@/components/Dashboard/DashboardMetricCard';
+import { DashboardSectionHeading } from '@/components/Dashboard/DashboardSectionHeading';
 
 export function EmployeeDashboard() {
   const { data: attendanceToday, isLoading: attendanceLoading } = useAttendanceToday();
 
   const { data: balances = [], isLoading: balancesLoading } = useLeaveBalances();
   const { data: applicationsData, isLoading: appsLoading } = useLeaveApplications({ page: 1, page_size: 5 });
+  const { data: pendingApplicationsData, isLoading: pendingAppsLoading } = useLeaveApplications({ status: 'pending', page: 1, page_size: 1 });
   const { data: expensesData, isLoading: expensesLoading } = useExpenseClaims({ page: 1, page_size: 5 });
+  const { data: pendingExpensesData, isLoading: pendingExpensesLoading } = useExpenseClaims({ status: 'pending', page: 1, page_size: 1 });
 
   const isCheckedIn = !!attendanceToday?.check_in;
   const isCheckedOut = !!attendanceToday?.check_out;
+  const totalAvailableLeave = balances.reduce(
+    (sum, balance) => sum + (Number(balance.available_balance ?? balance.remaining_days) || 0),
+    0,
+  );
+  const pendingLeaveRequests = pendingApplicationsData?.count ?? 0;
+  const pendingExpenseClaims = pendingExpensesData?.count ?? 0;
 
   const fmtTime = (t: string | null) => {
     if (!t) return '--:--';
@@ -61,6 +71,52 @@ export function EmployeeDashboard() {
         </Can>
       </div>
 
+      <DashboardSectionHeading title="My snapshot" description="Your attendance, leave, and request activity at a glance." icon="dashboard" />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Can permissions={['attendance.view']}>
+          <DashboardMetricCard
+            title="Today's Attendance"
+            value={isCheckedOut ? 'Checked out' : isCheckedIn ? 'Checked in' : 'Not clocked in'}
+            icon="attendance"
+            caption={attendanceToday?.check_in ? `Checked in at ${fmtTime(attendanceToday.check_in)}` : 'No check-in recorded yet'}
+            href="/my-attendance"
+            isLoading={attendanceLoading}
+            className="[&_p.text-3xl]:text-xl"
+          />
+        </Can>
+        <Can permissions={['leaves.view']}>
+          <DashboardMetricCard
+            title="Available Leave"
+            value={`${totalAvailableLeave} days`}
+            icon="leaves"
+            caption={`${balances.length} leave types available`}
+            href="/my-leaves"
+            isLoading={balancesLoading}
+          />
+        </Can>
+        <Can permissions={['leaves.view']}>
+          <DashboardMetricCard
+            title="Pending Leave Requests"
+            value={pendingLeaveRequests}
+            icon="leaveApprovals"
+            caption="Awaiting a decision"
+            href="/my-leaves"
+            isLoading={pendingAppsLoading}
+          />
+        </Can>
+        <Can permissions={['expenses.view']}>
+          <DashboardMetricCard
+            title="Pending Expense Claims"
+            value={pendingExpenseClaims}
+            icon="expenses"
+            caption="Awaiting a decision"
+            href="/expenses"
+            isLoading={pendingExpensesLoading}
+          />
+        </Can>
+      </div>
+
+      <DashboardSectionHeading title="My attendance & balances" description="Today’s clock activity and your leave entitlements." icon="attendance" />
       {/* Top Row */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Attendance Widget */}
@@ -138,6 +194,7 @@ export function EmployeeDashboard() {
         </Can>
       </div>
 
+      <DashboardSectionHeading title="Recent requests" description="Your latest leave applications and expense claims." icon="documentTypes" />
       {/* Bottom Row */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Recent Leave Applications */}

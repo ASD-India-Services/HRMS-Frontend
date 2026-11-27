@@ -4,7 +4,8 @@ import { usePerformanceData } from '@/hooks/usePerformance';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ButtonLink } from '@/components/ui/Button';
-import { StatCard } from '@/components/ui/StatCard';
+import { DashboardMetricCard as StatCard } from '@/components/Dashboard/DashboardMetricCard';
+import { DashboardSectionHeading } from '@/components/Dashboard/DashboardSectionHeading';
 import { StateView } from '@/components/ui/StateView';
 import { ChartCard, ChartTooltip, DonutChart, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
 import { Iconify } from '@/components/Iconify';
@@ -130,7 +131,8 @@ export default function PerformanceDashboard() {
         }
       />
 
-      <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <DashboardSectionHeading title="Performance snapshot" description="Objectives, key results, feedback, and items that may need attention." icon="goals" />
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard title="Total employee objectives" value={totalObjectives} icon="goals" href="/goals" isLoading={isLoading} />
         <StatCard title="Total key results" value={totalKeyResults} icon="kras" href="/kras" isLoading={isLoading} />
         <StatCard title="Total feedbacks" value={totalFeedbacks} icon="feedback" href="/performance-feedback" isLoading={isLoading} />
@@ -143,7 +145,8 @@ export default function PerformanceDashboard() {
         />
       </div>
 
-      <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <DashboardSectionHeading title="Performance analytics" description="Progress and feedback patterns from current performance records." icon="chart" />
+      <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <ChartCard title="Objective status" action={viewLink('/goals', 'View Objectives')} height={300}>
           {totalObjectives === 0 ? (
             <StateView icon="goals" title="No objectives are available." className="py-0" role="status" />

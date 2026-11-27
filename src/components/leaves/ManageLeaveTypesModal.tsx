@@ -213,7 +213,7 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
     <Modal open onClose={onClose} labelledBy="ManageLeaveTypesModal-modal-title-1" size="lg" closeOnEscape={false} closeOnOverlayClick={false}>
       <div className="flex flex-col min-h-0 flex-1 overflow-y-auto">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-divider flex items-center justify-between bg-surface-neutral/50">
+        <div className="px-6 py-4 border-b border-divider flex items-center justify-between rounded-t-card bg-surface-paper">
           <div>
             <h2 id="ManageLeaveTypesModal-modal-title-1" className="text-xl font-bold text-ink-primary">Manage Leave Types</h2>
             <p className="text-sm text-ink-secondary mt-0.5">
@@ -356,7 +356,7 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
             </div>
           ) : (
             canCreate && (
-              <div className="flex justify-between items-center bg-surface-neutral p-3 rounded-lg border border-divider">
+              <div className="flex items-center justify-between gap-4">
                 <span className="text-xs text-ink-secondary">
                   Total Active Leave Types: <strong className="text-ink-primary">{leaveTypes.length}</strong>
                 </span>
@@ -393,6 +393,9 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
                   <th className="px-4 py-3 text-xs font-semibold text-ink-secondary uppercase tracking-wider">
                     Approval
                   </th>
+                  <th className="px-4 py-3 text-xs font-semibold text-ink-secondary uppercase tracking-wider">
+                    Active
+                  </th>
                   <th className="px-4 py-3 text-xs font-semibold text-ink-secondary uppercase tracking-wider text-right">
                     Actions
                   </th>
@@ -401,13 +404,13 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
               <tbody className="divide-y divide-divider text-sm">
                 {loading ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-ink-secondary">
+                    <td colSpan={6} className="px-4 py-8 text-center text-ink-secondary">
                       Loading leave types...
                     </td>
                   </tr>
                 ) : leaveTypes.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-4 py-10 text-center">
+                    <td colSpan={6} className="px-4 py-10 text-center">
                       <div className="flex flex-col items-center justify-center text-ink-disabled">
                         <svg className="w-10 h-10 mb-2 stroke-current" fill="none" viewBox="0 0 24 24">
                           <path

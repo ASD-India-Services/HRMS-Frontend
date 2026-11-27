@@ -96,6 +96,11 @@ export function CrudModal({
       fields.forEach((field) => {
         if (field.type === 'checkbox') {
           defaults[field.key] = initialValues[field.key] ?? false;
+        } else if (field.type === 'time') {
+          // TimePickerField displays 9:00 AM when empty. Store the same default
+          // in form state so required validation and the submitted value agree
+          // with what the user sees, even if they keep that default.
+          defaults[field.key] = initialValues[field.key] ?? '09:00';
         } else {
           defaults[field.key] = initialValues[field.key] ?? '';
         }

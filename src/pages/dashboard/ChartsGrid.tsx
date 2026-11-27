@@ -10,6 +10,7 @@
 
 import { ChartWidget } from '@/components/ChartWidget';
 import { Can } from '@/components/Can';
+import { DashboardSectionHeading } from '@/components/Dashboard/DashboardSectionHeading';
 
 const CHARTS_ENDPOINT = '/api/v1/reports/dashboard-charts/';
 
@@ -19,7 +20,9 @@ interface ChartsGridProps {
 
 export function ChartsGrid({ dateRange }: ChartsGridProps) {
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+    <section className="space-y-4">
+      <DashboardSectionHeading title="People & operations analytics" description="Trends and distributions from your current HRMS data." icon="chart" />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
       <Can permissions={['employees.view']}>
         <ChartWidget
           title="Headcount Trend"
@@ -85,6 +88,7 @@ export function ChartsGrid({ dateRange }: ChartsGridProps) {
           dateRange={dateRange}
         />
       </Can>
-    </div>
+      </div>
+    </section>
   );
 }

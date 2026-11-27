@@ -8,7 +8,8 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { ButtonLink, IconButton } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
-import { StatCard } from '@/components/ui/StatCard';
+import { DashboardMetricCard as StatCard } from '@/components/Dashboard/DashboardMetricCard';
+import { DashboardSectionHeading } from '@/components/Dashboard/DashboardSectionHeading';
 import { ChartCard, ChartTooltip, DonutChart, AXIS_PROPS, getChartColors, getChartTheme } from '@/components/ui/Chart';
 import { Iconify } from '@/components/Iconify';
 
@@ -218,7 +219,8 @@ export default function RecruitmentDashboard() {
         }
       />
 
-      <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-5">
+      <DashboardSectionHeading title="Hiring snapshot" description="Current vacancies, recruitment activity, and candidate outcomes." icon="recruitment" />
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard title="Total Vacancies" value={totalVacancies} icon="recruitment" isLoading={isLoading} />
         <StatCard title="Ongoing Recruitments" value={ongoingRecruitments} icon="pipeline" isLoading={isLoading} />
         <StatCard title="Hired Candidates" value={hiredCount} icon="employees" isLoading={isLoading} />
@@ -238,6 +240,7 @@ export default function RecruitmentDashboard() {
         />
       </div>
 
+      <DashboardSectionHeading title="Recruitment analytics" description="Joinings and candidate pipeline across the selected data." icon="chart" />
       <div className="mb-6">
         <ChartCard
           title="Joinings Per Month"
@@ -325,7 +328,8 @@ export default function RecruitmentDashboard() {
         </ChartCard>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <DashboardSectionHeading title="Recent hiring activity" description="Latest applicants and upcoming interviews." icon="employees" />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader
             title="Recent Applicants"

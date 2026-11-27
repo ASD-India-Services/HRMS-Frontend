@@ -14,7 +14,8 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ButtonLink } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
-import { StatCard } from '@/components/ui/StatCard';
+import { DashboardMetricCard as StatCard } from '@/components/Dashboard/DashboardMetricCard';
+import { DashboardSectionHeading } from '@/components/Dashboard/DashboardSectionHeading';
 import { DonutChart, ChartCard, ChartTooltip, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
 import { EmptyState } from '@/components/EmptyState';
 import { Iconify } from '@/components/Iconify';
@@ -97,7 +98,8 @@ export default function PermissionDashboard() {
       />
       <div className="space-y-6">
         {/* Top Metric Cards */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <DashboardSectionHeading title="Access governance snapshot" description="Role coverage and account assignment overview." icon="compliance" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
             title="Active Roles"
             value={totalRoles}
@@ -115,7 +117,7 @@ export default function PermissionDashboard() {
           />
           <StatCard
             title="Security Modules"
-            value={Object.keys(modulePermCounts).length || 12}
+            value={Object.keys(modulePermCounts).length}
             icon="compliance"
             isLoading={isLoading}
             caption="Protected modules · Granular RBAC boundaries"
@@ -130,7 +132,8 @@ export default function PermissionDashboard() {
         </div>
 
         {/* Visual Charts Grid */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <DashboardSectionHeading title="Security analytics" description="User distribution and permission coverage across modules." icon="chart" />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {/* Users per Role Chart */}
           <ChartCard
             title="User Allocation per Role"
@@ -169,6 +172,7 @@ export default function PermissionDashboard() {
         </div>
 
         {/* Roles Directory Table */}
+        <DashboardSectionHeading title="Role directory" description="System and custom access roles configured for this organization." icon="employees" />
         <Card>
           <CardHeader
             title="Security Roles Overview"

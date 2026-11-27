@@ -15,7 +15,8 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { ButtonLink } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
-import { StatCard } from '@/components/ui/StatCard';
+import { DashboardMetricCard as StatCard } from '@/components/Dashboard/DashboardMetricCard';
+import { DashboardSectionHeading } from '@/components/Dashboard/DashboardSectionHeading';
 import { DonutChart, ChartCard, ChartTooltip, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
 import { EmptyState } from '@/components/EmptyState';
 import { Iconify } from '@/components/Iconify';
@@ -169,7 +170,8 @@ export default function PayrollDashboard() {
       />
       <div className="space-y-6">
         {/* Top Metric Cards */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <DashboardSectionHeading title="Payroll snapshot" description="Disbursements, payslip volume, payroll cycles, and salary structures." icon="payroll" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
             title="Disbursed Net Pay"
             value={formatCurrency(totalNetPay || 0)}
@@ -204,7 +206,8 @@ export default function PayrollDashboard() {
         </div>
 
         {/* Visual Charts Grid */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <DashboardSectionHeading title="Compensation analytics" description="Payroll trend and cost distribution from available records." icon="chart" />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {/* 6-Month Payroll Expense Trend */}
           <ChartCard
             title="6-Month Payroll Expense Trend"
@@ -248,6 +251,7 @@ export default function PayrollDashboard() {
         </div>
 
         {/* Recent Payroll Runs Table */}
+        <DashboardSectionHeading title="Recent payroll activity" description="Latest payroll runs and their processing status." icon="salarySlips" />
         <Card>
           <CardHeader
             title="Recent Payroll Runs"

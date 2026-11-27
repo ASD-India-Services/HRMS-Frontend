@@ -23,6 +23,7 @@ import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { ExpandableSearch } from '@/components/ui/ExpandableSearch';
 import { Select } from '@/components/ui/Select';
 import { Textarea } from '@/components/ui/Textarea';
 import { Card } from '@/components/ui/Card';
@@ -412,19 +413,15 @@ export default function CompensatoryLeave() {
         />
 
         <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
-          <div className="relative">
-            <Input
-              type="text"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Search"
-              className="w-48 pl-8 pr-3 sm:w-56"
-            />
-            <Iconify icon="search" width={16} className="absolute left-2.5 top-3 text-ink-disabled" />
-          </div>
+          <ExpandableSearch
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Search"
+            aria-label="Search compensatory leave requests"
+          />
 
           <div className="relative translate-y-0.5">
             <SegmentedButton

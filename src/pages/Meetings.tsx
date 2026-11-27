@@ -19,6 +19,7 @@ import type { Meeting } from '@/hooks/useMeetings';
 import { Modal } from '@/components/ui/Modal';
 import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { ExpandableSearch } from '@/components/ui/ExpandableSearch';
 import { Select } from '@/components/ui/Select';
 import { SegmentedControl } from '@/components/ui/SegmentedControl/SegmentedControl';
 import { Textarea } from '@/components/ui/Textarea';
@@ -483,17 +484,12 @@ export default function Meetings() {
           ]}
         />
         <div className="ml-auto flex items-center gap-3">
-          <div className="relative">
-            <Input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search meetings..."
-              inputSize="medium"
-              className="w-56 pl-8 pr-3 sm:w-72"
-            />
-            <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
-          </div>
+          <ExpandableSearch
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search meetings..."
+            aria-label="Search meetings"
+          />
           <div data-table-action-slot="true" className="flex shrink-0 items-center gap-2" />
         </div>
       </div>

@@ -20,7 +20,8 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { ButtonLink } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { Input } from '@/components/ui/Input';
-import { StatCard } from '@/components/ui/StatCard';
+import { DashboardMetricCard as StatCard } from '@/components/Dashboard/DashboardMetricCard';
+import { DashboardSectionHeading } from '@/components/Dashboard/DashboardSectionHeading';
 import { ChartCard, ChartTooltip, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
 import { Iconify } from '@/components/Iconify';
 
@@ -170,7 +171,7 @@ export default function AttendanceDashboard() {
   });
 
   // ─── Top Cards Metric Calculations ─────────────────────────────────────────
-  const totalEmployeesCount = employees.length || 30;
+  const totalEmployeesCount = employeesResponse?.count ?? employees.length;
 
   // Present employees: those with attendance records marked present or with check_in
   const presentRecords = useMemo(() => {
@@ -202,7 +203,7 @@ export default function AttendanceDashboard() {
   // Today's Attendances percentage
   const attendancePercentage = totalEmployeesCount > 0
     ? ((presentRecords.length / totalEmployeesCount) * 100).toFixed(2)
-    : '0.00';
+    : null;
 
   // ─── Organization Departments (IT and IT Support) ───────────────────────
   const activeDepartments = useMemo(() => {
@@ -216,7 +217,7 @@ export default function AttendanceDashboard() {
       if (matched.length > 0) return matched;
       return list.slice(0, 2);
     }
-    return ['IT', 'IT Support'];
+    return [];
   }, [departmentsList]);
 
   // Map each employee to department
@@ -397,14 +398,16 @@ export default function AttendanceDashboard() {
       />
       <div className="space-y-6">
         {/* Top metric cards */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard title="Today's Attendances" value={`${attendancePercentage}%`} icon="attendance" isLoading={isLoading} />
+        <DashboardSectionHeading title="Attendance snapshot" description="Today’s attendance, punctuality, and leave totals." icon="attendance" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCard title="Today's Attendance" value={attendancePercentage === null ? '—' : `${attendancePercentage}%`} icon="attendance" isLoading={isLoading} caption={`${presentRecords.length} of ${totalEmployeesCount} active employees`} />
           <StatCard title="On Time" value={onTimeCount} icon="success" isLoading={isLoading} />
           <StatCard title="Late Come" value={lateCount} icon="overtime" isLoading={isLoading} />
           <StatCard title="On Leave" value={onLeaveCount} icon="leaves" isLoading={isLoading} />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <DashboardSectionHeading title="Workforce attendance analytics" description="Compare attendance patterns, overtime, and working hours." icon="chart" />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           {/* Attendance Analytic */}
           <ChartCard
             title="Attendance Analytic"

@@ -22,7 +22,7 @@ import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
 import { Iconify } from '@/components/Iconify';
 import { IconButton } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { ExpandableSearch } from '@/components/ui/ExpandableSearch';
 import { Card } from '@/components/ui/Card';
 import { matchColumnFilters, useColumnFilterContext } from './ColumnFilterContext';
 import {
@@ -166,11 +166,14 @@ export function DataTable<T extends Record<string, unknown>>({
 
   useEffect(() => {
     if (!filterContext) return;
-    const availableColumns = rawData.length > 0
-      ? visibleColumns.map((column) => ({ key: String(column.key), header: String(column.header) }))
-      : [];
+    // Register configured columns even while the query is empty/loading so
+    // matching filters (such as Status) can still live in their column menus.
+    const availableColumns = visibleColumns.map((column) => ({
+      key: String(column.key),
+      header: String(column.header),
+    }));
     filterContext.setColumns(availableColumns);
-  }, [filterContext?.setColumns, rawData.length, visibleColumns]);
+  }, [filterContext?.setColumns, visibleColumns]);
 
   useEffect(() => {
     if (!openColumnFilter) return;
@@ -283,31 +286,12 @@ export function DataTable<T extends Record<string, unknown>>({
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div data-table-filter-slot="true" className="min-w-0 flex-1" />
         <div className="ml-auto flex flex-wrap items-center justify-end gap-3">
-          {/* Search input */}
-          <div className="relative">
-            <Iconify
-              icon="search"
-              width={16}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-disabled"
-            />
-            <Input
-              type="text"
-              inputSize="medium"
-              value={tableSearch}
-              onChange={(e) => setTableSearch(e.target.value)}
-              placeholder="Search in table..."
-              className="w-56 pl-9 pr-9"
-            />
-            {tableSearch && (
-              <IconButton
-                icon="close"
-                size="small"
-                onClick={() => setTableSearch('')}
-                className="absolute right-1 top-1/2 -translate-y-1/2"
-                aria-label="Clear search"
-              />
-            )}
-          </div>
+          <ExpandableSearch
+            value={tableSearch}
+            onChange={(e) => setTableSearch(e.target.value)}
+            placeholder="Search in table..."
+            aria-label="Search in table"
+          />
           <div data-table-action-slot="true" className="flex shrink-0 items-center gap-2" />
         </div>
       </div>

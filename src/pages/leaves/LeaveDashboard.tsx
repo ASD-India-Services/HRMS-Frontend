@@ -23,7 +23,8 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { ButtonLink, IconButton } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Select } from '@/components/ui/Select';
-import { StatCard } from '@/components/ui/StatCard';
+import { DashboardMetricCard as StatCard } from '@/components/Dashboard/DashboardMetricCard';
+import { DashboardSectionHeading } from '@/components/Dashboard/DashboardSectionHeading';
 import { Tabs } from '@/components/ui/Tabs';
 import { StateView } from '@/components/ui/StateView';
 import { ChartCard, DonutChart, ChartTooltip, AXIS_PROPS, getChartTheme } from '@/components/ui/Chart';
@@ -606,7 +607,8 @@ export default function LeaveDashboard() {
 
       <div className="space-y-6">
         {/* Top cards */}
-        <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <DashboardSectionHeading title="Leave snapshot" description="Requests, approvals, and upcoming time away." icon="leaves" />
+        <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
             title={isAdmin ? 'Requests to Approve' : 'New Requests'}
             value={isAdmin ? requestsToApproveCount : myPendingCount}
@@ -634,6 +636,12 @@ export default function LeaveDashboard() {
             className="[&_p.text-3xl]:truncate [&_p.text-3xl]:text-xl"
           />
         </div>
+
+        <DashboardSectionHeading
+          title={isAdmin ? 'Leave analytics' : 'My leave activity'}
+          description={isAdmin ? 'Current requests, employee availability, and upcoming holidays.' : 'Your leave history and upcoming time away.'}
+          icon="chart"
+        />
 
         {isAdmin && (
           <>

@@ -18,6 +18,7 @@ import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { Modal } from '@/components/ui/Modal';
 import { Button, ButtonLink, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { ExpandableSearch } from '@/components/ui/ExpandableSearch';
 import { Select } from '@/components/ui/Select';
 import { SegmentedControl } from '@/components/ui/SegmentedControl/SegmentedControl';
 import { Textarea } from '@/components/ui/Textarea';
@@ -351,19 +352,12 @@ export default function DocumentRequests() {
         </div>
 
         <div className="ml-auto flex min-w-0 max-w-full flex-1 items-center justify-end gap-3">
-          <div className="flex h-10 min-w-[240px] max-w-full flex-1 items-center gap-2 rounded-lg border border-divider bg-surface-neutral/80 px-3 py-1.5 focus-within:border-primary-main focus-within:bg-surface-paper focus-within:ring-1 focus-within:ring-primary-main sm:max-w-md">
-            <Iconify icon="search" width={16} className="text-ink-disabled" />
-            <input
-              type="text"
-              placeholder="Search employee, title, format, description..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-transparent text-xs text-ink-primary placeholder-ink-disabled focus:outline-none"
-            />
-            {search && (
-              <IconButton icon="close" size="small" onClick={() => setSearch('')} aria-label="Close" />
-            )}
-          </div>
+          <ExpandableSearch
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search employee, title, format, description..."
+            aria-label="Search document requests"
+          />
           <div data-table-action-slot="true" className="flex shrink-0 items-center gap-2" />
         </div>
       </div>

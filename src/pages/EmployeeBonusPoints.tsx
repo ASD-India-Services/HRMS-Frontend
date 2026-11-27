@@ -17,6 +17,7 @@ import {
 import { Modal } from '@/components/ui/Modal';
 import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { ExpandableSearch } from '@/components/ui/ExpandableSearch';
 import { Select } from '@/components/ui/Select';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -370,17 +371,12 @@ export default function EmployeeBonusPoints() {
             )}
           </div>
 
-          {/* Search Input matching Screenshot 1 */}
-          <div className="relative">
-            <Iconify icon="search" width={16} className="pointer-events-none absolute left-2.5 top-2.5 text-ink-disabled" />
-            <Input
-              type="text"
-              placeholder="Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 pr-3 w-44 sm:w-56"
-            />
-          </div>
+          <ExpandableSearch
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search"
+            aria-label="Search bonus points"
+          />
 
           {/* + Create Button (Blue) */}
           {canCreate && (

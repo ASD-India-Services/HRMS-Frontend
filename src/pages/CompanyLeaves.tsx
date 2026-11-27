@@ -14,7 +14,7 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { Button, IconButton } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { ExpandableSearch } from '@/components/ui/ExpandableSearch';
 import { Select } from '@/components/ui/Select';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -255,17 +255,13 @@ export default function CompanyLeaves() {
       <PageHeader title="Company Leaves" actions={
         <>
 <div className="flex items-center gap-2.5 self-end sm:self-auto">
-          {/* Search Input with Q icon */}
-          <div className="relative order-last">
-            <Iconify icon="search" width={16} className="pointer-events-none absolute left-2.5 top-2.5 text-ink-disabled" />
-            <Input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search"
-              className="pl-8 pr-3 w-44 sm:w-56"
-            />
-          </div>
+          <ExpandableSearch
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search"
+            aria-label="Search company leaves"
+            className="order-last"
+          />
 
           {/* Filter Popover Button */}
           <div className="relative" ref={filterRef}>
