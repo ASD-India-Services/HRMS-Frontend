@@ -8,6 +8,7 @@
  * Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import api from '@/lib/api';
@@ -110,7 +111,7 @@ export default function RolesPage() {
       {/* Roles Table */}
       {roles && roles.length > 0 && (
         <Card className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-divider">
+          <HRMSTable className="min-w-full divide-y divide-divider">
             <thead className="bg-surface-neutral">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-ink-secondary">
@@ -181,7 +182,7 @@ export default function RolesPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </HRMSTable>
         </Card>
       )}
     </PageContainer>

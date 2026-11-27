@@ -1,11 +1,11 @@
 /**
- * PageContainer — single page wrapper. AppShell <main> already provides the page padding,
- * so this only limits the width (left-aligned so every page shares one origin).
+ * PageContainer — single page wrapper. AppShell <main> already provides the page padding.
+ * List and dashboard pages use the available content width; form/detail pages can opt into `lg`.
  */
 import type { HTMLAttributes } from 'react';
 import { cx } from '../cx';
 
-const MAX_WIDTH = { lg: 'max-w-7xl', xl: 'max-w-7xl' } as const;
+const MAX_WIDTH = { lg: 'max-w-7xl', xl: 'max-w-none' } as const;
 
 export interface PageContainerProps extends HTMLAttributes<HTMLDivElement> {
   /** 'lg' for narrow forms, 'xl' (default) for lists and dashboards. */
@@ -13,5 +13,5 @@ export interface PageContainerProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function PageContainer({ maxWidth = 'xl', className, ...rest }: PageContainerProps) {
-  return <div className={cx('w-full', MAX_WIDTH[maxWidth], className)} {...rest} />;
+  return <div data-page-container="true" className={cx('w-full', MAX_WIDTH[maxWidth], className)} {...rest} />;
 }

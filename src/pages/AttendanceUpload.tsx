@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState } from 'react';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
@@ -203,7 +204,7 @@ export default function AttendanceUpload() {
               </div>
 
               <div className="overflow-x-auto rounded border border-divider/20">
-                <table className="min-w-full divide-y divide-divider/20 text-xs">
+                <HRMSTable className="min-w-full divide-y divide-divider/20 text-xs">
                   <thead className="bg-surface-neutral">
                     <tr>
                       {previewHeaders.map((head, i) => (
@@ -224,7 +225,7 @@ export default function AttendanceUpload() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </HRMSTable>
               </div>
             </div>
           )}
@@ -254,7 +255,7 @@ export default function AttendanceUpload() {
                     Validation Errors ({result.errors.length})
                   </h4>
                   <div className="overflow-x-auto rounded border border-error-main/30">
-                    <table className="min-w-full divide-y divide-error-main/20 text-xs">
+                    <HRMSTable className="min-w-full divide-y divide-error-main/20 text-xs">
                       <thead className="bg-error-main/10">
                         <tr>
                           <th className="px-3 py-2 text-left font-semibold text-error-dark">Row</th>
@@ -275,7 +276,7 @@ export default function AttendanceUpload() {
                           </tr>
                         ))}
                       </tbody>
-                    </table>
+                    </HRMSTable>
                   </div>
                 </div>
               )}

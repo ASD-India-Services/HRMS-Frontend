@@ -1,6 +1,7 @@
-/** PageHeader — page title, optional subtitle and breadcrumb, with a right-aligned actions row. */
-import type { ReactNode } from 'react';
+/** Shared page title row with an optional subtitle, breadcrumb, and right-aligned page actions. */
+import { useLayoutEffect, type ReactNode } from 'react';
 import { cx } from '../cx';
+import { usePageTitleContext } from '@/components/Layout/PageTitleContext';
 
 export interface PageHeaderProps {
   title: ReactNode;
@@ -11,13 +12,21 @@ export interface PageHeaderProps {
 }
 
 export function PageHeader({ title, subtitle, actions, breadcrumb, className }: PageHeaderProps) {
+  const pageTitleContext = usePageTitleContext();
+
+  useLayoutEffect(() => {
+    if (!pageTitleContext) return;
+    pageTitleContext.setTitle(title);
+    return () => pageTitleContext.setTitle('');
+  }, [pageTitleContext?.setTitle, title]);
+
+  if (!subtitle && !actions && !breadcrumb && pageTitleContext) return null;
+
   return (
-    <div className={cx('relative mb-8 flex flex-wrap items-start justify-between gap-4', className)}>
-      <div className="min-w-0">
+    <div className={cx('relative mb-6 flex min-h-14 flex-wrap items-center justify-between gap-4', className)}>
+      <div className="min-w-0 flex-1">
         {/* Breadcrumb floats above the title so the title sits at the same y on every page. */}
         {breadcrumb && <div className="absolute -top-6 left-0 text-sm text-ink-secondary">{breadcrumb}</div>}
-        <h1 className="text-2xl font-bold text-ink-primary">{title}</h1>
-        {subtitle && <p className="mt-1 text-sm text-ink-secondary">{subtitle}</p>}
       </div>
       {actions && <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">{actions}</div>}
     </div>

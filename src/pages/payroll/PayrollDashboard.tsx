@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useQuery } from '@tanstack/react-query';
 import {
   AreaChart,
@@ -262,7 +263,7 @@ export default function PayrollDashboard() {
               <EmptyState module="payroll" title="No payroll runs found" description="Payroll runs will appear here once processed." />
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
+                <HRMSTable className="w-full text-left text-sm">
                   <thead className="bg-surface-neutral text-xs font-semibold uppercase tracking-wider text-ink-secondary">
                     <tr>
                       <th className="px-4 py-3">Cycle Title / Period</th>
@@ -297,7 +298,7 @@ export default function PayrollDashboard() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </HRMSTable>
               </div>
             )}
           </CardContent>

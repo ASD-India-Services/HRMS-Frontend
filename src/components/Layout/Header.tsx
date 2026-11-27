@@ -8,7 +8,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth, useUser } from '@platform/auth-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { ProductSwitcher } from '@/components/ProductSwitcher';
@@ -17,6 +17,7 @@ import { Iconify, type IconName } from '@/components/Iconify';
 import { Button, IconButton } from '@/components/ui/Button';
 import { TimeRunnerWidget } from './TimeRunnerWidget';
 import api from '@/lib/api';
+import { usePageTitleContext } from './PageTitleContext';
 
 /** Registry icon per notification type. */
 const NOTIFICATION_ICONS: Record<string, IconName> = {
@@ -35,6 +36,8 @@ export function Header({ onMenuToggle }: HeaderProps) {
   const { logout } = useAuth();
   const { name, email, role } = useUser();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const pageTitleContext = usePageTitleContext();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
@@ -75,9 +78,13 @@ export function Header({ onMenuToggle }: HeaderProps) {
     : '??';
 
   const pendingCount = notifications.length;
+  const routeTitle = pathname === '/'
+    ? 'Dashboard'
+    : pathname.split('/').filter(Boolean).at(-1)?.replace(/[-_]/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase()) ?? 'DigiHRMS';
+  const pageTitle = pageTitleContext?.title || routeTitle;
 
   return (
-    <header className="sticky top-0 z-30 flex h-header w-full max-w-full min-w-0 shrink-0 items-center gap-4 bg-surface-default/80 px-4 backdrop-blur-md sm:px-6 lg:px-10">
+    <header className="sticky top-0 z-30 flex h-header w-full max-w-full min-w-0 shrink-0 items-center gap-4 border-b border-divider bg-white px-4 sm:px-6 lg:px-10">
       {/* Mobile menu toggle */}
       <IconButton
         icon="menu"
@@ -86,8 +93,9 @@ export function Header({ onMenuToggle }: HeaderProps) {
         aria-label="Toggle sidebar"
       />
 
-      {/* Spacer */}
-      <div className="flex-1 min-w-0" />
+      <h1 className="min-w-0 flex-1 truncate text-lg font-semibold text-ink-primary sm:text-xl" title={typeof pageTitle === 'string' ? pageTitle : undefined}>
+        {pageTitle}
+      </h1>
 
       {/* Right side actions */}
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">

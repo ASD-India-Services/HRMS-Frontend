@@ -8,6 +8,7 @@
  * Requirements: 18.1, 18.2
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 export interface TableSkeletonProps {
   /** Number of columns to render */
   columns: number;
@@ -25,7 +26,7 @@ export function TableSkeleton({ columns, rows = 5 }: TableSkeletonProps) {
       role="status"
       aria-label="Loading table"
     >
-      <table className="min-w-full divide-y divide-divider">
+      <HRMSTable className="min-w-full divide-y divide-divider">
         <thead className="bg-surface-neutral">
           <tr>
             {Array.from({ length: columns }).map((_, colIdx) => (
@@ -51,7 +52,7 @@ export function TableSkeleton({ columns, rows = 5 }: TableSkeletonProps) {
             </tr>
           ))}
         </tbody>
-      </table>
+      </HRMSTable>
       <span className="sr-only">Loading...</span>
     </div>
   );

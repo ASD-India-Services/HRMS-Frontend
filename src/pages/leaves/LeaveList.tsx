@@ -6,6 +6,7 @@
  * Requirements: 27.2
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -107,7 +108,7 @@ export function LeaveList() {
         <>
           {/* Table */}
           <Card className="overflow-hidden">
-            <table className="min-w-full divide-y divide-divider">
+            <HRMSTable className="min-w-full divide-y divide-divider">
               <thead className="bg-surface-neutral">
                 <tr>
                   {isManagerOrAdmin && (
@@ -201,7 +202,7 @@ export function LeaveList() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </HRMSTable>
           </Card>
           {/* Pagination */}
           <div className="mt-4 flex items-center justify-between">

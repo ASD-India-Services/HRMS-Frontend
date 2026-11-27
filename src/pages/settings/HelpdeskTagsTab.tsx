@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import React, { useState, useMemo } from 'react';
 import {
   useHelpdeskTags,
@@ -188,7 +189,7 @@ export function HelpdeskTagsTab() {
 
       {/* Filter / Search Bar */}
       <div className="flex items-center justify-between gap-4">
-        <div className="relative max-w-sm flex-1">
+        <div className="relative order-last max-w-sm flex-1">
           <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-disabled" />
           <Input
             type="text"
@@ -208,7 +209,7 @@ export function HelpdeskTagsTab() {
 
       {/* Table matching screenshot */}
       <div className="overflow-hidden rounded-lg border border-divider bg-surface-paper shadow-xs">
-        <table className="min-w-full divide-y divide-divider text-left text-sm">
+        <HRMSTable className="min-w-full divide-y divide-divider text-left text-sm">
           <thead className="bg-surface-neutral/70 text-xs font-semibold text-ink-primary">
             <tr>
               <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
@@ -252,7 +253,7 @@ export function HelpdeskTagsTab() {
               ))
             )}
           </tbody>
-        </table>
+        </HRMSTable>
       </div>
 
       {/* ───────────────────────────────────────────────────────────

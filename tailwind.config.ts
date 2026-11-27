@@ -58,7 +58,7 @@ export default {
         divider: 'rgb(var(--divider) / 0.2)',
       },
       fontFamily: {
-        sans: ["'Public Sans Variable'", 'system-ui', '-apple-system', "'Segoe UI'", 'Roboto', "'Helvetica Neue'", 'sans-serif'],
+        sans: ["'DM Sans Variable'", 'system-ui', '-apple-system', "'Segoe UI'", 'Roboto', "'Helvetica Neue'", 'sans-serif'],
       },
       borderRadius: {
         DEFAULT: '8px',

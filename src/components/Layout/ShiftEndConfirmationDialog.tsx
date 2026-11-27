@@ -27,7 +27,7 @@ export function ShiftEndConfirmationDialog() {
   const [totalSeconds, setTotalSeconds] = useState(300);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Sync state when backend indicates prompt is required
   useEffect(() => {
@@ -138,6 +138,7 @@ export function ShiftEndConfirmationDialog() {
     <Modal
       open={isOpen}
       onClose={() => {}} // Disallow dismissing via click outside
+      labelledBy="shift-end-dialog-title"
       size="sm"
       closeOnEscape={false}
       closeOnOverlayClick={false}
@@ -145,11 +146,11 @@ export function ShiftEndConfirmationDialog() {
       <div className="p-6 text-center select-none">
         {/* Animated Warning / Clock Icon */}
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-warning-lighter text-warning-main ring-8 ring-warning-lighter/50 animate-pulse">
-          <Iconify icon="clock" width={36} />
+          <Iconify icon="attendance" width={36} />
         </div>
 
         {/* Title */}
-        <h3 className="mt-4 text-lg font-bold text-ink-primary">
+        <h3 id="shift-end-dialog-title" className="mt-4 text-lg font-bold text-ink-primary">
           Shift Completed — Action Required
         </h3>
 

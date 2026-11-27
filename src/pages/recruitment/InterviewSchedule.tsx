@@ -12,7 +12,7 @@ import { CrudModal } from '@/components/CrudModal';
 import type { FieldConfig } from '@/components/CrudModal';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
-import { Select } from '@/components/ui/Select';
+import { SegmentedControl } from '@/components/ui/SegmentedControl/SegmentedControl';
 import { formatDate, formatTime } from '@/utils/formatters';
 
 const INTERVIEW_FIELDS: FieldConfig[] = [
@@ -75,17 +75,17 @@ export function InterviewSchedule() {
         </div>
         <div className="flex items-center gap-2">
           <CreateButton permission="recruitment.create" label="Schedule Interview" onClick={() => setShowCreate(true)} />
-          <Select
-            selectSize="small"
+          <SegmentedControl
             value={statusFilter}
-            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+            onChange={(value) => { setStatusFilter(value); setPage(1); }}
             aria-label="Filter by interview status"
-          >
-            <option value="">All Statuses</option>
-            <option value="scheduled">Scheduled</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
-          </Select>
+            items={[
+              { value: '', label: 'All Statuses' },
+              { value: 'scheduled', label: 'Scheduled' },
+              { value: 'completed', label: 'Completed' },
+              { value: 'cancelled', label: 'Cancelled' },
+            ]}
+          />
         </div>
       </div>
 

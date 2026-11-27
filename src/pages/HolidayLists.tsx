@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { createCrudHooks } from '@/hooks/useCrud';
@@ -149,7 +150,7 @@ function HolidayEntries({ list, onBack }: { list: Record<string, unknown>; onBac
         <Card><StateView icon="holidayLists" title="No holidays added yet" description={'Click "Add Holiday" to add entries.'} /></Card>
       ) : (
         <Card className="overflow-hidden">
-          <table className="min-w-full divide-y divide-divider">
+          <HRMSTable className="min-w-full divide-y divide-divider">
             <thead className="bg-surface-neutral">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">Date</th>
@@ -170,7 +171,7 @@ function HolidayEntries({ list, onBack }: { list: Record<string, unknown>; onBac
                 </tr>
               ))}
             </tbody>
-          </table>
+          </HRMSTable>
         </Card>
       )}
 

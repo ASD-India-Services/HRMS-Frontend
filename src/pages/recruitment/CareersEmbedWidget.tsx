@@ -197,7 +197,7 @@ export default function CareersEmbedWidget() {
 
         {/* Filter & Search Bar */}
         <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="relative sm:col-span-2">
+          <div className="relative order-last sm:col-span-2">
             <svg
               className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-disabled"
               fill="none"
@@ -215,7 +215,7 @@ export default function CareersEmbedWidget() {
             />
           </div>
 
-          <div>
+          <div className="sm:order-first">
             <Select
               value={selectedDept}
               onChange={(e) => setSelectedDept(e.target.value)}

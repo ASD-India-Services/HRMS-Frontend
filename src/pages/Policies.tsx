@@ -237,7 +237,7 @@ export default function Policies() {
         actions={
         <>
           {/* Search Bar */}
-          <div className="relative">
+          <div className="relative order-last ml-auto">
             <Input
               type="text"
               value={searchTerm}

@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
@@ -17,6 +18,7 @@ import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Card } from '@/components/ui/Card';
 import { Iconify } from '@/components/Iconify';
+import { SegmentedButton } from '@/components/ui/SegmentedControl/SegmentedControl';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StateView } from '@/components/ui/StateView';
@@ -470,14 +472,15 @@ export default function WorkRecords() {
           </Button>
 
           {/* Filter Button */}
-          <Button
-            variant={activeFilterCount > 0 ? 'soft' : 'outlined'}
-            color={activeFilterCount > 0 ? 'primary' : 'inherit'}
-            startIcon={<Iconify icon="filter" />}
+          <SegmentedButton
+            selected={activeFilterCount > 0 || isFilterOpen}
+            aria-expanded={isFilterOpen}
+            aria-haspopup="true"
             onClick={() => setIsFilterOpen(!isFilterOpen)}
           >
+            <Iconify icon="filter" className="mr-2" />
             Filter {activeFilterCount > 0 && `(${activeFilterCount})`}
-          </Button>
+          </SegmentedButton>
 
           {/* Filter Popover matching Screenshots 2, 3, 4 */}
           {isFilterOpen && (
@@ -822,7 +825,7 @@ export default function WorkRecords() {
           ) : !data?.results || data.results.length === 0 ? (
             <StateView icon="inbox" title="No work records found" description={`No active employee attendance records found for ${monthName} ${selectedYear}.`} />
           ) : (
-            <table className="w-full border-collapse text-left text-xs">
+            <HRMSTable className="w-full border-collapse text-left text-xs">
               <thead>
                 <tr className="bg-surface-neutral border-b border-divider text-ink-primary">
                   {/* Sticky Employee Column Header */}
@@ -934,7 +937,7 @@ export default function WorkRecords() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </HRMSTable>
           )}
         </div>
 

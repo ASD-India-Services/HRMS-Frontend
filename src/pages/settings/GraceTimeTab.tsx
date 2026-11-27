@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import React, { useState, useEffect } from 'react';
 import { useHRSettings, useUpdateHRSettings } from '@/hooks/useHRSettings';
 import type { DefaultGraceTimeConfig, GraceTimeRecordItem } from '@/hooks/useHRSettings';
@@ -249,7 +250,7 @@ export function GraceTimeTab() {
         <hr className="border-divider" />
 
         <div className="overflow-hidden rounded-lg border border-divider bg-surface-paper shadow-xs">
-          <table className="min-w-full divide-y divide-divider text-left text-sm">
+          <HRMSTable className="min-w-full divide-y divide-divider text-left text-sm">
             <thead className="bg-surface-neutral/70 text-xs font-semibold text-ink-primary">
               <tr>
                 <th scope="col" className="px-6 py-4 font-bold text-ink-primary w-1/4">
@@ -305,7 +306,7 @@ export function GraceTimeTab() {
                 </td>
               </tr>
             </tbody>
-          </table>
+          </HRMSTable>
         </div>
       </div>
 
@@ -330,7 +331,7 @@ export function GraceTimeTab() {
         <hr className="border-divider" />
 
         <div className="overflow-x-auto rounded-lg border border-divider bg-surface-paper shadow-xs">
-          <table className="min-w-full divide-y divide-divider text-left text-sm">
+          <HRMSTable className="min-w-full divide-y divide-divider text-left text-sm">
             <thead className="bg-surface-neutral/70 text-xs font-semibold text-ink-primary">
               <tr>
                 <th scope="col" className="px-6 py-4 font-bold text-ink-primary">
@@ -390,7 +391,7 @@ export function GraceTimeTab() {
                 ))
               )}
             </tbody>
-          </table>
+          </HRMSTable>
         </div>
       </div>
 

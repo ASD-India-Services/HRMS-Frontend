@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState, useMemo, useRef, useEffect } from 'react';
 import {
   useDocumentRequests,
@@ -18,6 +19,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Button, ButtonLink, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { SegmentedControl } from '@/components/ui/SegmentedControl/SegmentedControl';
 import { Textarea } from '@/components/ui/Textarea';
 import { Card } from '@/components/ui/Card';
 import { Iconify } from '@/components/Iconify';
@@ -316,34 +318,21 @@ export default function DocumentRequests() {
         <StatCard title="Rejected" value={summary?.rejected ?? 0} icon="leaveBlock" />
       </div>
       {/* Filter and Search Bar */}
-      <Card className="flex flex-wrap items-center justify-between gap-3 p-3">
-        <div className="flex flex-1 min-w-[240px] items-center gap-2 rounded-lg border border-divider bg-surface-neutral/80 px-3 py-1.5 focus-within:border-primary-main focus-within:bg-surface-paper focus-within:ring-1 focus-within:ring-primary-main">
-          <Iconify icon="search" width={16} className="text-ink-disabled" />
-          <input
-            type="text"
-            placeholder="Search employee, title, format, description..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-transparent text-xs text-ink-primary placeholder-ink-disabled focus:outline-none"
-          />
-          {search && (
-            <IconButton icon="close" size="small" onClick={() => setSearch('')} aria-label="Close" />
-          )}
-        </div>
-
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
           {/* Status Filter */}
-          <Select
-            selectSize="small"
+          <SegmentedControl
+            aria-label="Filter document requests by status"
             value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-          >
-            <option value="">All Statuses</option>
-            <option value="pending">Pending Review</option>
-            <option value="in_progress">In Progress</option>
-            <option value="approved">Approved / Issued</option>
-            <option value="rejected">Rejected</option>
-          </Select>
+            onChange={setSelectedStatus}
+            items={[
+              { value: '', label: 'All Statuses' },
+              { value: 'pending', label: 'Pending Review' },
+              { value: 'in_progress', label: 'In Progress' },
+              { value: 'approved', label: 'Approved / Issued' },
+              { value: 'rejected', label: 'Rejected' },
+            ]}
+          />
 
           {/* Format Filter */}
           <Select
@@ -360,7 +349,21 @@ export default function DocumentRequests() {
             <option value="XLSX">XLSX</option>
           </Select>
         </div>
-      </Card>
+
+        <div className="ml-auto flex min-w-[240px] max-w-full flex-1 items-center gap-2 rounded-lg border border-divider bg-surface-neutral/80 px-3 py-1.5 focus-within:border-primary-main focus-within:bg-surface-paper focus-within:ring-1 focus-within:ring-primary-main sm:max-w-md">
+          <Iconify icon="search" width={16} className="text-ink-disabled" />
+          <input
+            type="text"
+            placeholder="Search employee, title, format, description..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-transparent text-xs text-ink-primary placeholder-ink-disabled focus:outline-none"
+          />
+          {search && (
+            <IconButton icon="close" size="small" onClick={() => setSearch('')} aria-label="Close" />
+          )}
+        </div>
+      </div>
 
       {/* Loading & Error States */}
       {isLoading && (
@@ -400,7 +403,7 @@ export default function DocumentRequests() {
       {!isLoading && filteredRequests.length > 0 && (
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-ink-secondary">
+            <HRMSTable className="w-full text-left text-xs text-ink-secondary">
               <thead className="border-b border-divider bg-surface-neutral/75 text-[11px] font-semibold text-ink-secondary uppercase tracking-wider">
                 <tr>
                   <th className="px-4 py-3.5">Employee</th>
@@ -566,7 +569,7 @@ export default function DocumentRequests() {
                     </tr>
                 ))}
               </tbody>
-            </table>
+            </HRMSTable>
           </div>
         </Card>
       )}

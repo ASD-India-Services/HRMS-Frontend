@@ -3,6 +3,7 @@
  * with month navigation. Available to all roles with attendance.view permission.
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
@@ -105,7 +106,7 @@ export default function MyAttendanceHistory() {
         </Card>
       ) : (
         <Card className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-divider">
+          <HRMSTable className="min-w-full divide-y divide-divider">
             <thead className="bg-surface-neutral">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-medium text-ink-secondary uppercase">Date</th>
@@ -165,7 +166,7 @@ export default function MyAttendanceHistory() {
                 );
               })}
             </tbody>
-          </table>
+          </HRMSTable>
         </Card>
       )}
     </PageContainer>

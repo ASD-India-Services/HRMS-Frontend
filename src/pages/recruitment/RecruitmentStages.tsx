@@ -28,6 +28,7 @@ import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
 import { Button, ButtonLink, IconButton, Switch } from '@/components/ui/Button';
 import { Tabs } from '@/components/ui/Tabs';
+import { SegmentedControl } from '@/components/ui/SegmentedControl/SegmentedControl';
 import { Textarea } from '@/components/ui/Textarea';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
@@ -418,7 +419,7 @@ export function RecruitmentStages() {
 
         {/* Filter and Search Bar */}
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative flex-1 max-w-md">
+          <div className="relative ml-auto w-full max-w-md sm:order-last sm:flex-1">
             <svg
               className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-disabled"
               fill="none"
@@ -439,20 +440,17 @@ export function RecruitmentStages() {
 
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-ink-secondary">Status:</span>
-            <Card className="inline-flex p-0.5">
-              {['all', 'open', 'closed', 'on_hold'].map((st) => (
-                <Button
-                  key={st}
-                  size="small"
-                  variant={statusFilter === st ? 'contained' : 'text'}
-                  color={statusFilter === st ? 'secondary' : 'inherit'}
-                  onClick={() => setStatusFilter(st)}
-                  className="capitalize"
-                >
-                  {st === 'all' ? 'All Jobs' : st.replace('_', ' ')}
-                </Button>
-              ))}
-            </Card>
+            <SegmentedControl
+              aria-label="Filter job openings by status"
+              value={statusFilter}
+              onChange={setStatusFilter}
+              items={[
+                { value: 'all', label: 'All Jobs' },
+                { value: 'open', label: 'Open' },
+                { value: 'closed', label: 'Closed' },
+                { value: 'on_hold', label: 'On Hold' },
+              ]}
+            />
           </div>
         </div>
 

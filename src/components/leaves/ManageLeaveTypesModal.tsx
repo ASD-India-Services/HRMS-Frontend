@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import React, { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
@@ -377,7 +378,7 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
 
           {/* Table List */}
           <div className="border border-divider rounded-xl overflow-hidden shadow-sm bg-surface-paper">
-            <table className="min-w-full divide-y divide-divider text-left">
+            <HRMSTable className="min-w-full divide-y divide-divider text-left">
               <thead className="bg-surface-neutral">
                 <tr>
                   <th className="px-4 py-3 text-xs font-semibold text-ink-secondary uppercase tracking-wider">
@@ -499,7 +500,7 @@ export function ManageLeaveTypesModal({ isOpen, onClose, onLeaveTypesChanged }: 
                   ))
                 )}
               </tbody>
-            </table>
+            </HRMSTable>
           </div>
         </div>
 

@@ -3,6 +3,7 @@
  * Requirements: 19.1, 24.2
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -179,7 +180,7 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
 
       {/* Search and Filter */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
+        <div className="relative order-last ml-auto w-full flex-1 sm:max-w-md">
           <svg
             className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-disabled"
             fill="none"
@@ -234,7 +235,7 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
       {/* Table */}
       {data && data.results.length > 0 && (
         <Card className="overflow-hidden">
-          <table className="min-w-full divide-y divide-divider">
+          <HRMSTable className="min-w-full divide-y divide-divider">
             <thead className="bg-surface-neutral">
               <tr>
                 <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-ink-secondary">Position</th>
@@ -349,7 +350,7 @@ export function JobOpenings({ onSelectOpening }: JobOpeningsProps) {
                 );
               })}
             </tbody>
-          </table>
+          </HRMSTable>
 
           {/* Fetching indicator */}
           {isFetching && !isLoading && (

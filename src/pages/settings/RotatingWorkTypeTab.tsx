@@ -1,3 +1,4 @@
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useState } from 'react';
 import { PlusIcon, CheckIcon } from './SettingsIcons';
 import { Modal } from '@/components/ui/Modal';
@@ -149,7 +150,7 @@ export function RotatingWorkTypeTab() {
 
       {/* Table */}
       <div className="overflow-hidden rounded-xl border border-divider bg-surface-paper shadow-xs">
-        <table className="min-w-full divide-y divide-divider text-left text-sm">
+        <HRMSTable className="min-w-full divide-y divide-divider text-left text-sm">
           <thead className="bg-surface-neutral text-xs font-semibold uppercase tracking-wider text-ink-secondary">
             <tr>
               <th className="px-6 py-3.5">Policy / Schedule Name</th>
@@ -192,7 +193,7 @@ export function RotatingWorkTypeTab() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </HRMSTable>
       </div>
 
       {/* Modal */}

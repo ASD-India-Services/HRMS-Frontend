@@ -3,6 +3,7 @@
  * Requirements: 20.2, 20.3
  */
 
+import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import { useParams } from 'react-router-dom';
 import { useAppraisalDetail } from '@/hooks/useAppraisals';
 import type { AppraisalStatus } from '@/types/appraisal';
@@ -129,7 +130,7 @@ export function AppraisalDetail() {
         />
         {appraisal.goals.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-divider">
+            <HRMSTable className="min-w-full divide-y divide-divider">
               <thead className="bg-surface-neutral">
                 <tr>
                   <th scope="col" className="px-4 py-3 text-left text-xs font-medium uppercase text-ink-secondary">
@@ -173,7 +174,7 @@ export function AppraisalDetail() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </HRMSTable>
           </div>
         ) : (
           <EmptyState module="appraisals" title="No goals yet" description="No goals have been defined for this appraisal yet." />
