@@ -63,6 +63,15 @@ export interface CompensatoryLeaveSettingsConfig {
   [key: string]: any;
 }
 
+export interface WebShiftEndConfirmationConfig {
+  enabled?: boolean;
+  shift_end_buffer_minutes?: number;
+  unanswered_timeout_minutes?: number;
+  recheck_interval_minutes?: number;
+  max_continue_prompts?: number;
+  auto_checkout_timestamp_policy?: 'shift_end_time' | 'prompt_time' | 'timeout_time';
+}
+
 export interface AutoPayslipRuleItem {
   id: string;
   generate_day: string;

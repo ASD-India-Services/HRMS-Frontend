@@ -12,6 +12,7 @@ import { useState, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { ShiftEndConfirmationDialog } from './ShiftEndConfirmationDialog';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { useHRSettings } from '@/hooks/useHRSettings';
 
@@ -35,6 +36,9 @@ export function AppShell() {
     <div className="flex h-screen w-full max-w-full overflow-hidden bg-surface-default">
       {/* Offline banner */}
       <OfflineIndicator />
+
+      {/* Global Shift-End Confirmation & Auto-Logout Dialog */}
+      <ShiftEndConfirmationDialog />
 
       {/* Sidebar */}
       <Sidebar

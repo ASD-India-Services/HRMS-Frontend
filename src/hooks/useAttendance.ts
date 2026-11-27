@@ -127,3 +127,60 @@ export function useCheckOut() {
     },
   })
 }
+
+export interface ShiftPromptStatus {
+  prompt_required: boolean
+  session_id?: string
+  shift_name?: string
+  shift_end_time?: string
+  buffer_minutes?: number
+  timeout_seconds?: number
+  remaining_seconds?: number
+  continue_count?: number
+  max_continue_prompts?: number
+  can_continue?: boolean
+  auto_checkout_timestamp_policy?: string
+  reason?: string
+  auto_checked_out?: boolean
+  detail?: string
+}
+
+export interface RespondShiftPromptPayload {
+  action: 'checkout' | 'continue' | 'timeout'
+  session_id?: string
+}
+
+/**
+ * Hook for polling shift-end prompt status for the active user session.
+ */
+export function useShiftPromptStatus(enabled = true) {
+  return useQuery<ShiftPromptStatus>({
+    queryKey: ['attendance', 'shift-prompt-status'],
+    queryFn: async () => {
+      const res = await api.get('/api/v1/attendance/shift-prompt-status/')
+      return res.data
+    },
+    enabled,
+    refetchInterval: 30_000, // Poll every 30 seconds
+    staleTime: 10_000,
+  })
+}
+
+/**
+ * Hook for submitting employee response or automated timeout to shift-end prompt.
+ */
+export function useRespondShiftPrompt() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (payload: RespondShiftPromptPayload) => {
+      const res = await api.post('/api/v1/attendance/respond-shift-prompt/', payload)
+      return res.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['attendance'] })
+    },
+  })
+}
+
+
