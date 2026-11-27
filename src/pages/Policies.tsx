@@ -243,7 +243,7 @@ export default function Policies() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search..."
-              inputSize="small"
+              inputSize="medium"
               className="w-48 sm:w-64"
             />
             {searchTerm && (

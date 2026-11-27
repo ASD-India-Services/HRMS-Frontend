@@ -26,8 +26,6 @@ import { DateRangeFilter, getDefaultDateRange } from './dashboard/DateRangeFilte
 import type { DateRange } from './dashboard/DateRangeFilter';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { ButtonLink, IconButton } from '@/components/ui/Button';
-import { Iconify } from '@/components/Iconify';
 
 /** Roles that see the full organisation-wide admin/HR dashboard */
 const ADMIN_ROLES = ['org_admin', 'hr_manager'];
@@ -39,18 +37,6 @@ export default function Dashboard() {
   const { name } = useUser();
   const { roleName, isLoading: permLoading } = useHrmsPermissionsContext();
   const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange);
-  const [bannerDismissed, setBannerDismissed] = useState(
-    () => localStorage.getItem('org-setup-banner-dismissed') === 'true',
-  );
-
-  const isOrgAdmin = roleName === 'org_admin';
-  const showSetupBanner = isOrgAdmin && !bannerDismissed;
-
-  const dismissBanner = () => {
-    localStorage.setItem('org-setup-banner-dismissed', 'true');
-    setBannerDismissed(true);
-  };
-
   // Determine which sub-dashboard to render
   const isAdmin = roleName ? ADMIN_ROLES.includes(roleName) : false;
   const isManager = roleName ? MANAGER_ROLES.includes(roleName) : false;
@@ -64,28 +50,6 @@ export default function Dashboard() {
 
   return (
     <PageContainer>
-      {/* Org Setup Banner — shown to first-time org admins only */}
-      {showSetupBanner && (
-        <div className="mb-8 flex items-start gap-3 rounded-card bg-primary-lighter p-4 text-primary-darker">
-          <Iconify icon="info" width={20} className="mt-0.5 shrink-0 text-primary-main" />
-          <div className="flex-1">
-            <h3 className="text-sm font-semibold">Complete Your Organization Setup</h3>
-            <p className="mt-1 text-sm">
-              Set up your company details, SMTP configuration, and HR policies to get the most out of your HRMS.
-            </p>
-            <ButtonLink
-              href="/hr-settings"
-              variant="text"
-              size="small"
-              className="mt-2 -ml-2.5"
-              endIcon={<Iconify icon="arrow-right" />}
-            >
-              Go to HR Settings
-            </ButtonLink>
-          </div>
-          <IconButton icon="close" size="small" aria-label="Dismiss banner" onClick={dismissBanner} />
-        </div>
-      )}
       <PageHeader
         title="Dashboard"
         subtitle={`Welcome back${name ? `, ${name}` : ''}. ${subtitle}`}

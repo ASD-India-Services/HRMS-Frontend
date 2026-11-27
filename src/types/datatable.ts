@@ -22,7 +22,16 @@ export interface FilterConfig {
   key: string;
   label: string;
   type: 'search' | 'select' | 'date-range' | 'multi-select';
+  /** Optional table column key for placing select filters in that column header. */
+  columnKey?: string;
   options?: { value: string; label: string }[];
+  /** Optional async source for filter options. */
+  optionsQuery?: {
+    queryKey: readonly unknown[];
+    endpoint: string;
+    labelKey?: string | ((item: Record<string, unknown>) => string);
+    valueKey?: string;
+  };
   debounceMs?: number; // default 300 for search
 }
 

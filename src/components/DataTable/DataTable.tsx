@@ -14,16 +14,17 @@
  */
 
 import { HRMSTable } from '@/components/DataTable/HRMSTable';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import type { DataTableProps } from '@/types/datatable';
 import { BulkActionToolbar } from './BulkActionToolbar';
 import { TableSkeleton, ErrorState } from '@/components/Skeleton';
 import { EmptyState } from '@/components/EmptyState';
 import { Iconify } from '@/components/Iconify';
-import { Button, IconButton } from '@/components/ui/Button';
+import { IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Select } from '@/components/ui/Select';
 import { Card } from '@/components/ui/Card';
+import { matchColumnFilters, useColumnFilterContext } from './ColumnFilterContext';
 import {
   formatDate,
   formatDateTime,
@@ -36,6 +37,13 @@ export type SortDirection = 'asc' | 'desc' | null;
 export interface SortState {
   key: string;
   direction: SortDirection;
+}
+
+function allFilterLabel(label: string): string {
+  if (/^all\b/i.test(label)) return label;
+  if (/s$/i.test(label)) return `All ${label}`;
+  if (/[^aeiou]y$/i.test(label)) return `All ${label.slice(0, -1)}ies`;
+  return `All ${label}${/(ss|x|ch|sh)$/i.test(label) ? 'es' : 's'}`;
 }
 
 /**
@@ -90,8 +98,15 @@ export function DataTable<T extends Record<string, unknown>>({
   selectable,
   bulkActions,
 }: DataTableProps<T>) {
+  const filterContext = useColumnFilterContext();
   const [sort, setSort] = useState<SortState>({ key: '', direction: null });
   const [tableSearch, setTableSearch] = useState('');
+  const [openColumnFilter, setOpenColumnFilter] = useState<string | null>(null);
+  const [filterDraft, setFilterDraft] = useState<{ filterKey: string; values: string[] } | null>(null);
+  const [filterOptionSearch, setFilterOptionSearch] = useState('');
+  const [filterMenuPosition, setFilterMenuPosition] = useState({ top: 0, left: 0 });
+  const filterRootRef = useRef<HTMLDivElement>(null);
+  const filterMenuRef = useRef<HTMLDivElement>(null);
   const hiddenColumns = useMemo(
     () => new Set(columns.filter((column) => column.hidden).map((column) => String(column.key))),
     [columns],
@@ -104,36 +119,43 @@ export function DataTable<T extends Record<string, unknown>>({
     [columns, hiddenColumns]
   );
 
-  // Sortable columns for the sort dropdown
-  const sortableColumns = useMemo(
-    () => columns.filter((col) => col.sortable),
-    [columns]
-  );
+  const rawData = queryResult.data?.results ?? [];
 
-  // Handle sort change from dropdown
-  const handleSortColumnChange = useCallback((columnKey: string) => {
-    if (!columnKey) {
-      setSort({ key: '', direction: null });
-    } else {
-      setSort((prev) => ({
-        key: columnKey,
-        direction: prev.key === columnKey ? prev.direction : 'asc',
-      }));
-    }
-  }, []);
+  useEffect(() => {
+    if (!filterContext) return;
+    const availableColumns = rawData.length > 0
+      ? visibleColumns.map((column) => ({ key: String(column.key), header: String(column.header) }))
+      : [];
+    filterContext.setColumns(availableColumns);
+  }, [filterContext?.setColumns, rawData.length, visibleColumns]);
 
-  const handleSortDirectionToggle = useCallback(() => {
-    setSort((prev) => {
-      if (!prev.key) return prev;
-      return {
-        key: prev.key,
-        direction: prev.direction === 'asc' ? 'desc' : 'asc',
-      };
-    });
-  }, []);
+  useEffect(() => {
+    if (!openColumnFilter) return;
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (!filterRootRef.current?.contains(target) && !filterMenuRef.current?.contains(target)) {
+        setOpenColumnFilter(null);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpenColumnFilter(null);
+    };
+    document.addEventListener('mousedown', closeOnOutsideClick);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [openColumnFilter]);
+
+  const columnFilters = filterContext?.filterBar
+    ? matchColumnFilters(filterContext.filterBar.filters, visibleColumns.map((column) => ({
+        key: String(column.key),
+        header: String(column.header),
+      })))
+    : new Map();
 
   // Get data from query result
-  const rawData = queryResult.data?.results ?? [];
   const isLoading = queryResult.isLoading;
   const isError = queryResult.isError;
 
@@ -160,17 +182,18 @@ export function DataTable<T extends Record<string, unknown>>({
       if (aVal == null && bVal == null) return 0;
       if (aVal == null) return 1;
       if (bVal == null) return -1;
-      // Numeric comparison
-      const aNum = Number(aVal);
-      const bNum = Number(bVal);
-      if (!isNaN(aNum) && !isNaN(bNum)) {
+      // Compare actual numbers numerically, but keep numeric-looking text
+      // (such as IDs with leading zeroes) in string order.
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        const aNum = Number.isFinite(aVal) ? aVal : 0;
+        const bNum = Number.isFinite(bVal) ? bVal : 0;
         return sort.direction === 'asc' ? aNum - bNum : bNum - aNum;
       }
       // String comparison
       const aStr = String(aVal).toLowerCase();
       const bStr = String(bVal).toLowerCase();
-      if (aStr < bStr) return sort.direction === 'asc' ? -1 : 1;
-      if (aStr > bStr) return sort.direction === 'asc' ? 1 : -1;
+      const comparison = aStr.localeCompare(bStr, undefined, { numeric: true, sensitivity: 'base' });
+      if (comparison !== 0) return sort.direction === 'asc' ? comparison : -comparison;
       return 0;
     });
     return sorted;
@@ -226,7 +249,7 @@ export function DataTable<T extends Record<string, unknown>>({
             />
             <Input
               type="text"
-              inputSize="small"
+              inputSize="medium"
               value={tableSearch}
               onChange={(e) => setTableSearch(e.target.value)}
               placeholder="Search in table..."
@@ -242,38 +265,7 @@ export function DataTable<T extends Record<string, unknown>>({
               />
             )}
           </div>
-          {/* Sort controls */}
-          {sortableColumns.length > 0 && (
-            <div className="flex items-center gap-2">
-              <label className="text-xs text-ink-secondary font-medium">Sort:</label>
-              <Select
-                selectSize="small"
-                value={sort.key}
-                onChange={(e) => handleSortColumnChange(e.target.value)}
-                aria-label="Sort by"
-                className="w-40"
-              >
-                <option value="">None</option>
-                {sortableColumns.map((col) => (
-                  <option key={String(col.key)} value={String(col.key)}>
-                    {col.header}
-                  </option>
-                ))}
-              </Select>
-              {sort.key && (
-                <Button
-                  variant="outlined"
-                  color="inherit"
-                  size="small"
-                  startIcon={<Iconify icon={sort.direction === 'asc' ? 'chevron-up' : 'chevron-down'} />}
-                  onClick={handleSortDirectionToggle}
-                  aria-label={sort.direction === 'asc' ? 'Sort ascending' : 'Sort descending'}
-                >
-                  {sort.direction === 'asc' ? 'A→Z' : 'Z→A'}
-                </Button>
-              )}
-            </div>
-          )}
+          <div data-table-action-slot="true" className="flex shrink-0 items-center gap-2" />
         </div>
       </div>
     );
@@ -380,18 +372,213 @@ export function DataTable<T extends Record<string, unknown>>({
           <thead className="bg-surface-neutral">
             <tr>
               {selectable && renderCheckboxHeader()}
-              {visibleColumns.map((col) => (
-                <th
-                  key={String(col.key)}
-                  className={`px-4 py-3 text-left text-sm font-semibold text-ink-secondary ${
-                    typeof col.header === 'string' && /\bactions?\b/i.test(col.header)
-                      ? 'w-20 text-right'
-                      : ''
-                  }`}
-                >
-                  {col.header}
-                </th>
-              ))}
+              {visibleColumns.map((col) => {
+                const columnKey = String(col.key);
+                const filter = columnFilters.get(columnKey);
+                const selectedFilterValue = filter
+                  ? filterContext?.filterBar?.values[filter.key] ?? ''
+                  : '';
+                const filterOptions = filter
+                  ? [
+                      {
+                        value: '',
+                        label: filter.options?.find((option) => option.value === '')?.label
+                          ?? allFilterLabel(filter.label),
+                      },
+                      ...(filter.options ?? []).filter((option) => option.value !== ''),
+                    ]
+                  : [];
+                const selectableFilterOptions = filterOptions.filter((option) => option.value !== '');
+                const appliedFilterValues = selectedFilterValue ? selectedFilterValue.split(',').filter(Boolean) : [];
+                const draftFilterValues = filterDraft?.filterKey === filter?.key
+                  ? filterDraft?.values ?? appliedFilterValues
+                  : appliedFilterValues;
+                const isMultiSelect = filter?.type === 'multi-select';
+                const areAllOptionsSelected = isMultiSelect
+                  ? draftFilterValues.length === 0 || draftFilterValues.length === selectableFilterOptions.length
+                  : draftFilterValues.length === 0;
+                const visibleFilterOptions = selectableFilterOptions.filter((option) =>
+                  option.label.toLowerCase().includes(filterOptionSearch.trim().toLowerCase()),
+                );
+                const isActionsColumn = typeof col.header === 'string' && /\bactions?\b/i.test(col.header);
+
+                return (
+                  <th
+                    key={columnKey}
+                    className={`px-4 py-3 text-left text-sm font-semibold text-ink-secondary ${isActionsColumn ? 'w-20 text-right' : ''}`}
+                  >
+                    <div className={`flex w-full items-center gap-1.5 ${isActionsColumn ? 'justify-end' : ''}`}>
+                      <span>{col.header}</span>
+                      {filter && filterContext?.filterBar && (
+                        <div className="relative inline-flex" ref={openColumnFilter === columnKey ? filterRootRef : null}>
+                          <button
+                            type="button"
+                            aria-label={`Filter ${filter.label}`}
+                            aria-expanded={openColumnFilter === columnKey}
+                            className={`relative inline-flex h-7 w-7 items-center justify-center rounded-md bg-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-main ${
+                              selectedFilterValue
+                                ? 'bg-primary-main/10 text-primary-main'
+                                : 'text-ink-disabled hover:bg-transparent hover:text-ink-disabled'
+                            }`}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              if (openColumnFilter === columnKey) {
+                                setOpenColumnFilter(null);
+                              } else {
+                                setFilterDraft({ filterKey: filter.key, values: appliedFilterValues });
+                                setFilterOptionSearch('');
+                                const bounds = event.currentTarget.getBoundingClientRect();
+                                const menuHeight = 420;
+                                const left = Math.max(8, Math.min(bounds.left, window.innerWidth - 268));
+                                const top = window.innerHeight - bounds.bottom < menuHeight && bounds.top > menuHeight
+                                  ? bounds.top - menuHeight - 4
+                                  : bounds.bottom + 4;
+                                setFilterMenuPosition({ top, left });
+                                setOpenColumnFilter(columnKey);
+                              }
+                            }}
+                          >
+                            <Iconify icon="filter" width={16} />
+                            {selectedFilterValue && <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-primary-main" />}
+                          </button>
+                          {openColumnFilter === columnKey && (
+                            createPortal(<div
+                              ref={filterMenuRef}
+                              role="dialog"
+                              aria-label={`${filter.label} filter options`}
+                              style={{ position: 'fixed', top: filterMenuPosition.top, left: filterMenuPosition.left }}
+                              className="z-[1000] w-[260px] overflow-hidden rounded-xl border border-divider bg-surface-paper p-3 text-left shadow-dropdown"
+                              onClick={(event) => event.stopPropagation()}
+                            >
+                              <div className="border-b border-divider pb-2">
+                                <button
+                                  type="button"
+                                  className="flex h-8 w-full items-center gap-2 rounded-md px-2 text-sm text-ink-primary hover:bg-surface-neutral"
+                                  onClick={() => {
+                                    setSort({ key: columnKey, direction: 'asc' });
+                                    setOpenColumnFilter(null);
+                                  }}
+                                >
+                                  <span className="text-base leading-none text-ink-secondary" aria-hidden="true">↕</span>
+                                  Sort A → Z
+                                </button>
+                                <button
+                                  type="button"
+                                  className="flex h-8 w-full items-center gap-2 rounded-md px-2 text-sm text-ink-primary hover:bg-surface-neutral"
+                                  onClick={() => {
+                                    setSort({ key: columnKey, direction: 'desc' });
+                                    setOpenColumnFilter(null);
+                                  }}
+                                >
+                                  <span className="text-base leading-none text-ink-secondary" aria-hidden="true">↕</span>
+                                  Sort Z → A
+                                </button>
+                              </div>
+
+                              <label className="relative my-2 block">
+                                <Iconify
+                                  icon="search"
+                                  width={16}
+                                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-disabled"
+                                />
+                                <input
+                                  type="search"
+                                  value={filterOptionSearch}
+                                  onChange={(event) => setFilterOptionSearch(event.target.value)}
+                                  placeholder={`Search ${filter.label.toLowerCase()}...`}
+                                  aria-label={`Search ${filter.label.toLowerCase()} options`}
+                                  className="h-9 w-full rounded-lg border border-divider bg-surface-paper pl-9 pr-3 text-sm text-ink-primary placeholder:text-ink-disabled focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                                />
+                              </label>
+
+                              <div className="max-h-48 overflow-y-auto border-b border-divider pb-2">
+                                <label className="flex min-h-8 cursor-pointer items-center gap-2 rounded-md px-1.5 text-sm font-medium text-ink-primary hover:bg-surface-neutral">
+                                  <input
+                                    type="checkbox"
+                                    checked={areAllOptionsSelected}
+                                    onChange={() => {
+                                      if (isMultiSelect && !areAllOptionsSelected) {
+                                        setFilterDraft({
+                                          filterKey: filter.key,
+                                          values: selectableFilterOptions.map((option) => option.value),
+                                        });
+                                      } else {
+                                        setFilterDraft({ filterKey: filter.key, values: [] });
+                                      }
+                                    }}
+                                    className="h-4 w-4 rounded border-divider accent-primary-main text-primary-main focus:ring-primary-main"
+                                  />
+                                  Select all
+                                </label>
+                                {visibleFilterOptions.length === 0 ? (
+                                  <p className="px-2 py-3 text-sm text-ink-disabled">
+                                    {selectableFilterOptions.length === 0 ? 'No options available' : 'No matching options'}
+                                  </p>
+                                ) : visibleFilterOptions.map((option) => {
+                                  const isChecked = draftFilterValues.includes(option.value);
+                                  return (
+                                    <label
+                                      key={option.value}
+                                      className="flex min-h-8 cursor-pointer items-center gap-2 rounded-md px-1.5 text-sm text-ink-secondary hover:bg-surface-neutral"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={isChecked}
+                                        onChange={() => {
+                                          const nextValues = isMultiSelect
+                                            ? isChecked
+                                              ? draftFilterValues.filter((value) => value !== option.value)
+                                              : [...draftFilterValues, option.value]
+                                            : isChecked ? [] : [option.value];
+                                          setFilterDraft({ filterKey: filter.key, values: nextValues });
+                                        }}
+                                        className="h-4 w-4 rounded border-divider accent-primary-main text-primary-main focus:ring-primary-main"
+                                      />
+                                      {option.label}
+                                    </label>
+                                  );
+                                })}
+                              </div>
+
+                              <div className="flex gap-2 pt-2">
+                                <button
+                                  type="button"
+                                  className="h-9 flex-1 rounded-lg border border-divider bg-surface-paper px-2 text-xs font-semibold text-ink-primary hover:bg-surface-neutral focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-main"
+                                  onClick={() => {
+                                    filterContext.filterBar?.onChange(filter.key, '');
+                                    setFilterDraft({ filterKey: filter.key, values: [] });
+                                    setOpenColumnFilter(null);
+                                  }}
+                                >
+                                  Clear filter
+                                </button>
+                                <button
+                                  type="button"
+                                  className="h-9 flex-1 rounded-lg bg-primary-main px-2 text-xs font-semibold text-primary-contrast hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-main focus-visible:ring-offset-2"
+                                  onClick={() => {
+                                    const allMultiOptionsSelected = isMultiSelect
+                                      && selectableFilterOptions.length > 0
+                                      && draftFilterValues.length === selectableFilterOptions.length;
+                                    const value = isMultiSelect && !allMultiOptionsSelected
+                                      ? draftFilterValues.join(',')
+                                      : isMultiSelect || areAllOptionsSelected
+                                        ? ''
+                                        : draftFilterValues[0] ?? '';
+                                    filterContext.filterBar?.onChange(filter.key, value);
+                                    setOpenColumnFilter(null);
+                                  }}
+                                >
+                                  Apply filter
+                                </button>
+                              </div>
+                            </div>, document.body)
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody className="bg-surface-paper divide-y divide-divider">
@@ -401,13 +588,7 @@ export function DataTable<T extends Record<string, unknown>>({
               return (
                 <tr
                   key={rowId ?? rowIdx}
-                  className={`${
-                    isSelected
-                      ? 'bg-primary-lighter'
-                      : onRowClick
-                        ? 'cursor-pointer hover:bg-primary-main/10 transition-colors'
-                        : 'hover:bg-surface-neutral transition-colors'
-                  } ${isSelected && onRowClick ? 'cursor-pointer' : ''}`}
+                  className={`${isSelected ? 'bg-primary-lighter' : ''} ${onRowClick ? 'cursor-pointer' : ''}`}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                 >
                   {selectable && rowId && renderCheckboxCell(rowId)}

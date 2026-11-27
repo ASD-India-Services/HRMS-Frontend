@@ -20,7 +20,11 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(functio
   { variant = 'contained', color = 'primary', size = 'medium', startIcon, endIcon, className, children, ...rest },
   ref,
 ) {
-  const classes = cx(buttonClasses({ variant, color, size }), className);
+  const classes = cx(
+    buttonClasses({ variant, color, size }),
+    variant === 'contained' && color === 'primary' && size === 'medium' ? '!h-10' : '',
+    className,
+  );
   const content = (
     <>
       {startIcon && <ButtonIcon>{startIcon}</ButtonIcon>}

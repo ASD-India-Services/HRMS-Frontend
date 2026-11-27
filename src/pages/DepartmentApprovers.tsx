@@ -44,6 +44,7 @@ const filters: FilterConfig[] = [
     key: 'department',
     label: 'Department',
     type: 'select',
+    columnKey: 'department_name',
     options: [],
     optionsQuery: {
       queryKey: ['departments', 'options'],

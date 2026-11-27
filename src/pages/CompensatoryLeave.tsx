@@ -386,12 +386,24 @@ export default function CompensatoryLeave() {
 
   return (
     <PageContainer>
-      <PageHeader
-        title="Compensatory Leave Requests"
-        actions={
-        <>
-          {/* Search Input */}
-          <div className="relative order-last">
+      <PageHeader title="Compensatory Leave Requests" />
+
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <Tabs
+          aria-label="Request views"
+          items={[
+            { value: 'my', label: 'My Compensatory Leave Requests' },
+            ...(isApproverOrAdmin ? [{ value: 'all' as const, label: 'Compensatory Leave Requests' }] : []),
+          ]}
+          value={activeTab}
+          onChange={(tab) => {
+            setActiveTab(tab);
+            setPage(1);
+          }}
+        />
+
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+          <div className="relative">
             <Input
               type="text"
               value={search}
@@ -400,13 +412,12 @@ export default function CompensatoryLeave() {
                 setPage(1);
               }}
               placeholder="Search"
-              className="w-48 sm:w-56 pl-8 pr-3"
+              className="w-48 pl-8 pr-3 sm:w-56"
             />
-            <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
+            <Iconify icon="search" width={16} className="absolute left-2.5 top-3 text-ink-disabled" />
           </div>
 
-          {/* Filter Button */}
-          <div className="relative">
+          <div className="relative translate-y-0.5">
             <SegmentedButton
               selected={Boolean(statusFilter) || isFilterOpen}
               aria-expanded={isFilterOpen}
@@ -418,8 +429,8 @@ export default function CompensatoryLeave() {
             </SegmentedButton>
 
             {isFilterOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-surface-paper border border-divider rounded-md shadow-xl p-3 z-30">
-                <p className="text-[11px] font-bold text-ink-secondary uppercase tracking-wider mb-2">
+              <div className="absolute right-0 mt-2 w-48 rounded-md border border-divider bg-surface-paper p-3 shadow-xl z-30">
+                <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-ink-secondary">
                   Filter by Status
                 </p>
                 <div className="flex flex-col items-stretch gap-2">
@@ -442,8 +453,8 @@ export default function CompensatoryLeave() {
             )}
           </div>
 
-          {/* Blue + Create Button gated on compensatory_leave.create permission */}
-          <Button size="small"
+          <Button
+            size="medium"
             type="button"
             onClick={() => {
               if (!canCreate) return;
@@ -461,12 +472,11 @@ export default function CompensatoryLeave() {
           >
             <span>+ Create</span>
           </Button>
-        </>
-        }
-      />
+        </div>
+      </div>
 
       {/* Status Indicators Legend matching Screenshots 1, 2, 4 */}
-      <div className="flex justify-end items-center gap-4 py-2 text-xs font-medium text-ink-primary">
+      <div className="mb-2 flex items-center justify-end gap-4 text-xs font-medium text-ink-primary">
         <div className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-success-main inline-block"></span>
           <span>Approved</span>
@@ -481,18 +491,6 @@ export default function CompensatoryLeave() {
         </div>
       </div>
 
-      <Tabs
-        aria-label="Request views"
-        items={[
-          { value: 'my', label: 'My Compensatory Leave Requests' },
-          ...(isApproverOrAdmin ? [{ value: 'all' as const, label: 'Compensatory Leave Requests' }] : []),
-        ]}
-        value={activeTab}
-        onChange={(tab) => {
-          setActiveTab(tab);
-          setPage(1);
-        }}
-      />
       {/* Main Content: Table or Empty State */}
       <Card className="overflow-hidden">
         {isLoading ? (

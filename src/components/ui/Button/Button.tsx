@@ -34,7 +34,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       type={type}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={cx(buttonClasses({ variant, color, size }), className)}
+      className={cx(
+        buttonClasses({ variant, color, size }),
+        variant === 'contained' && color === 'primary' && size === 'medium' ? '!h-10' : '',
+        className,
+      )}
       {...rest}
     >
       {loading && (

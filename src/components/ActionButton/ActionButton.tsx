@@ -94,7 +94,7 @@ export function ActionButton({
   return (
     <Button
       {...VARIANT_PROPS[variant]}
-      size={SIZE_PROPS[size]}
+      size={variant === 'primary' ? 'medium' : SIZE_PROPS[size]}
       className={className}
       onClick={onClick}
       disabled={disabled}

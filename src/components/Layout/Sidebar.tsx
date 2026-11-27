@@ -150,10 +150,10 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
           </div>
           {!isCollapsed && (
             <IconButton
-              icon="collapse"
+              icon="chevron-right"
               size="small"
               onClick={onToggleCollapse}
-              className="hidden md:inline-flex"
+              className="hidden !h-8 !w-8 !rounded-full !border !border-divider !bg-surface-paper !text-ink-secondary !shadow-sm hover:!bg-surface-subtle md:inline-flex"
               aria-label="Collapse sidebar"
             />
           )}
@@ -163,10 +163,10 @@ export function Sidebar({ isOpen, isCollapsed, onClose, onToggleCollapse }: Side
         {isCollapsed && (
           <div className="flex justify-center pb-2">
             <IconButton
-              icon="expand"
+              icon="chevron-right"
               size="small"
               onClick={onToggleCollapse}
-              className="hidden md:inline-flex"
+              className="hidden !h-8 !w-8 !rounded-full !border !border-divider !bg-surface-paper !text-ink-secondary !shadow-sm hover:!bg-surface-subtle md:inline-flex"
               aria-label="Expand sidebar"
             />
           </div>

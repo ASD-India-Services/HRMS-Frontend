@@ -79,7 +79,7 @@ export default function Departments() {
 
   return (
     <PageContainer>
-      <PageHeader title="Departments" subtitle="Manage organizational departments" actions={<CreateButton permission="departments.create" label="Add Department" onClick={() => setShowCreate(true)} />} />
+      <PageHeader className="-mt-6" title="Departments" subtitle="Manage organizational departments" actions={<CreateButton permission="departments.create" label="Add Department" onClick={() => setShowCreate(true)} />} />
 
       <FilterBar
         filters={departmentCrudConfig.filters}

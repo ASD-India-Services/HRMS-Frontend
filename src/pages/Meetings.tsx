@@ -482,16 +482,19 @@ export default function Meetings() {
             { value: 'cancelled', label: 'Cancelled' },
           ]}
         />
-        <div className="relative ml-auto">
-          <Input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search meetings..."
-            inputSize="small"
-            className="w-56 pl-8 pr-3 sm:w-72"
-          />
-          <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
+        <div className="ml-auto flex items-center gap-3">
+          <div className="relative">
+            <Input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search meetings..."
+              inputSize="medium"
+              className="w-56 pl-8 pr-3 sm:w-72"
+            />
+            <Iconify icon="search" width={16} className="absolute left-2.5 top-2.5 text-ink-disabled" />
+          </div>
+          <div data-table-action-slot="true" className="flex shrink-0 items-center gap-2" />
         </div>
       </div>
 

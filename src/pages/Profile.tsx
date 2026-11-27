@@ -51,6 +51,10 @@ export default function Profile() {
     roleName?.toLowerCase() === 'hr_manager' ||
     hasPermission('employees.edit');
 
+  // Employees without profile edit permissions can still view contact details,
+  // but should be told to contact HR if they need changes.
+  const isReadOnlyEmployee = !isAdmin;
+
   // Check if profile edit is restricted by HR settings
   const isProfileEditRestricted = !isAdmin && !!hrSettings?.account_restrictions?.restrict_profile_edit;
   // If not restricted, user can edit profile

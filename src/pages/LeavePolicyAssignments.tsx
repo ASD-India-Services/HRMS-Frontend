@@ -10,6 +10,7 @@ import type { FieldConfig } from '@/components/CrudModal';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { formatDate } from '@/utils/formatters';
+import { useToast } from '@/components/ui/Toast';
 
 const ENDPOINT = '/api/v1/leaves/policy-assignments/';
 const crud = createCrudHooks<Record<string, unknown>>({
@@ -49,6 +50,7 @@ export default function LeavePolicyAssignments() {
   const [editRecord, setEditRecord] = useState<Record<string, unknown> | null>(null);
   const [editLoading, setEditLoading] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const { showToast } = useToast();
   const { filterValues, setFilter, clearFilters, page, pageSize, setPage, setPageSize } = useFilterSync({ filters });
   const params = useMemo(() => { const p: Record<string, string | number> = { page, page_size: pageSize }; Object.entries(filterValues).forEach(([k, v]) => { if (v) p[k] = v; }); return p; }, [filterValues, page, pageSize]);
   const queryResult = crud.useList(params);
@@ -71,10 +73,31 @@ export default function LeavePolicyAssignments() {
     },
   ];
 
-  const handleCreate = (data: Record<string, unknown>) => {
-    createMutation.mutate(data, {
-      onSuccess: () => setShowCreate(false),
-    });
+  const handleCreate = async (data: Record<string, unknown>) => {
+    const assignmentType = String(data.assignment_type ?? '');
+    const payload = {
+      ...data,
+      employee: assignmentType === 'employee' ? data.employee || null : null,
+      department: assignmentType === 'department' ? data.department || null : null,
+      grade: assignmentType === 'grade' ? data.grade || null : null,
+      effective_to: data.effective_to || null,
+    };
+
+    try {
+      await createMutation.mutateAsync(payload);
+      setShowCreate(false);
+    } catch (error) {
+      const responseData = (error as { response?: { data?: unknown } }).response?.data;
+      const message = responseData && typeof responseData === 'object'
+        ? Object.entries(responseData as Record<string, unknown>)
+            .map(([field, detail]) => {
+              const text = Array.isArray(detail) ? detail.join(' ') : String(detail);
+              return field === 'non_field_errors' || field === 'detail' ? text : `${field}: ${text}`;
+            })
+            .join(' ')
+        : error instanceof Error ? error.message : 'Could not save the leave policy assignment.';
+      showToast(message || 'Could not save the leave policy assignment.', 'error');
+    }
   };
 
   const handleEdit = async (data: Record<string, unknown>) => {

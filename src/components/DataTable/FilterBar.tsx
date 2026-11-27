@@ -8,12 +8,15 @@
  * Requirements: 17.2, 3.3
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useId, useMemo } from 'react';
 import { createPortal } from 'react-dom';
+import { useQueries } from '@tanstack/react-query';
 import type { FilterConfig } from '@/types/datatable';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { SegmentedControl } from '@/components/ui/SegmentedControl/SegmentedControl';
+import { matchColumnFilters, useColumnFilterContext } from './ColumnFilterContext';
+import api from '@/lib/api';
 
 export interface FilterBarProps {
   /** Filter configuration array */
@@ -24,6 +27,33 @@ export interface FilterBarProps {
   onChange: (key: string, value: string) => void;
   /** Callback to clear all filters */
   onClearAll?: () => void;
+}
+
+function resolveOptions(data: unknown, filter: FilterConfig) {
+  const items = Array.isArray(data)
+    ? data
+    : data && typeof data === 'object' && Array.isArray((data as { results?: unknown[] }).results)
+      ? (data as { results: unknown[] }).results
+      : [];
+
+  return items.flatMap((item) => {
+    if (!item || typeof item !== 'object') return [];
+    const record = item as Record<string, unknown>;
+    const configuredLabel = filter.optionsQuery?.labelKey;
+    const labelValue = typeof configuredLabel === 'function'
+      ? configuredLabel(record)
+      : (configuredLabel ? record[configuredLabel] : undefined)
+        ?? record.name
+        ?? record.title
+        ?? record.label
+        ?? record.id;
+    const optionValue = (filter.optionsQuery?.valueKey ? record[filter.optionsQuery.valueKey] : undefined)
+      ?? record.value
+      ?? record.id
+      ?? record.pk;
+    if (labelValue == null || optionValue == null) return [];
+    return [{ value: String(optionValue), label: String(labelValue) }];
+  });
 }
 
 /**
@@ -56,12 +86,40 @@ function useDebouncedCallback(callback: (value: string) => void, delay: number) 
 }
 
 export function FilterBar({ filters, values, onChange, onClearAll }: FilterBarProps) {
+  const filterContext = useColumnFilterContext();
+  const filterBarId = useId();
+  const optionQueries = useQueries({
+    queries: filters.map((filter) => ({
+      queryKey: filter.optionsQuery?.queryKey ?? ['filter-options', filter.key],
+      enabled: Boolean(filter.optionsQuery?.endpoint),
+      queryFn: async () => {
+        if (!filter.optionsQuery?.endpoint) return filter.options ?? [];
+        const response = await api.get(filter.optionsQuery.endpoint);
+        return resolveOptions(response.data, filter);
+      },
+    })),
+  });
+  const resolvedFilters = useMemo(
+    () => filters.map((filter, index) => filter.optionsQuery
+      ? { ...filter, options: optionQueries[index]?.data ?? filter.options ?? [] }
+      : filter),
+    [filters, ...optionQueries.map((query) => query.data)],
+  );
+  const columnFilterKeys = new Set(
+    Array.from(matchColumnFilters(resolvedFilters, filterContext?.columns ?? []).values(), (filter) => filter.key),
+  );
   // Skip search-type filters — DataTable has a built-in search bar
-  const nonSearchFilters = filters.filter((f) => f.type !== 'search');
+  const nonSearchFilters = resolvedFilters.filter((f) => f.type !== 'search' && !columnFilterKeys.has(f.key));
   const hasActiveFilters = Object.values(values).some((v) => v !== '');
   const fallbackRef = useRef<HTMLDivElement>(null);
   const toolbarTargetRef = useRef<HTMLElement | null>(null);
   const [toolbarTarget, setToolbarTarget] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!filterContext) return;
+    filterContext.registerFilterBar({ id: filterBarId, filters: resolvedFilters, values, onChange });
+    return () => filterContext.unregisterFilterBar(filterBarId);
+  }, [filterContext?.registerFilterBar, filterContext?.unregisterFilterBar, filterBarId, resolvedFilters, values, onChange]);
 
   useEffect(() => {
     const page = fallbackRef.current?.closest<HTMLElement>('[data-page-container]');

@@ -1666,7 +1666,7 @@ export default function HourAccountPage() {
 
           {/* + Create Button (Blue) */}
           {canCreate && (
-            <Button size="small" startIcon={<Iconify icon="plus" />} onClick={handleOpenCreate}><span>Create</span>
+            <Button size="medium" startIcon={<Iconify icon="plus" />} onClick={handleOpenCreate}><span>Create</span>
             </Button>
           )}
         </>

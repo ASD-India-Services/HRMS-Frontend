@@ -118,17 +118,20 @@ export function EmployeeDirectory() {
       <div className="mb-6 space-y-4">
         {/* Search Bar */}
         <div className="flex justify-end">
-          <div className="relative w-full max-w-md">
-          <Iconify icon="search" width={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-disabled" />
-          <Input
-            type="text"
-            value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder="Search by name, department, or designation..."
-            inputSize="small"
-            className="pl-10 pr-4"
-            aria-label="Search employees"
-          />
+          <div className="flex w-full items-center justify-end gap-3">
+            <div className="relative w-full max-w-md">
+              <Iconify icon="search" width={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-disabled" />
+              <Input
+                type="text"
+                value={search}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                placeholder="Search by name, department, or designation..."
+                inputSize="medium"
+                className="pl-10 pr-4"
+                aria-label="Search employees"
+              />
+            </div>
+            <div data-table-action-slot="true" className="flex shrink-0 items-center gap-2" />
           </div>
         </div>
 

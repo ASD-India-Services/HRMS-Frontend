@@ -345,7 +345,7 @@ export default function CompanyLeaves() {
           </div>
 
           {/* + Create Button (Blue) */}
-          <Button size="small"
+          <Button size="medium"
             type="button"
             onClick={handleOpenCreate}
           >
@@ -356,7 +356,7 @@ export default function CompanyLeaves() {
       } />
 
       {/* Main Table (Matching Screenshot 2) */}
-      <div className="bg-surface-paper border border-grey-300/90 rounded-xs shadow-2xs overflow-hidden">
+      <div>
         <div className="overflow-x-auto">
           <HRMSTable className="min-w-full divide-y divide-divider text-left">
             <thead>
@@ -375,7 +375,7 @@ export default function CompanyLeaves() {
                 </th>
                 <th
                   scope="col"
-                  className="py-3 px-4 text-xs font-bold text-ink-primary uppercase tracking-wider text-center border-l border-divider w-36"
+                  className="py-3 px-4 text-xs font-bold text-ink-primary uppercase tracking-wider text-center w-36"
                 >
                   Actions
                 </th>
@@ -407,7 +407,7 @@ export default function CompanyLeaves() {
                     <td className="py-3.5 px-4 text-sm text-ink-primary font-normal">
                       {item.based_on_week_day_display || item.based_on_week_day}
                     </td>
-                    <td className="py-2 px-4 text-center border-l border-divider">
+                    <td className="py-2 px-4 text-center">
                       <div className="inline-flex items-center justify-center gap-4">
                         {/* Edit Icon (Pencil in Square) */}
                         <IconButton icon="pencil" size="small" onClick={() => handleOpenEdit(item)} aria-label="Edit" />
@@ -424,7 +424,7 @@ export default function CompanyLeaves() {
         </div>
 
         {/* Pagination Bar (Matching Screenshot 2) */}
-        <div className="py-3 px-4 flex items-center justify-between border-t border-divider bg-surface-paper text-xs text-ink-primary">
+        <div className="py-3 px-4 flex items-center justify-between bg-surface-paper text-xs text-ink-primary">
           <div>
             Page {page} of {totalPages}.
           </div>

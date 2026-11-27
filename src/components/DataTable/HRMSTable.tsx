@@ -4,7 +4,7 @@ import { RowActionsMenu } from './RowActionsMenu';
 function readText(node: ReactNode): string {
   if (typeof node === 'string' || typeof node === 'number') return String(node);
   if (!isValidElement<{ children?: ReactNode }>(node)) return '';
-  return readText(node.props.children);
+  return Children.toArray(node.props.children).map(readText).join('');
 }
 
 function findHeaderRow(node: ReactNode): React.ReactElement | null {

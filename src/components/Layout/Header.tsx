@@ -13,6 +13,7 @@ import { useAuth, useUser } from '@platform/auth-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { ProductSwitcher } from '@/components/ProductSwitcher';
 import { useNotifications } from '@/hooks/useNotifications';
+import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { Iconify, type IconName } from '@/components/Iconify';
 import { Button, IconButton } from '@/components/ui/Button';
 import { TimeRunnerWidget } from './TimeRunnerWidget';
@@ -38,8 +39,12 @@ export function Header({ onMenuToggle }: HeaderProps) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const pageTitleContext = usePageTitleContext();
+  const { roleName } = useHrmsPermissionsContext();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [setupReminderDismissed, setSetupReminderDismissed] = useState(
+    () => localStorage.getItem('org-setup-banner-dismissed') === 'true',
+  );
 
   // Fetch current employee's designation
   const { data: currentEmployee } = useQuery<{ designation?: { title?: string } | null }>({
@@ -77,7 +82,8 @@ export function Header({ onMenuToggle }: HeaderProps) {
       .slice(0, 2)
     : '??';
 
-  const pendingCount = notifications.length;
+  const showSetupReminder = roleName === 'org_admin' && !setupReminderDismissed;
+  const pendingCount = notifications.length + (showSetupReminder ? 1 : 0);
   const routeTitle = pathname === '/'
     ? 'Dashboard'
     : pathname.split('/').filter(Boolean).at(-1)?.replace(/[-_]/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase()) ?? 'DigiHRMS';
@@ -127,15 +133,47 @@ export function Header({ onMenuToggle }: HeaderProps) {
               aria-label="Notifications"
             >
               <div className="px-4 py-3 border-b border-dashed border-divider">
-                <p className="text-sm font-semibold text-ink-primary">Pending Approvals</p>
+                <p className="text-sm font-semibold text-ink-primary">Notifications</p>
               </div>
               <div className="max-h-80 overflow-y-auto">
+                {showSetupReminder && (
+                  <div className="flex items-start gap-2 border-b border-divider px-4 py-3">
+                    <Button
+                      variant="text"
+                      color="inherit"
+                      onClick={() => {
+                        setIsNotificationsOpen(false);
+                        navigate('/hr-settings');
+                      }}
+                      className="!h-auto min-w-0 flex-1 !items-start !justify-start gap-3 !rounded-none !p-0 text-left !font-normal"
+                      role="menuitem"
+                    >
+                      <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary-lighter text-primary-main">
+                        <Iconify icon="info" width={16} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-medium text-ink-primary">Complete Your Organization Setup</span>
+                        <span className="mt-0.5 block text-xs text-ink-secondary">Set up company details, SMTP, and HR policies.</span>
+                        <span className="mt-1 block text-xs font-semibold text-primary-main">Go to HR Settings →</span>
+                      </span>
+                    </Button>
+                    <IconButton
+                      icon="close"
+                      size="small"
+                      aria-label="Dismiss organization setup reminder"
+                      onClick={() => {
+                        localStorage.setItem('org-setup-banner-dismissed', 'true');
+                        setSetupReminderDismissed(true);
+                      }}
+                    />
+                  </div>
+                )}
                 {notificationsLoading && (
                   <div className="px-4 py-6 text-center text-sm text-ink-secondary">Loading...</div>
                 )}
-                {!notificationsLoading && notifications.length === 0 && (
+                {!notificationsLoading && notifications.length === 0 && !showSetupReminder && (
                   <div className="px-4 py-6 text-center text-sm text-ink-secondary">
-                    No pending approvals
+                    No notifications
                   </div>
                 )}
                 {!notificationsLoading &&

@@ -48,7 +48,6 @@ export default function EmployeeBonusPoints() {
   const [search, setSearch] = useState('');
   const [groupByField, setGroupByField] = useState<GroupByOption>('Employee');
   const [isGroupByOpen, setIsGroupByOpen] = useState(false);
-  const [savedNotification, setSavedNotification] = useState('');
   const groupByRef = useRef<HTMLDivElement>(null);
 
   // Modal State (Create / Edit)
@@ -281,18 +280,6 @@ export default function EmployeeBonusPoints() {
       <PageHeader title="Employee Bonus Point" actions={
         <>
 <div className="flex items-center gap-2 self-end sm:self-auto">
-          {/* Search Input matching Screenshot 1 */}
-          <div className="relative order-last ml-auto">
-            <Iconify icon="search" width={16} className="pointer-events-none absolute left-2.5 top-2.5 text-ink-disabled" />
-            <Input
-              type="text"
-              placeholder="Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 pr-3 w-44 sm:w-56"
-            />
-          </div>
-
           {/* Group By(1) Popover Trigger Button */}
           <div className="relative" ref={groupByRef}>
             <Button variant="outlined" color="inherit" size="small"
@@ -328,9 +315,22 @@ export default function EmployeeBonusPoints() {
             )}
           </div>
 
+          {/* Search Input matching Screenshot 1 */}
+          <div className="relative">
+            <Iconify icon="search" width={16} className="pointer-events-none absolute left-2.5 top-2.5 text-ink-disabled" />
+            <Input
+              type="text"
+              placeholder="Search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-8 pr-3 w-44 sm:w-56"
+            />
+          </div>
+
           {/* + Create Button (Blue) */}
           {canCreate && (
-            <Button size="small"
+            <Button
+              size="medium"
               startIcon={<Iconify icon="plus" />}
               onClick={handleOpenCreate}
             >
@@ -340,42 +340,6 @@ export default function EmployeeBonusPoints() {
         </div>
         </>
       } />
-
-      {/* ── Active Filter Bar ── */}
-      {groupByField !== 'Select' && (
-        <div className="flex items-center justify-end gap-2 pt-1 pb-1">
-          {/* White Filters: Badge */}
-          <span className="rounded-full bg-surface-neutral px-3 py-1 text-[11px] font-bold text-ink-primary">
-            Filters:
-          </span>
-
-          {/* Active Field Chip */}
-          <span className="inline-flex items-center gap-1 rounded-full bg-surface-neutral py-0.5 pl-3 pr-1 text-xs text-ink-primary">
-            Field : {groupByField}
-            <IconButton icon="close" size="small" onClick={() => setGroupByField('Select')} aria-label="Remove filter" />
-          </span>
-
-          {/* Save Button (White) */}
-          <Button variant="outlined" color="inherit" size="small"
-            startIcon={<Iconify icon="download" />}
-            onClick={() => {
-              setSavedNotification('View preferences saved.');
-              setTimeout(() => setSavedNotification(''), 3000);
-            }}
-          >
-            Save
-          </Button>
-
-          {/* Clear Button */}
-          <IconButton icon="close" size="small" onClick={() => setGroupByField('Select')} aria-label="Clear filters" />
-        </div>
-      )}
-
-      {savedNotification && (
-        <div className="text-right text-xs text-success-main font-medium">
-          {savedNotification}
-        </div>
-      )}
 
       {/* ── Main Content Area: Empty State or Grouped / Flat View ── */}
       {isLoading ? (
@@ -403,12 +367,9 @@ export default function EmployeeBonusPoints() {
         /* Grouped View */
         <div className="space-y-4">
           {groupedData.map((group) => (
-            <Card
-              key={group.groupKey}
-              className="overflow-hidden"
-            >
+            <section key={group.groupKey} className="overflow-hidden">
               {/* Group Header */}
-              <div className="px-4 py-3 bg-surface-neutral/75 border-b border-divider flex flex-wrap items-center justify-between gap-2">
+              <div className="px-4 py-3 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-sm text-ink-primary">{group.groupTitle}</span>
                   {group.subTitle && (
@@ -479,7 +440,7 @@ export default function EmployeeBonusPoints() {
                   </tbody>
                 </HRMSTable>
               </div>
-            </Card>
+            </section>
           ))}
         </div>
       ) : (
