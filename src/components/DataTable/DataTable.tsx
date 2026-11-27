@@ -140,6 +140,7 @@ export function DataTable<T extends Record<string, unknown>>({
   selectable,
   bulkActions,
 }: DataTableProps<T>) {
+  const { dateFormat, timeFormat } = useAppFormatting();
   const filterContext = useColumnFilterContext();
   const [sort, setSort] = useState<SortState>({ key: '', direction: null });
   const [tableSearch, setTableSearch] = useState('');

@@ -38,8 +38,9 @@ export default function Dashboard() {
   const { roleName, isLoading: permLoading } = useHrmsPermissionsContext();
   const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange);
   // Determine which sub-dashboard to render
-  const isAdmin = effectiveRole ? ADMIN_ROLES.includes(effectiveRole) : false;
-  const isManager = effectiveRole ? MANAGER_ROLES.includes(effectiveRole) : false;
+  const effectiveRole = (roleName || authRole || '').trim().toLowerCase();
+  const isAdmin = ADMIN_ROLES.includes(effectiveRole);
+  const isManager = MANAGER_ROLES.includes(effectiveRole);
 
   // Welcome subtitle varies by tier
   const subtitle = isAdmin
