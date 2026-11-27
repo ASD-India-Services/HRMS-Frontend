@@ -11,12 +11,13 @@
  * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 18.1, 18.2, 18.3, 18.4, 18.5
  */
 
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { FormBuilder } from '@/components/FormBuilder';
 import { createCrudHooks } from '@/hooks/useCrud';
 import { employeeCrudConfig } from '@/config/crud/employees';
+import { useHRSettings } from '@/hooks/useHRSettings';
 import type { Employee } from '@/types/employee';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -37,6 +38,7 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEditMode = Boolean(employeeId);
+  const { data: hrSettings } = useHRSettings();
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -125,9 +127,33 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
         if (emp.reporting_manager && typeof emp.reporting_manager === 'object') {
           flat.reporting_manager_id = (emp.reporting_manager as Record<string, unknown>).id;
         }
+        // History tags
+        const rawTags = (emp as any).history_tags || (emp as any).custom_fields?.history_tags;
+        flat.history_tags = Array.isArray(rawTags) ? rawTags : [];
         return flat;
       })()
     : undefined;
+
+  // Dynamically populate history tags options from HRSettings
+  const formFields = useMemo(() => {
+    const configuredTags = hrSettings?.history_tags || [];
+    if (configuredTags.length === 0) return employeeCrudConfig.formFields;
+
+    const dynamicTagOptions = configuredTags.map((t) => ({
+      value: t.title,
+      label: t.title,
+    }));
+
+    return employeeCrudConfig.formFields.map((field) => {
+      if (field.name === 'history_tags') {
+        return {
+          ...field,
+          options: dynamicTagOptions,
+        };
+      }
+      return field;
+    });
+  }, [hrSettings?.history_tags]);
 
   return (
     <PageContainer maxWidth="lg">
@@ -154,7 +180,7 @@ export function EmployeeForm({ employeeId }: EmployeeFormProps) {
       {/* Form */}
       <Card className="p-6">
         <FormBuilder
-          fields={employeeCrudConfig.formFields}
+          fields={formFields}
           steps={employeeCrudConfig.formSteps}
           initialValues={initialValues}
           onSubmit={handleSubmit}

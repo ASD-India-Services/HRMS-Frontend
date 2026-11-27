@@ -1,6 +1,7 @@
 import { HRMSTable } from '@/components/DataTable/HRMSTable';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { EMPLOYEES } from '@/lib/endpoints';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
@@ -51,6 +52,7 @@ export default function EmployeeBonusPoints() {
   const groupByRef = useRef<HTMLDivElement>(null);
 
   // Modal State (Create / Edit)
+  const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<EmployeeBonusPoint | null>(null);
 
@@ -58,6 +60,8 @@ export default function EmployeeBonusPoints() {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState('');
   const [points, setPoints] = useState<number>(0);
   const [basedOn, setBasedOn] = useState('');
+  const [selectedCriteriaId, setSelectedCriteriaId] = useState('');
+  const [isEvaluating, setIsEvaluating] = useState(false);
   const [formError, setFormError] = useState('');
 
   // Delete State
@@ -91,6 +95,55 @@ export default function EmployeeBonusPoints() {
 
   const bonusPoints = data?.results || [];
 
+  // Query active bonus criteria from Settings
+  const { data: criteriaList = [] } = useQuery<any[]>({
+    queryKey: ['employee-bonus-point-criteria'],
+    queryFn: async () => {
+      try {
+        const res = await api.get('/api/v1/employee-bonus-points/criteria/');
+        return Array.isArray(res.data) ? res.data : [];
+      } catch {
+        return [];
+      }
+    },
+    staleTime: 30 * 1000,
+  });
+
+  // Handle selecting a configured criterion from Settings
+  const handleCriteriaSelect = (id: string) => {
+    setSelectedCriteriaId(id);
+    if (!id || id === 'custom') return;
+    const rule = criteriaList.find((c) => String(c.id) === String(id));
+    if (rule) {
+      setBasedOn(rule.label);
+      if (rule.points !== undefined && rule.points !== null) {
+        setPoints(Number(rule.points));
+      }
+    }
+  };
+
+  // Automated performance evaluation against configured rules
+  const handleEvaluateCriteria = async () => {
+    setIsEvaluating(true);
+    try {
+      const res = await api.post('/api/v1/employee-bonus-points/evaluate/', {});
+      const count = res.data?.awarded_count ?? 0;
+      setSavedNotification(
+        count > 0
+          ? `Evaluated rules successfully: Awarded ${count} new bonus point record(s)!`
+          : 'Evaluation complete: No new qualifying achievements found.'
+      );
+      setTimeout(() => setSavedNotification(''), 4500);
+      queryClient.invalidateQueries({ queryKey: ['employee-bonus-points'] });
+    } catch (err: any) {
+      const msg = err?.response?.data?.detail || 'Failed to evaluate bonus point criteria.';
+      setSavedNotification(msg);
+      setTimeout(() => setSavedNotification(''), 4000);
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
+
   // Mutations
   const createMutation = useCreateBonusPoint();
   const updateMutation = useUpdateBonusPoint();
@@ -101,6 +154,7 @@ export default function EmployeeBonusPoints() {
     setSelectedEmployeeId(employees.length > 0 ? employees[0].id : '');
     setPoints(0);
     setBasedOn('');
+    setSelectedCriteriaId('');
     setFormError('');
     setEditingRecord(null);
   };
@@ -122,6 +176,7 @@ export default function EmployeeBonusPoints() {
     setSelectedEmployeeId(record.employee);
     setPoints(record.points);
     setBasedOn(record.based_on);
+    setSelectedCriteriaId('');
     setFormError('');
     setIsModalOpen(true);
   };
@@ -567,16 +622,43 @@ export default function EmployeeBonusPoints() {
                 </div>
               </div>
 
-              {/* Row 2: Based on * */}
+              {/* Row 2: Configured Criteria (from Settings) */}
+              {criteriaList.length > 0 && (
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-semibold text-ink-primary">
+                      Configured Criteria (from Settings)
+                    </label>
+                    <span className="text-[11px] text-primary-main">Auto-fills points & reason</span>
+                  </div>
+                  <Select
+                    value={selectedCriteriaId}
+                    onChange={(e) => handleCriteriaSelect(e.target.value)}
+                  >
+                    <option value="">-- Select from Configured Rules --</option>
+                    {criteriaList.map((crit: any) => (
+                      <option key={crit.id} value={crit.id}>
+                        {crit.label} (+{crit.points} pts)
+                      </option>
+                    ))}
+                    <option value="custom">Custom Reason / Manual Entry</option>
+                  </Select>
+                </div>
+              )}
+
+              {/* Row 3: Based on * */}
               <div>
                 <label className="block text-xs font-semibold text-ink-primary mb-1.5">
                   Based on *
                 </label>
                 <Input
                   type="text"
-                  placeholder="Based On"
+                  placeholder="e.g. [Objective] Objective Completion"
                   value={basedOn}
-                  onChange={(e) => setBasedOn(e.target.value)}
+                  onChange={(e) => {
+                    setBasedOn(e.target.value);
+                    setSelectedCriteriaId('');
+                  }}
                   required
                 />
               </div>

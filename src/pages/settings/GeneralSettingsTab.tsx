@@ -24,13 +24,19 @@ export function GeneralSettingsTab() {
   const { data: settings, isLoading, isError, error } = useHRSettings();
   const updateMutation = useUpdateHRSettings();
 
-  // 1. Pagination state
+  // 1. Announcement Expire state
+  const [expireDays, setExpireDays] = useState<number>(30);
+  const [expireSaving, setExpireSaving] = useState(false);
+  const [expireSaved, setExpireSaved] = useState(false);
+
+  // 2. Pagination state
   const [pagination, setPagination] = useState<number>(50);
   const [paginationSaving, setPaginationSaving] = useState(false);
   const [paginationSaved, setPaginationSaved] = useState(false);
 
   // 3. Employee Account Restrictions state
   const [restrictions, setRestrictions] = useState({
+    restrict_login_account: false,
     restrict_profile_edit: false,
     restrict_bank_edit: false,
     restrict_outside_checkin: false,
@@ -38,6 +44,11 @@ export function GeneralSettingsTab() {
   });
   const [restrictionsSaving, setRestrictionsSaving] = useState(false);
   const [restrictionsSaved, setRestrictionsSaved] = useState(false);
+
+  // 4. Resignation Request state
+  const [resignationRequest, setResignationRequest] = useState<boolean>(false);
+  const [resignationSaving, setResignationSaving] = useState(false);
+  const [resignationSaved, setResignationSaved] = useState(false);
 
   // 5. Time Runner (At-Work Tracker) state
   const [atWorkTracker, setAtWorkTracker] = useState<boolean>(true);
@@ -91,7 +102,6 @@ export function GeneralSettingsTab() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const [workInfoTracking, setWorkInfoTracking] = useState<boolean>(false);
   const [historySaving, setHistorySaving] = useState(false);
   const [historySaved, setHistorySaved] = useState(false);
 
@@ -105,16 +115,23 @@ export function GeneralSettingsTab() {
   // Synchronize state when settings load
   useEffect(() => {
     if (settings) {
+      if (settings.announcement_expire_days !== undefined) {
+        setExpireDays(settings.announcement_expire_days);
+      }
       if (settings.default_pagination_size !== undefined) {
         setPagination(settings.default_pagination_size);
       }
       if (settings.account_restrictions) {
         setRestrictions({
+          restrict_login_account: !!settings.account_restrictions.restrict_login_account,
           restrict_profile_edit: !!settings.account_restrictions.restrict_profile_edit,
           restrict_bank_edit: !!settings.account_restrictions.restrict_bank_edit,
           restrict_outside_checkin: !!settings.account_restrictions.restrict_outside_checkin,
           allow_employee_password_reset: settings.account_restrictions.allow_employee_password_reset ?? true,
         });
+      }
+      if (settings.resignation_request !== undefined) {
+        setResignationRequest(!!settings.resignation_request);
       }
       if (settings.at_work_tracker !== undefined) {
         setAtWorkTracker(!!settings.at_work_tracker);
@@ -136,9 +153,6 @@ export function GeneralSettingsTab() {
       if (Array.isArray(settings.history_tracking_fields) && settings.history_tracking_fields.length > 0) {
         setTrackingFields(settings.history_tracking_fields);
       }
-      if (settings.work_information_tracking !== undefined) {
-        setWorkInfoTracking(!!settings.work_information_tracking);
-      }
       if (settings.currency_symbol !== undefined) {
         setCurrencySymbol(settings.currency_symbol || '₹');
       }
@@ -149,7 +163,22 @@ export function GeneralSettingsTab() {
     }
   }, [settings]);
 
-  // Save 1. Pagination
+  // Save 1. Announcement Expire
+  const handleSaveExpireDays = async () => {
+    setExpireSaving(true);
+    setExpireSaved(false);
+    try {
+      await updateMutation.mutateAsync({
+        announcement_expire_days: Number(expireDays) || 30,
+      });
+      setExpireSaved(true);
+      setTimeout(() => setExpireSaved(false), 3000);
+    } finally {
+      setExpireSaving(false);
+    }
+  };
+
+  // Save 2. Pagination
   const handleSavePagination = async () => {
     setPaginationSaving(true);
     setPaginationSaved(false);
@@ -177,6 +206,21 @@ export function GeneralSettingsTab() {
       setTimeout(() => setRestrictionsSaved(false), 2500);
     } finally {
       setRestrictionsSaving(false);
+    }
+  };
+
+  // Save 4. Resignation Request
+  const handleToggleResignation = async (nextVal: boolean) => {
+    setResignationRequest(nextVal);
+    setResignationSaving(true);
+    try {
+      await updateMutation.mutateAsync({
+        resignation_request: nextVal,
+      });
+      setResignationSaved(true);
+      setTimeout(() => setResignationSaved(false), 2500);
+    } finally {
+      setResignationSaving(false);
     }
   };
 
@@ -255,23 +299,11 @@ export function GeneralSettingsTab() {
     try {
       await updateMutation.mutateAsync({
         history_tracking_fields: trackingFields,
-        work_information_tracking: workInfoTracking,
       });
       setHistorySaved(true);
       setTimeout(() => setHistorySaved(false), 3000);
     } finally {
       setHistorySaving(false);
-    }
-  };
-
-  const handleToggleWorkInfo = async (nextVal: boolean) => {
-    setWorkInfoTracking(nextVal);
-    try {
-      await updateMutation.mutateAsync({
-        work_information_tracking: nextVal,
-      });
-    } catch {
-      // Handled by query
     }
   };
 
@@ -445,6 +477,9 @@ export function GeneralSettingsTab() {
                 <InfoIcon className="h-4 w-4" />
               </span>
             </label>
+            <p className="text-xs text-ink-secondary">
+              When turned on, inactive, suspended, terminated, or past-leaving-date employees cannot access the portal.
+            </p>
             <div>
               <SwitchToggle
                 checked={restrictions.restrict_login_account}
@@ -841,30 +876,6 @@ export function GeneralSettingsTab() {
                 <CheckIcon className="h-4 w-4" /> Saved successfully
               </span>
             )}
-          </div>
-        </div>
-
-        {/* Work Information Tracking Toggle */}
-        <div className="pt-4 border-t border-divider space-y-2">
-          <label className="flex items-center gap-1.5 text-sm font-semibold text-ink-primary">
-            <span>Work Information Tracking</span>
-            <span
-              title="Automatically log lifecycle transfers and promotion snapshots whenever work information changes"
-              className="cursor-help text-ink-disabled hover:text-ink-secondary"
-            >
-              <InfoIcon className="h-4 w-4" />
-            </span>
-          </label>
-          <div className="flex items-center gap-3">
-            <SwitchToggle
-              checked={workInfoTracking}
-              onChange={handleToggleWorkInfo}
-            />
-            <span className={`text-xs font-medium ${workInfoTracking ? 'text-emerald-700' : 'text-gray-500'}`}>
-              {workInfoTracking
-                ? 'Active — Changes to selected tracking fields are automatically logged to employee history'
-                : 'Disabled — Work information changes are not recorded'}
-            </span>
           </div>
         </div>
       </section>

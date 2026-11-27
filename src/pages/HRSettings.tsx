@@ -28,6 +28,17 @@ interface HRSettingsData {
     compensatory_leave_validity_days?: number;
     [key: string]: any;
   };
+  attendance_settings?: {
+    web_shift_end_confirmation?: {
+      enabled: boolean;
+      shift_end_buffer_minutes: number;
+      unanswered_timeout_minutes: number;
+      recheck_interval_minutes: number;
+      max_continue_prompts: number;
+      auto_checkout_timestamp_policy: 'shift_end_time' | 'prompt_time' | 'timeout_time';
+    };
+    [key: string]: any;
+  };
 }
 
 interface EmailConfigData {
@@ -124,6 +135,16 @@ export default function HRSettings() {
             compensatory_leave_allow_weekend: true,
             compensatory_leave_validity_days: 60,
           },
+          attendance_settings: data.attendance_settings || {
+            web_shift_end_confirmation: {
+              enabled: true,
+              shift_end_buffer_minutes: 15,
+              unanswered_timeout_minutes: 5,
+              recheck_interval_minutes: 30,
+              max_continue_prompts: 3,
+              auto_checkout_timestamp_policy: 'shift_end_time',
+            },
+          },
         });
       } catch {
         // Settings not found yet — keep defaults
@@ -163,6 +184,31 @@ export default function HRSettings() {
 
   const handleChange = (key: keyof HRSettingsData, value: string | number) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+    setSaved(false);
+  };
+
+  const handleWebShiftConfigChange = (field: string, value: any) => {
+    setForm((prev) => {
+      const currentAtt = prev.attendance_settings || {};
+      const currentWebConfig = currentAtt.web_shift_end_confirmation || {
+        enabled: true,
+        shift_end_buffer_minutes: 15,
+        unanswered_timeout_minutes: 5,
+        recheck_interval_minutes: 30,
+        max_continue_prompts: 3,
+        auto_checkout_timestamp_policy: 'shift_end_time',
+      };
+      return {
+        ...prev,
+        attendance_settings: {
+          ...currentAtt,
+          web_shift_end_confirmation: {
+            ...currentWebConfig,
+            [field]: value,
+          },
+        },
+      };
+    });
     setSaved(false);
   };
 
@@ -373,6 +419,142 @@ export default function HRSettings() {
             disabled={saving}
           >
             {saving ? 'Saving...' : 'Save Settings'}
+          </Button>
+          {saved && <span className="text-sm text-success-main">Settings saved successfully.</span>}
+        </div>
+      </Card>
+
+      {/* Web Shift-End Confirmation & Auto-Logout Configuration */}
+      <Card className="mt-8 p-6">
+        <div className="mb-4">
+          <div className="flex items-center gap-2">
+            <Iconify icon="clock" width={22} className="text-primary-main" />
+            <h2 className="text-lg font-semibold text-ink-primary">
+              Web Attendance Auto-Checkout &amp; Shift-End Confirmation
+            </h2>
+          </div>
+          <p className="mt-1 text-sm text-ink-secondary">
+            Configure automated shift-end prompts, waiting timers, and auto-checkout rules for employees working via the website.
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          {/* Master Enable Toggle */}
+          <div className="flex items-center justify-between rounded-xl border border-divider bg-surface-neutral/50 p-4">
+            <div>
+              <p className="text-sm font-semibold text-ink-primary">
+                Enable Shift-End Confirmation &amp; Web Auto-Checkout
+              </p>
+              <p className="text-xs text-ink-secondary">
+                When active, employees who punched in on the website are prompted when their shift ends, and automatically checked out if unanswered.
+              </p>
+            </div>
+            <input
+              type="checkbox"
+              id="web_auto_checkout_enabled"
+              checked={form.attendance_settings?.web_shift_end_confirmation?.enabled ?? true}
+              onChange={(e) => handleWebShiftConfigChange('enabled', e.target.checked)}
+              className="h-5 w-5 rounded border-divider text-primary-main focus:ring-primary-main cursor-pointer"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {/* 1. Shift End Buffer Time */}
+            <div>
+              <label htmlFor="shift_end_buffer_minutes" className="mb-1 block text-sm font-medium text-ink-primary">
+                Shift-End Grace Buffer (Minutes)
+              </label>
+              <Input
+                id="shift_end_buffer_minutes"
+                type="number"
+                min={0}
+                max={60}
+                value={form.attendance_settings?.web_shift_end_confirmation?.shift_end_buffer_minutes ?? 15}
+                onChange={(e) => handleWebShiftConfigChange('shift_end_buffer_minutes', parseInt(e.target.value, 10) || 0)}
+              />
+              <p className="mt-1 text-xs text-ink-secondary">
+                Minutes to wait after scheduled shift ends before showing the confirmation prompt (e.g. 15 mins).
+              </p>
+            </div>
+
+            {/* 2. Unanswered Prompt Countdown */}
+            <div>
+              <label htmlFor="unanswered_timeout_minutes" className="mb-1 block text-sm font-medium text-ink-primary">
+                Unanswered Prompt Countdown (Minutes)
+              </label>
+              <Input
+                id="unanswered_timeout_minutes"
+                type="number"
+                min={1}
+                max={30}
+                value={form.attendance_settings?.web_shift_end_confirmation?.unanswered_timeout_minutes ?? 5}
+                onChange={(e) => handleWebShiftConfigChange('unanswered_timeout_minutes', parseInt(e.target.value, 10) || 5)}
+              />
+              <p className="mt-1 text-xs text-ink-secondary">
+                How long the pop-up modal waits for employee response before automatically checking out and logging out.
+              </p>
+            </div>
+
+            {/* 3. Re-prompt Interval */}
+            <div>
+              <label htmlFor="recheck_interval_minutes" className="mb-1 block text-sm font-medium text-ink-primary">
+                &quot;Continue Working&quot; Re-Prompt Interval (Minutes)
+              </label>
+              <Input
+                id="recheck_interval_minutes"
+                type="number"
+                min={10}
+                max={120}
+                value={form.attendance_settings?.web_shift_end_confirmation?.recheck_interval_minutes ?? 30}
+                onChange={(e) => handleWebShiftConfigChange('recheck_interval_minutes', parseInt(e.target.value, 10) || 30)}
+              />
+              <p className="mt-1 text-xs text-ink-secondary">
+                If the employee clicks &quot;Continue Working&quot; (overtime), re-check and prompt again after this interval.
+              </p>
+            </div>
+
+            {/* 4. Maximum Continue Reminders */}
+            <div>
+              <label htmlFor="max_continue_prompts" className="mb-1 block text-sm font-medium text-ink-primary">
+                Maximum Continue Reminders (Safety Cap)
+              </label>
+              <Input
+                id="max_continue_prompts"
+                type="number"
+                min={1}
+                max={10}
+                value={form.attendance_settings?.web_shift_end_confirmation?.max_continue_prompts ?? 3}
+                onChange={(e) => handleWebShiftConfigChange('max_continue_prompts', parseInt(e.target.value, 10) || 3)}
+              />
+              <p className="mt-1 text-xs text-ink-secondary">
+                Maximum number of times an employee can extend their shift before check-out is required.
+              </p>
+            </div>
+
+            {/* 5. Auto-Checkout Stamped Time Policy */}
+            <div className="sm:col-span-2">
+              <label htmlFor="auto_checkout_timestamp_policy" className="mb-1 block text-sm font-medium text-ink-primary">
+                Auto-Checkout Stamped Timestamp Policy
+              </label>
+              <Select
+                id="auto_checkout_timestamp_policy"
+                value={form.attendance_settings?.web_shift_end_confirmation?.auto_checkout_timestamp_policy ?? 'shift_end_time'}
+                onChange={(e) => handleWebShiftConfigChange('auto_checkout_timestamp_policy', e.target.value)}
+              >
+                <option value="shift_end_time">Official Shift End Time (e.g. 06:00 PM) — Recommended</option>
+                <option value="prompt_time">Prompt Trigger Time (Shift End + Buffer e.g. 06:15 PM)</option>
+                <option value="timeout_time">Exact Moment Timeout Expired (e.g. 06:20 PM)</option>
+              </Select>
+              <p className="mt-1 text-xs text-ink-secondary">
+                Timestamp recorded as check-out when employee left without answering the confirmation prompt.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 flex items-center gap-4">
+          <Button type="button" onClick={handleSave} disabled={saving}>
+            {saving ? 'Saving...' : 'Save Shift Confirmation Rules'}
           </Button>
           {saved && <span className="text-sm text-success-main">Settings saved successfully.</span>}
         </div>

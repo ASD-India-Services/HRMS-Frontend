@@ -27,10 +27,12 @@ import { Card } from '@/components/ui/Card';
 import { matchColumnFilters, useColumnFilterContext } from './ColumnFilterContext';
 import {
   formatDate,
+  formatTime,
   formatDateTime,
   isIsoDateString,
   isIsoDateTimeString,
 } from '@/utils/formatters';
+import { useAppFormatting } from '@/hooks/useAppFormatting';
 
 export type SortDirection = 'asc' | 'desc' | null;
 
@@ -62,32 +64,72 @@ function getNestedValue<T>(row: T, key: string): unknown {
  * Automatically format cell values when no custom col.render is provided,
  * detecting ISO date / datetime strings according to HR Settings.
  */
-function formatAutoCellValue(value: unknown, key: string): React.ReactNode {
+function formatAutoCellValue(
+  value: unknown,
+  key: string,
+  dateFormat?: string,
+  timeFormat?: string,
+): React.ReactNode {
   if (value === null || value === undefined || value === '') {
     return '—';
   }
   if (typeof value === 'boolean') {
     return value ? 'Yes' : 'No';
   }
+
   const keyLower = key.toLowerCase();
-  if (isIsoDateString(value)) {
-    return formatDate(value as string);
+
+  // 1. If value is a Date instance
+  if (value instanceof Date) {
+    if (keyLower.endsWith('_at') || keyLower.includes('time') || keyLower.includes('datetime')) {
+      return formatDateTime(value, dateFormat, timeFormat);
+    }
+    return formatDate(value, dateFormat);
   }
+
+  // 2. ISO Date (e.g., YYYY-MM-DD or midnight ISO string)
+  if (isIsoDateString(value)) {
+    return formatDate(value as string, dateFormat);
+  }
+
+  // 3. ISO DateTime (e.g., YYYY-MM-DDTHH:MM...)
   if (isIsoDateTimeString(value)) {
     if (keyLower.endsWith('_at') || keyLower.includes('time') || keyLower.includes('datetime')) {
-      return formatDateTime(value as string);
+      return formatDateTime(value as string, dateFormat, timeFormat);
     }
-    return formatDate(value as string);
+    return formatDate(value as string, dateFormat);
   }
+
+  // 4. Date-related column keys
   if (
     keyLower === 'date' ||
     keyLower.endsWith('_date') ||
-    keyLower.startsWith('date_')
+    keyLower.startsWith('date_') ||
+    keyLower.endsWith('_on') ||
+    keyLower.startsWith('effective_') ||
+    keyLower.startsWith('valid_') ||
+    keyLower.startsWith('period_') ||
+    keyLower === 'dob' ||
+    keyLower.includes('dob')
   ) {
     if (typeof value === 'string' && value.length >= 8 && !isNaN(Date.parse(value))) {
-      return formatDate(value);
+      return formatDate(value, dateFormat);
     }
   }
+
+  // 5. Time-related column keys
+  if (
+    keyLower === 'time' ||
+    keyLower.endsWith('_time') ||
+    keyLower.startsWith('time_') ||
+    keyLower === 'check_in' ||
+    keyLower === 'check_out'
+  ) {
+    if (typeof value === 'string' && /^\d{1,2}:\d{2}(?::\d{2})?/.test(value.trim())) {
+      return formatTime(value, timeFormat);
+    }
+  }
+
   return String(value);
 }
 
@@ -594,7 +636,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   {selectable && rowId && renderCheckboxCell(rowId)}
                   {visibleColumns.map((col) => {
                     const value = getNestedValue(row, String(col.key));
-                    const rendered = col.render ? col.render(value, row) : formatAutoCellValue(value, String(col.key));
+                    const rendered = col.render ? col.render(value, row) : formatAutoCellValue(value, String(col.key), dateFormat, timeFormat);
                     const isActionsColumn = typeof col.header === 'string' && /\bactions?\b/i.test(col.header);
                     return (
                       <td

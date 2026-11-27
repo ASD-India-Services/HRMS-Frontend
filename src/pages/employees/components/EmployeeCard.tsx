@@ -93,6 +93,31 @@ export function EmployeeCard({ employee }: EmployeeCardProps) {
           <p className="truncate text-xs text-ink-secondary">
             {employee.department?.name || 'No Department'}
           </p>
+          {/* History Tags */}
+          {(() => {
+            const rawTags = (employee as any).history_tags || (employee as any).custom_fields?.history_tags;
+            if (Array.isArray(rawTags) && rawTags.length > 0) {
+              return (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {rawTags.slice(0, 2).map((tag: string) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center gap-1 rounded-full bg-surface-neutral px-2 py-0.5 text-[11px] font-medium text-ink-primary border border-divider"
+                    >
+                      <Iconify icon="solar:tag-outline" width={10} className="text-ink-secondary" />
+                      {tag}
+                    </span>
+                  ))}
+                  {rawTags.length > 2 && (
+                    <span className="text-[10px] text-ink-disabled self-center">
+                      +{rawTags.length - 2}
+                    </span>
+                  )}
+                </div>
+              );
+            }
+            return null;
+          })()}
         </div>
       </div>
 

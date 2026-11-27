@@ -59,6 +59,26 @@ export function getWorkTypeOptions(): { value: string; label: string }[] {
   ];
 }
 
+export function getHistoryTagOptions(): { value: string; label: string }[] {
+  try {
+    const saved = localStorage.getItem('hrms_history_tags');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map((item: any) => ({
+          value: item.title,
+          label: item.title,
+        }));
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return [
+    { value: 'Safety Commitee', label: 'Safety Commitee' },
+  ];
+}
+
 export const employeeCrudConfig = {
   id: 'employees',
   title: 'Employees',
@@ -195,6 +215,15 @@ export const employeeCrudConfig = {
       type: 'text',
       step: 1,
       placeholder: 'Auto-generated from prefix if blank (e.g. PEP-0001)',
+    },
+    {
+      name: 'history_tags',
+      label: 'History Tags',
+      type: 'multi-select',
+      step: 1,
+      options: getHistoryTagOptions(),
+      placeholder: 'Select history tags...',
+      helpText: 'Select organizational visual markers or committee badges (configured in Settings)',
     },
     // Step 2: Address
     { name: 'address', label: 'Address', type: 'textarea', step: 2 },

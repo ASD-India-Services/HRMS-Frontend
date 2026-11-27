@@ -63,3 +63,14 @@ export interface UpdateHelpdeskTagPayload {
   color?: string;
 }
 
+export const DEFAULT_HELPDESK_TAGS: HelpdeskTag[] = [
+  { id: '1', title: 'Horilla', color: '#000000' },
+  { id: '2', title: 'Asset', color: '#4fc3f7' },
+  { id: '3', title: 'Request', color: '#afb42b' },
+  { id: '4', title: 'Allocation', color: '#00838f' },
+  { id: '5', title: 'Recruitment', color: '#ef9a9a' },
+  { id: '6', title: 'Stage', color: '#b39ddb' },
+  { id: '7', title: 'Manager', color: '#00bfa5' },
+  { id: '8', title: 'Attendance', color: '#9fa8da' },
+];
+

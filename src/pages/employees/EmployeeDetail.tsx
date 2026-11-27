@@ -173,6 +173,35 @@ export function EmployeeDetail() {
             >
               {statusLabel}
             </span>
+            {(() => {
+              const rawTags = (employee as any).history_tags || (employee as any).custom_fields?.history_tags;
+              if (Array.isArray(rawTags) && rawTags.length > 0) {
+                return rawTags.map((tagTitle: string) => {
+                  const tagItem = hrSettings?.history_tags?.find(
+                    (t) => t.title.toLowerCase() === tagTitle.toLowerCase()
+                  );
+                  const isHighlighted = tagItem ? tagItem.highlight : false;
+                  return (
+                    <span
+                      key={tagTitle}
+                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        isHighlighted
+                          ? 'bg-amber-100 text-amber-900 border border-amber-300 font-semibold shadow-xs'
+                          : 'bg-surface-neutral text-ink-primary border border-divider'
+                      }`}
+                      title={isHighlighted ? 'Highlighted History Tag' : 'History Tag'}
+                    >
+                      <Iconify
+                        icon={isHighlighted ? 'solar:shield-star-bold' : 'solar:tag-outline'}
+                        className={`w-3.5 h-3.5 ${isHighlighted ? 'text-amber-600' : 'text-ink-secondary'}`}
+                      />
+                      {tagTitle}
+                    </span>
+                  );
+                });
+              }
+              return null;
+            })()}
           </span>
         }
         subtitle={
@@ -335,6 +364,18 @@ export function EmployeeDetail() {
                   value={formatDate(employee.date_of_leaving)}
                 />
               )}
+              {(() => {
+                const rawTags = (employee as any).history_tags || (employee as any).custom_fields?.history_tags;
+                if (Array.isArray(rawTags) && rawTags.length > 0) {
+                  return (
+                    <DetailRow
+                      label="History Tags"
+                      value={rawTags.join(', ')}
+                    />
+                  );
+                }
+                return null;
+              })()}
             </dl>
           </CardContent>
         </Card>

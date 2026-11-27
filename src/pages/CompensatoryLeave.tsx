@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { EMPLOYEES } from '@/lib/endpoints';
-import { useDefaultPaginationSize } from '@/hooks/useHRSettings';
+import { useDefaultPaginationSize, useHRSettings } from '@/hooks/useHRSettings';
 import { useHrmsPermissionsContext } from '@/contexts/HrmsPermissionsContext';
 import { formatDate, formatDateTime } from '@/utils/formatters';
 import {
@@ -42,6 +42,14 @@ export default function CompensatoryLeave() {
   const canDelete = hasPermission('compensatory_leave.delete');
   const isApproverOrAdmin = canApprove || canReject;
 
+  // HR Settings integration
+  const { data: hrSettings } = useHRSettings();
+  const compSettings = hrSettings?.compensatory_leave_settings;
+  const isRequestEnabled = compSettings?.request_enabled !== false;
+  const configuredDays = compSettings?.total_days !== undefined ? String(compSettings.total_days) : '1.0';
+  const configuredTypeName = compSettings?.leave_type_name || 'Compensatory Leave Type';
+  const configuredPayment = compSettings?.payment || 'Paid';
+
   // Tabs: 'my' = My Compensatory Leave Requests, 'all' = Compensatory Leave Requests (approver / all)
   const [activeTab, setActiveTab] = useState<'my' | 'all'>('my');
 
@@ -56,6 +64,7 @@ export default function CompensatoryLeave() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState('');
   const [selectedAttendance, setSelectedAttendance] = useState('');
+  const [requestDays, setRequestDays] = useState(configuredDays);
   const [description, setDescription] = useState('');
   const [formError, setFormError] = useState('');
 
@@ -191,7 +200,7 @@ export default function CompensatoryLeave() {
         employee: empId,
         attendance_date: attDate,
         description: description.trim(),
-        days: '1.0',
+        days: requestDays || configuredDays,
       });
       setIsCreateOpen(false);
       setDescription('');
@@ -457,8 +466,9 @@ export default function CompensatoryLeave() {
             size="medium"
             type="button"
             onClick={() => {
-              if (!canCreate) return;
+              if (!canCreate || !isRequestEnabled) return;
               setIsCreateOpen(true);
+              setRequestDays(configuredDays);
               setFormError('');
               if (employeesData && employeesData.length > 0 && !selectedEmployee) {
                 setSelectedEmployee(employeesData[0].id);
@@ -467,8 +477,14 @@ export default function CompensatoryLeave() {
                 setSelectedAttendance(attendanceOptions[0].attendance_date);
               }
             }}
-            disabled={!canCreate}
-            title={!canCreate ? 'Create permission required' : 'Create Compensatory Leave Request'}
+            disabled={!canCreate || !isRequestEnabled}
+            title={
+              !isRequestEnabled
+                ? 'Compensatory leave requests are disabled in Settings'
+                : !canCreate
+                ? 'Create permission required'
+                : 'Create Compensatory Leave Request'
+            }
           >
             <span>+ Create</span>
           </Button>
@@ -808,6 +824,48 @@ export default function CompensatoryLeave() {
                     </p>
                   </div>
                 )}
+              </div>
+
+              {/* Compensatory Leave Type Details Card from Settings */}
+              <div className="rounded-lg bg-surface-neutral/60 border border-divider p-3 text-xs space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-ink-secondary">Leave Type:</span>
+                  <span className="font-semibold text-ink-primary">{configuredTypeName}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-ink-secondary">Payment:</span>
+                  <span
+                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                      configuredPayment === 'Paid'
+                        ? 'bg-success-lighter text-success-dark'
+                        : configuredPayment === 'Unpaid'
+                        ? 'bg-error-lighter text-error-dark'
+                        : 'bg-warning-lighter text-warning-dark'
+                    }`}
+                  >
+                    {configuredPayment}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-ink-secondary">Default Allocation:</span>
+                  <span className="font-semibold text-ink-primary">{configuredDays} day(s)</span>
+                </div>
+              </div>
+
+              {/* Requested Days */}
+              <div>
+                <label className="block text-xs font-semibold text-ink-primary mb-1.5">
+                  Requested Days *
+                </label>
+                <Input
+                  type="number"
+                  step="0.5"
+                  min="0.5"
+                  required
+                  value={requestDays}
+                  onChange={(e) => setRequestDays(e.target.value)}
+                  placeholder={configuredDays}
+                />
               </div>
 
               {/* Description * */}

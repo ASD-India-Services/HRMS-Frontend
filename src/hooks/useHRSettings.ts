@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 
 export interface AccountRestrictions {
+  restrict_login_account?: boolean;
   restrict_profile_edit?: boolean;
   restrict_bank_edit?: boolean;
   restrict_outside_checkin?: boolean;
@@ -62,6 +63,15 @@ export interface CompensatoryLeaveSettingsConfig {
   [key: string]: any;
 }
 
+export interface WebShiftEndConfirmationConfig {
+  enabled?: boolean;
+  shift_end_buffer_minutes?: number;
+  unanswered_timeout_minutes?: number;
+  recheck_interval_minutes?: number;
+  max_continue_prompts?: number;
+  auto_checkout_timestamp_policy?: 'shift_end_time' | 'prompt_time' | 'timeout_time';
+}
+
 export interface AutoPayslipRuleItem {
   id: string;
   generate_day: string;
@@ -114,6 +124,7 @@ export interface HRSettings {
   announcement_expire_days: number;
   default_pagination_size: number;
   account_restrictions: AccountRestrictions;
+  resignation_request?: boolean;
   date_format: string;
   time_format: string;
   timezone: string;
@@ -167,6 +178,8 @@ export function useHRSettings() {
         if (typeof res.data.restrict_past_leave === 'boolean') {
           localStorage.setItem('hrms_restrict_past_leave', JSON.stringify(res.data.restrict_past_leave));
         }
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('hrms-format-changed', { detail: res.data }));
       } catch {
         // ignore storage errors
       }

@@ -28,18 +28,18 @@ import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
 
 /** Roles that see the full organisation-wide admin/HR dashboard */
-const ADMIN_ROLES = ['org_admin', 'hr_manager'];
+const ADMIN_ROLES = ['org_admin', 'hr_manager', 'hr', 'admin', 'administrator', 'superadmin', 'org admin'];
 
 /** Roles that see the manager/team-lead dashboard */
-const MANAGER_ROLES = ['manager', 'dept_head', 'hod', 'department_head'];
+const MANAGER_ROLES = ['manager', 'dept_head', 'hod', 'department_head', 'team_lead', 'team lead'];
 
 export default function Dashboard() {
-  const { name } = useUser();
+  const { name, role: authRole } = useUser();
   const { roleName, isLoading: permLoading } = useHrmsPermissionsContext();
   const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange);
   // Determine which sub-dashboard to render
-  const isAdmin = roleName ? ADMIN_ROLES.includes(roleName) : false;
-  const isManager = roleName ? MANAGER_ROLES.includes(roleName) : false;
+  const isAdmin = effectiveRole ? ADMIN_ROLES.includes(effectiveRole) : false;
+  const isManager = effectiveRole ? MANAGER_ROLES.includes(effectiveRole) : false;
 
   // Welcome subtitle varies by tier
   const subtitle = isAdmin

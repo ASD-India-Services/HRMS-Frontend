@@ -14,6 +14,8 @@
  */
 
 import { useMemo, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import api from '@/lib/api';
 import { createCrudHooks } from '@/hooks/useCrud';
 import { useHRSettings } from '@/hooks/useHRSettings';
 import { formatCurrency } from '@/utils/formatters';
@@ -195,6 +197,45 @@ function PayrollRunsContent() {
   // Fetch payroll entries using CRUD hooks
   const queryResult = payrollEntriesCrud.useList(apiParams);
 
+  // Query client for manual invalidation
+  const queryClient = useQueryClient();
+  const [isTriggeringAuto, setIsTriggeringAuto] = useState(false);
+  const [autoNotification, setAutoNotification] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null);
+
+  /**
+   * Handle on-demand trigger of auto-generation rules
+   */
+  async function handleTriggerAuto() {
+    setIsTriggeringAuto(true);
+    setAutoNotification(null);
+    try {
+      const res = await api.post('/api/v1/payroll-entries/auto-generate/', { force: true });
+      const data = res.data;
+      if (data.status === 'success') {
+        setAutoNotification({
+          message: data.detail || 'Payroll run auto-generated successfully!',
+          type: 'success',
+        });
+      } else if (data.status === 'already_exists') {
+        setAutoNotification({
+          message: data.detail || 'Payroll run already exists for this period.',
+          type: 'info',
+        });
+      } else {
+        setAutoNotification({
+          message: data.detail || 'Auto-payslip trigger finished.',
+          type: 'info',
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: [payrollEntriesCrudConfig.queryKey] });
+    } catch (err: any) {
+      const msg = err?.response?.data?.detail || 'Failed to trigger auto-generation.';
+      setAutoNotification({ message: msg, type: 'error' });
+    } finally {
+      setIsTriggeringAuto(false);
+    }
+  }
+
   // Create mutation
   const createMutation = payrollEntriesCrud.useCreate();
   const [createError, setCreateError] = useState<string | null>(null);
@@ -255,17 +296,29 @@ function PayrollRunsContent() {
 
       {/* Active Auto-Payslip Generation Rules from Settings */}
       {activeAutoRules.length > 0 && (
-        <div className="mb-6 rounded-card bg-success-lighter/80 p-4">
-          <div className="flex items-center justify-between">
+        <div className="mb-6 rounded-card bg-success-lighter/80 p-4 border border-success-light">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-2">
               <span className="flex h-2.5 w-2.5 rounded-full bg-success-main animate-pulse" />
               <span className="text-xs font-semibold uppercase tracking-wider text-success-darker">
                 Active Auto-Payslip Schedule (Linked to Settings)
               </span>
+              <span className="text-[11px] font-medium text-success-dark bg-success-lighter/70 px-2 py-0.5 rounded">
+                Rule Active
+              </span>
             </div>
-            <span className="text-[11px] font-medium text-success-dark bg-success-lighter/70 px-2 py-0.5 rounded">
-              Rule Active
-            </span>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={handleTriggerAuto}
+                disabled={isTriggeringAuto}
+                className="bg-surface-paper text-success-darker border-success-main/40 hover:bg-success-lighter"
+                startIcon={<Iconify icon={isTriggeringAuto ? "eos-icons:loading" : "mdi:lightning-bolt"} />}
+              >
+                {isTriggeringAuto ? 'Generating...' : 'Trigger Auto-Generation Now'}
+              </Button>
+            </div>
           </div>
           <div className="mt-2.5 flex flex-wrap gap-2">
             {activeAutoRules.map((rule: any) => (
@@ -279,6 +332,18 @@ function PayrollRunsContent() {
               </span>
             ))}
           </div>
+          {autoNotification && (
+            <div className={`mt-3 rounded p-2.5 text-xs font-medium flex items-center gap-2 ${
+              autoNotification.type === 'success'
+                ? 'bg-success-main text-white'
+                : autoNotification.type === 'error'
+                ? 'bg-error-main text-white'
+                : 'bg-primary-main text-white'
+            }`}>
+              <Iconify icon={autoNotification.type === 'success' ? 'mdi:check-circle' : 'mdi:information'} width={16} />
+              <span>{autoNotification.message}</span>
+            </div>
+          )}
         </div>
       )}
 

@@ -13,8 +13,10 @@ import { Outlet } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { ShiftEndConfirmationDialog } from './ShiftEndConfirmationDialog';
 import { PageTitleContext } from './PageTitleContext';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
+import { useHRSettings } from '@/hooks/useHRSettings';
 
 /** Loading fallback shown during route transitions */
 function PageLoader() {
@@ -30,11 +32,17 @@ export function AppShell() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [pageTitle, setPageTitle] = useState<ReactNode>('');
 
+  // Load organization HR settings (date format, time format, currency, pagination) on startup
+  useHRSettings();
+
   return (
     <PageTitleContext.Provider value={{ title: pageTitle, setTitle: setPageTitle }}>
     <div className="flex h-screen w-full max-w-full overflow-hidden bg-surface-default">
       {/* Offline banner */}
       <OfflineIndicator />
+
+      {/* Global Shift-End Confirmation & Auto-Logout Dialog */}
+      <ShiftEndConfirmationDialog />
 
       {/* Sidebar */}
       <Sidebar

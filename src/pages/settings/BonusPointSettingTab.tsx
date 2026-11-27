@@ -248,7 +248,7 @@ export function BonusPointSettingTab() {
           className="shrink-0"
         >
           <PlusIcon className="h-4 w-4" />
-          + Create
+          Create
         </Button>
       </div>
 
@@ -287,7 +287,7 @@ export function BonusPointSettingTab() {
             className="mt-4"
           >
             <PlusIcon className="h-4 w-4" />
-            + Create
+            Create
           </Button>
         </div>
       ) : (

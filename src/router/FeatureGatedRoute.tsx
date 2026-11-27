@@ -20,7 +20,18 @@ export function FeatureGatedRoute({ featureFlag, moduleName, children }: Feature
   const { role } = useUser();
   const { roleName } = useHrmsPermissionsContext();
 
-  if (featureFlag && !hasFeature(featureFlag)) {
+  const normalizedRole = (roleName || role || '').toLowerCase().trim();
+  const isAdmin =
+    normalizedRole === 'org_admin' ||
+    normalizedRole === 'admin' ||
+    normalizedRole === 'administrator' ||
+    normalizedRole === 'org admin' ||
+    normalizedRole === 'superadmin' ||
+    normalizedRole === 'hr' ||
+    normalizedRole === 'hr_manager' ||
+    normalizedRole === 'hr manager';
+
+  if (!isAdmin && featureFlag && !hasFeature(featureFlag)) {
     return <UpgradePrompt moduleName={moduleName} />;
   }
 
